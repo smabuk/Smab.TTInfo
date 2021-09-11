@@ -1,0 +1,145 @@
+﻿@page "/team/{League}/{TeamName}"
+@using Smab.TTInfo
+@using Smab.TTInfo.Models
+@using Smab.Shared.Helpers
+@inject TT365Client _tt365Client
+<PageTitle>🏓 @TeamName - @League</PageTitle>
+
+
+@if (readingTeam is null) {
+    <h3>Loading... @TeamName ...</h3>
+} else {
+<h3><a href="@readingTeam.FixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h3>
+@*<h3>@Model.readingTeam.FixturesView.Caption</h3>*@
+
+<div class="container-fluid">
+	@foreach (var fixture in readingTeam.FixturesView.Fixtures!)
+	{
+		<div class="row">
+			<div class="col-12 col-sm-5 col-md-4 col-lg-3"><strong>@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30") @fixture.Date.ToString("ddd dd MMM")</strong></div>
+			<div class="col-12 col-sm-7 col-md-8 col-lg-9">
+				@if (@fixture.IsCompleted)
+				{
+					@if (fixture.HomeTeam.Equals(@readingTeam.Team.Name))
+					{
+						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "success" : (fixture.ForHome < fixture.ForAway) ? "danger" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForHome - @fixture.ForAway</a>
+					}
+					else
+					{
+						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "danger" : (fixture.ForHome < fixture.ForAway) ? "success" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForAway - @fixture.ForHome</a>
+					}
+				}
+				<strong>@(fixture.HomeTeam.Equals(@readingTeam.Team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
+				<span> @@ @fixture.Venue</span>
+			</div>
+		</div>
+		<div class="row justify-content-end">
+			<div class="col-12 col-md-8 col-lg-9">
+				@if (fixture.HomeTeam.Equals(@readingTeam.Team.Name))
+				{
+					@teamPlayersList[fixture.AwayTeam];
+				}
+				else
+				{
+					@teamPlayersList[fixture.HomeTeam];
+				}
+			</div>
+		</div>
+		<br />
+		}
+</div>
+<h3>Team Stats</h3>
+<div class="card">
+    <div>
+        <div>Captain: <span>@readingTeam.Team.Captain</span></div>
+        <div>Caption: <span>@readingTeam.Team.Caption</span></div>
+    </div>
+    <table class="table table-bordered table-sm">
+        <caption style="caption-side: top" class="container-fluid text-dark bg-light">Players</caption>
+        <thead class="thead-default">
+            <tr>
+                <th>Name</th>
+                <th>Played</th>
+                <th>Win %</th>
+                <th>Ranking</th>
+                <th class="">PoM Awards</th>
+                <th>Form</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in readingTeam.Team.Players!)
+            {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Played</td>
+                <td>@player.WinPercentage</td>
+                <td>@player.LeagueRanking</td>
+                <td>@player.PoMAwards</td>
+                <td>@player.Form</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table table-bordered table-sm">
+        <caption style="caption-side: top" class="container-fluid text-dark bg-light">Results</caption>
+        <thead class="thead-default">
+            <tr>
+                <th>Opposition</th>
+                <th>Home Or Away</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Points</th>
+                <th>Player Of The Match</th>
+                <th>Card</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in readingTeam.Team.Results!)
+            {
+                <tr>
+                    <td>@result.Opposition</td>
+                    <td>@result.HomeOrAway</td>
+                    <td>@result.Date.ToString("ddd MMM dd yyyy")</td>
+                    <td>@result.ScoreForHome-@result.ScoreForAway</td>
+                    <td>@result.Points</td>
+                    <td>@result.PlayerOfTheMatch</td>
+                    <td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+}
+
+
+@code {
+    [EditorRequired]
+    [Parameter]
+    public string TeamName { get; set; } = "";
+
+    [EditorRequired]
+    [Parameter]
+    public string League { get; set; } = "";
+
+    TT365Models.ReadingTeam? readingTeam;
+	static Dictionary<string, string> teamPlayersList = new();
+
+
+    protected override async Task OnParametersSetAsync() {
+		TeamName = TeamName.Replace("_", " ");
+        readingTeam = await _tt365Client.GetReadingTeam(TeamName);
+        if (readingTeam is not null) {
+            foreach (var fixture in readingTeam.FixturesView.Fixtures!) 
+            {
+		        if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
+                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", await _tt365Client.GetTeamPlayers(fixture.HomeTeam)));
+		        }
+		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
+                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", await _tt365Client.GetTeamPlayers(fixture.AwayTeam)));
+		        }
+            }
+        }
+    }
+
+}

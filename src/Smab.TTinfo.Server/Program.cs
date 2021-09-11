@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Components;
-using TTInfo.Server.Data;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+builder.Services.AddSingleton<ITT365Service, TT365Reader>();
+
 
 var app = builder.Build();
 
@@ -28,6 +27,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
+app.MapControllers();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
