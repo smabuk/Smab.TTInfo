@@ -126,6 +126,8 @@
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
+        team = null;
+        StateHasChanged();
         team = await _tt365.GetTeamStats(TeamName);
         if (team is not null) {
             fixturesView = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
