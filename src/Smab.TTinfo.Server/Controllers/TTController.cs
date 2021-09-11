@@ -19,22 +19,9 @@ public partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{TeamName}")]
-	public async Task<IActionResult> ReadingTeam(String TeamName) {
-		TeamName = TeamName.Replace("_", " ");
-		TT365Models.ReadingTeam model = new(
-			 await TT365ReaderHelper.GetTeam(_tt365, TeamName),
-			 await _tt365.GetFixturesAdvancedView(TeamName) ?? new()
-		);
-
-		return Ok(model);
-	}
-
-
-	[HttpGet]
-	[Route("{TeamName}")]
 	public async Task<IActionResult> Fixtures(String TeamName = "") {
 		TeamName = TeamName.Replace("_", " ");
-		TT365Models.FixturesView list = await _tt365.GetFixturesAdvancedView(TeamName) ?? new();
+		FixturesView list = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
 
 		return Ok(list);
 	}
@@ -44,7 +31,7 @@ public partial class TTController : Controller {
 	public async Task<IActionResult> Team(String TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 
-		TT365Models.Team? team = await _tt365.GetTeamStats(TeamName);
+		Team? team = await _tt365.GetTeamStats(TeamName);
 		if (team is null) {
 			return NotFound();
 		}
@@ -57,7 +44,7 @@ public partial class TTController : Controller {
 	public async Task<IActionResult> TeamPlayersList(String TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 
-		TT365Models.Team? team = await _tt365.GetTeamStats(TeamName);
+		Team? team = await _tt365.GetTeamStats(TeamName);
 		if (team is null) {
 			return NotFound();
 		}
@@ -65,8 +52,6 @@ public partial class TTController : Controller {
 									 select p.Name + " (" + p.WinPercentage + ")").ToList();
 		return Ok(teamplayers);
 	}
-
-
 
 
 }

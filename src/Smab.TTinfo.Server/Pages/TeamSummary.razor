@@ -1,26 +1,23 @@
-﻿@page "/team/{League}/{TeamName}"
-@using Smab.TTInfo
-@using Smab.TTInfo.Models
-@using Smab.Shared.Helpers
-@inject TT365Client _tt365Client
+﻿@page "/TeamSummary/{League}/{TeamName}"
+@inject ITT365Service _tt365
 <PageTitle>🏓 @TeamName - @League</PageTitle>
 
 
-@if (readingTeam is null) {
-    <h3>Loading... @TeamName ...</h3>
+@if (team is null) {
+    <h3>Loading ... @TeamName ...</h3>
 } else {
-<h3><a href="@readingTeam.FixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h3>
-@*<h3>@Model.readingTeam.FixturesView.Caption</h3>*@
+<h3><a href="@fixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h3>
+@*<h3>@fixturesView.Caption</h3>*@
 
 <div class="container-fluid">
-	@foreach (var fixture in readingTeam.FixturesView.Fixtures!)
+	@foreach (var fixture in fixturesView.Fixtures!)
 	{
 		<div class="row">
 			<div class="col-12 col-sm-5 col-md-4 col-lg-3"><strong>@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30") @fixture.Date.ToString("ddd dd MMM")</strong></div>
 			<div class="col-12 col-sm-7 col-md-8 col-lg-9">
 				@if (@fixture.IsCompleted)
 				{
-					@if (fixture.HomeTeam.Equals(@readingTeam.Team.Name))
+					@if (fixture.HomeTeam.Equals(@team.Name))
 					{
 						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "success" : (fixture.ForHome < fixture.ForAway) ? "danger" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForHome - @fixture.ForAway</a>
 					}
@@ -29,13 +26,13 @@
 						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "danger" : (fixture.ForHome < fixture.ForAway) ? "success" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForAway - @fixture.ForHome</a>
 					}
 				}
-				<strong>@(fixture.HomeTeam.Equals(@readingTeam.Team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
+				<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
 				<span> @@ @fixture.Venue</span>
 			</div>
 		</div>
 		<div class="row justify-content-end">
 			<div class="col-12 col-md-8 col-lg-9">
-				@if (fixture.HomeTeam.Equals(@readingTeam.Team.Name))
+				@if (fixture.HomeTeam.Equals(@team.Name))
 				{
 					@teamPlayersList[fixture.AwayTeam];
 				}
@@ -51,8 +48,8 @@
 <h3>Team Stats</h3>
 <div class="card">
     <div>
-        <div>Captain: <span>@readingTeam.Team.Captain</span></div>
-        <div>Caption: <span>@readingTeam.Team.Caption</span></div>
+        <div>Captain: <span>@team.Captain</span></div>
+        <div>Caption: <span>@team.Caption</span></div>
     </div>
     <table class="table table-bordered table-sm">
         <caption style="caption-side: top" class="container-fluid text-dark bg-light">Players</caption>
@@ -67,7 +64,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in readingTeam.Team.Players!)
+            @foreach (var player in team.Players!)
             {
             <tr>
                 <td>@player.Name</td>
@@ -94,7 +91,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var result in readingTeam.Team.Results!)
+            @foreach (var result in team.Results!)
             {
                 <tr>
                     <td>@result.Opposition</td>
@@ -122,24 +119,28 @@
     [Parameter]
     public string League { get; set; } = "";
 
-    TT365Models.ReadingTeam? readingTeam;
+    private Team? team;
+    private FixturesView? fixturesView;
 	static Dictionary<string, string> teamPlayersList = new();
 
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
-        readingTeam = await _tt365Client.GetReadingTeam(TeamName);
-        if (readingTeam is not null) {
-            foreach (var fixture in readingTeam.FixturesView.Fixtures!) 
+        team = await _tt365.GetTeamStats(TeamName);
+        if (team is not null) {
+            fixturesView = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
+            foreach (var fixture in fixturesView.Fixtures!) 
             {
 		        if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
-                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", await _tt365Client.GetTeamPlayers(fixture.HomeTeam)));
+                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.HomeTeam)).PlayersList));
 		        }
 		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
-                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", await _tt365Client.GetTeamPlayers(fixture.AwayTeam)));
+                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.AwayTeam)).PlayersList));
 		        }
             }
         }
     }
+
+
 
 }

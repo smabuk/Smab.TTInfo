@@ -10,10 +10,10 @@ public partial class TTController : Controller
 
     [HttpGet]
 	[Route("/[action]/{League}/{TeamName}")]
-	public async Task<IActionResult> Calendar(String TeamName = "", string Command = "")
+	public async Task<IActionResult> Calendar(string? League = null, string TeamName = "", string Command = "")
     {
 		TeamName = TeamName.Replace("_", " ");
-		TT365Models.FixturesView? tt365FixtureView = await _tt365.GetFixturesAdvancedView(TeamName);
+		FixturesView? tt365FixtureView = await _tt365.GetFixturesByTeamName(TeamName);
 		if (tt365FixtureView is null || tt365FixtureView.Fixtures is null) {
 			return new EmptyResult();
 		}
@@ -35,7 +35,7 @@ public partial class TTController : Controller
         };
 
         ical.Events = new List<VEvent>();
-        foreach (TT365Models.Fixture fixture in tt365FixtureView.Fixtures)
+        foreach (Fixture fixture in tt365FixtureView.Fixtures)
         {
             VEvent fixtureEvent = new VEvent
             {

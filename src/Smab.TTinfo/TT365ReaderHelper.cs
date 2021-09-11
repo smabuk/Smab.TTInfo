@@ -5,16 +5,16 @@ public class TT365ReaderHelper {
 
 	static readonly Dictionary<string, List<string>> TeamPlayersList = new();
 
-	public static async Task<TT365Models.FixturesView> GetFixturesList(ITT365Service _tt365, string TeamName = "") {
+	public static async Task<FixturesView> GetFixturesList(ITT365Service _tt365, string TeamName = "") {
 		_tt365.Season = CurrentSeason;
 
-		return await _tt365.GetFixturesAdvancedView(TeamName) ?? new();
+		return await _tt365.GetFixturesByTeamName(TeamName) ?? new();
 	}
 
-	public static async Task<TT365Models.Team> GetTeam(ITT365Service _tt365, string TeamName) {
+	public static async Task<Team> GetTeam(ITT365Service _tt365, string TeamName) {
 		_tt365.Season = CurrentSeason;
 
-		TT365Models.Team team = await _tt365.GetTeamStats(TeamName) ?? new();
+		Team team = await _tt365.GetTeamStats(TeamName) ?? new();
 		List<string>? teamplayers = (from p in team.Players
 						   select p.Name + " (" + p.WinPercentage + ")").ToList();
 		TeamPlayersList.TryAdd(TeamName, teamplayers);
