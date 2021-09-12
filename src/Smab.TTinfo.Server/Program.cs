@@ -11,9 +11,12 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new(
 		league: "Reading",
-		season: "Senior_2021-22",
-		useTestFiles: builder.Environment.IsDevelopment()
-		));
+		season: "Senior_2021-22"
+		)
+	{
+		CacheFolder = @"DevData",
+		UseTestFiles = builder.Environment.IsDevelopment()
+	});
 
 var app = builder.Build();
 

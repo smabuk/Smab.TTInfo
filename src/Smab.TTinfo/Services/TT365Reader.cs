@@ -6,8 +6,17 @@ public partial class TT365Reader : ITT365Reader
 {
 	public string League { get; set; }
 	public string Season { get; set; }
-
 	public bool UseTestFiles { get; set; } = false;
+	public string CacheFolder = @"Cache";
+
+	public TT365Reader(string league, string season)
+	{
+		ArgumentNullException.ThrowIfNull(league);
+		ArgumentNullException.ThrowIfNull(season);
+		League = league;
+		Season = season;
+	}
+
 
 	private class TeamInfo
 	{
@@ -16,21 +25,6 @@ public partial class TT365Reader : ITT365Reader
 		public int ClubId { get; set; }
 		public string Division { get; set; } = "";
 	}
-
-	public TT365Reader(string league, string season, bool useTestFiles = false)
-	{
-		ArgumentNullException.ThrowIfNull(league);
-		ArgumentNullException.ThrowIfNull(season);
-		League = league;
-		Season = season;
-		UseTestFiles = useTestFiles;
-	}
-
-
-	// Public Function GetFixturesAdvancedView() As Task(Of TT365Models.FixturesView) Implements ITT365Service.GetFixturesAdvancedView
-	// Throw New NotImplementedException()
-	// End Function
-
 
 	private Dictionary<string, TeamInfo> GetTeamInfoForSeason(string season)
 	{
