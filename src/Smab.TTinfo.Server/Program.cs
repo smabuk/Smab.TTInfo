@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddScoped<ITT365Service, TT365Reader> (
+builder.Services.AddScoped<ITT365Reader, TT365Reader> (
     tt => new(
 		league: "Reading",
 		season: "Senior_2021-22",

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo;
 
-public interface ITT365Service
+public interface ITT365Reader
 {
 	string League { get; set; }
 	string Season { get; set; }
