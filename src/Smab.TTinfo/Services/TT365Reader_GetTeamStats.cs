@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.Models.TT365;
+
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -12,7 +14,6 @@ public partial class TT365Reader
 		string ActualName = "";
 
 		HttpClient client = new();
-		string html;
 		string lookupTeamName = TeamName.Replace("_", " ");
 		Dictionary<string, TeamInfo> TeamInfoLookup;
 
@@ -26,28 +27,9 @@ public partial class TT365Reader
 		else
 			return null; /* TODO Change to default(_) if this is not a reference type */
 
-		HtmlDocument? doc = new();
-
-		bool docLoadSuccessful = false;
-		if (UseTestFiles)
-		{
-			team.URL = $@"DevData\{League}_TeamStats_{TeamName}.html";
-			if (File.Exists(team.URL))
-			{
-				doc.Load(team.URL);
-				docLoadSuccessful = true;
-			}
-		}
-		if (!docLoadSuccessful)
-		{
-			team.URL = $"{"https"}://www.tabletennis365.com/{League}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
-			html = await client.GetStringAsync(team.URL);
-			doc.LoadHtml(html);
-			if (UseTestFiles)
-			{
-				doc.Save($@"DevData\{League}_TeamStats_{TeamName}.html");
-			}
-		}
+		HtmlDocument doc = await LoadPage(
+			$"{"https"}://www.tabletennis365.com/{League}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}",
+			$@"{League}_TeamStats_{TeamName}.html");
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 
