@@ -28,16 +28,25 @@ public partial class TT365Reader
 
 		HtmlDocument? doc = new();
 
+		bool docLoadSuccessful = false;
 		if (UseTestFiles)
 		{
-			team.URL = $@"DevData\TeamStats_{TeamName}.html";
-			doc.Load($@"DevData\TeamStats_{TeamName}.html");
+			team.URL = $@"DevData\{League}_TeamStats_{TeamName}.html";
+			if (File.Exists(team.URL))
+			{
+				doc.Load(team.URL);
+				docLoadSuccessful = true;
+			}
 		}
-		else
+		if (!docLoadSuccessful)
 		{
 			team.URL = $"{"https"}://www.tabletennis365.com/{League}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
 			html = await client.GetStringAsync(team.URL);
 			doc.LoadHtml(html);
+			if (UseTestFiles)
+			{
+				doc.Save($@"DevData\{League}_TeamStats_{TeamName}.html");
+			}
 		}
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");

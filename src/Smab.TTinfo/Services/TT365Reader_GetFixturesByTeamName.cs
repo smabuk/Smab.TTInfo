@@ -43,12 +43,17 @@ public partial class TT365Reader
 
 
 		HtmlDocument doc = new();
+		bool docLoadSuccessful = false;
 		if (UseTestFiles)
 		{
-			fixturesView.URL = $@"DevData\Fixtures_{TeamName}.html";
-			doc.Load(fixturesView.URL);
+			fixturesView.URL = $@"DevData\{League}_Fixtures_{TeamName}.html";
+			if (File.Exists(fixturesView.URL))
+			{
+				doc.Load(fixturesView.URL);
+				docLoadSuccessful = true;
+			}
 		}
-		else
+		if (!docLoadSuccessful)
 		{
 			fixturesView.URL = $"{"https"}://www.tabletennis365.com/{League}/Fixtures/{Season}/{Division}?c=False&vm={ViewModeType}&d={Division}&vn={VenueId}&cl={ClubId}&t={TeamId}&swn={ShowByWeekNo}&hc={HideCompletedFixtures}&md={MergeDivisions}";
 			using (HttpClient client = new())
@@ -56,6 +61,10 @@ public partial class TT365Reader
 				html = await client.GetStringAsync(fixturesView.URL);
 			}
 			doc.LoadHtml(html);
+			if (UseTestFiles)
+			{
+				doc.Save($@"DevData\{League}_Fixtures_{TeamName}.html");
+			}
 		}
 
 		// fixture.Description = fixtureNode.SelectSingleNode("//meta[@itemprop='description']").Attributes("content").Value

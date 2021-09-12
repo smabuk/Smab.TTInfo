@@ -8,7 +8,7 @@ builder.Services.AddScoped<ITT365Reader, TT365Reader> (
     tt => new(
 		league: "Reading",
 		season: "Senior_2021-22",
-        useTestFiles: false      // TODO: change this later
+        useTestFiles: builder.Environment.IsDevelopment()
         ));
 
 var app = builder.Build();
