@@ -45,7 +45,8 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 
-app.MapGet("/calendar/{LeagueName}/{TeamName}", async (string LeagueName, string TeamName, string Command, ITT365Reader _tt365, HttpContext context) =>
+app.MapGet("/calendar/{LeagueName}/{TeamName}",
+	 async (string LeagueName, string TeamName, string Command, ITT365Reader _tt365, HttpContext context) =>
 {
 	TeamName = TeamName.Replace("_", " ");
 	FixturesView? tt365FixtureView = await _tt365.GetFixturesByTeamName(TeamName, LeagueName);
@@ -60,7 +61,7 @@ app.MapGet("/calendar/{LeagueName}/{TeamName}", async (string LeagueName, string
 		false => TimeZoneInfo.FindSystemTimeZoneById("GMT")
 	};
 
-	IcalCalendar ical = new IcalCalendar
+	IcalCalendar ical = new()
 	{
 		Name = $"{LeagueName} fixtures - {TeamName}",
 		Description = "Fixtures and results of matches for the {LeagueName} league"
@@ -69,7 +70,7 @@ app.MapGet("/calendar/{LeagueName}/{TeamName}", async (string LeagueName, string
 	ical.Events = new List<VEvent>();
 	foreach (Fixture fixture in tt365FixtureView.Fixtures)
 	{
-		VEvent fixtureEvent = new VEvent
+		VEvent fixtureEvent = new()
 		{
 			UID = $"RDTTA {fixture.HomeTeam} vs {fixture.AwayTeam}",
 			Summary = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
@@ -130,10 +131,10 @@ app.MapGet("/calendar/{LeagueName}/{TeamName}", async (string LeagueName, string
 		case "TEXT":
 			return Results.Content(ical.ToString(), "text/plain");
 		case "CONTENT":
-			context.Response.Headers.Add("content-disposition", $"inline;filename={LeagueName}Fixtures.ics");
+			context.Response.Headers.Add("content-disposition", $"inline;filename={LeagueName}{TeamName}Fixtures.ics");
 			return Results.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 		case "FILE":
-			return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName}Fixtures.ics");
+			return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName}{TeamName}Fixtures.ics");
 		case "JSON":
 			return Results.Json(ical);
 		case "NEG":
@@ -142,7 +143,7 @@ app.MapGet("/calendar/{LeagueName}/{TeamName}", async (string LeagueName, string
 			break;
 	}
 
-	return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName}Fixtures.ics");
+	return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName}{TeamName}Fixtures.ics");
 
 
 });

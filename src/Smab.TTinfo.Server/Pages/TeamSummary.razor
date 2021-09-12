@@ -1,6 +1,6 @@
-﻿@page "/TeamSummary/{League}/{TeamName}"
+﻿@page "/TeamSummary/{LeagueName}/{TeamName}"
 @inject ITT365Reader _tt365
-<PageTitle>🏓 @TeamName - @League</PageTitle>
+<PageTitle>🏓 @TeamName - @LeagueName</PageTitle>
 
 
 @if (team is null) {
@@ -117,12 +117,11 @@
 
     [EditorRequired]
     [Parameter]
-    public string League { get; set; } = "";
+    public string LeagueName { get; set; } = "";
 
     private Team? team;
     private FixturesView? fixturesView;
 	static Dictionary<string, string> teamPlayersList = new();
-
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
@@ -142,7 +141,6 @@
             }
         }
     }
-
 
 
 }
