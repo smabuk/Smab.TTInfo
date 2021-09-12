@@ -9,7 +9,7 @@ public partial class TTController : Controller
 {
 
     [HttpGet]
-	[Route("/[action]/{League}/{TeamName}")]
+	[Route("{League}/{TeamName}")]
 	public async Task<IActionResult> Calendar(string? League = null, string TeamName = "", string Command = "")
     {
 		TeamName = TeamName.Replace("_", " ");
