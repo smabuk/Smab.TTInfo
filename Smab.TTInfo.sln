@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTInfo.Server", "src\Smab.TTInfo.Server\Smab.TTInfo.Server.csproj", "{7FE66186-2E14-455D-BB3E-433BC1D7EF17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.Server", "src\Smab.TTInfo.Server\Smab.TTInfo.Server.csproj", "{7FE66186-2E14-455D-BB3E-433BC1D7EF17}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo", "src\Smab.TTInfo\Smab.TTInfo.csproj", "{91719C17-242A-4E78-9186-4FFE7FD53A66}"
 EndProject

@@ -5,14 +5,14 @@ namespace Smab.TTInfo.Server.Controllers;
 
 [Route("/api/[action]")]
 public partial class TTController : Controller {
-	private readonly ITT365Service _tt365;
+	private readonly ITT365Reader _tt365;
 	private IMemoryCache _cache;
 
 	public TTController(
-		ITT365Service tt365Service,
+		ITT365Reader tt365Reader,
 		IMemoryCache memoryCache
 		) {
-		_tt365 = tt365Service;
+		_tt365 = tt365Reader;
 		_cache = memoryCache;
 	}
 

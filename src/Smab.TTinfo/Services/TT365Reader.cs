@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader : ITT365Service
+public partial class TT365Reader : ITT365Reader
 {
 	public string League { get; set; }
 	public string Season { get; set; }
