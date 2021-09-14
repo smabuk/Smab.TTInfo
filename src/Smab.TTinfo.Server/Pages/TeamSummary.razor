@@ -19,12 +19,13 @@
 				{
 					@if (fixture.HomeTeam.Equals(@team.Name))
 					{
-						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "success" : (fixture.ForHome < fixture.ForAway) ? "danger" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForHome - @fixture.ForAway</a>
+						<a class="badge badge-sm bg-@((fixture.ForHome > fixture.ForAway) ? "success" : (fixture.ForHome < fixture.ForAway) ? "danger" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForHome - @fixture.ForAway</a>
 					}
 					else
 					{
-						<a class="badge badge-sm badge-@((fixture.ForHome > fixture.ForAway) ? "danger" : (fixture.ForHome < fixture.ForAway) ? "success" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForAway - @fixture.ForHome</a>
+						<a class="badge badge-sm bg-@((fixture.ForHome > fixture.ForAway) ? "danger" : (fixture.ForHome < fixture.ForAway) ? "success" : "info")" href="@fixture.CardURL" target="_blank">@fixture.ForAway - @fixture.ForHome</a>
 					}
+                    <text>&nbsp;</text>
 				}
 				<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
 				<span> @@ @fixture.Venue</span>
