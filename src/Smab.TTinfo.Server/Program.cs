@@ -15,17 +15,13 @@ builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 		)
 	{
 		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder"),
-		UseTestFiles = builder.Environment.IsDevelopment()
+		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-	app.UseDeveloperExceptionPage();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

@@ -1,7 +1,7 @@
 ﻿@page "/TeamSummary/{LeagueName}/{TeamName}"
 @inject ITT365Reader _tt365
-<PageTitle>🏓 @TeamName - @LeagueName</PageTitle>
 
+<PageTitle>🏓 @TeamName - @LeagueName</PageTitle>
 
 @if (team is null) {
     <h3>Loading ... @TeamName ...</h3>
