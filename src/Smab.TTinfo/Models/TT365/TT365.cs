@@ -125,7 +125,7 @@ public record League(
 	public string Name { get; set; } = "";
 	ICollection<Division>? Divisions;
 
-	public int DivisionCount => Divisions?.Count() ?? 0;
+	public int DivisionCount => Divisions?.Count ?? 0;
 }
 
 public record Division(
@@ -133,5 +133,5 @@ public record Division(
 )
 {
 	ICollection<Team>? Teams;
-	public int TeamCount => Teams?.Count() ?? 0;
+	public int TeamCount => Teams?.Count ?? 0;
 }
