@@ -16,6 +16,7 @@
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
         "dist/css/bootstrap.min.css",
+        "dist/css/bootstrap-grid.min.css.map",
         "package.json",
         "LICENSE",
         "README.md"

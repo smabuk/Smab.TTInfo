@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
+@namespace Smab.TTInfo.Server.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
@@ -6,13 +7,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smab.TTInfo.Server</title>
     <base href="~/" />
-    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
     <script src="lib/fortawesome/fontawesome-free/js/all.min.js"></script>
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="Smab.TTInfo.Server.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
     @RenderBody()
