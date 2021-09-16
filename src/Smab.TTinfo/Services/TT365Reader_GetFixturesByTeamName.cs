@@ -39,8 +39,9 @@ public partial class TT365Reader
 				return null; /* TODO Change to default(_) if this is not a reference type */
 		}
 
+		fixturesView.URL = $"{"https"}://www.tabletennis365.com/{League}/Fixtures/{Season}/{Division}?c=False&vm={ViewModeType}&d={Division}&vn={VenueId}&cl={ClubId}&t={TeamId}&swn={ShowByWeekNo}&hc={HideCompletedFixtures}&md={MergeDivisions}";
 		HtmlDocument doc = await LoadPage(
-			$"{"https"}://www.tabletennis365.com/{League}/Fixtures/{Season}/{Division}?c=False&vm={ViewModeType}&d={Division}&vn={VenueId}&cl={ClubId}&t={TeamId}&swn={ShowByWeekNo}&hc={HideCompletedFixtures}&md={MergeDivisions}",
+			fixturesView.URL,
 			$@"{League}_Fixtures_{TeamName}.html");
 
 		// fixture.Description = fixtureNode.SelectSingleNode("//meta[@itemprop='description']").Attributes("content").Value
