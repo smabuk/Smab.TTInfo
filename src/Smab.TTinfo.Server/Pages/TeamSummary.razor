@@ -121,7 +121,7 @@
     public string LeagueName { get; set; } = "";
 
     private Team? team;
-    private FixturesView? fixturesView;
+    private FixturesView fixturesView = new();
 	static Dictionary<string, string> teamPlayersList = new();
 
     protected override async Task OnParametersSetAsync() {
@@ -134,10 +134,10 @@
             foreach (var fixture in fixturesView.Fixtures!) 
             {
 		        if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
-                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.HomeTeam)).PlayersList));
+                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.HomeTeam))?.PlayersList ?? new()));
 		        }
 		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
-                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.AwayTeam)).PlayersList));
+                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.AwayTeam))?.PlayersList ?? new()));
 		        }
             }
         }
