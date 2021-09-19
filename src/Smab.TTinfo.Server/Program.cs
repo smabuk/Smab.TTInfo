@@ -2,6 +2,10 @@
 
 using System.Runtime.InteropServices;
 
+
+Name = typeof(Program).Assembly.GetName().Name;
+Version = typeof(Program).Assembly.GetName().Version;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -39,7 +43,6 @@ app.MapControllers();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
 
 app.MapGet("/calendar/{LeagueName}/{TeamName}",
 	 async (string LeagueName, string TeamName, string Command, ITT365Reader _tt365, HttpContext context) =>
@@ -145,3 +148,12 @@ app.MapGet("/calendar/{LeagueName}/{TeamName}",
 });
 
 app.Run();
+
+
+static partial class Program
+{
+	public static string SiteName { get; set; } = "Table Tennis Info";
+	public static string? Name { get; set; }
+	public static Version? Version{ get; set; }
+
+}
