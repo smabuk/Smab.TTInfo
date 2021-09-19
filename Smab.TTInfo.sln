@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.Server", "src\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo", "src\Smab.TTInfo\Smab.TTInfo.csproj", "{91719C17-242A-4E78-9186-4FFE7FD53A66}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99C6692C-6F0D-499C-8B69-1883B2615223}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\docker-publish.yml = .github\workflows\docker-publish.yml
+		.github\workflows\TTInfo_Main_Azure.yml = .github\workflows\TTInfo_Main_Azure.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
