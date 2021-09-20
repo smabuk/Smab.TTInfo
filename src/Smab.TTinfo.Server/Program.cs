@@ -1,4 +1,6 @@
-﻿using Smab.Calendar;
+﻿using Microsoft.AspNetCore.Http.Connections;
+
+using Smab.Calendar;
 
 using System.Runtime.InteropServices;
 
@@ -41,7 +43,12 @@ app.UseRouting();
 
 app.MapControllers();
 
-app.MapBlazorHub();
+app.MapBlazorHub(configureOptions: options =>
+{
+	// My PHYSICAL ROUTER seems to get in the way of WebSockets working so allow LongPolling as a fallback option
+	options.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+}); 
+
 app.MapFallbackToPage("/_Host");
 
 app.MapGet("/calendar/{LeagueName}/{TeamName}",
