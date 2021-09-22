@@ -1,0 +1,21 @@
+﻿:root {
+    --font-color: #424242;
+    --bg-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --font-color: #e1e1ff;
+        --bg-color: #161625;
+    }
+}
+
+[data-theme="dark"] {
+    --font-color: #e1e1ff;
+    --bg-color: #161625;
+}
+
+[data-theme="light"] {
+    --font-color: #424242;
+    --bg-color: #fff;
+}
