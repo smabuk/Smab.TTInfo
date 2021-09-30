@@ -1,21 +1,19 @@
-﻿:root {
-    --font-color: #424242;
+:root {
     --bg-color: #fff;
+    --link-color: #0077cc;
+    --text-color: #424242;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --font-color: #e1e1ff;
         --bg-color: #161625;
+        --text-color: #e1e1ff;
     }
-}
-
-[data-theme="dark"] {
-    --font-color: #e1e1ff;
-    --bg-color: #161625;
-}
-
-[data-theme="light"] {
-    --font-color: #424242;
-    --bg-color: #fff;
+    
+    .card,
+    .table {
+	    background-color: var(--bg-color);
+	    color: var(--text-color);
+	    mix-blend-mode: exclusion;
+    }
 }
