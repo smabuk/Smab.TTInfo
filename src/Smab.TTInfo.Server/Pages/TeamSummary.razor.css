@@ -3,6 +3,10 @@
 	padding-left: 0;
 }
 
+time {
+	font-weight: bold;
+}
+
 .card {
 	margin-bottom: 1rem;
 	padding: 10px;
