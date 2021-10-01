@@ -53,15 +53,11 @@ public class Fixture
 	public string PlayerOfTheMatch { get; set; } = "";
 	public string CardURL { get; set; } = "";
 
-	public string Score
-	{
-		get
-		{
-			if (IsCompleted)
-				return ForHome + " - " + ForAway;
-			return string.Empty;
-		}
-	}
+	public string Score =>
+		IsCompleted ? ForHome + " - " + ForAway : string.Empty;
+
+	public int Id =>
+		int.Parse(CardURL.Split('/').LastOrDefault() ?? "");
 }
 
 [DebuggerDisplay("CompletedFixture: {Date,nq} - {HomeTeam,nq} ({ForHome,nq}) vs ({ForAway,nq}) {AwayTeam,nq}")]
