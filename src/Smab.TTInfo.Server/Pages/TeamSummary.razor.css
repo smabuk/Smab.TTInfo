@@ -3,10 +3,13 @@
 	padding-left: 0;
 }
 
+h1 {
+	font-size: calc(1.3rem + .6vw);
+}
+
 time {
 	font-weight: bold;
 }
-
 .card {
 	margin-bottom: 1rem;
 	padding: 10px;
@@ -15,4 +18,54 @@ time {
 
 .table {
 	margin-bottom: 0;
+}
+
+[data-result='win'] {
+	--result-color: var(--bs-success, green);
+}
+
+[data-result='loss'] {
+	--result-color: var(--bs-danger, red);
+}
+
+[data-result='draw'] {
+	--result-color: var(--bs-primary, blue);
+}
+
+#fixtures .card {
+	margin-bottom: 0.25rem;
+	box-shadow: inset 6px -4px 2px 0px var(--result-color);
+}
+
+#fixtures .badge {
+	background-color: var(--result-color);
+	margin-right: 0.5rem;
+	text-decoration: none;
+}
+
+#players th:nth-child(n+2),
+#players td:nth-child(5)
+{
+	text-align: center;
+}
+
+#players td:nth-child(2),
+#players td:nth-child(3),
+#players td:nth-child(4)
+{
+	text-align: right;
+	padding-right: 3rem;
+}
+
+#results th:nth-child(n+2):not(:nth-child(3)):not(:nth-child(6))
+{
+	text-align: center;
+}
+
+
+#results td:nth-child(2),
+#results td:nth-child(4),
+#results td:nth-child(5),
+#results td:last-child {
+	text-align: center;
 }

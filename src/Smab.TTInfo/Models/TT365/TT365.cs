@@ -54,9 +54,9 @@ public class Fixture
 	public string CardURL { get; set; } = "";
 
 	public string Score =>
-		IsCompleted ? ForHome + " - " + ForAway : string.Empty;
+		IsCompleted ? ForHome + " - " + ForAway : "";
 
-	public int Id =>
+	public int Id => string.IsNullOrWhiteSpace(CardURL) ? 0 :
 		int.Parse(CardURL.Split('/').LastOrDefault() ?? "");
 }
 

@@ -4,51 +4,52 @@
 <PageTitle>@TeamName - @LeagueName</PageTitle>
 
 @if (team is null) {
-    <h3>Loading ... @TeamName ...</h3>
+    <h1>Loading ... @TeamName ...</h1>
 } else {
-<h3><a href="@fixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h3>
+<h1><a href="@fixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h1>
 @*<h3>@fixturesView.Caption</h3>*@
 
-<div class="container-fluid">
+<div id="fixtures">
 	@foreach (var fixture in fixturesView.Fixtures!)
 	{
-		<div class="row">
-			<div class="col-12 col-sm-5 col-md-4 col-lg-3"><time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time></div>
-			<div class="col-12 col-sm-7 col-md-8 col-lg-9">
-				@if (@fixture.IsCompleted)
-				{
-                    FixtureResult fr = fixtureResults[fixture.Id];
-					<a class="badge badge-sm bg-@((fr.Result == "win") ? "success" : (fr.Result == "loss") ? "danger" : "info")" href="@fixture.CardURL" target="_blank">@fr.FullScore</a>
-                    <text>&nbsp;</text>
-				}
-				<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
-				<span> @@ @fixture.Venue</span>
-			</div>
-		</div>
-		<div class="row justify-content-end">
-			<div class="col-12 col-md-8 col-lg-9">
-				@if (fixture.HomeTeam.Equals(@team.Name))
-				{
-					@teamPlayersList[fixture.AwayTeam];
-				}
-				else
-				{
-					@teamPlayersList[fixture.HomeTeam];
-				}
-			</div>
-		</div>
-		<br />
+        FixtureResult? fr;
+        fixtureResults.TryGetValue(fixture.Id, out fr);
+        <div class="card" data-result='@fr?.Result'>
+		    <div class="row">
+			    <div class="col-12 col-sm-5 col-md-4 col-lg-3"><time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time></div>
+			    <div class="col-12 col-sm-7 col-md-8 col-lg-9">
+				    @if (fr is not null)
+				    {
+					    <a class="badge badge-sm" href="@fixture.CardURL" target="_blank">@fr.FullScore</a>
+				    }
+				    <strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
+				    <span> @@ @fixture.Venue</span>
+			    </div>
+		    </div>
+		    <div class="row justify-content-end">
+			    <div class="col-12 col-md-8 col-lg-9">
+				    @if (fixture.HomeTeam.Equals(@team.Name))
+				    {
+					    @teamPlayersList[fixture.AwayTeam];
+				    }
+				    else
+				    {
+					    @teamPlayersList[fixture.HomeTeam];
+				    }
+			    </div>
+		    </div>
+        </div>
 		}
 </div>
-<h3>Team Stats</h3>
-<div class="card">
+<h2>Team Stats</h2>
+<div id="teamstats" class="card">
     <div>
         <div>Captain: <span>@team.Captain</span></div>
         <div>Caption: <span>@team.Caption</span></div>
     </div>
-    <table class="table table-bordered table-sm">
+    <table id="players" class="table table-bordered table-sm">
         <caption class="container-fluid">Players</caption>
-        <thead class="thead-default">
+        <thead>
             <tr>
                 <th>Name</th>
                 <th>Played</th>
@@ -72,9 +73,9 @@
             }
         </tbody>
     </table>
-    <table class="table table-bordered table-sm">
+    <table id="results" class="table table-bordered table-sm">
         <caption class="container-fluid">Results</caption>
-        <thead class="thead-default">
+        <thead>
             <tr>
                 <th>Opposition</th>
                 <th>Home Or Away</th>
