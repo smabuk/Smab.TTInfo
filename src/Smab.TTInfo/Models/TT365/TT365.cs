@@ -87,8 +87,8 @@ public class Team
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Player
 {
-	public int Id { get; set; }
 	public string Name { get; set; } = "";
+	public string PlayerURL { get; set; } = "";
 	public int Played { get; set; }
 	public string WinPercentage { get; set; } = "";
 	public string PoMAwards { get; set; } = "";
@@ -98,6 +98,8 @@ public class Player
 	public int CountyRanking { get; set; }
 	public int RegionalRanking { get; set; }
 	public int NationalRanking { get; set; }
+	public int Id => string.IsNullOrWhiteSpace(PlayerURL) ? 0 :
+		int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "");
 }
 
 [DebuggerDisplay("Result: {ScoreForHome,nq} : {ScoreForAway,nq}")]
