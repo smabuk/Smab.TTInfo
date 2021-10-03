@@ -89,11 +89,11 @@
         <tbody>
             @foreach (var result in team.Results!)
             {
-                <tr>
+                <tr data-result='@result.MatchResult'>
                     <td>@result.Opposition</td>
                     <td>@result.HomeOrAway</td>
                     <td>@result.Date.ToString("dd MMM yyyy")</td>
-                    <td><span>@(new string('0', 2 - $"{result.ScoreForHome}".Length))</span>@result.ScoreForHome-@result.ScoreForAway<span>@(new string('0', 2 - $"{result.ScoreForAway}".Length))</span></td>
+                    <td><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></td>
                     <td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
                     <td>@result.PlayerOfTheMatch</td>
                     <td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>

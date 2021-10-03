@@ -22,24 +22,24 @@ caption {
 }
 
 [data-result='win'] {
-	--result-color: var(--bs-success, green);
+	--result-color-rgb: var(--bs-success-rgb, 25,135,84);
 }
 
 [data-result='loss'] {
-	--result-color: var(--bs-danger, red);
+	--result-color-rgb: var(--bs-danger-rgb, 220,53,69);
 }
 
 [data-result='draw'] {
-	--result-color: var(--bs-primary, blue);
+	--result-color-rgb: var(--bs-primary-rgb, 13,110,253);
 }
 
 #fixtures .card {
 	margin-bottom: 0.25rem;
-	box-shadow: inset 6px -4px 2px 0px var(--result-color);
+	box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
 }
 
 #fixtures .badge {
-	background-color: var(--result-color);
+	background-color: rgb(var(--result-color-rgb));
 	margin-right: 0.5rem;
 	text-decoration: none;
 }
@@ -83,6 +83,10 @@ caption {
 #results td:nth-child(5),
 #results td:nth-child(7) {
 	text-align: center;
+}
+
+#results tr {
+	background-color: rgba(var(--result-color-rgb), .5);
 }
 
 #results span {

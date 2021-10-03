@@ -86,6 +86,7 @@ public partial class TT365Reader
 							switch (rankType)
 							{
 								case "OLOP":
+								case "OLOP TTC":
 									{
 										player.ClubRanking = int.Parse(rankValue);
 										break;
@@ -101,6 +102,7 @@ public partial class TT365Reader
 										break;
 									}
 								case "TTE > South East Region":
+								case "South East":
 									{
 										player.RegionalRanking = int.Parse(rankValue);
 										break;
@@ -127,8 +129,8 @@ public partial class TT365Reader
 					{
 						Opposition = cells[0].InnerText,
 						HomeOrAway = cells[1].InnerText,
-						ScoreForHome = cells[3].InnerText.Split("-")[0].Trim(),
-						ScoreForAway = cells[3].InnerText.Split("-")[1].Trim(),
+						ScoreForHome = int.Parse(cells[3].InnerText.Split("-")[0]),
+						ScoreForAway = int.Parse(cells[3].InnerText.Split("-")[1]),
 						Points = int.Parse(cells[4].InnerText),
 						PlayerOfTheMatch = cells[5].InnerText,
 						CardURL = $"{"https"}://www.tabletennis365.com/{cells[6].Descendants("a").Single().Attributes["href"].Value}"
