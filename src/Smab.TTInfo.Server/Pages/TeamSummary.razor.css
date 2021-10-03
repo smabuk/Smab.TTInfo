@@ -12,7 +12,7 @@ time {
 	border-radius: 20px;
 }
 
-.table {
+table {
 	margin-bottom: 0;
 }
 
@@ -44,7 +44,9 @@ caption {
 	text-decoration: none;
 }
 
-
+#teamstats {
+	overflow-x: hidden;
+}
 
 #players th:nth-child(n+2),
 #players td:nth-child(n+2):not(:nth-child(6))
