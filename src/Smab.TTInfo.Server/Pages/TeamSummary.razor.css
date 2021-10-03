@@ -92,3 +92,14 @@ caption {
 #results span {
 	visibility: hidden;
 }
+
+#results a {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+#results a:hover {
+	color: var(--text-color);
+	text-decoration: underline;
+}
+
