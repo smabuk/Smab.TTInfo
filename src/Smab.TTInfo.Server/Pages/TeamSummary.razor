@@ -55,19 +55,19 @@
                 <th>Played</th>
                 <th>Win %</th>
                 <th>Ranking</th>
-                <th class="">PoM Awards</th>
+                <th class="">PoM</th>
                 <th>Form</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in team.Players!)
+            @foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played))
             {
             <tr>
                 <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
-                <td>@player.Played</td>
-                <td>@player.WinPercentage</td>
-                <td>@player.LeagueRanking</td>
-                <td>@player.PoMAwards</td>
+                <td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
+                <td><span>@(new string('0', 3 - player.WinPercentage.ToString("##0").Length))</span>@($"{player.WinPercentage:##0.##}")<span>@(new string('0', 6 - player.WinPercentage.ToString("000.##").Length))</span></td>
+                <td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
+                <td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
                 <td>@player.Form</td>
             </tr>
             }
@@ -92,9 +92,9 @@
                 <tr>
                     <td>@result.Opposition</td>
                     <td>@result.HomeOrAway</td>
-                    <td>@result.Date.ToString("ddd MMM dd yyyy")</td>
-                    <td>@result.ScoreForHome-@result.ScoreForAway</td>
-                    <td>@result.Points</td>
+                    <td>@result.Date.ToString("dd MMM yyyy")</td>
+                    <td><span>@(new string('0', 2 - $"{result.ScoreForHome}".Length))</span>@result.ScoreForHome-@result.ScoreForAway<span>@(new string('0', 2 - $"{result.ScoreForAway}".Length))</span></td>
+                    <td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
                     <td>@result.PlayerOfTheMatch</td>
                     <td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>
                 </tr>
@@ -141,11 +141,16 @@
                     }
                     fixtureResults.TryAdd(fixture.Id, new(fixture.Id, result, fullScore));
                 }
+
                 if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
-                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.HomeTeam))?.PlayersList ?? new()));
+                    var players = (await _tt365.GetTeamStats(fixture.HomeTeam))?.Players;
+	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + p.WinPercentage + "%)").ToList();
+                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", playersList));
 		        }
 		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
-                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", (await _tt365.GetTeamStats(fixture.AwayTeam))?.PlayersList ?? new()));
+                    var players = (await _tt365.GetTeamStats(fixture.AwayTeam))?.Players;
+	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + p.WinPercentage + "%)").ToList();
+                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", playersList));
 		        }
             }
         }

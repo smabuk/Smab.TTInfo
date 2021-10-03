@@ -79,9 +79,6 @@ public class Team
 	public ICollection<Fixture>? Fixtures { get; set; }
 	public ICollection<Result>? Results { get; set; }
 
-	public List<string> PlayersList 
-		=> (from p in Players select p.Name + " (" + p.WinPercentage + ")").ToList();
-
 }
 
 [DebuggerDisplay("Name: {Name,nq}")]
@@ -90,7 +87,7 @@ public class Player
 	public string Name { get; set; } = "";
 	public string PlayerURL { get; set; } = "";
 	public int Played { get; set; }
-	public string WinPercentage { get; set; } = "";
+	public float WinPercentage { get; set; }
 	public string PoMAwards { get; set; } = "";
 	public string Form { get; set; } = "";
 	public int ClubRanking { get; set; }

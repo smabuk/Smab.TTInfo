@@ -64,7 +64,7 @@ public partial class TT365Reader
 						Name = cells[0].InnerText,
 						PlayerURL = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
 						Played = int.Parse(cells[1].InnerText),
-						WinPercentage = cells[2].InnerText,
+						WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
 						LeagueRanking = int.Parse(cells[3].InnerText),
 						PoMAwards = cells[4].InnerText
 					};
