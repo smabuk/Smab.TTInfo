@@ -116,8 +116,8 @@
 
     private Team? team;
     private FixturesView fixturesView = new();
-	static Dictionary<string, string> teamPlayersList = new();
-	static Dictionary<int, FixtureResult> fixtureResults = new();
+	private Dictionary<string, string> teamPlayersList = new();
+	private Dictionary<int, FixtureResult> fixtureResults = new();
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
