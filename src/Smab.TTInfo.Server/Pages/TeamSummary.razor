@@ -63,7 +63,7 @@
             @foreach (var player in team.Players!)
             {
             <tr>
-                <td>@player.Name</td>
+                <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
                 <td>@player.Played</td>
                 <td>@player.WinPercentage</td>
                 <td>@player.LeagueRanking</td>

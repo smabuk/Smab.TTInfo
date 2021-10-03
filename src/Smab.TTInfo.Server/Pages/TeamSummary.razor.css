@@ -57,6 +57,16 @@ time {
 	padding-right: 3rem;
 }
 
+#players a {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+#players a:hover {
+	color: var(--text-color);
+	text-decoration: underline;
+}
+
 #results th:nth-child(n+2):not(:nth-child(3)):not(:nth-child(6))
 {
 	text-align: center;

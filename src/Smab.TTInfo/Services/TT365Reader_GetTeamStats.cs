@@ -62,7 +62,7 @@ public partial class TT365Reader
 					Player player = new()
 					{
 						Name = cells[0].InnerText,
-						PlayerURL = cells[0].ChildNodes[0].Attributes["href"].Value,
+						PlayerURL = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
 						Played = int.Parse(cells[1].InnerText),
 						WinPercentage = cells[2].InnerText,
 						LeagueRanking = int.Parse(cells[3].InnerText),
