@@ -7,13 +7,19 @@ public partial class TT365Reader
 	public async Task<HtmlDocument> LoadPage(string url, string fileName)
 	{
 		string html = "";
-		string source = "";
-
 		HtmlDocument doc = new();
+
+        if (!Directory.Exists(CacheFolder))
+        {
+			Directory.CreateDirectory(CacheFolder);
+        }
+
+		string source = Path.Combine(CacheFolder, fileName);
+		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(CacheHours) < DateTime.UtcNow;
+
 		bool docLoadSuccessful = false;
-		if (UseTestFiles)
+		if (!refreshCache || UseTestFiles)
 		{
-			source = Path.Combine(CacheFolder, fileName);
 			if (File.Exists(source))
 			{
 				doc.Load(source);
@@ -27,10 +33,7 @@ public partial class TT365Reader
 				html = await client.GetStringAsync(url);
 			}
 			doc.LoadHtml(html);
-			if (UseTestFiles)
-			{
-				doc.Save(source);
-			}
+			doc.Save(source);
 		}
 		return doc;
 	}

@@ -47,60 +47,64 @@
         <div>Captain: <span>@team.Captain</span></div>
         <div>Caption: <span>@team.Caption</span></div>
     </div>
-    <table id="players" class="table table-bordered table-sm">
-        <caption class="container-fluid">Players</caption>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Played</th>
-                <th>Win %</th>
-                <th>Ranking</th>
-                <th class="">PoM</th>
-                <th>Form</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played))
-            {
-            <tr>
-                <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
-                <td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
-                <td><span>@(new string('0', 3 - player.WinPercentage.ToString("##0").Length))</span>@($"{player.WinPercentage:##0.##}")<span>@(new string('0', 6 - player.WinPercentage.ToString("000.##").Length))</span></td>
-                <td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
-                <td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
-                <td>@player.Form</td>
-            </tr>
-            }
-        </tbody>
-    </table>
-    <table id="results" class="table table-bordered table-sm">
-        <caption class="container-fluid">Results</caption>
-        <thead>
-            <tr>
-                <th>Opposition</th>
-                <th>Home Or Away</th>
-                <th>Date</th>
-                <th>Score</th>
-                <th>Points</th>
-                <th>Player Of The Match</th>
-                @*<th>Card</th>*@
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var result in team.Results!)
-            {
-                <tr data-result='@result.MatchResult'>
-                    <td>@result.Opposition</td>
-                    <td>@result.HomeOrAway</td>
-                    <td>@result.Date.ToString("dd MMM yyyy")</td>
-                    <td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
-                    <td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
-                    <td>@result.PlayerOfTheMatch</td>
-                    @*<td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>*@
+    <div id="players">
+        <table class="table table-bordered table-sm">
+            <caption class="container-fluid">Players</caption>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Played</th>
+                    <th>Win %</th>
+                    <th>Ranking</th>
+                    <th class="">PoM</th>
+                    <th>Form</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played))
+                {
+                <tr>
+                    <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
+                    <td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
+                    <td><span>@(new string('0', 3 - player.WinPercentage.ToString("##0").Length))</span>@($"{player.WinPercentage:##0.##}")<span>@(new string('0', 6 - player.WinPercentage.ToString("000.##").Length))</span></td>
+                    <td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
+                    <td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
+                    <td>@player.Form</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="results">
+        <table class="table table-bordered table-sm">
+            <caption class="container-fluid">Results</caption>
+            <thead>
+                <tr>
+                    <th>Opposition</th>
+                    <th>Home Or Away</th>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Points</th>
+                    <th>Player Of The Match</th>
+                    @*<th>Card</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in team.Results!)
+                {
+                    <tr data-result='@result.MatchResult'>
+                        <td>@result.Opposition</td>
+                        <td>@result.HomeOrAway</td>
+                        <td>@result.Date.ToString("dd MMM yyyy")</td>
+                        <td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
+                        <td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
+                        <td>@result.PlayerOfTheMatch</td>
+                        @*<td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 }
 
@@ -116,8 +120,8 @@
 
     private Team? team;
     private FixturesView fixturesView = new();
-	static Dictionary<string, string> teamPlayersList = new();
-	static Dictionary<int, FixtureResult> fixtureResults = new();
+	private Dictionary<string, string> teamPlayersList = new();
+	private Dictionary<int, FixtureResult> fixtureResults = new();
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");

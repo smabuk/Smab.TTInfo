@@ -8,6 +8,7 @@ public partial class TT365Reader : ITT365Reader
 	public string Season { get; set; }
 	public bool UseTestFiles { get; set; } = false;
 	public string CacheFolder = @"Cache";
+	public int CacheHours = 12;
 
 	System.Globalization.CultureInfo gbCulture = new("en-GB");
 

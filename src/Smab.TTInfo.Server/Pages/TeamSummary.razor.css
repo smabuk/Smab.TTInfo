@@ -49,7 +49,7 @@ caption {
 	text-decoration: underline;
 }
 
-#teamstats {
+#players, #results {
 	overflow-x: auto;
 }
 

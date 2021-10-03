@@ -16,6 +16,7 @@ builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 		)
 	{
 		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder"),
+		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 12,
 		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
