@@ -44,8 +44,13 @@ caption {
 	text-decoration: none;
 }
 
+#fixtures a:hover {
+	color: var(--text-color);
+	text-decoration: underline;
+}
+
 #teamstats {
-	overflow-x: hidden;
+	overflow-x: auto;
 }
 
 #players th:nth-child(n+2),
