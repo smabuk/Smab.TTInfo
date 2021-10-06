@@ -10,14 +10,14 @@
 @*<h3>@fixturesView.Caption</h3>*@
 
 <div id="fixtures">
-	@foreach (var fixture in fixturesView.Fixtures!)
+	@foreach (var fixture in fixturesView.Fixtures ?? new List<Fixture>())
 	{
         FixtureResult? fr;
         fixtureResults.TryGetValue(fixture.Id, out fr);
         <div class="card" data-result='@fr?.Result'>
 		    <div class="row">
-			    <div class="col-12 col-sm-5 col-md-4 col-lg-3"><time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time></div>
-			    <div class="col-12 col-sm-7 col-md-8 col-lg-9">
+			    <div class="col-12 col-sm-4 col-md-4 col-lg-3"><time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time></div>
+			    <div class="col-12 col-sm-8 col-md-8 col-lg-9">
 				    @if (fr is not null)
 				    {
 					    <a class="badge badge-sm" href="@fixture.CardURL" target="_blank">@fr.FullScore</a>
@@ -86,7 +86,6 @@
                     <th>Score</th>
                     <th>Points</th>
                     <th>Player Of The Match</th>
-                    @*<th>Card</th>*@
                 </tr>
             </thead>
             <tbody>
@@ -99,7 +98,6 @@
                         <td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
                         <td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
                         <td>@result.PlayerOfTheMatch</td>
-                        @*<td><a href="@result.CardURL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a></td>*@
                     </tr>
                 }
             </tbody>
@@ -126,6 +124,7 @@
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
         team = null;
+        fixturesView = new();
         StateHasChanged();
         team = await _tt365.GetTeamStats(TeamName);
         if (team is not null) {
