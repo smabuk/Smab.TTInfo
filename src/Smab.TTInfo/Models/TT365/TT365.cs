@@ -43,7 +43,7 @@ public class Fixture
 {
 	public string Division { get; set; } = "";
 	public string Description { get; set; } = "";
-	public DateTime Date { get; set; }
+	public DateOnly Date { get; set; }
 	public string HomeTeam { get; set; } = "";
 	public string AwayTeam { get; set; } = "";
 	public string Venue { get; set; } = "";
@@ -105,7 +105,7 @@ public class Result
 	public int Id { get; set; }
 	public string Opposition { get; set; } = "";
 	public string HomeOrAway { get; set; } = "";
-	public DateTime Date { get; set; }
+	public DateOnly Date { get; set; }
 	public int ScoreForHome { get; set; }
 	public int ScoreForAway { get; set; }
 	public int Points { get; set; }

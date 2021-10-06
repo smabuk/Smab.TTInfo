@@ -37,8 +37,8 @@ public static partial class CalendarEndPoint
 					UID = $"RDTTA {fixture.HomeTeam} vs {fixture.AwayTeam}",
 					Summary = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
 					Location = fixture.Venue,
-					DateStart = TimeZoneInfo.ConvertTimeToUtc(fixture.Date, gmtZone).AddHours(19).AddMinutes(30), // All matches by default start at 7:30pm
-					DateEnd = TimeZoneInfo.ConvertTimeToUtc(fixture.Date, gmtZone).AddHours(22).AddMinutes(30),
+					DateStart = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new (19, 30)), gmtZone), // All matches by default start at 7:30pm
+					DateEnd = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new (22, 30)), gmtZone),
 					Priority = VEvent.PriorityLevel.Normal,
 					Transparency = VEvent.TransparencyType.TRANSPARENT,
 					Categories = "Table tennis,OLOP Table Tennis Club",

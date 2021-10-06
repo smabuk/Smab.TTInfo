@@ -71,8 +71,7 @@ public partial class TT365Reader
 						{
 							case "DATE":
 								{
-									DateTime tempDate;
-									if (DateTime.TryParse(divNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out tempDate))
+									if (DateOnly.TryParse(divNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate))
 									{
 										fixture.Date = tempDate;
 									};
@@ -114,11 +113,6 @@ public partial class TT365Reader
 								}
 						}
 					}
-					// Try
-					// DateTime.TryParse(fixtureNode.Descendants("div").Where(
-					// Function(x) x.Attributes["class"].Value = "date").Single.Descendants("time").Single.Attributes("datetime").Value, fixture.Date)
-					// Catch ex As Exception
-					// End Try
 					fixturesView.Fixtures.Add(fixture);
 				}
 			}

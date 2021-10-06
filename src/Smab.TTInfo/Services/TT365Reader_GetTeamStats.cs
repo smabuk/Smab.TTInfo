@@ -135,11 +135,10 @@ public partial class TT365Reader
 						PlayerOfTheMatch = cells[5].InnerText,
 						CardURL = $"{"https"}://www.tabletennis365.com/{cells[6].Descendants("a").Single().Attributes["href"].Value}"
 					};
-					DateTime tempDate;
-					if (DateTime.TryParse(cells[2].InnerText,
+					if (DateOnly.TryParse(cells[2].InnerText,
 						   gbCulture,
 						   System.Globalization.DateTimeStyles.None,
-						   out tempDate))
+						   out DateOnly tempDate))
 					{
 						result.Date = tempDate;
 					};
