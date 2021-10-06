@@ -1,7 +1,6 @@
 ﻿using Smab.TTInfo.Server.EndPoints;
 
-Name = typeof(Program).Assembly.GetName().Name;
-Version = typeof(Program).Assembly.GetName().Version;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,7 @@ builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 		)
 	{
 		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder"),
-		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 12,
+		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
 		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
@@ -50,7 +49,12 @@ app.Run();
 static partial class Program
 {
 	public static string SiteName { get; set; } = "Table Tennis Info";
-	public static string? Name { get; set; }
-	public static Version? Version{ get; set; }
+	public static string Name { get; set; } = typeof(Program).Assembly
+							.GetName().Name ?? "No assembly name";
+	public static Version Version { get; set; } = typeof(Program).Assembly
+							.GetName().Version ?? new();
+	public static string ProductVersion { get; set; } = typeof(Program).Assembly
+							.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+							.InformationalVersion ?? "";
 
 }
