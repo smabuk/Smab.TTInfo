@@ -93,13 +93,18 @@ public partial class TT365Reader
 								{
 									fixture.AwayTeam = divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
 									if (CompletedFixture)
-										fixture.ForAway = int.Parse(divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+									fixture.ForAway = int.Parse(divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 									break;
 								}
 							case "MATCHCARDICON":
 								{
 									if (CompletedFixture)
-										fixture.CardURL = $"{"https"}://www.tabletennis365.com{divNode.Descendants("a").SingleOrDefault()?.Attributes["href"].Value.Trim() ?? ""}";
+									fixture.CardURL = $"{"https"}://www.tabletennis365.com{divNode.Descendants("a").SingleOrDefault()?.Attributes["href"].Value.Trim() ?? ""}";
+									break;
+								}
+							case "ICON POSTPONED":
+								{
+									fixture.Postponed = divNode.Attributes["title"].Value.Trim();
 									break;
 								}
 							case "VENUE":

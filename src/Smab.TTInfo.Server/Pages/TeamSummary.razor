@@ -16,7 +16,12 @@
         fixtureResults.TryGetValue(fixture.Id, out fr);
         <div class="card" data-result='@fr?.Result'>
 		    <div class="row">
-			    <div class="col-12 col-sm-4 col-md-4 col-lg-3"><time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time></div>
+			    <div class="col-12 col-sm-4 col-md-4 col-lg-3">
+                    @if (fixture.IsPostponed) {
+                        <span class="postponed badge" title="@fixture.Postponed">P</span>
+                    }
+                    <time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
+                </div>
 			    <div class="col-12 col-sm-8 col-md-8 col-lg-9">
 				    @if (fr is not null)
 				    {

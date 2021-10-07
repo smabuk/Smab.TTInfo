@@ -52,6 +52,9 @@ public class Fixture
 	public int ForAway { get; set; }
 	public string PlayerOfTheMatch { get; set; } = "";
 	public string CardURL { get; set; } = "";
+	public string? Postponed { get; set; }
+
+	public bool IsPostponed => Postponed is not null;
 
 	public string Score =>
 		IsCompleted ? ForHome + " - " + ForAway : "";
