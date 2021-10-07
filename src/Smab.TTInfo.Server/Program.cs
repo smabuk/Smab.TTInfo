@@ -1,6 +1,5 @@
-﻿using Smab.TTInfo.Server.EndPoints;
-
-using System.Reflection;
+﻿using System.Reflection;
+using Smab.TTInfo.Server.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +40,7 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-app.MapGet("/calendar/{LeagueName}/{TeamName}", CalendarEndPoint.GetCalendarByTeam);
+app.MapCalendarEndPoints();
 
 app.Run();
 

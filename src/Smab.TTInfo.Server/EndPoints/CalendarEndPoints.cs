@@ -3,9 +3,13 @@
 using Smab.Calendar;
 
 namespace Smab.TTInfo.Server.EndPoints;
-public static partial class CalendarEndPoint
+public static partial class CalendarEndPoints
 {
 	public const string DefaultCalendarByTeamRoute = "/calendar/{LeagueName}/{TeamName}";
+
+	public static void MapCalendarEndPoints(this WebApplication? app) {
+		app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam);
+	}
 
 	public static Func<string, string, string, ITT365Reader, HttpContext, Task<IResult>> GetCalendarByTeam =
 		async (string LeagueName, string TeamName, string Command, ITT365Reader _tt365, HttpContext context) =>
