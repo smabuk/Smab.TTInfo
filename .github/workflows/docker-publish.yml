@@ -6,7 +6,7 @@ name: Publish Releases to Hub
 on:
   push:
     tags:
-      - "v*.*.*"
+      - v*.*.*
 
   # Allow manual workflow
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=smabuk/ttinfo
+          DOCKER_IMAGE=smabuk/smabttinfoserver
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
