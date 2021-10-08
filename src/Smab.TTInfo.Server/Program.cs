@@ -56,4 +56,12 @@ static partial class Program
 							.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
 							.InformationalVersion ?? "";
 
+	public static string SmabTTInfoName { get; set; } = typeof(ITT365Reader).Assembly
+							.GetName().Name ?? "No assembly name";
+	public static string SmabTTInfoVersion { get; set; } = typeof(ITT365Reader).Assembly
+							.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+							.InformationalVersion ?? "";
+
+
+
 }
