@@ -1,0 +1,80 @@
+﻿namespace Smab.TTInfo;
+
+public partial class TT365Reader
+{
+	public string IcalStringFromFixtures(string LeagueName, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone)
+	{
+		return IcalFromFixtures(LeagueName, TeamName, Fixtures,timeZone).ToString();
+	}
+
+	public IcalCalendar IcalFromFixtures(string LeagueName, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone)
+	{
+		IcalCalendar ical = new()
+		{
+			Name = $"{LeagueName} fixtures - {TeamName}",
+			Description = "Fixtures and results of matches for the {LeagueName} league"
+		};
+
+		ical.Events = new List<VEvent>();
+		foreach (Fixture fixture in Fixtures)
+		{
+			VEvent fixtureEvent = new()
+			{
+				UID = $"RDTTA {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				Summary = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				Location = fixture.Venue,
+				DateStart = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(19, 30)), timeZone), // All matches by default start at 7:30pm
+				DateEnd = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(22, 30)), timeZone),
+				Priority = VEvent.PriorityLevel.Normal,
+				Transparency = VEvent.TransparencyType.TRANSPARENT,
+				Categories = "Table tennis,OLOP Table Tennis Club",
+				Description = $"\n"
+			};
+
+			if (fixture.Venue.ToUpperInvariant().Contains("CURZON")
+			|| fixture.Venue.ToUpperInvariant().Contains("RBL")) // 7pm start time
+			{
+				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
+			}
+
+			if (!string.IsNullOrEmpty(TeamName)) // If looking at a particular team add BUSY and 1hr REMINDER
+			{
+				fixtureEvent.Transparency = VEvent.TransparencyType.OPAQUE;
+				fixtureEvent.Alarms = new List<VAlarm>
+					{
+						new VAlarm
+						{
+							Trigger = new System.TimeSpan(0, 0, 60, 0),
+							Action = VAlarm.ActionType.DISPLAY,
+							Description = "Reminder"
+						}
+					};
+			}
+
+			if (fixture.IsCompleted)
+			{
+				if (fixture.ForHome > fixture.ForAway)
+				{
+					fixtureEvent.Description += $"\nWIN:  {fixture.HomeTeam.ToUpper()}";
+					fixtureEvent.Description += $"\nLOSS: {fixture.AwayTeam}";
+				}
+				else if (fixture.ForHome < fixture.ForAway)
+				{
+					fixtureEvent.Description += $"\nLOSS: {fixture.HomeTeam}";
+					fixtureEvent.Description += $"\nWIN:  {fixture.AwayTeam.ToUpper()}";
+				}
+				else if (fixture.ForHome == fixture.ForAway)
+				{
+					fixtureEvent.Description += $"\nDRAW: {fixture.HomeTeam} and {fixture.AwayTeam}";
+				}
+				fixtureEvent.Description += $"\nScore: {fixture.Score}";
+			}
+
+			ical.Events.Add(fixtureEvent);
+		}
+
+		return ical;
+	}
+
+}
+

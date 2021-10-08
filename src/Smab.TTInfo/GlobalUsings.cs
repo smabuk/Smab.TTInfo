@@ -2,3 +2,5 @@
 
 global using Smab.TTInfo.Models;
 global using Smab.TTInfo.Models.TT365;
+
+global using Smab.Calendar;
