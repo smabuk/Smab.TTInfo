@@ -5,7 +5,7 @@ namespace Smab.TTInfo;
 public partial class TT365Reader
 {
 	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName = "")
-		=> await GetFixturesByTeamName(TeamName, League, Season);
+		=> await GetFixturesByTeamName(TeamName, LeagueId, Season);
 
 	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName = "", string? League = null, string? Season = null)
 	{
@@ -20,7 +20,7 @@ public partial class TT365Reader
 		bool MergeDivisions = true;
 		bool ShowByWeekNo = true;
 
-		League ??= this.League;
+		League ??= this.LeagueId;
 		Season ??= this.Season;
 
 		string lookupTeamName = TeamName.Replace("_", " ");

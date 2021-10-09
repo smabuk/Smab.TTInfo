@@ -27,10 +27,10 @@ public partial class TT365Reader
 		else
 			return null; /* TODO Change to default(_) if this is not a reference type */
 
-		team.URL = $"{"https"}://www.tabletennis365.com/{League}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
+		team.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
 		HtmlDocument doc = await LoadPage(
 			team.URL,
-			$@"{League}_TeamStats_{TeamName}.html");
+			$@"{LeagueId}_TeamStats_{TeamName}.html");
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 

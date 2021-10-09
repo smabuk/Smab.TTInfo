@@ -4,7 +4,7 @@ namespace Smab.TTInfo;
 
 public partial class TT365Reader : ITT365Reader
 {
-	public string League { get; set; }
+	public string LeagueId { get; set; }
 	public string Season { get; set; }
 	public bool UseTestFiles { get; set; } = false;
 	public string CacheFolder = @"Cache";
@@ -12,11 +12,11 @@ public partial class TT365Reader : ITT365Reader
 
 	System.Globalization.CultureInfo gbCulture = new("en-GB");
 
-	public TT365Reader(string league, string season)
+	public TT365Reader(string leagueId, string season)
 	{
-		ArgumentNullException.ThrowIfNull(league);
+		ArgumentNullException.ThrowIfNull(leagueId);
 		ArgumentNullException.ThrowIfNull(season);
-		League = league;
+		LeagueId = leagueId;
 		Season = season;
 	}
 

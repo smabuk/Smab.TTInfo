@@ -9,10 +9,10 @@ public partial class TT365Reader
 		string html = "";
 		HtmlDocument doc = new();
 
-        if (!Directory.Exists(CacheFolder))
-        {
+		if (!Directory.Exists(CacheFolder))
+		{
 			Directory.CreateDirectory(CacheFolder);
-        }
+		}
 
 		string source = Path.Combine(CacheFolder, fileName);
 		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(CacheHours) < DateTime.UtcNow;
@@ -28,12 +28,14 @@ public partial class TT365Reader
 		}
 		if (!docLoadSuccessful)
 		{
-			using (HttpClient client = new())
+			using HttpClient client = new();
+			HttpResponseMessage? response = await client.GetAsync(url);
+			if (response.IsSuccessStatusCode)
 			{
-				html = await client.GetStringAsync(url);
+				html = await response.Content.ReadAsStringAsync();
+				doc.LoadHtml(html);
+				doc.Save(source);
 			}
-			doc.LoadHtml(html);
-			doc.Save(source);
 		}
 		return doc;
 	}

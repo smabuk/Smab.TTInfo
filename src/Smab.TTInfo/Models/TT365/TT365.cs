@@ -81,6 +81,15 @@ public class Team
 	public ICollection<Player>? Players { get; set; }
 	public ICollection<Fixture>? Fixtures { get; set; }
 	public ICollection<Result>? Results { get; set; }
+	public int? LeaguePosition {  get; set; }
+	public int Played {  get; set; }
+	public int Won {  get; set; }
+	public int Drawn {  get; set; }
+	public int Lost {  get; set; }
+	public int SetsFor {  get; set; }
+	public int SetsAgainst {  get; set; }
+	public int Points {  get; set; }
+
 
 }
 
@@ -138,14 +147,23 @@ public class Result
 
 }
 
-public record League(
-	string Id
-)
+public record League(string Id)
 {
 	public string Name { get; set; } = "";
-	ICollection<Division>? Divisions {  get; set; }
+	public string Description {  get; set; } = "";
+	public string Title {  get; set; } = "";
+	public string URL {  get; set; } = "";
+	public string Theme {  get; set; } = "";
+	public Season CurrentSeason { get; set; }
+	public ICollection<Season> Seasons { get; set; } = new List<Season>();
 
+}
+
+public record Season(string Id, string Name)
+{
+	ICollection<Division>? Divisions { get; set; }
 	public int DivisionCount => Divisions?.Count ?? 0;
+	
 }
 
 public record Division(

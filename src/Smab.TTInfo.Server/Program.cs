@@ -9,7 +9,7 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new(
-		league: builder.Configuration.GetValue<string>("TTInfo:League"),
+		leagueId: builder.Configuration.GetValue<string>("TTInfo:League"),
 		season: builder.Configuration.GetValue<string>("TTInfo:Season")
 		)
 	{

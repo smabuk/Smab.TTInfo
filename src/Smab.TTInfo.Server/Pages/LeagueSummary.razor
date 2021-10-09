@@ -1,0 +1,33 @@
+﻿@page "/LeagueSummary/{LeagueId}"
+@inject ITT365Reader _tt365
+
+<PageTitle>@LeagueId</PageTitle>
+<h3>@LeagueName summary</h3>
+
+<br />
+<dl>
+	<dt>Name</dt>			<dd>@League.Name</dd>
+	<dt>Title</dt>			<dd>@League.Title</dd>
+	<dt>Description</dt>	<dd>@League.Description</dd>
+	<dt>URL</dt>			<dd>@League.URL</dd>
+	<dt>Theme</dt>			<dd>@League.Theme</dd>
+	<dt>Season</dt>			<dd>@League.CurrentSeason.Name</dd>
+	<dt>Seasons</dt>		<dd>@string.Join(", ", League.Seasons.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
+</dl>
+
+
+@code {
+	[EditorRequired]
+	[Parameter]
+	public string LeagueId { get; set; }
+	
+	private string LeagueName { get; set; }
+	private League League { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		LeagueName = LeagueId;
+		League = await _tt365.GetLeague(LeagueId) ?? new(LeagueId);
+		LeagueName = League.Name;
+	}
+}
