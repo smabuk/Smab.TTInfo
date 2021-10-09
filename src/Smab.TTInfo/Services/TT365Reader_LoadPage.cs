@@ -6,7 +6,7 @@ public partial class TT365Reader
 {
 	public async Task<HtmlDocument> LoadPage(string url, string fileName)
 	{
-		string html = "";
+		string html;
 		HtmlDocument doc = new();
 
 		if (!Directory.Exists(CacheFolder))

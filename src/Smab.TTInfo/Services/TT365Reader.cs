@@ -10,7 +10,7 @@ public partial class TT365Reader : ITT365Reader
 	public string CacheFolder = @"Cache";
 	public int CacheHours = 12;
 
-	System.Globalization.CultureInfo gbCulture = new("en-GB");
+	readonly System.Globalization.CultureInfo gbCulture = new("en-GB");
 
 	public TT365Reader(string leagueId, string season)
 	{
@@ -29,7 +29,7 @@ public partial class TT365Reader : ITT365Reader
 		public string Division { get; set; } = "";
 	}
 
-	private Dictionary<string, TeamInfo> GetTeamInfoForSeason(string season)
+	private static Dictionary<string, TeamInfo> GetTeamInfoForSeason(string season)
 	{
 		return season switch
 		{
@@ -785,7 +785,7 @@ public partial class TT365Reader : ITT365Reader
 					new TeamInfo() { Id = 60336, ClubId = 2327, Name = "Tilehurst RBL C", Division = "Division 4" }
 				}
 			},
-			_ => throw new ArgumentException(),
+			_ => new() { },
 		};
 	}
 }

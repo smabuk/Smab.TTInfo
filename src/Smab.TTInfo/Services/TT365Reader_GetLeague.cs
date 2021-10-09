@@ -48,6 +48,42 @@ public partial class TT365Reader
 
 		if (!string.IsNullOrWhiteSpace(doc.Text))
 		{
+			foreach (HtmlNode? divTable in doc.DocumentNode.SelectNodes(@"//table"))
+			{
+				if (divTable.SelectSingleNode("caption") is null)
+				{
+					continue;
+				}
+
+				string divName = divTable.SelectSingleNode("caption")?.InnerText.Split(">").Last().Trim() ?? "";
+				Division division = new(divName);
+				league.CurrentSeason.Divisions.Add(division);
+
+				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr"))
+				{
+					Team team = new();
+					team.Name = teamRow.ChildNodes[3].FirstChild.InnerText.Trim();
+					team.URL = $"{"https"}://www.tabletennis365.com{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
+
+					if (int.TryParse(teamRow.ChildNodes[1].InnerText, out int leaguePosition))
+					{
+						team.LeaguePosition = leaguePosition;
+					};
+					team.Played = int.Parse(teamRow.ChildNodes[5].InnerText);
+					team.Won = int.Parse(teamRow.ChildNodes[7].InnerText);
+					team.Drawn = int.Parse(teamRow.ChildNodes[9].InnerText);
+					team.Lost = int.Parse(teamRow.ChildNodes[11].InnerText);
+					team.SetsFor = int.Parse(teamRow.ChildNodes[13].InnerText);
+					team.SetsAgainst = int.Parse(teamRow.ChildNodes[15].InnerText);
+					team.Points = int.Parse(teamRow.ChildNodes[17].InnerText);
+
+					division.Teams.Add(team);
+				}
+
+			}
+
+
+
 		}
 
 		return league;

@@ -1,0 +1,37 @@
+﻿.division {
+	overflow-x: auto;
+}
+
+td {
+	white-space: nowrap;
+}
+
+table th:nth-child(1),
+table th:nth-child(n+3)
+{
+	text-align: right;
+	padding-right: 1rem;
+	padding-left: 0;
+}
+
+table td:nth-child(1),
+table td:nth-child(n+3)
+{
+	text-align: right;
+	padding-right: 1rem;
+}
+
+table td:last-child
+{
+	font-weight: bold;
+}
+
+table a {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+table a:hover {
+	color: var(--text-color);
+	text-decoration: underline;
+}

@@ -154,22 +154,20 @@ public record League(string Id)
 	public string Title {  get; set; } = "";
 	public string URL {  get; set; } = "";
 	public string Theme {  get; set; } = "";
-	public Season CurrentSeason { get; set; }
-	public ICollection<Season> Seasons { get; set; } = new List<Season>();
+	public Season CurrentSeason { get; set; } = new("unknown", "Unknown");
+	public List<Season> Seasons { get; set; } = new ();
 
 }
 
 public record Season(string Id, string Name)
 {
-	ICollection<Division>? Divisions { get; set; }
+	public List<Division> Divisions { get; set; } = new();
 	public int DivisionCount => Divisions?.Count ?? 0;
 	
 }
 
-public record Division(
-	string Name
-)
+public record Division(string Name)
 {
-	ICollection<Team>? Teams { get; set; }
+	public List<Team> Teams { get; set; } = new ();
 	public int TeamCount => Teams?.Count ?? 0;
 }
