@@ -19,7 +19,7 @@ public partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{TeamName}")]
-	public async Task<IActionResult> Fixtures(String TeamName = "") {
+	public async Task<IActionResult> Fixtures(string TeamName = "") {
 		TeamName = TeamName.Replace("_", " ");
 		FixturesView list = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
 
@@ -28,10 +28,10 @@ public partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{TeamName}")]
-	public async Task<IActionResult> Team(String TeamName) {
+	public async Task<IActionResult> Team(string LeagueId, string TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 
-		Team? team = await _tt365.GetTeamStats(TeamName);
+		Team? team = await _tt365.GetTeamStats(LeagueId, TeamName);
 		if (team is null) {
 			return NotFound();
 		}
@@ -41,10 +41,10 @@ public partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{TeamName}")]
-	public async Task<IActionResult> TeamPlayersList(String TeamName) {
+	public async Task<IActionResult> TeamPlayersList(string LeagueId, string TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 
-		Team? team = await _tt365.GetTeamStats(TeamName);
+		Team? team = await _tt365.GetTeamStats(LeagueId, TeamName);
 		if (team is null) {
 			return NotFound();
 		}

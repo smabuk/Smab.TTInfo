@@ -6,28 +6,18 @@ namespace Smab.TTInfo;
 
 public partial class TT365Reader
 {
-	public async Task<Team?> GetTeamStats(string TeamName)
+	public async Task<Team?> GetTeamStats(string LeagueId, string TeamName)
 	{
 		Team team = new();
 
-		string Division = "";
-		string ActualName = "";
+		League? league = await GetLeague(LeagueId);
+		if (league is null) { return null; };
 
 		HttpClient client = new();
 		string lookupTeamName = TeamName.Replace("_", " ");
-		Dictionary<string, TeamInfo> TeamInfoLookup;
 
-		TeamInfoLookup = GetTeamInfoForSeason(SeasonId);
+		team = league.CurrentSeason.Divisions.SelectMany(d => d.Teams).Where(t => t.Name.ToUpperInvariant() == TeamName.ToUpperInvariant()).SingleOrDefault() ?? new();
 
-		if (TeamInfoLookup.ContainsKey(lookupTeamName))
-		{
-			Division = TeamInfoLookup[lookupTeamName].Division;
-			ActualName = TeamInfoLookup[lookupTeamName].Name;
-		}
-		else
-			return null; /* TODO Change to default(_) if this is not a reference type */
-
-		team.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Results/Team/Statistics/{SeasonId.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
 		HtmlDocument doc = await LoadPage(
 			team.URL,
 			$@"{LeagueId}_TeamStats_{TeamName}.html");
@@ -41,8 +31,6 @@ public partial class TT365Reader
 		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']"))
 		{
 			team.Caption = node.SelectSingleNode("//div[@class='caption']").InnerText.Replace("&gt;", ">");
-			team.DivisionName = Division;
-			team.Name = TeamName;
 			team.Players = new List<Player>();
 			team.Results = new List<Result>();
 			try
@@ -54,7 +42,7 @@ public partial class TT365Reader
 			}
 			// For Each playerRow In node.SelectNodes("//tbody/tr")
 			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption").InnerText.Contains("Players")).SingleOrDefault();
-			if (playertableNode != null)
+			if (playertableNode is not null)
 			{
 				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody").SelectNodes("tr"))
 				{

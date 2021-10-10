@@ -6,12 +6,13 @@ public interface ITT365Reader
 	string SeasonId { get; set; }
 	bool UseTestFiles { get; set; }
 
-	Task<FixturesView?> GetFixturesByTeamName(string TeamName);
 	Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null);
 
+	Task<FixturesView?> GetFixturesByTeamName(string TeamName);
 	Task<FixturesView?> GetFixturesByTeamName(string TeamName = "", string? LeagueId = null, string? Seasonid = null);
+	
 	Task<League?> GetLeague(string LeagueId);
-	Task<Team?> GetTeamStats(string TeamName);
+	Task<Team?> GetTeamStats(string LeagueId, string TeamName);
 
 	IcalCalendar IcalFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
 	string IcalStringFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);

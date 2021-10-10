@@ -1,7 +1,7 @@
-﻿@page "/TeamSummary/{LeagueName}/{TeamName}"
+﻿@page "/TeamSummary/{LeagueId}/{TeamId}"
 @inject ITT365Reader _tt365
 
-<PageTitle>@TeamName - @LeagueName</PageTitle>
+<PageTitle>@TeamName - @LeagueId</PageTitle>
 
 @if (team is null) {
     <h1>Loading ... @TeamName ...</h1>
@@ -34,11 +34,17 @@
 			    <div class="col-12 col-md-8 col-lg-9">
 				    @if (fixture.HomeTeam.Equals(@team.Name))
 				    {
-					    @teamPlayersList[fixture.AwayTeam];
+                        @if (teamPlayersList.ContainsKey(fixture.AwayTeam))
+                        {
+    					    @teamPlayersList[fixture.AwayTeam];
+                        }
 				    }
 				    else
 				    {
-					    @teamPlayersList[fixture.HomeTeam];
+					    @if (teamPlayersList.ContainsKey(fixture.AwayTeam))
+                        {
+                           @teamPlayersList[fixture.HomeTeam];
+                        }
 				    }
 			    </div>
 		    </div>
@@ -114,25 +120,29 @@
 @code {
     [EditorRequired]
     [Parameter]
-    public string TeamName { get; set; } = "";
+    public string TeamId { get; set; } = "";
 
     [EditorRequired]
     [Parameter]
-    public string LeagueName { get; set; } = "";
+    public string LeagueId { get; set; } = "";
 
+    public string TeamName { get; set; } = "";
     private Team? team;
     private List<Fixture> fixtures = new();
 	private Dictionary<string, string> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
+    private League? league;
 
     protected override async Task OnParametersSetAsync() {
-		TeamName = TeamName.Replace("_", " ");
+		TeamName = TeamId.Replace("_", " ");
         team = null;
         fixtures = new();
         StateHasChanged();
-        team = await _tt365.GetTeamStats(TeamName);
+        league = await _tt365.GetLeague(LeagueId);
+        team = await _tt365.GetTeamStats(LeagueId, TeamName);
         if (team is not null) {
-            fixtures = (await _tt365.GetAllFixtures(LeagueName) ?? new()).Where( f => f.HomeTeam == TeamName || f.AwayTeam == TeamName ).ToList();
+
+            fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new()).Where( f => string.Compare(f.HomeTeam, TeamName, true) == 0 || string.Compare(f.AwayTeam, TeamName, true) == 0 ).ToList();
             foreach (var fixture in fixtures )
             {
                 if (fixture.IsCompleted) {
@@ -150,12 +160,12 @@
                 }
 
                 if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
-                    var players = (await _tt365.GetTeamStats(fixture.HomeTeam))?.Players;
+                    var players = (await _tt365.GetTeamStats(LeagueId, fixture.HomeTeam))?.Players;
 	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
                     teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", playersList));
 		        }
 		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
-                    var players = (await _tt365.GetTeamStats(fixture.AwayTeam))?.Players;
+                    var players = (await _tt365.GetTeamStats(LeagueId, fixture.AwayTeam))?.Players;
 	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
                     teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", playersList));
 		        }

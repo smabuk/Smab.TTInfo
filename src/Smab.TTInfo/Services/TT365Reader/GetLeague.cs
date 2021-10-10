@@ -91,6 +91,8 @@ public partial class TT365Reader
 					team.PointsAdjustment = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'pointAdj')]")?.InnerText ?? "0");
 					team.Points = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'points')]")?.InnerText ?? "0");
 
+					team.DivisionName = divName;
+
 					division.Teams.Add(team);
 				}
 
