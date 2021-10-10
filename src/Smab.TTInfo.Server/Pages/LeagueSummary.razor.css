@@ -12,6 +12,7 @@ table th:nth-child(n+3)
 	text-align: right;
 	padding-right: 1rem;
 	padding-left: 0;
+	width: 50px;
 }
 
 table td:nth-child(1),
@@ -19,6 +20,7 @@ table td:nth-child(n+3)
 {
 	text-align: right;
 	padding-right: 1rem;
+	max-width: 50px;
 }
 
 table td:last-child

@@ -90,6 +90,7 @@ public class Team
 	public int SetsFor {  get; set; }
 	public int SetsAgainst {  get; set; }
 	public int Points {  get; set; }
+	public int PointsAdjustment {  get; set; }
 
 
 }

@@ -66,17 +66,18 @@ public partial class TT365Reader
 					team.ShortName = teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim().Replace("&#39;", "'").Replace("&amp;", "&");
 					team.URL = $"{"https"}://www.tabletennis365.com{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
 
-					if (int.TryParse(teamRow.ChildNodes[1].InnerText, out int leaguePosition))
+					if (int.TryParse(teamRow.SelectSingleNode(@"td[contains(@class, 'pos')]")?.InnerText ?? "0", out int leaguePosition))
 					{
 						team.LeaguePosition = leaguePosition;
 					};
-					team.Played = int.Parse(teamRow.ChildNodes[5].InnerText);
-					team.Won = int.Parse(teamRow.ChildNodes[7].InnerText);
-					team.Drawn = int.Parse(teamRow.ChildNodes[9].InnerText);
-					team.Lost = int.Parse(teamRow.ChildNodes[11].InnerText);
-					team.SetsFor = int.Parse(teamRow.ChildNodes[13].InnerText);
-					team.SetsAgainst = int.Parse(teamRow.ChildNodes[15].InnerText);
-					team.Points = int.Parse(teamRow.ChildNodes[17].InnerText);
+					team.Played = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'played')]")?.InnerText ?? "0");
+					team.Won = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'won')]")?.InnerText ?? "0");
+					team.Drawn = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'drawn')]")?.InnerText ?? "0");
+					team.Lost = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'lost')]")?.InnerText ?? "0");
+					team.SetsFor = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'setsFor')]")?.InnerText ?? "0");
+					team.SetsAgainst = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'setsAgainst')]")?.InnerText ?? "0");
+					team.PointsAdjustment = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'pointAdj')]")?.InnerText ?? "0");
+					team.Points = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'points')]")?.InnerText ?? "0");
 
 					division.Teams.Add(team);
 				}
