@@ -4,45 +4,45 @@ namespace Smab.TTInfo;
 
 public partial class TT365Reader
 {
-	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName = "")
-		=> await GetFixturesByTeamName(TeamName, LeagueId, Season);
+	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName)
+		=> await GetFixturesByTeamName(TeamName, LeagueId, SeasonId);
 
-	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName = "", string? League = null, string? Season = null)
+	public async Task<FixturesView?> GetFixturesByTeamName(string TeamName = "", string? LeagueId = null, string? SeasonId = null)
 	{
 		// This function will deliberately use different ways to access the data using the HTML Agility Pack
 		FixturesView fixturesView = new();
-		string Division = "All Divisions";
-		string ClubId = ""; // OLOP 411
-		string TeamId = ""; // OLOP E 40043
-		string VenueId = "";
-		int ViewModeType = FixturesViewType.Advanced;
-		bool HideCompletedFixtures = false;
-		bool MergeDivisions = true;
-		bool ShowByWeekNo = true;
+		string division = "All Divisions";
+		string clubId = ""; // OLOP 411
+		string teamId = ""; // OLOP E 40043
+		string venueId = "";
+		int viewModeType = FixturesViewType.Advanced;
+		bool hideCompletedFixtures = false;
+		bool mergeDivisions = true;
+		bool showByWeekNo = true;
 
-		League ??= this.LeagueId;
-		Season ??= this.Season;
+		string leagueId = LeagueId ?? this.LeagueId;
+		string season = SeasonId ?? this.SeasonId;
 
 		string lookupTeamName = TeamName.Replace("_", " ");
 		Dictionary<string, TeamInfo> TeamInfoLookup;
 
-		TeamInfoLookup = GetTeamInfoForSeason(Season);
+		TeamInfoLookup = GetTeamInfoForSeason(season);
 
 		if (TeamName != "")
 		{
 			if (TeamInfoLookup.ContainsKey(lookupTeamName))
 			{
-				TeamId = TeamInfoLookup[lookupTeamName].Id.ToString();
-				Division = TeamInfoLookup[lookupTeamName].Division;
+				teamId = TeamInfoLookup[lookupTeamName].Id.ToString();
+				division = TeamInfoLookup[lookupTeamName].Division;
 			}
 			else
 				return null; /* TODO Change to default(_) if this is not a reference type */
 		}
 
-		fixturesView.URL = $"{"https"}://www.tabletennis365.com/{League}/Fixtures/{Season}/{Division}?c=False&vm={ViewModeType}&d={Division}&vn={VenueId}&cl={ClubId}&t={TeamId}&swn={ShowByWeekNo}&hc={HideCompletedFixtures}&md={MergeDivisions}";
+		fixturesView.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Fixtures/{SeasonId}/{division}?c=False&vm={viewModeType}&d={division}&vn={venueId}&cl={clubId}&t={teamId}&swn={showByWeekNo}&hc={hideCompletedFixtures}&md={mergeDivisions}";
 		HtmlDocument doc = await LoadPage(
 			fixturesView.URL,
-			$@"{League}_Fixtures_{TeamName}.html");
+			$@"{LeagueId}_Fixtures_{TeamName}.html");
 
 		// fixture.Description = fixtureNode.SelectSingleNode("//meta[@itemprop='description']").Attributes("content").Value
 		fixturesView.Fixtures = new List<Fixture>();
@@ -61,7 +61,7 @@ public partial class TT365Reader
 
 					Fixture fixture = new()
 					{
-						Division = Division.Replace("%20", " "),
+						Division = division.Replace("%20", " "),
 						IsCompleted = CompletedFixture
 					};
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;

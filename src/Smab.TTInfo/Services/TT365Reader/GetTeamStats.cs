@@ -17,7 +17,7 @@ public partial class TT365Reader
 		string lookupTeamName = TeamName.Replace("_", " ");
 		Dictionary<string, TeamInfo> TeamInfoLookup;
 
-		TeamInfoLookup = GetTeamInfoForSeason(Season);
+		TeamInfoLookup = GetTeamInfoForSeason(SeasonId);
 
 		if (TeamInfoLookup.ContainsKey(lookupTeamName))
 		{
@@ -27,7 +27,7 @@ public partial class TT365Reader
 		else
 			return null; /* TODO Change to default(_) if this is not a reference type */
 
-		team.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Results/Team/Statistics/{Season.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
+		team.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Results/Team/Statistics/{SeasonId.Replace(" ", "_")}/{Division.Replace(" ", "_")}/{ActualName.Replace(" ", "_")}";
 		HtmlDocument doc = await LoadPage(
 			team.URL,
 			$@"{LeagueId}_TeamStats_{TeamName}.html");

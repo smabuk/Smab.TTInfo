@@ -6,11 +6,10 @@
 @if (team is null) {
     <h1>Loading ... @TeamName ...</h1>
 } else {
-<h1><a href="@fixturesView.URL" target="_blank" rel="noopener"><i class="fas fa-external-link-square-alt"></i></a> @TeamName</h1>
-@*<h3>@fixturesView.Caption</h3>*@
+<h1>@TeamName</h1>
 
 <div id="fixtures">
-	@foreach (var fixture in fixturesView.Fixtures ?? new List<Fixture>())
+	@foreach (var fixture in fixtures)
 	{
         FixtureResult? fr;
         fixtureResults.TryGetValue(fixture.Id, out fr);
@@ -44,7 +43,7 @@
 			    </div>
 		    </div>
         </div>
-		}
+	}
 </div>
 <h2>Team Stats</h2>
 <div id="teamstats" class="card">
@@ -122,19 +121,19 @@
     public string LeagueName { get; set; } = "";
 
     private Team? team;
-    private FixturesView fixturesView = new();
+    private List<Fixture> fixtures = new();
 	private Dictionary<string, string> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
 
     protected override async Task OnParametersSetAsync() {
 		TeamName = TeamName.Replace("_", " ");
         team = null;
-        fixturesView = new();
+        fixtures = new();
         StateHasChanged();
         team = await _tt365.GetTeamStats(TeamName);
         if (team is not null) {
-            fixturesView = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
-            foreach (var fixture in fixturesView.Fixtures!) 
+            fixtures = (await _tt365.GetAllFixtures(LeagueName) ?? new()).Where( f => f.HomeTeam == TeamName || f.AwayTeam == TeamName ).ToList();
+            foreach (var fixture in fixtures )
             {
                 if (fixture.IsCompleted) {
                     string result;
