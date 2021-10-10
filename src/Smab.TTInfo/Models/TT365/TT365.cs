@@ -75,6 +75,7 @@ public class Team
 	public string URL { get; set; } = "";
 	public string Caption { get; set; } = "";
 	public string Name { get; set; } = "";
+	public string ShortName { get; set; } = "";
 	public int ClubId { get; set; }
 	public string DivisionName { get; set; } = "";
 	public string Captain { get; set; } = "";
