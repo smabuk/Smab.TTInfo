@@ -4,7 +4,7 @@ namespace Smab.TTInfo;
 
 public partial class TT365Reader
 {
-	public async Task<HtmlDocument> LoadPage(string url, string fileName)
+	public async Task<HtmlDocument> LoadPage(string url, string fileName, int? cacheHours = null)
 	{
 		string html;
 		HtmlDocument doc = new();
@@ -15,7 +15,7 @@ public partial class TT365Reader
 		}
 
 		string source = Path.Combine(CacheFolder, fileName);
-		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(CacheHours) < DateTime.UtcNow;
+		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < DateTime.UtcNow;
 
 		bool docLoadSuccessful = false;
 		if (!refreshCache || UseTestFiles)

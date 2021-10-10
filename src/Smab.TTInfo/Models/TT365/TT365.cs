@@ -32,11 +32,6 @@ public record FixturesViewOptions
 	public bool ShowByWeekNo { get; set; } = true;
 }
 
-[DebuggerDisplay("Title: {Title,nq}")]
-public class FixtureWeek
-{
-	public string Title { get; set; } = "";
-}
 
 [DebuggerDisplay("Fixture: {Date,nq} - {HomeTeam,nq} vs {AwayTeam,nq}")]
 public class Fixture
@@ -149,13 +144,14 @@ public class Result
 
 }
 
-public record League(string Id)
+public record League(
+	string Id,
+	string Name,
+	string Description,
+	string URL,
+	string Theme
+	)
 {
-	public string Name { get; set; } = "";
-	public string Description {  get; set; } = "";
-	public string Title {  get; set; } = "";
-	public string URL {  get; set; } = "";
-	public string Theme {  get; set; } = "";
 	public Season CurrentSeason { get; set; } = new("unknown", "Unknown");
 	public List<Season> Seasons { get; set; } = new ();
 
