@@ -33,15 +33,16 @@ public partial class TT365Reader
 
 		foreach (HtmlNode? item in doc.DocumentNode.SelectNodes(@"//ul[./li[text()='Archive']]//a"))
 		{
-			currentSeasonId = item.GetAttributeValue("href", "");
-			currentSeasonId = currentSeasonId.Substring(currentSeasonId.LastIndexOf("/") + 1);
-			currentSeasonName = item.GetAttributeValue("title", "");
-			league.Seasons.Add(new(currentSeasonId, currentSeasonName));
+			string seasonId = item.GetAttributeValue("href", "");
+			seasonId = seasonId.Substring(seasonId.LastIndexOf("/") + 1);
+			string seasonName = item.GetAttributeValue("title", "");
+			league.Seasons.Add(new(seasonId, seasonName));
 		}
 
 
-		url = $"{"https"}://www.tabletennis365.com/{LeagueId}/Tables/{league.CurrentSeason}/All_Divisions";
+		url = $"{"https"}://www.tabletennis365.com/{LeagueId}/Tables/{league.CurrentSeason.Id}/All_Divisions";
 
+		doc = new();
 		doc = await LoadPage(
 			url,
 			$@"{LeagueId}_Divisions_All_Divisions.html");
