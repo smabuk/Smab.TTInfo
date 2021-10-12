@@ -1,5 +1,8 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.Models.TT365;
+using System;
+
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -8,25 +11,28 @@ public partial class TT365Reader
 	public async Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null)
 	{
 		List<Fixture> fixtures = new();
-		string division = "All Divisions";
-		string clubId = "";
-		string teamId = "";
-		string venueId = "";
-		int viewModeType = FixturesViewType.Advanced;
-		bool hideCompletedFixtures = false;
-		bool mergeDivisions = true;
-		bool showByWeekNo = true;
 
 		string leagueId = LeagueId;
 		string? seasonId = SeasonId ?? (await GetLeague(leagueId))?.CurrentSeason.Id;
 
 		ArgumentNullException.ThrowIfNull(seasonId, nameof(seasonId));
 
-		string url = $"{"https"}://www.tabletennis365.com/{leagueId}/Fixtures/{seasonId}/{division}?c=False&vm={viewModeType}&d={division}&vn={venueId}&cl={clubId}&t={teamId}&swn={showByWeekNo}&hc={hideCompletedFixtures}&md={mergeDivisions}";
-		HtmlDocument doc = await LoadPage(
-			url,
-			$@"{leagueId}_Fixtures_All_Divisions.html");
+		FixturesViewOptions fvo = new()
+		{
+			DivisionName = "All Divisions",
+			ClubId = "",
+			TeamId = "",
+			VenueId = "",
+			ViewModeType = FixturesViewType.Advanced,
+			HideCompletedFixtures = false,
+			MergeDivisions = true,
+			ShowByWeekNo = true
+		};
 
+		string url = $"{"https"}://www.tabletennis365.com/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
+		HtmlDocument doc = await LoadPage(
+					url,
+					$@"{leagueId}_Fixtures_All_Divisions.html");
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']"))
 		{
 			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]")) // This doesn't work as fixtureWeek is a class that would match this
@@ -41,7 +47,7 @@ public partial class TT365Reader
 
 					Fixture fixture = new()
 					{
-						Division = division.Replace("%20", " "),
+						//Division = divisionName.Replace("%20", " "),
 						IsCompleted = CompletedFixture
 					};
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;

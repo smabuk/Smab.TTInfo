@@ -22,7 +22,7 @@ public class FixturesView
 public record FixturesViewOptions
 {
 	public string Season { get; set; } = "";
-	public string Division { get; set; } = "All Divisions";
+	public string DivisionName { get; set; } = "All Divisions";
 	public string ClubId { get; set; } = "";
 	public string TeamId { get; set; } = "";
 	public string VenueId { get; set; } = "";
@@ -66,7 +66,7 @@ public class CompletedFixture : Fixture
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Team
 {
-	public int Id { get; set; }
+	public string Id { get; set; } = "";
 	public string URL { get; set; } = "";
 	public string Caption { get; set; } = "";
 	public string Name { get; set; } = "";
@@ -159,13 +159,25 @@ public record League(
 
 public record Season(string Id, string Name)
 {
+	public LookupTables Lookups { get; set; } = new ();
 	public List<Division> Divisions { get; set; } = new();
 	public int DivisionCount => Divisions?.Count ?? 0;
 	
 }
 
-public record Division(string Name)
+public record Division(string Id, string Name)
 {
 	public List<Team> Teams { get; set; } = new ();
 	public int TeamCount => Teams?.Count ?? 0;
 }
+
+public record LookupTables
+{
+	public List<IdNamePair> DivisionLookup = new();
+	public List<IdNamePair> ClubLookup = new();
+	public List<IdNamePair> TeamLookup = new();
+	public List<IdNamePair> VenueLookup = new();
+
+}
+
+public record IdNamePair(string Id, string Name);

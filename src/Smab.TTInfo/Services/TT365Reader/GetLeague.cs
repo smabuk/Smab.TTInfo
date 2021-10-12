@@ -36,8 +36,11 @@ public partial class TT365Reader
 
 			league = new(LeagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
 
+
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("title", "").Replace(" Tables", "");
 			league.CurrentSeason = new(currentSeasonId, currentSeasonName);
+			
+			league.CurrentSeason.Lookups = await GetLookupTables(LeagueId, currentSeasonId);
 
 			foreach (HtmlNode? item in doc.DocumentNode.SelectNodes(@"//ul[./li[text()='Archive']]//a"))
 			{
@@ -49,6 +52,7 @@ public partial class TT365Reader
 
 		} else {
 			league = cachedLeague;
+			league.CurrentSeason.Lookups = await GetLookupTables(LeagueId, league.CurrentSeason.Id);
 		}
 
 		url = $"{"https"}://www.tabletennis365.com/{LeagueId}/Tables/{league.CurrentSeason.Id}/All_Divisions";
@@ -68,13 +72,14 @@ public partial class TT365Reader
 				}
 
 				string divName = divTable.SelectSingleNode("caption")?.InnerText.Split(">").Last().Trim() ?? "";
-				Division division = new(divName);
+				Division division = new(Id: league.CurrentSeason.Lookups.DivisionLookup.Where(d => d.Name == divName).Single().Id, Name: divName);
 				league.CurrentSeason.Divisions.Add(division);
 
 				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr"))
 				{
 					Team team = new();
 					team.Name = teamRow.ChildNodes[3].FirstChild.InnerText.Trim();
+					team.Id = league.CurrentSeason.Lookups.TeamLookup.Where(t => t.Name == team.Name).Single().Id;
 					team.ShortName = teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim().Replace("&#39;", "'").Replace("&amp;", "&");
 					team.URL = $"{"https"}://www.tabletennis365.com{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
 
@@ -102,7 +107,7 @@ public partial class TT365Reader
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFile(jsonString, $"league_{LeagueId}.json");
-
+		
 		return league;
 	}
 }
