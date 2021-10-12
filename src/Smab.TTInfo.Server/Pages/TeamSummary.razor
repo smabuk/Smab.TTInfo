@@ -142,7 +142,9 @@
         team = await _tt365.GetTeamStats(LeagueId, TeamName);
         if (team is not null) {
 
-            fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new()).Where( f => string.Compare(f.HomeTeam, TeamName, true) == 0 || string.Compare(f.AwayTeam, TeamName, true) == 0 ).ToList();
+            fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
+                            .Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
+                            .ToList();
             foreach (var fixture in fixtures )
             {
                 if (fixture.IsCompleted) {

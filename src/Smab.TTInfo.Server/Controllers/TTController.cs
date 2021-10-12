@@ -19,9 +19,16 @@ public partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{TeamName}")]
-	public async Task<IActionResult> Fixtures(string TeamName = "") {
-		TeamName = TeamName.Replace("_", " ");
-		FixturesView list = await _tt365.GetFixturesByTeamName(TeamName) ?? new();
+	public async Task<IActionResult> Fixtures(string LeagueId, string SeasonId, string? TeamName = null) {
+		List<Fixture> list = await _tt365.GetAllFixtures(LeagueId, SeasonId) ?? new();
+
+        if (TeamName is not null)
+        {
+			TeamName = TeamName.Replace("_", " ");
+			list = list
+				.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
+				.ToList();
+		}
 
 		return Ok(list);
 	}

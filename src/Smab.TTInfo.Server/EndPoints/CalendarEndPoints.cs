@@ -15,15 +15,17 @@ public static partial class CalendarEndPoints
 		async (string LeagueName, string TeamName, string? Command, ITT365Reader _tt365, HttpContext context) =>
 		{
 			TeamName = TeamName.Replace("_", " ");
-			FixturesView? tt365FixtureView = await _tt365.GetFixturesByTeamName(TeamName, LeagueName);
-			if (tt365FixtureView is null || tt365FixtureView.Fixtures is null)
+			List<Fixture>? fixtures = (await _tt365.GetAllFixtures(LeagueName))?
+						.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
+                        .ToList();
+			if (fixtures is null)
 			{
 				return Results.NotFound();
 			}
 
 			TimeZoneInfo gmtZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
 
-			IcalCalendar ical = _tt365.IcalFromFixtures(LeagueName, TeamName, tt365FixtureView.Fixtures, gmtZone);
+			IcalCalendar ical = _tt365.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
 
 			// Different ways of returning the information
 			switch (Command?.ToUpper())

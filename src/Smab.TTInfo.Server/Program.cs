@@ -8,10 +8,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
-	tt => new(
-		leagueId: builder.Configuration.GetValue<string>("TTInfo:League"),
-		seasonId: builder.Configuration.GetValue<string>("TTInfo:Season")
-		)
+	tt => new()
 	{
 		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder"),
 		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,

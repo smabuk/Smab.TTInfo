@@ -5,7 +5,7 @@ namespace Smab.TTInfo;
 public partial class TT365Reader
 {
 
-	public async Task<List<Fixture>?> GetAllFixtures(string? LeagueId = null, string? SeasonId = null)
+	public async Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null)
 	{
 		List<Fixture> fixtures = new();
 		string division = "All Divisions";
@@ -17,9 +17,10 @@ public partial class TT365Reader
 		bool mergeDivisions = true;
 		bool showByWeekNo = true;
 
-		string leagueId = LeagueId ?? this.LeagueId;
-		string seasonId = SeasonId ?? this.SeasonId;
+		string leagueId = LeagueId;
+		string? seasonId = SeasonId ?? (await GetLeague(leagueId))?.CurrentSeason.Id;
 
+		ArgumentNullException.ThrowIfNull(seasonId, nameof(seasonId));
 
 		string url = $"{"https"}://www.tabletennis365.com/{leagueId}/Fixtures/{seasonId}/{division}?c=False&vm={viewModeType}&d={division}&vn={venueId}&cl={clubId}&t={teamId}&swn={showByWeekNo}&hc={hideCompletedFixtures}&md={mergeDivisions}";
 		HtmlDocument doc = await LoadPage(

@@ -2,14 +2,12 @@
 
 public interface ITT365Reader
 {
-	string LeagueId { get; set; }
-	string SeasonId { get; set; }
 	bool UseTestFiles { get; set; }
 
 	Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null);
 
-	Task<FixturesView?> GetFixturesByTeamName(string TeamName);
-	Task<FixturesView?> GetFixturesByTeamName(string TeamName = "", string? LeagueId = null, string? Seasonid = null);
+	//Task<FixturesView?> GetFixturesByTeamName(string TeamName);
+	//Task<FixturesView?> GetFixturesByTeamName(string LeagueId, string Seasonid, string TeamName);
 	
 	Task<League?> GetLeague(string LeagueId);
 	Task<Team?> GetTeamStats(string LeagueId, string TeamName);

@@ -4,20 +4,14 @@ namespace Smab.TTInfo;
 
 public partial class TT365Reader : ITT365Reader
 {
-	public string LeagueId { get; set; }
-	public string SeasonId { get; set; }
 	public bool UseTestFiles { get; set; } = false;
 	public string CacheFolder = @"Cache";
 	public int CacheHours = 12;
 
 	readonly System.Globalization.CultureInfo gbCulture = new("en-GB");
 
-	public TT365Reader(string leagueId, string seasonId)
+	public TT365Reader()
 	{
-		ArgumentNullException.ThrowIfNull(leagueId);
-		ArgumentNullException.ThrowIfNull(seasonId);
-		LeagueId = leagueId;
-		SeasonId = seasonId;
 	}
 
 
