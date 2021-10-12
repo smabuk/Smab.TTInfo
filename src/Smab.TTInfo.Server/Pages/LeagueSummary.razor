@@ -23,6 +23,7 @@
                         <th>L</th>
                         <th>SF</th>
                         <th>SA</th>
+                        <th>Avg</th>
                         <th>Pts</th>
                     </tr>
                 </thead>
@@ -38,6 +39,7 @@
                             <td>@team.Lost</td>
                             <td>@team.SetsFor</td>
                             <td>@team.SetsAgainst</td>
+                            <td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
                             <td>@team.Points</td>
                         </tr>
                     }

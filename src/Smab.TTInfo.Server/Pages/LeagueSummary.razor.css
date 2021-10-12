@@ -9,18 +9,16 @@ td {
 table th:nth-child(1),
 table th:nth-child(n+3)
 {
-	text-align: right;
-	padding-right: 1rem;
-	padding-left: 0;
-	width: 50px;
+	text-align: center;
+	width: 3em;
 }
 
 table td:nth-child(1),
 table td:nth-child(n+3)
 {
 	text-align: right;
-	padding-right: 1rem;
-	max-width: 50px;
+	padding-right: 0.5em;
+	width: 3em;
 }
 
 table td:last-child
