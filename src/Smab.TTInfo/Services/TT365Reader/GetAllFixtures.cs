@@ -33,6 +33,9 @@ public partial class TT365Reader
 		HtmlDocument doc = await LoadPage(
 					url,
 					$@"{leagueId}_Fixtures_All_Divisions.html");
+
+		if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
+
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']"))
 		{
 			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]")) // This doesn't work as fixtureWeek is a class that would match this

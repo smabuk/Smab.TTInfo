@@ -36,6 +36,22 @@ public partial class TT365Reader
 				doc.LoadHtml(html);
 				doc.Save(source);
 			}
+			else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+			{
+				if (File.Exists(source))
+				{
+					doc.Load(source);
+					docLoadSuccessful = true;
+				}
+			}
+			else
+			{
+				if (File.Exists(source))
+				{
+					doc.Load(source);
+					docLoadSuccessful = true;
+				}
+			}
 		}
 		return doc;
 	}
