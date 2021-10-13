@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-RUN ls -a
+RUN dotnet --info
 COPY ["src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj", "src/Smab.TTInfo.Server/"]
 COPY ["src/Smab.TTInfo/Smab.TTInfo.csproj", "src/Smab.TTInfo/"]
 RUN dotnet restore "src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj"
