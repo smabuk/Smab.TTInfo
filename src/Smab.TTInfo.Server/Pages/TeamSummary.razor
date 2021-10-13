@@ -76,7 +76,7 @@
                 <tr>
                     <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
                     <td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
-                    <td><span>@(new string('0', 3 - player.WinPercentage.ToString("##0").Length))</span>@($"{player.WinPercentage:##0.##}")<span>@(new string('0', 6 - player.WinPercentage.ToString("000.##").Length))</span></td>
+                    <td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
                     <td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
                     <td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
                     <td>@player.Form</td>
@@ -94,7 +94,7 @@
                     <th>Home Or Away</th>
                     <th>Date</th>
                     <th>Score</th>
-                    <th>Points</th>
+                    <th>Pts</th>
                     <th>Player Of The Match</th>
                 </tr>
             </thead>
