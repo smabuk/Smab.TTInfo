@@ -49,6 +49,10 @@ public class Fixture
 	public string CardURL { get; set; } = "";
 	public string? Postponed { get; set; }
 
+	public List<MatchPlayer> HomePlayers { get; set; } = new();
+	public List<MatchPlayer> AwayPlayers { get; set; } = new();
+
+
 	public bool IsPostponed => Postponed is not null;
 
 	public string Score =>
@@ -57,6 +61,9 @@ public class Fixture
 	public int Id => string.IsNullOrWhiteSpace(CardURL) ? 0 :
 		int.Parse(CardURL.Split('/').LastOrDefault() ?? "");
 }
+
+public record MatchPlayer(string Name, int Id, int SetsWon, bool PoM);
+
 
 [DebuggerDisplay("CompletedFixture: {Date,nq} - {HomeTeam,nq} ({ForHome,nq}) vs ({ForAway,nq}) {AwayTeam,nq}")]
 public class CompletedFixture : Fixture

@@ -1,8 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.Models.TT365;
-using System;
-
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -50,63 +47,52 @@ public partial class TT365Reader
 
 					Fixture fixture = new()
 					{
-						//Division = divisionName.Replace("%20", " "),
 						IsCompleted = CompletedFixture
 					};
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
-					foreach (HtmlNode divNode in fixtureNode.Descendants("div"))
+					DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate);
+					fixture.Date = tempDate;
+					fixture.Division = fixtureNode.SelectSingleNode("div[@class='div']").InnerText;
+					fixture.Venue = fixtureNode.SelectSingleNode("div[@class='venue']/span/a").InnerText.Replace("&amp;", "&");
+
+					HtmlNode homeNode = fixtureNode.SelectSingleNode("div[@class='home']");
+					fixture.HomeTeam = homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+
+					HtmlNode awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
+					fixture.AwayTeam = awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+
+					if (CompletedFixture)
 					{
-						switch (divNode.Attributes["class"]?.Value.Trim().ToUpperInvariant())
+						fixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						fixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						fixture.CardURL = $"{"https"}://www.tabletennis365.com{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
+						foreach (HtmlNode playerNode in fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]"))
 						{
-							case "DATE":
-								{
-									if (DateOnly.TryParse(divNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate))
-									{
-										fixture.Date = tempDate;
-									};
-									break;
-								}
-							case "DIV":
-								{
-									fixture.Division = divNode.InnerText;
-									break;
-								}
-							case "HOME":
-								{
-									fixture.HomeTeam = divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
-									if (CompletedFixture)
-										fixture.ForHome = int.Parse(divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-									break;
-								}
-							case "AWAY":
-								{
-									fixture.AwayTeam = divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
-									if (CompletedFixture)
-									fixture.ForAway = int.Parse(divNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-									break;
-								}
-							case "MATCHCARDICON":
-								{
-									if (CompletedFixture)
-									fixture.CardURL = $"{"https"}://www.tabletennis365.com{divNode.Descendants("a").SingleOrDefault()?.Attributes["href"].Value.Trim() ?? ""}";
-									break;
-								}
-							case "ICON POSTPONED":
-								{
-									fixture.Postponed = divNode.Attributes["title"].Value.Trim();
-									break;
-								}
-							case "VENUE":
-								{
-									fixture.Venue = divNode.ChildNodes[0].ChildNodes[0].InnerText.Replace("&amp;", "&");
-									break;
-								}
-							default:
-								{
-									break;
-								}
+							string playerName = playerNode.SelectSingleNode("span/a")?.InnerText ?? playerNode.SelectSingleNode("span").InnerText;
+							string? playerIdString = playerNode.SelectSingleNode("span/a")?.GetAttributeValue("href", null);
+							int playerId = 0;
+							int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);
+							if (playerIdString is not null)
+							{
+								playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
+							}
+							bool playerPoM = playerNode.HasClass("pom");
+							MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
+							if (playerNode.ParentNode.HasClass("homeTeam"))
+							{
+								fixture.HomePlayers.Add(matchPlayer);
+							}
+							else
+							{
+								fixture.AwayPlayers.Add(matchPlayer);
+							}
 						}
 					}
+					else
+					{
+						fixture.Postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim();
+					}
+
 					fixtures.Add(fixture);
 				}
 			}

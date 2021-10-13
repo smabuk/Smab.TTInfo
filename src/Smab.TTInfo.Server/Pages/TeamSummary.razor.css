@@ -25,6 +25,10 @@ time {
     --result-color-rgb: var(--bs-primary-rgb, 13,110,253);
 }
 
+.pom {
+    font-weight: bold;
+}
+
 table {
     margin-bottom: 0;
     max-width: 50em;
