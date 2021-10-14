@@ -30,6 +30,14 @@
 				    <span> @@ @fixture.Venue</span>
 			    </div>
 		    </div>
+				@if (fixture.IsPostponed)
+				{
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@fixture.Postponed
+						</div>
+					</div>
+				}
             @if (fixture.IsCompleted)
             {
                 <div class="row justify-content-end">
@@ -60,7 +68,7 @@
                     }
                     else
                     {
-                        @if (teamPlayersList.ContainsKey(fixture.AwayTeam))
+                        @if (teamPlayersList.ContainsKey(fixture.HomeTeam))
                         {
                             @teamPlayersList[fixture.HomeTeam];
                         }

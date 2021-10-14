@@ -1,0 +1,109 @@
+﻿@page "/Recent/{LeagueId}/{NoOfDays:int?}"
+@inject ITT365Reader _tt365
+
+<PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
+
+@if (fixtures is null)
+{
+	<h1>Loading ... Results for the last @NoOfDays days ...</h1>
+}
+else
+{
+	<h1>Recent Results</h1>
+
+	<div id="fixtures">
+		@foreach (var fixture in fixtures)
+		{
+			FixtureResult? fr;
+			fixtureResults.TryGetValue(fixture.Id, out fr);
+			<div class="card" data-result='@fr?.Result'>
+				<div class="row">
+					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+						@if (fixture.IsPostponed)
+						{
+							<span class="postponed badge" title="@fixture.Postponed">P</span>
+						}
+						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
+					</div>
+					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						@if (fr is not null)
+						{
+							<a class="badge badge-sm" href="@fixture.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
+						}
+						<strong>@fixture.HomeTeam vs @fixture.AwayTeam</strong>
+						<span> @@ @fixture.Venue</span>
+					</div>
+				</div>
+				@if (fixture.IsPostponed)
+				{
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@fixture.Postponed
+						</div>
+					</div>
+				}
+				@if (fixture.IsCompleted)
+				{
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
+							{
+								<span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
+							}
+						</div>
+					</div>
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
+							{
+								<span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
+							}
+						</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+
+@code {
+	[Parameter]
+	public int? NoOfDays { get; set; }
+
+	[EditorRequired]
+	[Parameter]
+	public string LeagueId { get; set; } = "";
+
+	private List<Fixture> fixtures = new();
+	private Dictionary<int, FixtureResult> fixtureResults = new();
+	private League? league;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		fixtures = new();
+		StateHasChanged();
+		league = await _tt365.GetLeague(LeagueId);
+		DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+		NoOfDays = NoOfDays ?? 6;
+
+		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
+						.Where(f => f.Date <= today && f.Date >= today.AddDays(- (int)NoOfDays))
+						.Where(f => f.IsCompleted || f.IsPostponed)
+						.ToList();
+		foreach (var fixture in fixtures)
+		{
+			if (fixture.IsCompleted)
+			{
+				string result;
+				string fullScore;
+				result = (fixture.ForHome > fixture.ForAway) ? "homewin" : (fixture.ForHome < fixture.ForAway) ? "homeloss" : "draw";
+				fullScore = $"{fixture.ForHome} - {fixture.ForAway}";
+				fixtureResults.TryAdd(fixture.Id, new(fixture.Id, result, fullScore));
+			}
+		}
+	}
+
+	private record FixtureResult(int Id, string Result, string FullScore);
+
+}
