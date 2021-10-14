@@ -56,9 +56,7 @@ public partial class TT365Reader
 						LeagueRanking = int.Parse(cells[3].InnerText),
 						PoMAwards = cells[4].InnerText
 					};
-					player.Name = player.Name.Replace("&#39;", "'");
-					player.Name = player.Name.Replace("Osullivan", "O'Sullivan");
-					player.Name = player.Name.Replace("Ohalloran", "O'Halloran");
+					player.Name = FixPlayerName(player.Name);
 					List<string>? form = (from f in cells[5].Descendants("a")
 										  select f.InnerText).ToList();
 					player.Form = string.Join(",", form);

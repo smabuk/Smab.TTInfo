@@ -3,7 +3,7 @@
 
 <PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
 
-@if (fixtures is null)
+@if (fixtures.Count == 0)
 {
 	<h1>Loading ... Results for the last @NoOfDays days ...</h1>
 }
@@ -36,7 +36,10 @@ else
 				</div>
 				@if (fixture.IsPostponed)
 				{
-					<div class="row justify-content-end">
+					<div class="row">
+						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+							@fixture.Division
+						</div>
 						<div class="col-12 col-md-8 col-lg-9">
 							@fixture.Postponed
 						</div>
@@ -45,7 +48,10 @@ else
 				@if (fixture.IsCompleted)
 				{
 					<div class="row justify-content-end">
-						<div class="col-12 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+							@fixture.Division
+						</div>
+						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 							@foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
 							{
 								<span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
@@ -53,7 +59,7 @@ else
 						</div>
 					</div>
 					<div class="row justify-content-end">
-						<div class="col-12 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 							@foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
 							{
 								<span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>

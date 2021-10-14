@@ -69,6 +69,7 @@ public partial class TT365Reader
 						foreach (HtmlNode playerNode in fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]"))
 						{
 							string playerName = playerNode.SelectSingleNode("span/a")?.InnerText ?? playerNode.SelectSingleNode("span").InnerText;
+							playerName = FixPlayerName(playerName);
 							string? playerIdString = playerNode.SelectSingleNode("span/a")?.GetAttributeValue("href", null);
 							int playerId = 0;
 							int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);

@@ -3,7 +3,7 @@
 
 <PageTitle>@TeamName - @LeagueId</PageTitle>
 
-@if (team is null) {
+@if (team is null || fixtures.Count == 0) {
     <h1>Loading ... @TeamName ...</h1>
 } else {
 <h1>@TeamName</h1>
@@ -61,17 +61,11 @@
                     <div class="col-12 col-md-8 col-lg-9">
                     @if (fixture.HomeTeam.Equals(@team.Name))
                     {
-                        @if (teamPlayersList.ContainsKey(fixture.AwayTeam))
-                        {
-                            @teamPlayersList[fixture.AwayTeam];
-                        }
+                        <text>@(teamPlayersList.ContainsKey(fixture.AwayTeam) ? @teamPlayersList[fixture.AwayTeam] : "Loading ...")</text>
                     }
                     else
                     {
-                        @if (teamPlayersList.ContainsKey(fixture.HomeTeam))
-                        {
-                            @teamPlayersList[fixture.HomeTeam];
-                        }
+                        <text>@(teamPlayersList.ContainsKey(fixture.HomeTeam) ? @teamPlayersList[fixture.HomeTeam] : "Loading ...")</text>
                     }
                     </div>
                 </div>
@@ -157,12 +151,12 @@
     public string TeamName { get; set; } = "";
     private Team? team;
     private List<Fixture> fixtures = new();
-	private Dictionary<string, string> teamPlayersList = new();
-	private Dictionary<int, FixtureResult> fixtureResults = new();
+    private Dictionary<string, string> teamPlayersList = new();
+    private Dictionary<int, FixtureResult> fixtureResults = new();
     private League? league;
 
     protected override async Task OnParametersSetAsync() {
-		TeamName = TeamId.Replace("_", " ");
+        TeamName = TeamId.Replace("_", " ");
         team = null;
         fixtures = new();
         StateHasChanged();
@@ -189,19 +183,28 @@
                     fixtureResults.TryAdd(fixture.Id, new(fixture.Id, result, fullScore));
                 }
 
-                if (!teamPlayersList.ContainsKey(fixture.HomeTeam)) {
-                    var players = (await _tt365.GetTeamStats(LeagueId, fixture.HomeTeam))?.Players;
-	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
-                    teamPlayersList.TryAdd(fixture.HomeTeam, String.Join(", ", playersList));
-		        }
-		        if (!teamPlayersList.ContainsKey(fixture.AwayTeam)) {
-                    var players = (await _tt365.GetTeamStats(LeagueId, fixture.AwayTeam))?.Players;
-	                List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
-                    teamPlayersList.TryAdd(fixture.AwayTeam, String.Join(", ", playersList));
-		        }
+                _ = await GetTeamPlayers(fixture.HomeTeam);
+                _ = await GetTeamPlayers(fixture.AwayTeam);
             }
         }
     }
+
+    protected async Task<string> GetTeamPlayers(string teamName) {
+
+        string playersString;
+
+        if (teamPlayersList.ContainsKey(teamName)) {
+            playersString = teamPlayersList[teamName];
+        } else {
+            var players = (await _tt365.GetTeamStats(LeagueId, teamName))?.Players;
+	        List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
+            playersString = String.Join(", ", playersList);
+            teamPlayersList.TryAdd(teamName, playersString);
+            
+		}
+        return playersString;
+    }
+
 
     private record FixtureResult (int Id, string Result, string FullScore);
 
