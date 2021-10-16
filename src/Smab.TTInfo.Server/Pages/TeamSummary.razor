@@ -40,22 +40,44 @@
 				}
             @if (fixture.IsCompleted)
             {
-                <div class="row justify-content-end">
-                    <div class="col-12 col-md-8 col-lg-9">
-                    @foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
-                    {
-                        <span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
-                    }
+                @if (fixture.HomeTeam.Equals(@team.Name))
+                {
+                    <div class="row justify-content-end">
+                        <div class="col-12 col-md-8 col-lg-9">
+                        @foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
+                        {
+                            <span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
+                        }
+                        </div>
                     </div>
-                </div>
-               <div class="row justify-content-end">
-                    <div class="col-12 col-md-8 col-lg-9">
-                    @foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
-                    {
-                        <span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
-                    }
+                   <div class="row justify-content-end">
+                        <div class="col-12 col-md-8 col-lg-9">
+                        @foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
+                        {
+                            <span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
+                        }
+                        </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                   <div class="row justify-content-end">
+                        <div class="col-12 col-md-8 col-lg-9">
+                        @foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
+                        {
+                            <span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
+                        }
+                        </div>
+                    </div>
+                    <div class="row justify-content-end">
+                        <div class="col-12 col-md-8 col-lg-9">
+                        @foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
+                        {
+                            <span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
+                        }
+                        </div>
+                    </div>
+                }
             } else {
                 <div class="row justify-content-end">
                     <div class="col-12 col-md-8 col-lg-9">
