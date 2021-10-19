@@ -9,7 +9,7 @@
 <h1>@TeamName</h1>
 
 <div id="fixtures">
-	@foreach (var fixture in fixtures)
+	@foreach (Fixture fixture in fixtures)
 	{
         FixtureResult? fr;
         fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
@@ -170,6 +170,8 @@
     [Parameter]
     public string LeagueId { get; set; } = "";
 
+    private record FixtureResult (int Id, string Result, string FullScore);
+
     public string TeamName { get; set; } = "";
     private Team? team;
     private List<Fixture> fixtures = new();
@@ -228,6 +230,5 @@
     }
 
 
-    private record FixtureResult (int Id, string Result, string FullScore);
 
 }

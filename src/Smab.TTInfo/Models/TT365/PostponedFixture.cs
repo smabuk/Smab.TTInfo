@@ -2,5 +2,5 @@
 
 public record PostponedFixture : Fixture
 {
-	public string? Postponed { get; set; } = "";
+	public string Postponed { get; set; } = "";
 }

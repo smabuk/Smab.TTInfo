@@ -45,11 +45,9 @@ public partial class TT365Reader
 				{
 					Fixture fixture;
 
-					string? postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim();
-
 					if (nodeClass.HasClass("complete")) { 
 						fixture = new CompletedFixture();
-					} else if (postponed is not null) {
+					} else if (fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null) {
 						fixture = new PostponedFixture();
 					} else {
 						fixture = new();
@@ -100,7 +98,7 @@ public partial class TT365Reader
 
 					if (fixture is PostponedFixture pf)
 					{
-						pf.Postponed = postponed;
+						pf.Postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim() ?? "";
 					}
 
 					fixtures.Add(fixture);
