@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
+using Newtonsoft.Json;
+
 namespace Smab.TTInfo.Server.Controllers;
 
 [Route("/api/[action]")]
@@ -21,16 +23,16 @@ public partial class TTController : Controller {
 	[Route("{LeagueId}/{TeamName}")]
 	public async Task<IActionResult> Fixtures(string LeagueId, string SeasonId, string? TeamName = null) {
 		List<Fixture> list = await _tt365.GetAllFixtures(LeagueId, SeasonId) ?? new();
-
         if (TeamName is not null)
-        {
+
+		{
 			TeamName = TeamName.Replace("_", " ");
 			list = list
 				.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
 				.ToList();
 		}
 
-		return Ok(list);
+		return Ok(JsonConvert.SerializeObject(list));
 	}
 
 	[HttpGet]
@@ -43,7 +45,7 @@ public partial class TTController : Controller {
 			return NotFound();
 		}
 
-		return Ok(team);
+		return Ok(JsonConvert.SerializeObject(team));
 	}
 
 	[HttpGet]
@@ -57,7 +59,7 @@ public partial class TTController : Controller {
 		}
 		List<string>? teamplayers = (from p in team.Players
 									 select p.Name + " (" + p.WinPercentage + ")").ToList();
-		return Ok(teamplayers);
+		return Ok(JsonConvert.SerializeObject(teamplayers));
 	}
 
 
