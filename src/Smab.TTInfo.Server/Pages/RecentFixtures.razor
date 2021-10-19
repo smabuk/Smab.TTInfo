@@ -19,9 +19,9 @@ else
 			<div class="card" data-result='@fr?.Result'>
 				<div class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
-						@if (fixture.IsPostponed)
+						@if (fixture is PostponedFixture pf)
 						{
-							<span class="postponed badge" title="@fixture.Postponed">P</span>
+							<span class="postponed badge" title="@pf.Postponed">P</span>
 						}
 						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
 					</div>
@@ -34,14 +34,14 @@ else
 						<span> @@ @fixture.Venue</span>
 					</div>
 				</div>
-				@if (fixture.IsPostponed)
+				@if (fixture is PostponedFixture postponed)
 				{
 					<div class="row">
 						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 							@fixture.Division
 						</div>
 						<div class="col-12 col-md-8 col-lg-9">
-							@fixture.Postponed
+							@postponed.Postponed
 						</div>
 					</div>
 				}
@@ -95,7 +95,7 @@ else
 
 		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(- (int)NoOfDays))
-						.Where(f => f.IsCompleted || f.IsPostponed)
+						.Where(f => f.IsCompleted || f is PostponedFixture)
 						.ToList();
 		foreach (var fixture in fixtures)
 		{

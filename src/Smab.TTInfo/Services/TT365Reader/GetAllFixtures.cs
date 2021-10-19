@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.Models.TT365;
+
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -43,12 +45,20 @@ public partial class TT365Reader
 
 				if (nodeClass.HasClass("fixture"))
 				{
-					bool CompletedFixture = nodeClass.HasClass("complete");
+					Fixture fixture;
 
-					Fixture fixture = new()
+					bool CompletedFixture = nodeClass.HasClass("complete");
+					string? postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim();
+					if (postponed is not null) { 
+						fixture = new PostponedFixture();
+					} else
 					{
-						IsCompleted = CompletedFixture
-					};
+						fixture = new()
+						{
+							IsCompleted = CompletedFixture
+						};
+					}
+
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
 					DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate);
 					fixture.Date = tempDate;
@@ -89,9 +99,10 @@ public partial class TT365Reader
 							}
 						}
 					}
-					else
+
+					if (fixture is PostponedFixture pf)
 					{
-						fixture.Postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim();
+						pf.Postponed = postponed;
 					}
 
 					fixtures.Add(fixture);
