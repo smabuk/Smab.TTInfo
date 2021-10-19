@@ -51,23 +51,23 @@ public partial class TT365Reader
 					};
 			}
 
-			if (fixture.IsCompleted)
+			if (fixture is CompletedFixture completedFixture)
 			{
-				if (fixture.ForHome > fixture.ForAway)
+				if (completedFixture.ForHome > completedFixture.ForAway)
 				{
 					fixtureEvent.Description += $"\nWIN:  {fixture.HomeTeam.ToUpper()}";
 					fixtureEvent.Description += $"\nLOSS: {fixture.AwayTeam}";
 				}
-				else if (fixture.ForHome < fixture.ForAway)
+				else if (completedFixture.ForHome < completedFixture.ForAway)
 				{
 					fixtureEvent.Description += $"\nLOSS: {fixture.HomeTeam}";
 					fixtureEvent.Description += $"\nWIN:  {fixture.AwayTeam.ToUpper()}";
 				}
-				else if (fixture.ForHome == fixture.ForAway)
+				else if (completedFixture.ForHome == completedFixture.ForAway)
 				{
 					fixtureEvent.Description += $"\nDRAW: {fixture.HomeTeam} and {fixture.AwayTeam}";
 				}
-				fixtureEvent.Description += $"\nScore: {fixture.Score}";
+				fixtureEvent.Description += $"\nScore: {completedFixture.Score}";
 			}
 
 			ical.Events.Add(fixtureEvent);

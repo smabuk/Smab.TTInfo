@@ -15,7 +15,7 @@ else
 		@foreach (var fixture in fixtures)
 		{
 			FixtureResult? fr;
-			fixtureResults.TryGetValue(fixture.Id, out fr);
+			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
 			<div class="card" data-result='@fr?.Result'>
 				<div class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
@@ -26,9 +26,9 @@ else
 						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-						@if (fr is not null)
+						@if (fixture is CompletedFixture completedFixture1 && fr is not null)
 						{
-							<a class="badge badge-sm" href="@fixture.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
+							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
 						}
 						<strong>@fixture.HomeTeam vs @fixture.AwayTeam</strong>
 						<span> @@ @fixture.Venue</span>
@@ -45,14 +45,14 @@ else
 						</div>
 					</div>
 				}
-				@if (fixture.IsCompleted)
+				@if (fixture is CompletedFixture completedFixture)
 				{
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 							@fixture.Division
 						</div>
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-							@foreach (MatchPlayer player in fixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
+							@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
 							{
 								<span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
 							}
@@ -60,7 +60,7 @@ else
 					</div>
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-							@foreach (MatchPlayer player in fixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
+							@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
 							{
 								<span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
 							}
@@ -95,17 +95,17 @@ else
 
 		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(- (int)NoOfDays))
-						.Where(f => f.IsCompleted || f is PostponedFixture)
+						.Where(f => f is CompletedFixture || f is PostponedFixture)
 						.ToList();
 		foreach (var fixture in fixtures)
 		{
-			if (fixture.IsCompleted)
+			if (fixture is CompletedFixture completedFixture)
 			{
 				string result;
 				string fullScore;
-				result = (fixture.ForHome > fixture.ForAway) ? "homewin" : (fixture.ForHome < fixture.ForAway) ? "homeloss" : "draw";
-				fullScore = $"{fixture.ForHome} - {fixture.ForAway}";
-				fixtureResults.TryAdd(fixture.Id, new(fixture.Id, result, fullScore));
+				result = (completedFixture.ForHome > completedFixture.ForAway) ? "homewin" : (completedFixture.ForHome < completedFixture.ForAway) ? "homeloss" : "draw";
+				fullScore = $"{completedFixture.ForHome} - {completedFixture.ForAway}";
+				fixtureResults.TryAdd(completedFixture.Id, new(completedFixture.Id, result, fullScore));
 			}
 		}
 	}

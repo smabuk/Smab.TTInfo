@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.Models.TT365;
-
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -47,21 +45,21 @@ public partial class TT365Reader
 				{
 					Fixture fixture;
 
-					bool CompletedFixture = nodeClass.HasClass("complete");
 					string? postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim();
-					if (postponed is not null) { 
+
+					if (nodeClass.HasClass("complete")) { 
+						fixture = new CompletedFixture();
+					} else if (postponed is not null) {
 						fixture = new PostponedFixture();
-					} else
-					{
-						fixture = new()
-						{
-							IsCompleted = CompletedFixture
-						};
+					} else {
+						fixture = new();
 					}
 
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
-					DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate);
-					fixture.Date = tempDate;
+					if (DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate))
+					{
+						fixture.Date = tempDate;
+					};
 					fixture.Division = fixtureNode.SelectSingleNode("div[@class='div']").InnerText;
 					fixture.Venue = fixtureNode.SelectSingleNode("div[@class='venue']/span/a").InnerText.Replace("&amp;", "&");
 
@@ -71,18 +69,18 @@ public partial class TT365Reader
 					HtmlNode awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
 					fixture.AwayTeam = awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
 
-					if (CompletedFixture)
+					if (fixture is CompletedFixture completedFixture)
 					{
-						fixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						fixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						fixture.CardURL = $"{"https"}://www.tabletennis365.com{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
+						completedFixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						completedFixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						completedFixture.CardURL = $"{"https"}://www.tabletennis365.com{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
 						foreach (HtmlNode playerNode in fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]"))
 						{
 							string playerName = playerNode.SelectSingleNode("span/a")?.InnerText ?? playerNode.SelectSingleNode("span").InnerText;
 							playerName = FixPlayerName(playerName);
 							string? playerIdString = playerNode.SelectSingleNode("span/a")?.GetAttributeValue("href", null);
 							int playerId = 0;
-							int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);
+							_ = int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);
 							if (playerIdString is not null)
 							{
 								playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
@@ -91,11 +89,11 @@ public partial class TT365Reader
 							MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
 							if (playerNode.ParentNode.HasClass("homeTeam"))
 							{
-								fixture.HomePlayers.Add(matchPlayer);
+								completedFixture.HomePlayers.Add(matchPlayer);
 							}
 							else
 							{
-								fixture.AwayPlayers.Add(matchPlayer);
+								completedFixture.AwayPlayers.Add(matchPlayer);
 							}
 						}
 					}
