@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System.Text.Json.Serialization;
 
 namespace Smab.TTInfo.Models.TT365;
 
@@ -7,6 +7,7 @@ public record Fixture
 {
 	public string Division { get; set; } = "";
 	public string Description { get; set; } = "";
+	[JsonConverter(typeof(JsonDateOnlyConverter))]
 	public DateOnly Date { get; set; }
 	public string HomeTeam { get; set; } = "";
 	public string AwayTeam { get; set; } = "";

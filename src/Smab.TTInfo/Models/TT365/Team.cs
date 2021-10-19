@@ -15,7 +15,7 @@ public class Team
 	public string Captain { get; set; } = "";
 	public ICollection<Player>? Players { get; set; }
 	public ICollection<Fixture>? Fixtures { get; set; }
-	public ICollection<Result>? Results { get; set; }
+	public ICollection<TeamResult>? Results { get; set; }
 	public int? LeaguePosition {  get; set; }
 	public int Played {  get; set; }
 	public int Won {  get; set; }

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Smab.TTInfo.Models.TT365;
+﻿namespace Smab.TTInfo.Models.TT365;
 
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Player

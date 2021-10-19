@@ -18,7 +18,7 @@ public partial class TTController : Controller {
 
 
 	[HttpGet]
-	[Route("{TeamName}")]
+	[Route("{LeagueId}/{TeamName}")]
 	public async Task<IActionResult> Fixtures(string LeagueId, string SeasonId, string? TeamName = null) {
 		List<Fixture> list = await _tt365.GetAllFixtures(LeagueId, SeasonId) ?? new();
 
@@ -34,7 +34,7 @@ public partial class TTController : Controller {
 	}
 
 	[HttpGet]
-	[Route("{TeamName}")]
+	[Route("{LeagueId}/{TeamName}")]
 	public async Task<IActionResult> Team(string LeagueId, string TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 
@@ -47,7 +47,7 @@ public partial class TTController : Controller {
 	}
 
 	[HttpGet]
-	[Route("{TeamName}")]
+	[Route("{LeagueId}/{TeamName}")]
 	public async Task<IActionResult> TeamPlayersList(string LeagueId, string TeamName) {
 		TeamName = TeamName.Replace("_", " ");
 

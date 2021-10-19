@@ -32,7 +32,7 @@ public partial class TT365Reader
 		{
 			team.Caption = node.SelectSingleNode("//div[@class='caption']").InnerText.Replace("&gt;", ">");
 			team.Players = new List<Player>();
-			team.Results = new List<Result>();
+			team.Results = new List<TeamResult>();
 			try
 			{
 				team.Captain = teamNode.SelectNodes("//div[text()='Captain']").Single().NextSibling.NextSibling.InnerText;
@@ -49,14 +49,13 @@ public partial class TT365Reader
 					HtmlNode[] cells = playerRow.Descendants("td").ToArray();
 					Player player = new()
 					{
-						Name = cells[0].InnerText,
+						Name = FixPlayerName(cells[0].InnerText.Trim()),
 						PlayerURL = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
 						Played = int.Parse(cells[1].InnerText),
 						WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
 						LeagueRanking = int.Parse(cells[3].InnerText),
 						PoMAwards = cells[4].InnerText
 					};
-					player.Name = FixPlayerName(player.Name);
 					List<string>? form = (from f in cells[5].Descendants("a")
 										  select f.InnerText).ToList();
 					player.Form = string.Join(",", form);
@@ -111,12 +110,12 @@ public partial class TT365Reader
 				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody").SelectNodes("tr"))
 				{
 					HtmlNode[] cells = resultRow.Descendants("td").ToArray();
-					Result result = new()
+					TeamResult result = new()
 					{
 						Opposition = cells[0].InnerText,
 						HomeOrAway = cells[1].InnerText,
-						ScoreForHome = int.Parse(cells[3].InnerText.Split("-")[0]),
-						ScoreForAway = int.Parse(cells[3].InnerText.Split("-")[1]),
+						ForHome = int.Parse(cells[3].InnerText.Split("-")[0]),
+						ForAway = int.Parse(cells[3].InnerText.Split("-")[1]),
 						Points = int.Parse(cells[4].InnerText),
 						PlayerOfTheMatch = cells[5].InnerText,
 						CardURL = $"{"https"}://www.tabletennis365.com/{cells[6].Descendants("a").Single().Attributes["href"].Value}"
