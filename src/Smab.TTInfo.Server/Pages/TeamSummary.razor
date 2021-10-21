@@ -212,9 +212,19 @@
                     fixtureResults.TryAdd(completedFixture.Id, new(completedFixture.Id, result, fullScore));
                 }
 
-                _ = await GetTeamPlayers(fixture.HomeTeam);
-                _ = await GetTeamPlayers(fixture.AwayTeam);
             }
+
+            StateHasChanged();
+
+            List<string> teamList = fixtures.Select(t => t.HomeTeam).Union(fixtures.Select(t => t.HomeTeam)).Distinct().Where(t => t != TeamId).ToList();
+            List<Task<string>> tasks = new();
+            foreach (string team in teamList)
+            {
+                tasks.Add(GetTeamPlayers(team));
+            }
+            await Task.WhenAll(tasks);
+
+            StateHasChanged();
         }
     }
 
@@ -226,10 +236,13 @@
             playersString = teamPlayersList[teamName];
         } else {
             var players = (await _tt365.GetTeamStats(LeagueId, teamName))?.Players;
-	        List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
+            if (players is null)
+            {
+                return "";
+            }
+            List<string> playersList = (from p in players orderby p.WinPercentage descending select p.Name + " (" + Math.Round(p.WinPercentage, 0) + "%)").ToList();
             playersString = String.Join(", ", playersList);
             teamPlayersList.TryAdd(teamName, playersString);
-            
 		}
         return playersString;
     }
