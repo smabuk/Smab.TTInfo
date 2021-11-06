@@ -3,14 +3,14 @@
 
 <PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
 
+<h1>Recent Results</h1>
+
 @if (fixtures.Count == 0)
 {
-	<h1>Loading ... Results for the last @NoOfDays days ...</h1>
+	<h2>Loading ... Results for the last @NoOfDays days ...</h2>
 }
 else
 {
-	<h1>Recent Results</h1>
-
 	<div id="fixtures">
 		@foreach (var fixture in fixtures)
 		{

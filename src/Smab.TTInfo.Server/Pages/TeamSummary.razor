@@ -7,7 +7,6 @@
     <h1>Loading ... @TeamName ...</h1>
 } else {
 <h1>@TeamName</h1>
-
 <div id="fixtures">
 	@foreach (Fixture fixture in fixtures)
 	{
@@ -107,8 +106,8 @@
         <div>Caption: <span>@team.Caption</span></div>
     </div>
     <div id="players">
+        <h3>Players</h3>
         <table class="table table-bordered table-sm">
-            <caption class="container-fluid">Players</caption>
             <thead>
                 <tr>
                     <th>Name</th>
@@ -135,8 +134,8 @@
         </table>
     </div>
     <div id="results">
+        <h3>Results</h3>
         <table class="table table-bordered table-sm">
-            <caption class="container-fluid">Results</caption>
             <thead>
                 <tr>
                     <th>Opposition</th>

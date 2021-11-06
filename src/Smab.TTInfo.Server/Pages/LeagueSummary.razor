@@ -2,15 +2,14 @@
 @inject ITT365Reader _tt365
 
 <PageTitle>@LeagueName - @Program.SiteName</PageTitle>
-<h2>@LeagueName</h2>
+<h1>@LeagueName</h1>
 
 @if (League is not null && League.CurrentSeason.DivisionCount > 0) 
 {
-    <h3>Divisions</h3>
     <div>
     @foreach (var division in League.CurrentSeason.Divisions)
     {
-        <h4>@division.Name</h4>
+        <h2>@division.Name</h2>
         <div class="division">
             <table class="table table-bordered table-sm">
                 <thead>
