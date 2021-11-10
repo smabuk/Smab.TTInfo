@@ -20,3 +20,12 @@ public sealed class JsonTimeOnlyConverter : JsonConverter<TimeOnly>
 	public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
 		=> writer.WriteStringValue(value.ToString("HH:mm:ss"));
 }
+
+public static class JsonConverterExtensions
+{
+	public static void AddDateOnlyAndTimeOnlyConverters(this JsonSerializerOptions options)
+	{
+		options.Converters.Add(new JsonDateOnlyConverter());
+		options.Converters.Add(new JsonTimeOnlyConverter());
+	}
+}

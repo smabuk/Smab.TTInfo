@@ -1,10 +1,14 @@
 ﻿using System.Reflection;
+
+using Smab.Shared.Helpers;
 using Smab.TTInfo.Server.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+	.AddJsonOptions(options => options.JsonSerializerOptions.AddDateOnlyAndTimeOnlyConverters());
+
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
