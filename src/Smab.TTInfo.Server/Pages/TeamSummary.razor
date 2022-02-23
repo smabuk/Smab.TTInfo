@@ -29,16 +29,24 @@
 				    <span> @@ @fixture.Venue</span>
 			    </div>
 		    </div>
-				@if (fixture is PostponedFixture postponed)
-				{
-					<div class="row justify-content-end">
-						<div class="col-12 col-md-8 col-lg-9">
-							@postponed.Postponed
-						</div>
+			@if (fixture is PostponedFixture postponed)
+			{
+				<div class="row justify-content-end">
+					<div class="col-12 col-md-8 col-lg-9">
+						@postponed.Postponed
 					</div>
-				}
+				</div>
+			}
             @if (fixture is CompletedFixture completedFixture)
             {
+			    @if (completedFixture.Other is not null)
+			    {
+				    <div class="row justify-content-end">
+					    <div class="col-12 col-md-8 col-lg-9">
+						    @completedFixture.Other
+					    </div>
+				    </div>
+			    }
                 @if (fixture.HomeTeam.Equals(@team.Name))
                 {
                     <div class="row justify-content-end">

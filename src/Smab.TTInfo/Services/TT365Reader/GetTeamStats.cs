@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.Models.TT365;
-
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -25,7 +23,9 @@ public partial class TT365Reader
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 
 		if (teamNode == null)
+		{
 			return team;
+		}
 
 		// fixture.Description = fixtureNode.SelectSingleNode("//meta[@itemprop='description']").Attributes("content").Value
 		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']"))
@@ -110,14 +110,22 @@ public partial class TT365Reader
 				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody").SelectNodes("tr"))
 				{
 					HtmlNode[] cells = resultRow.Descendants("td").ToArray();
+					string score = cells[3].InnerText;
+					string? other = null;
+					if (score.EndsWith(" (A)"))
+					{
+						score = score.Replace(" (A)", "");
+						other = cells[3].Attributes["title"]?.Value;
+					}
 					TeamResult result = new()
 					{
 						Opposition = cells[0].InnerText,
 						HomeOrAway = cells[1].InnerText,
-						ForHome = int.Parse(cells[3].InnerText.Split("-")[0]),
-						ForAway = int.Parse(cells[3].InnerText.Split("-")[1]),
+						ForHome = int.Parse(score.Split("-")[0]),
+						ForAway = int.Parse(score.Split("-")[1]),
 						Points = int.Parse(cells[4].InnerText),
 						PlayerOfTheMatch = cells[5].InnerText,
+						Other = other,
 						CardURL = $"{"https"}://www.tabletennis365.com/{cells[6].Descendants("a").Single().Attributes["href"].Value}"
 					};
 					if (DateOnly.TryParse(cells[2].InnerText,
