@@ -94,7 +94,7 @@ caption {
         text-decoration: none;
     }
 
-        #players a:hover {
+        #players a:hover, #players a:active {
             color: var(--text-color);
             text-decoration: underline;
         }
@@ -130,7 +130,7 @@ caption {
         text-decoration: none;
     }
 
-        #results a:hover {
+        #results a:hover, #results a:active {
             color: var(--text-color);
             text-decoration: underline;
         }

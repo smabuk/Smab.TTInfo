@@ -32,7 +32,7 @@ table {
         text-decoration: none;
     }
 
-        table a:hover {
+        table a:hover, table a:active {
             color: var(--text-color);
             text-decoration: underline;
         }
