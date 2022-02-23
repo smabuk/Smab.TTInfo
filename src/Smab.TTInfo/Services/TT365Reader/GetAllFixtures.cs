@@ -72,26 +72,30 @@ public partial class TT365Reader
 						completedFixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.CardURL = $"{"https"}://www.tabletennis365.com{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
-						foreach (HtmlNode playerNode in fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]"))
+						HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]");
+						if (playerNodes is not null)
 						{
-							string playerName = playerNode.SelectSingleNode("span/a")?.InnerText ?? playerNode.SelectSingleNode("span").InnerText;
-							playerName = FixPlayerName(playerName);
-							string? playerIdString = playerNode.SelectSingleNode("span/a")?.GetAttributeValue("href", null);
-							int playerId = 0;
-							_ = int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);
-							if (playerIdString is not null)
+							foreach (HtmlNode playerNode in playerNodes)
 							{
-								playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
-							}
-							bool playerPoM = playerNode.HasClass("pom");
-							MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
-							if (playerNode.ParentNode.HasClass("homeTeam"))
-							{
-								completedFixture.HomePlayers.Add(matchPlayer);
-							}
-							else
-							{
-								completedFixture.AwayPlayers.Add(matchPlayer);
+								string playerName = playerNode.SelectSingleNode("span/a")?.InnerText ?? playerNode.SelectSingleNode("span").InnerText;
+								playerName = FixPlayerName(playerName);
+								string? playerIdString = playerNode.SelectSingleNode("span/a")?.GetAttributeValue("href", null);
+								int playerId = 0;
+								_ = int.TryParse(playerNode.LastChild.InnerText.Replace("(", "").Replace(")", ""), out int setsWon);
+								if (playerIdString is not null)
+								{
+									playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
+								}
+								bool playerPoM = playerNode.HasClass("pom");
+								MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
+								if (playerNode.ParentNode.HasClass("homeTeam"))
+								{
+									completedFixture.HomePlayers.Add(matchPlayer);
+								}
+								else
+								{
+									completedFixture.AwayPlayers.Add(matchPlayer);
+								}
 							}
 						}
 					}
