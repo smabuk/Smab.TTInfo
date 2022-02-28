@@ -57,6 +57,11 @@ caption {
         text-decoration: none;
     }
 
+    #fixtures a {
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
     #fixtures a:hover {
         color: var(--text-color);
         text-decoration: underline;

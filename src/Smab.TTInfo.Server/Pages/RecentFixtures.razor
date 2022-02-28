@@ -30,6 +30,7 @@ else
 						{
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
 						}
+                        <a href="TeamSummary/@LeagueId/@fixture.HomeTeam">
 						@if (fr is not null && fr.HomeWin)
 						{
 							<strong>@fixture.HomeTeam</strong>
@@ -37,7 +38,9 @@ else
 						{
 							<span>@fixture.HomeTeam</span>
 						}
+                        </a>
 						vs
+                        <a href="TeamSummary/@LeagueId/@fixture.AwayTeam">
 						@if (fr is not null && fr.AwayWin)
 						{
 							<strong>@fixture.AwayTeam</strong>
@@ -45,6 +48,7 @@ else
 						{
 							<span>@fixture.AwayTeam</span>
 						}
+                        </a>
 					</div>
 				</div>
 				@if (fixture is PostponedFixture postponed)
