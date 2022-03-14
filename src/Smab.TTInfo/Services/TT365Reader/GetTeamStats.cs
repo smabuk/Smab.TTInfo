@@ -67,36 +67,38 @@ public partial class TT365Reader
 						{
 							string[]? rTemp = rank.Split(":");
 							string rankType = rTemp[0].Trim();
-							string rankValue = rTemp[1].Trim();
-							switch (rankType)
+							if (int.TryParse(rTemp[1].Trim(), out int rankValue))
 							{
-								case "OLOP":
-								case "OLOP TTC":
-									{
-										player.ClubRanking = int.Parse(rankValue);
-										break;
-									}
-								case "Reading":
-									{
-										player.LeagueRanking = int.Parse(rankValue);
-										break;
-									}
-								case "Berkshire":
-									{
-										player.CountyRanking = int.Parse(rankValue);
-										break;
-									}
-								case "TTE > South East Region":
-								case "South East":
-									{
-										player.RegionalRanking = int.Parse(rankValue);
-										break;
-									}
-								case "National":
-									{
-										player.NationalRanking = int.Parse(rankValue);
-										break;
-									}
+								switch (rankType)
+								{
+									case "OLOP":
+									case "OLOP TTC":
+										{
+											player.ClubRanking = rankValue;
+											break;
+										}
+									case "Reading":
+										{
+											player.LeagueRanking = rankValue;
+											break;
+										}
+									case "Berkshire":
+										{
+											player.CountyRanking = rankValue;
+											break;
+										}
+									case "TTE > South East Region":
+									case "South East":
+										{
+											player.RegionalRanking = rankValue;
+											break;
+										}
+									case "National":
+										{
+											player.NationalRanking = rankValue;
+											break;
+										}
+								}
 							}
 						}
 					}
