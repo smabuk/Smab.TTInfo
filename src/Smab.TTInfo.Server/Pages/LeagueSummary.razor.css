@@ -37,5 +37,15 @@ table {
             text-decoration: underline;
         }
 
+dd a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+    dd a:hover, table a:active {
+        color: var(--text-color);
+        text-decoration: underline;
+    }
+
 
 

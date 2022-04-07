@@ -51,7 +51,7 @@
     <dl>
 	    <dt>Name</dt>			    <dd>@League.Name</dd>
 	    <dt>Description</dt>	    <dd>@League.Description</dd>
-	    <dt>URL</dt>			    <dd>@League.URL</dd>
+	    <dt>URL</dt>			    <dd><a href="@League.URL" target="_blank">@League.URL</a></dd>
 	    <dt>Theme</dt>			    <dd>@League.Theme</dd>
 	    <dt>Current Season</dt>	    <dd>@League.CurrentSeason.Name</dd>
 	    <dt>Previous Seasons</dt>	<dd>@string.Join(", ", League.Seasons.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
