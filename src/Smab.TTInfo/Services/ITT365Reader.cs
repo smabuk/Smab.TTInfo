@@ -11,6 +11,8 @@ public interface ITT365Reader
 	
 	Task<League?> GetLeague(string LeagueId);
 	Task<Team?> GetTeamStats(string LeagueId, string TeamName);
+	
+	string CsvFromFixtures(ICollection<Fixture> Fixtures);
 
 	IcalCalendar IcalFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
 	string IcalStringFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);

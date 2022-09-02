@@ -1,6 +1,8 @@
 ﻿
 using Smab.Calendar;
 
+using System.Text;
+
 namespace Smab.TTInfo.Server.EndPoints;
 public static partial class CalendarEndPoints
 {
@@ -36,7 +38,9 @@ public static partial class CalendarEndPoints
 					context.Response.Headers.Add("content-disposition", $"inline;filename={LeagueName} - {TeamName} Fixtures.ics");
 					return Results.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 				case "FILE":
-					return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName}Fixtures.ics");
+					return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
+				case "CSV":
+					return Results.File(System.Text.Encoding.UTF8.GetBytes(_tt365.CsvFromFixtures(fixtures)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv");
 				case "JSON":
 					return Results.Json(ical);
 				case "NEG":
