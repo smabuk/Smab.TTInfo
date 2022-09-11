@@ -18,7 +18,7 @@ public partial class TT365Reader
 
 		HtmlDocument doc = await LoadPage(
 			team.URL,
-			$@"{LeagueId}_TeamStats_{TeamName}.html");
+			$@"{LeagueId}_{league.CurrentSeason.Id}_TeamStats_{TeamName}.html");
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 

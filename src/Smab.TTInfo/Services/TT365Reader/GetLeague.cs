@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.Models.TT365;
+
 namespace Smab.TTInfo;
 
 public partial class TT365Reader
@@ -56,10 +58,9 @@ public partial class TT365Reader
 		}
 
 		url = $"{"https"}://www.tabletennis365.com/{LeagueId}/Tables/{league.CurrentSeason.Id}/All_Divisions";
-
 		doc = await LoadPage(
-			url,
-			$@"{LeagueId}_Divisions_All_Divisions.html");
+		url,
+			$@"{LeagueId}_{league.CurrentSeason.Id}_Divisions_All_Divisions.html");
 
 		if (!string.IsNullOrWhiteSpace(doc.Text))
 		{
@@ -107,6 +108,8 @@ public partial class TT365Reader
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFile(jsonString, $"league_{LeagueId}.json");
+		jsonString = JsonSerializer.Serialize(league);
+		_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentSeason.Id}.json");
 		
 		return league;
 	}

@@ -29,7 +29,7 @@ public partial class TT365Reader
 		string url = $"{"https"}://www.tabletennis365.com/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
 		HtmlDocument doc = await LoadPage(
 					url,
-					$@"{leagueId}_Fixtures_All_Divisions.html");
+					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
 
 		if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
 
