@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 
 	public async Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null)

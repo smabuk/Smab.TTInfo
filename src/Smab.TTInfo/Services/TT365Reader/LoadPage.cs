@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 	public async Task<HtmlDocument> LoadPage(string url, string fileName, int? cacheHours = null)
 	{

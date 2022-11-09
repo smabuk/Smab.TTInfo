@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public class TTInfoClient
+public sealed class TTInfoClient
 {
 	public HttpClient Client { get; }
 

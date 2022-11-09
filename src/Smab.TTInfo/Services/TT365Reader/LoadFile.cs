@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 	public string? LoadFile(string fileName)
 	{

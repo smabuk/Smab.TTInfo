@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 	//public async Task<FixturesView?> GetFixturesByTeamName(string TeamName)
 	//	=> await GetFixturesByTeamName(LeagueId, SeasonId, TeamName);

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 	public static string FixPlayerName(string PlayerName)
 	{

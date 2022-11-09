@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Smab.TTInfo.Server.Controllers;
 
 [Route("/api/[action]")]
-public partial class TTController : Controller {
+public sealed partial class TTController : Controller {
 	private readonly ITT365Reader _tt365;
 	private IMemoryCache _cache;
 

@@ -4,7 +4,7 @@ using Smab.TTInfo.Models.TT365;
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader
+public sealed partial class TT365Reader
 {
 	public async Task<League?> GetLeague(string LeagueId)
 	{

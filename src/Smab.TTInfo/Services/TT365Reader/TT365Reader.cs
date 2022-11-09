@@ -2,7 +2,7 @@
 
 namespace Smab.TTInfo;
 
-public partial class TT365Reader : ITT365Reader
+public sealed partial class TT365Reader : ITT365Reader
 {
 	public bool UseTestFiles { get; set; } = false;
 	public string CacheFolder = @"Cache";
