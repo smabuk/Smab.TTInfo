@@ -197,6 +197,7 @@
         TeamName = TeamId.Replace("_", " ");
         team = null;
         fixtures = new();
+        fixtureResults = new();
         StateHasChanged();
         league = await _tt365.GetLeague(LeagueId);
         team = await _tt365.GetTeamStats(LeagueId, TeamName);
