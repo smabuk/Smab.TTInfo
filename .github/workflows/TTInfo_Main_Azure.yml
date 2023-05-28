@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-dotnet@v1.8.0
+    - uses: actions/setup-dotnet@v3.1.0
       with:
         include-prerelease: True
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
