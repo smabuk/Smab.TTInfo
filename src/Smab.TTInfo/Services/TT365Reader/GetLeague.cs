@@ -34,20 +34,21 @@ public sealed partial class TT365Reader
 			string leagueDescription = doc.DocumentNode.SelectSingleNode(@"//meta[@property='og:description']").GetAttributeValue("content", "").Replace("&amp;", "&");
 			string leagueTheme = doc.DocumentNode.SelectSingleNode(@"//body").GetAttributeValue("class", "");
 			string currentSeasonId = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("href", "");
-			currentSeasonId = currentSeasonId.Substring(currentSeasonId.LastIndexOf("/") + 1);
+			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf("/") + 1)..];
 
 			league = new(LeagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
 
 
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("title", "").Replace(" Tables", "");
-			league.CurrentSeason = new(currentSeasonId, currentSeasonName);
-			
-			league.CurrentSeason.Lookups = await GetLookupTables(LeagueId, currentSeasonId);
+			league.CurrentSeason = new(currentSeasonId, currentSeasonName)
+			{
+				Lookups = await GetLookupTables(LeagueId, currentSeasonId)
+			};
 
 			foreach (HtmlNode? item in doc.DocumentNode.SelectNodes(@"//ul[./li[text()='Archive']]//a"))
 			{
 				string seasonId = item.GetAttributeValue("href", "");
-				seasonId = seasonId.Substring(seasonId.LastIndexOf("/") + 1);
+				seasonId = seasonId[(seasonId.LastIndexOf("/") + 1)..];
 				string seasonName = item.GetAttributeValue("title", "");
 				league.Seasons.Add(new(seasonId, seasonName));
 			}

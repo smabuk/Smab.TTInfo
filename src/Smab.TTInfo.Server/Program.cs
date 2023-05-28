@@ -14,8 +14,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new()
 	{
-		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"Cache",
-		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
+		CacheFolder  = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"Cache",
+		CacheHours   = builder.Configuration.GetValue<int?>("TTInfo:CacheHours")    ?? 6,
 		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
@@ -62,7 +62,4 @@ static partial class Program
 	public static string SmabTTInfoVersion { get; set; } = typeof(ITT365Reader).Assembly
 							.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
 							.InformationalVersion ?? "";
-
-
-
 }

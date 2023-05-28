@@ -8,14 +8,10 @@ namespace Smab.TTInfo.Server.Controllers;
 [Route("/api/[action]")]
 public sealed partial class TTController : Controller {
 	private readonly ITT365Reader _tt365;
-	private IMemoryCache _cache;
 
 	public TTController(
-		ITT365Reader tt365Reader,
-		IMemoryCache memoryCache
-		) {
+		ITT365Reader tt365Reader) {
 		_tt365 = tt365Reader;
-		_cache = memoryCache;
 	}
 
 
@@ -57,9 +53,9 @@ public sealed partial class TTController : Controller {
 		if (team is null) {
 			return NotFound();
 		}
-		List<string>? teamplayers = (from p in team.Players
+		List<string>? teamPlayers = (from p in team.Players
 									 select p.Name + " (" + p.WinPercentage + ")").ToList();
-		return Ok(JsonConvert.SerializeObject(teamplayers));
+		return Ok(JsonConvert.SerializeObject(teamPlayers));
 	}
 
 

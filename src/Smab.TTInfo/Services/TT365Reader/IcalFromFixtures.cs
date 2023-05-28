@@ -12,10 +12,9 @@ public sealed partial class TT365Reader
 		IcalCalendar ical = new()
 		{
 			Name = $"{LeagueName} fixtures - {TeamName}",
-			Description = "Fixtures and results of matches for the {LeagueName} league"
+			Description = "Fixtures and results of matches for the {LeagueName} league",
+			Events = new()
 		};
-
-		ical.Events = new List<VEvent>();
 		foreach (Fixture fixture in Fixtures)
 		{
 			VEvent fixtureEvent = new()
