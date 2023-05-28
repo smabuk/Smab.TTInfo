@@ -1,0 +1,25 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@hostname=localhost
+@port=7436
+
+###
+
+GET https://{{hostname}}:{{port}}/Calendar/Reading/Our%20Lady%20Of%20Peace%20D?command=json
+
+###
+
+GET https://{{hostname}}:{{port}}/Calendar/Reading/Our%20Lady%20Of%20Peace%20D
+
+###
+
+
+
+GET https://{{hostname}}:{{port}}/api/fixtures/Reading/Our%20Lady%20Of%20Peace%20D
+
+###
+
+
+GET https://{{hostname}}:{{port}}/api/fixtures/Senior_2021-22/Reading/Our%20Lady%20Of%20Peace%20D
+
+###

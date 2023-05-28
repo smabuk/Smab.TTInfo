@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.Models.TT365;
-
 namespace Smab.TTInfo;
 
 public sealed partial class TT365Reader

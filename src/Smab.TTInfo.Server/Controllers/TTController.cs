@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 using Newtonsoft.Json;
 
@@ -17,6 +16,7 @@ public sealed partial class TTController : Controller {
 
 	[HttpGet]
 	[Route("{LeagueId}/{TeamName}")]
+	[Route("{SeasonId}/{LeagueId}/{TeamName}")]
 	public async Task<IActionResult> Fixtures(string LeagueId, string SeasonId, string? TeamName = null) {
 		List<Fixture> list = await _tt365.GetAllFixtures(LeagueId, SeasonId) ?? new();
         if (TeamName is not null)
