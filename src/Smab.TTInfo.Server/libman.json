@@ -3,7 +3,7 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
-      "library": "@fortawesome/fontawesome-free@5.15.4",
+      "library": "@fortawesome/fontawesome-free@6.4.0",
       "destination": "wwwroot/lib/fortawesome/fontawesome-free/",
       "files": [
         "js/all.min.js",
@@ -12,7 +12,7 @@
       ]
     },
     {
-      "library": "bootstrap@5.2.2",
+      "library": "bootstrap@5.2.3",
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
         "dist/css/bootstrap.min.css",
