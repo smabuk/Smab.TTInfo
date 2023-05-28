@@ -53,27 +53,41 @@
 	    <dt>Description</dt>	    <dd>@League.Description</dd>
 	    <dt>URL</dt>			    <dd><a href="@League.URL" target="_blank">@League.URL</a></dd>
 	    <dt>Theme</dt>			    <dd>@League.Theme</dd>
-	    <dt>Current Season</dt>	    <dd>@League.CurrentSeason.Name</dd>
+		<dt>Current Season</dt>
+		<dd>
+			<select @bind="currentSeason">
+				@if (seasons.Any()) {
+					@foreach (var season in seasons) {
+						<option value="@season">@season</option>
+					}
+				}
+			</select>
+		</dd>
 	    <dt>Previous Seasons</dt>	<dd>@string.Join(", ", League.Seasons.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
     </dl>
 }
 
 
 @code {
-    [EditorRequired]
+	[EditorRequired]
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
 	private string LeagueName { get; set; } = "";
 	private League? League { get; set; }
 
+	private string currentSeason = "";
+	private List<string> seasons = new();
+
 	protected override async Task OnParametersSetAsync()
 	{
-        if(LeagueId is not null)
-        {
-            LeagueName = LeagueId;
-		    League = await _tt365.GetLeague(LeagueId);
-		    LeagueName = League?.Name ?? "";
-        }
+		if(LeagueId is not null)
+		{
+			LeagueName = LeagueId;
+			League = await _tt365.GetLeague(LeagueId);
+			LeagueName = League?.Name ?? "";
+			currentSeason = League?.CurrentSeason.Name ?? "";
+			seasons = League?.Seasons.Select(s => s.Name).Append(currentSeason).OrderByDescending(s => s).ToList() ?? new();
+		}
 	}
 }
