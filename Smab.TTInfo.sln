@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\TTInfo_Main_Azure.yml = .github\workflows\TTInfo_Main_Azure.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.TTInfo.Console", "src\Smab.TTInfo.Console\Smab.TTInfo.Console.csproj", "{81D064F6-BC7D-4A76-88B9-06533D9524B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{91719C17-242A-4E78-9186-4FFE7FD53A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91719C17-242A-4E78-9186-4FFE7FD53A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91719C17-242A-4E78-9186-4FFE7FD53A66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81D064F6-BC7D-4A76-88B9-06533D9524B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81D064F6-BC7D-4A76-88B9-06533D9524B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81D064F6-BC7D-4A76-88B9-06533D9524B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81D064F6-BC7D-4A76-88B9-06533D9524B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7FE66186-2E14-455D-BB3E-433BC1D7EF17} = {BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}
 		{91719C17-242A-4E78-9186-4FFE7FD53A66} = {BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}
+		{81D064F6-BC7D-4A76-88B9-06533D9524B7} = {BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E34714D7-994E-4923-BB9A-176F6B0ED40D}
