@@ -42,6 +42,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.MapCalendarEndPoints();
+app.MapTTEndPoints();
 
 app.Run();
 

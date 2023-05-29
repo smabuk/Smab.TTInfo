@@ -3,23 +3,44 @@
 @hostname=localhost
 @port=7436
 
-###
+@league=Reading
+@season=Senior_2021-22
+@team=Our%20Lady%20Of%20Peace%20D
 
-GET https://{{hostname}}:{{port}}/Calendar/Reading/Our%20Lady%20Of%20Peace%20D?command=json
-
-###
-
-GET https://{{hostname}}:{{port}}/Calendar/Reading/Our%20Lady%20Of%20Peace%20D
 
 ###
 
+GET https://{{hostname}}:{{port}}/Calendar/{{league}}/{{team}}?command=json
 
+###
 
-GET https://{{hostname}}:{{port}}/api/fixtures/Reading/Our%20Lady%20Of%20Peace%20D
+GET https://{{hostname}}:{{port}}/Calendar/{{league}}/{{team}}
 
 ###
 
 
-GET https://{{hostname}}:{{port}}/api/fixtures/Senior_2021-22/Reading/Our%20Lady%20Of%20Peace%20D
+
+GET https://{{hostname}}:{{port}}/api/fixtures/{{league}}/
 
 ###
+
+GET https://{{hostname}}:{{port}}/api/fixtures/{{league}}/{{team}}
+
+###
+
+
+GET https://{{hostname}}:{{port}}/api/fixtures/Senior_2021-22/{{league}}/{{team}}
+
+###
+
+# Get the Team "Our Lady of Peace D" from @season
+GET https://{{hostname}}:{{port}}/api/team/{{season}}/{{league}}/{{team}}
+
+###
+
+
+# Get the Team "Our Lady of Peace D" from @season
+GET https://{{hostname}}:{{port}}/api/teamplayers/{{season}}/{{league}}/{{team}}
+
+###
+
