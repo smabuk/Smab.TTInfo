@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Smab.TTInfo.Console": {
+      "commandName": "Project"
+    },
+    "Year2022": {
+      "commandName": "Project",
+      "commandLineArgs": "2022"
+    }
+  }
+}
