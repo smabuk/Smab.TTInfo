@@ -43,16 +43,11 @@ public sealed partial class TT365Reader
 
 				if (nodeClass.HasClass("fixture"))
 				{
-					Fixture fixture;
-
-					if (nodeClass.HasClass("complete")) { 
-						fixture = new CompletedFixture();
-					} else if (fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null) {
-						fixture = new PostponedFixture();
-					} else {
-						fixture = new();
-					}
-
+					Fixture fixture = nodeClass.HasClass("complete")
+						? new CompletedFixture()
+						: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
+							? new PostponedFixture()
+							: (Fixture)new();
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
 					if (DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate))
 					{

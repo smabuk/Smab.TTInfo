@@ -4,21 +4,27 @@ namespace Smab.TTInfo;
 
 public sealed partial class TT365Reader
 {
-	public async Task<Team?> GetTeamStats(string LeagueId, string TeamName)
+	public async Task<Team?> GetTeamStats(string LeagueId, string TeamName, string SeasonId = "")
 	{
 		Team team = new();
 
-		League? league = await GetLeague(LeagueId);
-		if (league is null) { return null; };
+		if (string.IsNullOrWhiteSpace(SeasonId)) {
+			League? league = await GetLeague(LeagueId);
+			if (league is null) { return null; };
+			SeasonId = league.CurrentSeason.Id;
+		}
+
+		List<Division> divisions = await GetDivisions(LeagueId, SeasonId);
+		if (divisions.Count == 0) { return null; };
 
 		HttpClient client = new();
 		string lookupTeamName = TeamName.Replace("_", " ");
 
-		team = league.CurrentSeason.Divisions.SelectMany(d => d.Teams).Where(t => t.Name.ToUpperInvariant() == TeamName.ToUpperInvariant()).SingleOrDefault() ?? new();
+		team = divisions.SelectMany(d => d.Teams).Where(t => t.Name.ToUpperInvariant() == TeamName.ToUpperInvariant()).SingleOrDefault() ?? new();
 
 		HtmlDocument doc = await LoadPage(
 			team.URL,
-			$@"{LeagueId}_{league.CurrentSeason.Id}_TeamStats_{TeamName}.html");
+			$@"{LeagueId}_{SeasonId}_TeamStats_{TeamName}.html");
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 
@@ -47,6 +53,7 @@ public sealed partial class TT365Reader
 				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody").SelectNodes("tr"))
 				{
 					HtmlNode[] cells = playerRow.Descendants("td").ToArray();
+					bool hasPoM = cells.Length > 5;
 					Player player = new()
 					{
 						Name = FixPlayerName(cells[0].InnerText.Trim()),
@@ -54,9 +61,9 @@ public sealed partial class TT365Reader
 						Played = int.Parse(cells[1].InnerText),
 						WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
 						LeagueRanking = int.Parse(cells[3].InnerText),
-						PoMAwards = cells[4].InnerText
+						PoMAwards = hasPoM ? cells[4].InnerText : "",
 					};
-					List<string>? form = (from f in cells[5].Descendants("a")
+					List<string>? form = (from f in cells[hasPoM ? 5 : 4].Descendants("a")
 										  select f.InnerText).ToList();
 					player.Form = string.Join(",", form);
 					List<string> rankings = (from r in cells[3].Descendants("a")
@@ -114,11 +121,16 @@ public sealed partial class TT365Reader
 					HtmlNode[] cells = resultRow.Descendants("td").ToArray();
 					string score = cells[3].InnerText;
 					string? other = null;
+					if (score.ToLowerInvariant() == "void") {
+						score = "0 - 0";
+						other = cells[3].Attributes["title"]?.Value;
+					}
 					if (score.EndsWith(" (A)"))
 					{
 						score = score.Replace(" (A)", "");
 						other = cells[3].Attributes["title"]?.Value;
 					}
+					bool hasPoM = cells.Length > 6;
 					TeamResult result = new()
 					{
 						Opposition = cells[0].InnerText,
@@ -126,9 +138,9 @@ public sealed partial class TT365Reader
 						ForHome = int.Parse(score.Split("-")[0]),
 						ForAway = int.Parse(score.Split("-")[1]),
 						Points = int.Parse(cells[4].InnerText),
-						PlayerOfTheMatch = cells[5].InnerText,
+						PlayerOfTheMatch = hasPoM ? cells[5].InnerText : "",
 						Other = other,
-						CardURL = $"{"https"}://www.tabletennis365.com/{cells[6].Descendants("a").Single().Attributes["href"].Value}"
+						CardURL = $"{"https"}://www.tabletennis365.com/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
 					};
 					if (DateOnly.TryParse(cells[2].InnerText,
 						   gbCulture,
