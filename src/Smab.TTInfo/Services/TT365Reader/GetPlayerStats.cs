@@ -37,6 +37,7 @@ public sealed partial class TT365Reader
 		}
 		string playerTeamName = doc.DocumentNode.SelectSingleNode("//div[@class='team']").SelectSingleNode("span").InnerText.Trim();
 
+		int index = 1;
 		foreach (HtmlNode? table in statsNode.Descendants("table").Where(t => t.SelectSingleNode("caption").InnerText.Contains("Results"))) {
 			if (table.SelectSingleNode("caption").InnerText.Contains("&gt;")) {
 				playerTeamName = table.SelectSingleNode("caption").InnerText.Split("&gt;").Last().Trim();
@@ -44,7 +45,7 @@ public sealed partial class TT365Reader
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = resultRow.Descendants("td").ToArray();
 				if (cells.Length == 7) {
-					string opponentHref = cells[0].Descendants("a").Single().Attributes["href"].Value;
+					string opponentHref = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = cells[0].Descendants("a").Single().InnerText.Trim();
 					Player opponent = new () {
 						Name = opponentName,
@@ -65,15 +66,18 @@ public sealed partial class TT365Reader
 					bool rankingDiffSuccessful = int.TryParse(cells[5].InnerText, null, out int rankingDiff);
 
 					string result = cells[6].InnerText.Trim();
-					string matchCardUrl = cells[6].SelectSingleNode("a").Attributes["href"].Value;
+					string matchCardUrl = $"{"https"}://www.tabletennis365.com{cells[6].SelectSingleNode("a").Attributes["href"].Value}";
+					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
 
 					PlayerResult playerResult = new()
 					{
 						Name = player.Name,
 						Id = player.Id,
+						OriginalSortOrder = index++,
 						PlayerTeamName = playerTeamName,
 						Opponent = opponent,
 						OpponentTeam = opponentTeam,
+						Division = division,
 						Date = date,
 						Scores = scores,
 						RankingDiff = rankingDiffSuccessful ? rankingDiff : null,

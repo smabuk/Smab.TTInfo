@@ -1,0 +1,78 @@
+﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
+@inject ITT365Reader _tt365
+
+<PageTitle>@PlayerName.Replace("_", " ") - @LeagueId</PageTitle>
+
+@if (playerResults is null || playerResults.Count == 0) {
+	<h1>Loading ... @PlayerName ...</h1>
+} else {
+	<h1>@PlayerName</h1>
+	<h2>Player Stats</h2>
+	<div id="results">
+		<h3>Results</h3>
+		<table class="table table-bordered table-sm">
+			<thead>
+				<tr>
+					<th>Opponent</th>
+					<th>Div</th>
+					<th>Team</th>
+					<th>Date</th>
+					<th>Games</th>
+					<th>Score</th>
+					<th>Ranking</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (PlayerResult result in playerResults.OrderByDescending(p => p.Date).ThenByDescending(p => p.OriginalSortOrder)) {
+					<tr data-result='@result.Result.ToLower()'>
+						<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
+						<td>@result.Division.Replace("Division_", "")</td>
+						<td>@result.OpponentTeam</td>
+						<td>@result.Date.ToString("dd MMM yyyy")</td>
+						<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
+						<td>@result.Scores.Replace(",",", ")</td>
+						<td>@result.RankingDiffString</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
+@code {
+	[EditorRequired]
+	[Parameter]
+	public int PlayerId { get; set; }
+
+	[EditorRequired]
+	[Parameter]
+	public string PlayerName { get; set; } = "";
+
+	[EditorRequired]
+	[Parameter]
+	public string LeagueId { get; set; } = "";
+
+	private record FixtureResult(int Id, string Result, string FullScore);
+
+	private List<PlayerResult> playerResults = new();
+	private League? league;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		PlayerName = PlayerName.Replace("_", " ");
+		playerResults = new();
+		StateHasChanged();
+		league = await _tt365.GetLeague(LeagueId);
+		Player player = new()
+			{
+				Name = PlayerName,
+				PlayerId = PlayerId,
+			};
+		Player playerStats = await _tt365.GetPlayerStats(LeagueId, player) ?? new();
+		if (playerStats is not null) {
+			playerResults = playerStats.PlayerResults.ToList();
+			StateHasChanged();
+		}
+	}
+}

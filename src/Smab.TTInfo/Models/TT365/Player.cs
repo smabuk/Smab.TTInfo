@@ -14,8 +14,12 @@ public class Player
 	public int CountyRanking { get; set; }
 	public int RegionalRanking { get; set; }
 	public int NationalRanking { get; set; }
-	public int Id => string.IsNullOrWhiteSpace(PlayerURL) ? 0 :
-		int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "");
+	public int PlayerId { get; set; }
+	public int Id => PlayerId == 0 
+		? (string.IsNullOrWhiteSpace(PlayerURL) 
+			? 0
+			: int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "")) 
+		: PlayerId;
 
 	public List<PlayerResult> PlayerResults { get; set; } = new();
 }

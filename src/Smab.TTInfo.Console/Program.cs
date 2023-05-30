@@ -73,8 +73,7 @@ foreach (Division division in divisions) {
 							"loss" => ConsoleColor.Red,
 							_      => Console.ForegroundColor,
 						};
-						string playerRankingDiffString = playerResult.RankingDiff is not null ? ((int)playerResult.RankingDiff).ToString("+##0;-##0", CultureInfo.CurrentCulture) : "n/a";
-						Console.WriteLine($"            {dateString, -6}  {(playerResult.ResultReason.Any() ? "*" : ""),1}{playerResult.Result,-4}  {playerRankingDiffString,3}  {playerResult.Opponent.Name,-24}   {playerResult.OpponentTeam,-30}  {playerResult.Scores}");
+						Console.WriteLine($"            {dateString, -6}  {(playerResult.ResultReason.Any() ? "*" : ""),1}{playerResult.Result,-4}  {playerResult.RankingDiffString,3}  {playerResult.Opponent.Name,-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}");
 						if (playerResult.ResultReason.Any() )
 						{
 							Console.WriteLine($"                     {playerResult.ResultReason}");

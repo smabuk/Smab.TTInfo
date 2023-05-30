@@ -55,7 +55,7 @@
                         <div class="col-12 col-md-8 col-lg-9">
                         @foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
                         {
-                            <span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
+                                    <span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
                         }
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                         <div class="col-12 col-md-8 col-lg-9">
                         @foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
                         {
-                            <span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
+									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
                         }
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         <div class="col-12 col-md-8 col-lg-9">
                         @foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
                         {
-                            <span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
+                                    <span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
                         }
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                         <div class="col-12 col-md-8 col-lg-9">
                         @foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
                         {
-                            <span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
+                                    <span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
                         }
                         </div>
                     </div>
@@ -132,7 +132,8 @@
                 @foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played))
                 {
                 <tr>
-                    <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td>
+                    @* <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td> *@
+                    <td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
                     <td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
                     <td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
                     <td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
