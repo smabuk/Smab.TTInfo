@@ -1,5 +1,6 @@
-﻿const string leagueId = "Reading";
-int year = DateTime.Today.Year;
+﻿int year = DateTime.Today.AddMonths(-8).Year;
+string leagueId = "Reading";
+string seasonId = $"Senior_{year}-{year + 1 - 2000}";
 
 List<LookupTables> allLookupTables = new();
 List<Division> allDivisions = new();
@@ -8,6 +9,9 @@ Console.WriteLine("Table Tennis 365 reader");
 
 if (args.Length == 1) {
 	year = int.Parse(args[0]);
+} else if (args.Length == 2) {
+	leagueId = args[0].Trim();
+	year = int.Parse(args[1]);
 }
 
 TT365Reader tt365 = new()
@@ -25,7 +29,8 @@ if (league is null) {
 Console.WriteLine($"{league.Name}   {league.URL}");
 
 
-string seasonId = $"Senior_{year}-{year + 1 - 2000}";
+seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, year);
+
 Console.WriteLine();
 Console.WriteLine($"{seasonId}");
 LookupTables lookupTables = await tt365.GetLookupTables(leagueId, seasonId);
@@ -46,7 +51,7 @@ foreach (Division division in divisions) {
 		finally {
 			Console.WriteLine($"  {newTeam.Captain,-20}");
 		}
-		if (newTeam.Name.ToLowerInvariant().Contains("peace")) {
+		if (newTeam.Name.ToLowerInvariant().Contains("peace") || newTeam.Name.ToLowerInvariant().Contains("olop")) {
 			foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? new List<Player>()) {
 				Console.WriteLine($"         {player.Name,-25} {player.Played,6} {(int)player.WinPercentage,3}%");
 			}

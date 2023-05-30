@@ -3,9 +3,9 @@
     "Smab.TTInfo.Console": {
       "commandName": "Project"
     },
-    "Year2022": {
-      "commandName": "Project",
-      "commandLineArgs": "2022"
+    "Bracknell 2022": {
+        "commandName": "Project",
+        "commandLineArgs": "BracknellAndWokingham 2022"
     }
   }
 }

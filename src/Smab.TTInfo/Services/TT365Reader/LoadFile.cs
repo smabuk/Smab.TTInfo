@@ -11,12 +11,11 @@ public sealed partial class TT365Reader
 
 		string source = Path.Combine(CacheFolder, fileName);
 
-		if (File.Exists(source))
+		return File.Exists(source) switch
 		{
-			return File.ReadAllText(source);
-		}
-
-		return null;
+			true  => File.ReadAllText(source),
+			false => null,
+		};
 	}
 }
 

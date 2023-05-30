@@ -33,13 +33,13 @@ GET https://{{hostname}}:{{port}}/api/fixtures/Senior_2021-22/{{league}}/{{team}
 
 ###
 
-# Get the Team "Our Lady of Peace D" from @season
+# Get the Team from a particular season
 GET https://{{hostname}}:{{port}}/api/team/{{season}}/{{league}}/{{team}}
 
 ###
 
 
-# Get the Team "Our Lady of Peace D" from @season
+# Get the players from a team in a particular season
 GET https://{{hostname}}:{{port}}/api/teamplayers/{{season}}/{{league}}/{{team}}
 
 ###
