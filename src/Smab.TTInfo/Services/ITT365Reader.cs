@@ -17,4 +17,5 @@ public interface ITT365Reader
 
 	IcalCalendar IcalFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
 	string IcalStringFromFixtures(string LeagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
+	string GetSeasonId(string seasonId, int year);
 }

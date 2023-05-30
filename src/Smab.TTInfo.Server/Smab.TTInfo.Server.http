@@ -2,6 +2,7 @@
 
 @hostname=localhost
 @port=7436
+@group=tt
 
 @league=Reading
 @season=Senior_2021-22
@@ -20,27 +21,38 @@ GET https://{{hostname}}:{{port}}/Calendar/{{league}}/{{team}}
 
 
 
-GET https://{{hostname}}:{{port}}/api/fixtures/{{league}}/
+GET https://{{hostname}}:{{port}}/{{group}}/fixtures/{{league}}/
 
 ###
 
-GET https://{{hostname}}:{{port}}/api/fixtures/{{league}}/{{team}}
+GET https://{{hostname}}:{{port}}/{{group}}/fixtures/{{league}}/{{team}}
 
 ###
 
 
-GET https://{{hostname}}:{{port}}/api/fixtures/Senior_2021-22/{{league}}/{{team}}
+GET https://{{hostname}}:{{port}}/{{group}}/fixtures/Senior_2021-22/{{league}}/{{team}}
 
 ###
 
 # Get the Team from a particular season
-GET https://{{hostname}}:{{port}}/api/team/{{season}}/{{league}}/{{team}}
+GET https://{{hostname}}:{{port}}/{{group}}/team/{{season}}/{{league}}/{{team}}
+
+###
+
+
+# Get the players from a team
+GET https://{{hostname}}:{{port}}/{{group}}/teamplayers/{{league}}/{{team}}
+
+###
+
+# Get the players from a team in a particular season
+GET https://{{hostname}}:{{port}}/{{group}}/teamplayers/{{season}}/{{league}}/{{team}}
 
 ###
 
 
 # Get the players from a team in a particular season
-GET https://{{hostname}}:{{port}}/api/teamplayers/{{season}}/{{league}}/{{team}}
+GET https://{{hostname}}:{{port}}/{{group}}/teamplayers/2019/{{league}}/{{team}}
 
 ###
 
