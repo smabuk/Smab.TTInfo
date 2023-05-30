@@ -16,4 +16,6 @@ public class Player
 	public int NationalRanking { get; set; }
 	public int Id => string.IsNullOrWhiteSpace(PlayerURL) ? 0 :
 		int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "");
+
+	public List<PlayerResult> PlayerResults { get; set; } = new();
 }

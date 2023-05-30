@@ -6,6 +6,10 @@
     "Bracknell 2022": {
         "commandName": "Project",
         "commandLineArgs": "BracknellAndWokingham 2022"
+    },
+    "Reading 2022 smith": {
+        "commandName": "Project",
+        "commandLineArgs": "Reading 2022 smith"
     }
   }
 }

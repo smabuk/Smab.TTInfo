@@ -11,6 +11,7 @@ public interface ITT365Reader
 
 	Task<List<Division>>  GetDivisions(string LeagueId, string SeasonId = "");
 	Task<League?>         GetLeague(string LeagueId);
+	Task<Player?>         GetPlayerStats(string LeagueId, Player player, string SeasonId = "");
 	Task<Team?>           GetTeamStats(string LeagueId, string TeamName, string SeasonId = "");
 
 	string CsvFromFixtures(ICollection<Fixture> Fixtures);
