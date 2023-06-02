@@ -6,7 +6,7 @@
 
 @league=Reading
 @season=Senior_2021-22
-@team=Our%20Lady%20Of%20Peace%20D
+@team=Our%20Lady%20Of%20Peace%20A
 
 
 ###
@@ -21,7 +21,7 @@ GET https://{{hostname}}:{{port}}/Calendar/{{league}}/{{team}}
 
 
 
-GET https://{{hostname}}:{{port}}/{{group}}/fixtures/{{league}}/
+GET https://{{hostname}}:{{port}}/{{group}}/fixtures/{{league}}
 
 ###
 

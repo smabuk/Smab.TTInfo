@@ -5,7 +5,7 @@ public static partial class TTEndPoints
 
 	public static RouteGroupBuilder MapTTEndPoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/fixtures",                                  GetFixtures);
+		group.MapGet("/fixtures/{leagueId}",                       GetFixtures);
 		group.MapGet("/fixtures/{leagueId}/{teamname}",            GetFixtures);
 		group.MapGet("/fixtures/{seasonId}/{leagueId}/{teamName}", GetFixtures);
 		group.MapGet("/fixtures/{year:int}/{leagueId}/{teamName}", GetFixtures);
