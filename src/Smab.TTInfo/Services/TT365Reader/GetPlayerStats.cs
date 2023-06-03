@@ -44,7 +44,7 @@ public sealed partial class TT365Reader
 			}
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = resultRow.Descendants("td").ToArray();
-				if (cells.Length == 7) {
+				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
 					string opponentHref = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = cells[0].Descendants("a").Single().InnerText.Trim();
 					Player opponent = new () {
