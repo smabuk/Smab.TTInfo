@@ -1,7 +1,7 @@
 ﻿namespace Smab.TTInfo.Cli;
 internal class TTInfoCli
 {
-	public static async Task Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? searchName = null)
+	public static async Task<int> Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? searchName = null)
 	{
 		searchName = searchName?.ToLowerInvariant() ?? null;
 		showTeamPlayers = showTeamPlayers?.ToLowerInvariant() ?? null;
@@ -15,10 +15,18 @@ internal class TTInfoCli
 			CacheHours = 10_000_000,
 		};
 
-		League? league = await tt365.GetLeague(leagueId);
+		League? league = await AnsiConsole.Status()
+			.Spinner(Spinner.Known.Circle)
+			.AutoRefresh(true)
+			.StartAsync($"Loading... {leagueId} ...", async ctx =>
+			{
+				return await tt365.GetLeague(leagueId);
+			}
+			);
+
 		if (league is null) {
 			AnsiConsole.MarkupLine($"Couldn't get league: {leagueId}");
-			return;
+			return -1;
 		}
 
 		AnsiConsole.MarkupLine($"{league.Name}   {league.URL}");
@@ -27,9 +35,25 @@ internal class TTInfoCli
 
 		AnsiConsole.MarkupLine("");
 		AnsiConsole.MarkupLine($"{seasonId}");
-		LookupTables lookupTables = await tt365.GetLookupTables(leagueId, seasonId);
+
+		LookupTables lookupTables = await AnsiConsole.Status()
+			.Spinner(Spinner.Known.Circle)
+			.AutoRefresh(true)
+			.StartAsync($"Loading... {leagueId} {seasonId} ...", async ctx =>
+			{
+				return await tt365.GetLookupTables(leagueId, seasonId);
+			}
+			);
 		allLookupTables.Add(lookupTables);
-		List<Division> divisions = await tt365.GetDivisions(leagueId, seasonId);
+
+		List<Division> divisions = await AnsiConsole.Status()
+			.Spinner(Spinner.Known.Circle)
+			.AutoRefresh(true)
+			.StartAsync($"Loading... {leagueId} {seasonId} all divisions ...", async ctx =>
+			{
+				return await tt365.GetDivisions(leagueId, seasonId);
+			}
+			);
 		allDivisions.AddRange(divisions);
 
 		foreach (Division division in divisions) {
@@ -37,16 +61,21 @@ internal class TTInfoCli
 			AnsiConsole.MarkupLine($"  {division.Name}");
 			foreach (Team team in division.Teams) {
 				Team newTeam = new();
-				AnsiConsole.Markup($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3}");
+				string message = "";
 				try {
-					newTeam = await tt365.GetTeamStats(leagueId, team.Name, seasonId) ?? new();
+					newTeam = await AnsiConsole.Status()
+						.Spinner(Spinner.Known.Circle)
+						.AutoRefresh(true)
+						.StartAsync($"Loading team... {team.Name} ...", async ctx =>
+						{
+							return await tt365.GetTeamStats(leagueId, team.Name, seasonId) ?? new();
+						}
+						);
 				}
 				catch (Exception ex) {
-					AnsiConsole.Markup($" *** {ex.Message}");
+					message = $"*** {ex.Message}";
 				}
-				finally {
-					AnsiConsole.MarkupLine($"  {TT365Reader.FixPlayerName(newTeam.Captain),-20}");
-				}
+				AnsiConsole.MarkupLine($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3} {TT365Reader.FixPlayerName(newTeam.Captain),-20} {message}");
 				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? new List<Player>()) {
 					bool showPlayerMatchDetails = searchName is not null && player.Name.ToLowerInvariant().Contains(searchName);
 					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.ToLowerInvariant().Contains(showTeamPlayers);
@@ -54,7 +83,14 @@ internal class TTInfoCli
 						AnsiConsole.MarkupLine($"         {TT365Reader.FixPlayerName(player.Name),-25} {player.Played,6} {(int)player.WinPercentage,3}%");
 					}
 					if (showPlayerMatchDetails) {
-						Player p2 = await tt365.GetPlayerStats(leagueId, player, seasonId) ?? new();
+						Player p2 = await AnsiConsole.Status()
+							.Spinner(Spinner.Known.Circle)
+							.AutoRefresh(true)
+							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx =>
+							{
+								return await tt365.GetPlayerStats(leagueId, player, seasonId) ?? new();
+							}
+							);
 						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name).OrderBy(pr => pr.Date)) {
 							string dateString = playerResult.Date.ToString("dd MMM");
 							dateString = dateString.Length <= 6 ? dateString : dateString[..6];
@@ -69,7 +105,7 @@ internal class TTInfoCli
 			}
 		}
 
-
+		return 0;
 	}
 
 	private static string GetResultColor(PlayerResult playerResult)

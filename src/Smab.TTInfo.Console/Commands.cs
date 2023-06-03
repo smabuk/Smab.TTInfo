@@ -3,11 +3,9 @@
 [Description("TTInfo cli utility for reading Table Tennis 365.")]
 internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 {
-
 	public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
 	{
-		TTInfoCli.Run(settings.LeagueId, settings.Year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers).Wait();
-		return 0;
+		return TTInfoCli.Run(settings.LeagueId, settings.Year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers).Result;
 	}
 
 	public sealed class Settings : CommandSettings
