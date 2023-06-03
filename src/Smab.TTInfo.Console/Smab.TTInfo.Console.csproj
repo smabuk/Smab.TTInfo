@@ -12,11 +12,16 @@
 		<Company>Simon Brookes</Company>
 		<Copyright>Copyright © Simon Brookes</Copyright>
 		<Description>Console application for accessing the information on tabletennis365.com</Description>
-		<VersionPrefix>0.2.0</VersionPrefix>
+		<VersionPrefix>0.3.0</VersionPrefix>
 		<VersionSuffix Condition=" '$(ComputerName)' != '' ">$(ComputerName)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
 		<VersionSuffix Condition=" '$(Name)' != '' And '$(ComputerName)' == '' ">$(Name)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
 		<VersionSuffix Condition=" '$(Name)' == '' And '$(ComputerName)' == '' ">$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Spectre.Console" Version="0.47.0" />
+	  <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="../Smab.TTInfo/Smab.TTInfo.csproj" />
