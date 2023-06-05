@@ -3,28 +3,25 @@
 namespace Smab.TTInfo.Models.TT365;
 
 [DebuggerDisplay("Name: {Name,nq}")]
-public record PlayerResult
+public record PlayerResult(
+	int      Id               ,
+	string   Name             ,
+	int      OriginalSortOrder,
+	DateOnly Date             ,
+	string   PlayerTeamName   ,
+	Player   Opponent         ,
+	string   OpponentTeam     ,
+	string   Division         ,
+	string   Scores           ,
+	int?     RankingDiff      ,
+	string   Result           ,
+	string   ResultReason     ,
+	string   MatchCardURL
+	)
 {
-	public int      Id { get; set; }
-	public string   Name { get; set; } = "";
-	public int      OriginalSortOrder{ get; set; }
-	public DateOnly Date { get; set; } = new();
-	public string   PlayerTeamName { get; set; } = "";
-	public Player   Opponent { get; set; } = new();
-	public string   OpponentTeam { get; set; } = "";
-	public string   Division{ get; set; } = "";
-	public string   Scores = "";
-	public int?     RankingDiff { get; set;}
-	public string   Result { get; set; } = "";
-	public string   ResultReason { get; set; } = "";
-	public string   MatchCardURL { get; set; } = "";
+	public string FormattedRankingDiff { get; init; } = RankingDiff?.ToString("+##0;-##0;0", CultureInfo.CurrentCulture) ?? "n/a";
 
-	public string RankingDiffString => RankingDiff switch {
-		null => "n/a",
-		_    => ((int)RankingDiff).ToString("+##0;-##0", CultureInfo.CurrentCulture),
-	};
-
-	public List<Score> Games => Scores
+	public List<Score> Games { get; init; } = Scores
 		.Split(",")
 		.Select(score => new Score(int.Parse(score[..score.IndexOf("-")]), int.Parse(score[(score.IndexOf("-")+1)..]))).ToList();
 

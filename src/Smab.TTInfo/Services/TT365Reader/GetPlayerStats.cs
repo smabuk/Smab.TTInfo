@@ -69,22 +69,21 @@ public sealed partial class TT365Reader
 					string matchCardUrl = $"{"https"}://www.tabletennis365.com{cells[6].SelectSingleNode("a").Attributes["href"].Value}";
 					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
 
-					PlayerResult playerResult = new()
-					{
-						Name = player.Name,
-						Id = player.Id,
-						OriginalSortOrder = index++,
-						PlayerTeamName = playerTeamName,
-						Opponent = opponent,
-						OpponentTeam = opponentTeam,
-						Division = division,
-						Date = date,
-						Scores = scores,
-						RankingDiff = rankingDiffSuccessful ? rankingDiff : null,
-						Result = result,
-						ResultReason = resultReason,
-						MatchCardURL = matchCardUrl,
-					};
+					PlayerResult playerResult = new(
+						Id:                player.Id,
+						Name:              player.Name,
+						OriginalSortOrder: index++,
+						Date:              date,
+						PlayerTeamName:    playerTeamName,
+						Opponent:          opponent,
+						OpponentTeam:      opponentTeam,
+						Division:          division,
+						Scores:            scores,
+						RankingDiff:       rankingDiffSuccessful ? rankingDiff : null,
+						Result:            result,
+						ResultReason:      resultReason,
+						MatchCardURL:      matchCardUrl
+					);
 
 					newPlayer.PlayerResults.Add(playerResult);
 				}
