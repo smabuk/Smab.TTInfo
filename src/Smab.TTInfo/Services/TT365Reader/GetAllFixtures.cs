@@ -32,6 +32,7 @@ public sealed partial class TT365Reader
 					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
 
 		if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
+		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return null; }
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']"))
 		{
@@ -44,7 +45,9 @@ public sealed partial class TT365Reader
 				if (nodeClass.HasClass("fixture"))
 				{
 					Fixture fixture = nodeClass.HasClass("complete")
-						? new CompletedFixture()
+						? fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]") is not null
+							? new VoidFixture()
+							: new CompletedFixture()
 						: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
 							? new PostponedFixture()
 							: (Fixture)new();
@@ -57,16 +60,16 @@ public sealed partial class TT365Reader
 					fixture.Venue = fixtureNode.SelectSingleNode("div[@class='venue']/span/a").InnerText.Replace("&amp;", "&");
 
 					HtmlNode homeNode = fixtureNode.SelectSingleNode("div[@class='home']");
-					fixture.HomeTeam = homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+					fixture.HomeTeam = homeNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
 
 					HtmlNode awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
-					fixture.AwayTeam = awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "teamName").SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+					fixture.AwayTeam = awayNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
 
 					if (fixture is CompletedFixture completedFixture)
 					{
 						completedFixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						completedFixture.CardURL = $"{"https"}://www.tabletennis365.com{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
+						completedFixture.CardURL = $"{tt365com}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
 						HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]");
 						if (playerNodes is not null)
 						{
@@ -97,7 +100,12 @@ public sealed partial class TT365Reader
 
 					if (fixture is PostponedFixture pf)
 					{
-						pf.Postponed = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim() ?? "";
+						pf.Reason = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim() ?? "";
+					}
+
+					if (fixture is VoidFixture vf)
+					{
+						vf.Reason = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]")?.Attributes["title"].Value.Trim() ?? "";
 					}
 
 					fixtures.Add(fixture);

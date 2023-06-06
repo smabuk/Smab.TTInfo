@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.Models.TT365;
 
-public record PostponedFixture : Fixture
+public record VoidFixture : Fixture
 {
 	public string Reason { get; set; } = "";
 }
