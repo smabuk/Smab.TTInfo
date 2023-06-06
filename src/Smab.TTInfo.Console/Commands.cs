@@ -5,7 +5,7 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 {
 	public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
 	{
-		return TTInfoCli.Run(settings.LeagueId, settings.Year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers).Result;
+		return TTInfoCli.Run(settings.LeagueId, settings.Year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result;
 	}
 
 	public sealed class Settings : CommandSettings
@@ -26,6 +26,10 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		[Description("Show match details for a player.")]
 		[CommandOption("-p")]
 		public string? SearchPlayers { get; init; } = null;
+
+		[Description("Limit match details to these opponents.")]
+		[CommandOption("-v|--vs")]
+		public string? SearchOpponents { get; init; } = null;
 
 		[Description("Cache folder used for storing the html and json files so the server calls can be avoided.")]
 		[CommandOption("-c|--cacheFolder")]

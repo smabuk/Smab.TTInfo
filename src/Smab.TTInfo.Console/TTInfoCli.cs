@@ -1,9 +1,12 @@
-﻿namespace Smab.TTInfo.Cli;
+﻿using Smab.TTInfo.Models.TT365;
+
+namespace Smab.TTInfo.Cli;
 internal class TTInfoCli
 {
-	public static async Task<int> Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? searchName = null)
+	public static async Task<int> Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
 	{
-		searchName = searchName?.ToLowerInvariant() ?? null;
+		playerSearchName = playerSearchName?.ToLowerInvariant() ?? null;
+		opponentSearchName = opponentSearchName?.ToLowerInvariant() ?? null;
 		showTeamPlayers = showTeamPlayers?.ToLowerInvariant() ?? null;
 
 		List<LookupTables> allLookupTables = new();
@@ -77,7 +80,7 @@ internal class TTInfoCli
 				}
 				AnsiConsole.MarkupLine($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3} {TT365Reader.FixPlayerName(newTeam.Captain),-20} {message}");
 				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? new List<Player>()) {
-					bool showPlayerMatchDetails = searchName is not null && player.Name.ToLowerInvariant().Contains(searchName);
+					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.ToLowerInvariant().Contains(playerSearchName);
 					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.ToLowerInvariant().Contains(showTeamPlayers);
 					if (showTeamDetails || showPlayerMatchDetails) {
 						AnsiConsole.MarkupLine($"         {TT365Reader.FixPlayerName(player.Name),-25} {player.Played,6} {(int)player.WinPercentage,3}%");
@@ -91,11 +94,12 @@ internal class TTInfoCli
 								return await tt365.GetPlayerStats(leagueId, player, seasonId) ?? new();
 							}
 							);
-						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name).OrderBy(pr => pr.Date)) {
-							string dateString = playerResult.Date.ToString("dd MMM");
-							dateString = dateString.Length <= 6 ? dateString : dateString[..6];
+						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName))).OrderBy(pr => pr.Date)) {
+							//bool limitToOpponentMatchDetails = opponentSearchName is null || playerResult.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName);
+							string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
+							dateString = dateString.Length <= 9 ? dateString : dateString[..9];
 							string resultColor = GetResultColor(playerResult);
-							AnsiConsole.MarkupLine($"[{resultColor}]          {dateString,-6} {(playerResult.ResultReason.Any() ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
+							AnsiConsole.MarkupLine($"[{resultColor}]          {dateString,-9} {(playerResult.ResultReason.Any() ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
 							if (playerResult.ResultReason.Any()) {
 								AnsiConsole.MarkupLine($"[{resultColor}]                  {playerResult.ResultReason}[/]");
 							}
