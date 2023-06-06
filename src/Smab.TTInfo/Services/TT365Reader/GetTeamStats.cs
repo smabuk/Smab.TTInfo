@@ -140,7 +140,7 @@ public sealed partial class TT365Reader
 						Points = int.Parse(cells[4].InnerText),
 						PlayerOfTheMatch = hasPoM ? cells[5].InnerText : "",
 						Other = other,
-						CardURL = $"{"https"}://www.tabletennis365.com/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
+						CardURL = $"{tt365com}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
 					};
 					if (DateOnly.TryParse(cells[2].InnerText,
 						   gbCulture,

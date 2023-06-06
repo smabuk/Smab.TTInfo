@@ -39,7 +39,7 @@ public sealed partial class TT365Reader
 	//			return null; /* TODO Change to default(_) if this is not a reference type */
 	//	}
 
-	//	fixturesView.URL = $"{"https"}://www.tabletennis365.com/{LeagueId}/Fixtures/{SeasonId}/{division}?c=False&vm={viewModeType}&d={division}&vn={venueId}&cl={clubId}&t={teamId}&swn={showByWeekNo}&hc={hideCompletedFixtures}&md={mergeDivisions}";
+	//	fixturesView.URL = $"{tt365com}/{LeagueId}/Fixtures/{SeasonId}/{division}?c=False&vm={viewModeType}&d={division}&vn={venueId}&cl={clubId}&t={teamId}&swn={showByWeekNo}&hc={hideCompletedFixtures}&md={mergeDivisions}";
 	//	HtmlDocument doc = await LoadPage(
 	//		fixturesView.URL,
 	//		$@"{LeagueId}_{seasonId}_Fixtures_{TeamName}.html");

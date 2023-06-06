@@ -19,11 +19,10 @@ public sealed partial class TT365Reader
 
 		if (cachedLeague is null || string.IsNullOrWhiteSpace(cachedLeague.CurrentSeason.Id))
 		{
-			url = $"{"https"}://www.tabletennis365.com/{LeagueId}";
+			url = $"{tt365com}/{LeagueId}";
 			doc = await LoadPage(
 				url,
-				$@"{LeagueId}.html",
-				240);
+				$@"{LeagueId}.html");
 
 			if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
 

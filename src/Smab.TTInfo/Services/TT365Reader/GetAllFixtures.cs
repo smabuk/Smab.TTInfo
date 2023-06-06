@@ -26,7 +26,7 @@ public sealed partial class TT365Reader
 			ShowByWeekNo = true
 		};
 
-		string url = $"{"https"}://www.tabletennis365.com/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
+		string url = $"{tt365com}/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
 		HtmlDocument doc = await LoadPage(
 					url,
 					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");

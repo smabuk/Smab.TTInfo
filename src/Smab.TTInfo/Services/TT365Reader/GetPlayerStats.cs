@@ -21,9 +21,8 @@ public sealed partial class TT365Reader
 		HttpClient client = new();
 		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
 
-		//https://www.tabletennis365.com/Reading/Results/Player/Statistics/Senior_2022-23/Simon_Brookes/335062
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
-			player.PlayerURL = $"{"https"}://www.tabletennis365.com/{leagueId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
+			player.PlayerURL = $"{tt365com}{leagueId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
 		}
 		HtmlDocument doc = await LoadPage(
 			player.PlayerURL,

@@ -13,7 +13,7 @@ public sealed partial class TT365Reader
 			return divisions;
 		}
 
-		string url = $"{"https"}://www.tabletennis365.com/{LeagueId}/Tables/{SeasonId}/All_Divisions";
+		string url = $"{tt365com}/{LeagueId}/Tables/{SeasonId}/All_Divisions";
 		HtmlDocument doc = await LoadPage(url, $@"{LeagueId}_{SeasonId}_Divisions_All_Divisions.html");
 
 		if (!string.IsNullOrWhiteSpace(doc.Text)) {
