@@ -22,7 +22,7 @@ public sealed partial class TT365Reader
 		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
 
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
-			player.PlayerURL = $"{tt365com}{leagueId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
+			player.PlayerURL = $"{tt365com}/{leagueId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
 		}
 		HtmlDocument doc = await LoadPage(
 			player.PlayerURL,

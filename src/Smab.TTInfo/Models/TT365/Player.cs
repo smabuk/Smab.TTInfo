@@ -20,6 +20,7 @@ public class Player
 			? 0
 			: int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "")) 
 		: PlayerId;
+	public string SeasonId => PlayerURL.Split('/').Skip(4).FirstOrDefault() ?? "";
 
 	public List<PlayerResult> PlayerResults { get; set; } = new();
 }

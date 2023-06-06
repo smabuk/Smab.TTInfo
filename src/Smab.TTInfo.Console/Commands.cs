@@ -5,7 +5,13 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 {
 	public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
 	{
-		return TTInfoCli.Run(settings.LeagueId, settings.Year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result;
+		int year = settings.Year ?? DateTime.Today.AddMonths(-8).Year;
+		return settings.Year switch
+		{
+			null when settings.SearchPlayers is not null && settings.SearchOpponents is not null 
+			  => TTInfoCli.PlayerVsPlayer(settings.LeagueId, year, settings.CacheFolder, settings.SearchPlayers, settings.SearchOpponents).Result,
+			_ => TTInfoCli.Run(settings.LeagueId, year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result
+		};
 	}
 
 	public sealed class Settings : CommandSettings
@@ -16,7 +22,7 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 
 		[Description("The year in which the season starts.")]
 		[CommandArgument(1, "[Year]")]
-		public int Year { get; init; } = DateTime.Today.AddMonths(-8).Year;
+		public int? Year { get; init; }
 
 
 		[Description("Show the team members in the team specified by the search.")]
