@@ -2,9 +2,11 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+		<RazorLangVersion>8.0</RazorLangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -19,8 +21,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Spectre.Console" Version="0.47.0" />
-	  <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+		<PackageReference Include="Spectre.Console" Version="0.47.0" />
+		<PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
 	</ItemGroup>
 
 	<ItemGroup>
