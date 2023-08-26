@@ -3,22 +3,20 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
-      "library": "@fortawesome/fontawesome-free@6.4.0",
+      "library": "@fortawesome/fontawesome-free@6.4.2",
       "destination": "wwwroot/lib/fortawesome/fontawesome-free/",
       "files": [
         "js/all.min.js",
-        "LICENSE.txt",
-        "package.json"
+        "LICENSE.txt"
       ]
     },
     {
-      "library": "bootstrap@5.2.3",
+      "library": "bootstrap@5.3.1",
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
         "dist/css/bootstrap.min.css",
         "dist/css/bootstrap.min.css.map",
-        "package.json",
-        "LICENSE",
+         "LICENSE",
         "README.md"
       ]
     },
@@ -32,7 +30,6 @@
         "font/fonts/open-iconic.svg",
         "font/fonts/open-iconic.ttf",
         "font/fonts/open-iconic.woff",
-        "package.json",
         "FONT-LICENSE",
         "ICON-LICENSE",
         "README.md"
