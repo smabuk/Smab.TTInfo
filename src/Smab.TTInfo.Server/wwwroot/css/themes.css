@@ -8,6 +8,8 @@
     :root {
         --bg-color: #161625;
         --text-color: #e1e1ff;
+        --bs-body-bg: #161625;
+        --bs-body-color: #e1e1ff;
     }
     
     .card,

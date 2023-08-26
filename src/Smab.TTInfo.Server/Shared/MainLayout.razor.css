@@ -6,6 +6,7 @@
 
 main {
     flex: 1;
+    margin-bottom: var(--sb-footer-size, 50px);
 }
 
 .sidebar {
@@ -13,23 +14,36 @@ main {
 }
 
 .top-row {
-    background-color: var(--bg-color);
-    border-bottom: 1px solid #d6d5d5;
+    background-color: #04173d;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    color: #fff;
     justify-content: flex-end;
     height: 3.5rem;
     display: flex;
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row .btn-link {
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        color: #fff;
         white-space: nowrap;
         margin-left: 1.5rem;
+        text-decoration: none;
     }
 
-    .top-row a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row ::deep a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+h1 {
+    font-size: x-large;
+    margin-right: auto;
+    margin-bottom: 0px;
+}
 
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
@@ -40,7 +54,7 @@ main {
         justify-content: space-between;
     }
 
-    .top-row a, .top-row .btn-link {
+    .top-row ::deep a, .top-row ::deep .btn-link {
         margin-left: 0;
     }
 }
@@ -62,6 +76,12 @@ main {
         top: 0;
         z-index: 1;
     }
+
+        .top-row.auth ::deep a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
 
     .top-row, article {
         padding-left: 2rem !important;

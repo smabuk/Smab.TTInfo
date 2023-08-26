@@ -1,4 +1,4 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="">@Program.SiteName</a><span title="@VersionInfo"><i class="fa fas fa-info-circle"></i></span>
 		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -11,83 +11,85 @@
 	<nav class="flex-column">
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-				<span class="oi oi-home" aria-hidden="true"></span> Home
+				<span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="LeagueSummary/Reading">
-				<span class="oi" aria-hidden="true">🏫</span> Reading League
+				<span class="bi" aria-hidden="true">🏫</span> Reading League
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="Recent/Reading">
-				<span class="oi" aria-hidden="true">🕐</span> Reading recent
+				<span class="bi" aria-hidden="true">🕐</span> Reading recent
 			</NavLink>
 		</div>
-		<div class="nav-item px-3">
+@*
+	<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace A">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP A
+				<span class="bi" aria-hidden="true">🏓</span> OLOP A
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace B">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP B
+				<span class="bi" aria-hidden="true">🏓</span> OLOP B
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace C">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP C
+				<span class="bi" aria-hidden="true">🏓</span> OLOP C
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace D">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP D
+				<span class="bi" aria-hidden="true">🏓</span> OLOP D
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace E">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP E
+				<span class="bi" aria-hidden="true">🏓</span> OLOP E
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace F">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP F
+				<span class="bi" aria-hidden="true">🏓</span> OLOP F
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace G">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP G
+				<span class="bi" aria-hidden="true">🏓</span> OLOP G
 			</NavLink>
 		</div>
+ *@
 		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="Calendar/Reading/Our Lady Of Peace D?command=json">
-				<span class="oi oi-calendar" aria-hidden="true"></span> OLOP D
+			<NavLink class="nav-link" href="Calendar/Reading/Our Lady Of Peace B?command=json">
+				<span class="bi bi-calendar3" aria-hidden="true"></span> OLOP B
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="Calendar/Reading/Our Lady Of Peace F?command=json">
-				<span class="oi oi-calendar" aria-hidden="true"></span> OLOP F
+				<span class="bi bi-calendar3" aria-hidden="true"></span> OLOP F
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="LeagueSummary/BracknellAndWokingham">
-				<span class="oi" aria-hidden="true">🏫</span> Bracknell League
+				<span class="bi" aria-hidden="true">🏫</span> Bracknell League
 			</NavLink>
 		</div>
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="TeamSummary/BracknellAndWokingham/OLOP A">
-				<span class="oi" aria-hidden="true">🏓</span> OLOP A Bracknell
+				<span class="bi" aria-hidden="true">🏓</span> OLOP A Bracknell
 			</NavLink>
 		</div>
 	</nav>
 </div>
 
 @code {
+	private string VersionInfo => $"{Program.Name}: {Program.ProductVersion}{Environment.NewLine}{Program.SmabTTInfoName}: {Program.SmabTTInfoVersion}";
+	
 	private bool collapseNavMenu = true;
 
 	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-	private string VersionInfo => $"{Program.Name}: {Program.ProductVersion}{Environment.NewLine}{Program.SmabTTInfoName}: {Program.SmabTTInfoVersion}";
 
 	private void ToggleNavMenu()
 	{
