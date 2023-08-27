@@ -10,7 +10,6 @@ public sealed partial class TT365Reader
 	public string GetSeasonId(string seasonId, int year)
 	{
 		string newSeasonId = "";
-		DateOnly dt = new(year, 1, 1);
 		if (SeasonRegex().IsMatch(seasonId)) {
 			Match regexMatch = SeasonRegex().Match(seasonId);
 			int year1 = regexMatch.Groups["year1"].Value.Length == 4 ? year : year % 100;
@@ -21,4 +20,3 @@ public sealed partial class TT365Reader
 		return newSeasonId;
 	}
 }
-

@@ -3,9 +3,7 @@
 public sealed partial class TT365Reader
 {
 	public string IcalStringFromFixtures(string LeagueName, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone)
-	{
-		return IcalFromFixtures(LeagueName, TeamName, Fixtures,timeZone).ToString();
-	}
+		=> IcalFromFixtures(LeagueName, TeamName, Fixtures, timeZone).ToString();
 
 	public IcalCalendar IcalFromFixtures(string LeagueName, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone)
 	{
@@ -15,19 +13,19 @@ public sealed partial class TT365Reader
 			Description = "Fixtures and results of matches for the {LeagueName} league",
 			Events = new()
 		};
-		foreach (Fixture fixture in Fixtures)
-		{
+
+		foreach (Fixture fixture in Fixtures) {
 			VEvent fixtureEvent = new()
 			{
-				UID = $"RDTTA {fixture.HomeTeam} vs {fixture.AwayTeam}",
-				Summary = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
-				Location = fixture.Venue,
-				DateStart = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(19, 30)), timeZone), // All matches by default start at 7:30pm
-				DateEnd = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(22, 30)), timeZone),
-				Priority = VEvent.PriorityLevel.Normal,
+				UID          = $"TT365 {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				Summary      = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				Location     = fixture.Venue,
+				DateStart    = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(19, 30)), timeZone), // All matches by default start at 7:30pm
+				DateEnd      = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(22, 30)), timeZone),
+				Priority     = VEvent.PriorityLevel.Normal,
 				Transparency = VEvent.TransparencyType.TRANSPARENT,
-				Categories = "Table tennis,OLOP Table Tennis Club",
-				Description = $"\n"
+				Categories   = "Table tennis,OLOP Table Tennis Club",
+				Description  = $"\n"
 			};
 
 			if (fixture.Venue.ToUpperInvariant().Contains("CURZON")
@@ -50,20 +48,14 @@ public sealed partial class TT365Reader
 					};
 			}
 
-			if (fixture is CompletedFixture completedFixture)
-			{
-				if (completedFixture.ForHome > completedFixture.ForAway)
-				{
+			if (fixture is CompletedFixture completedFixture) {
+				if (completedFixture.ForHome > completedFixture.ForAway) {
 					fixtureEvent.Description += $"\nWIN:  {fixture.HomeTeam.ToUpper()}";
 					fixtureEvent.Description += $"\nLOSS: {fixture.AwayTeam}";
-				}
-				else if (completedFixture.ForHome < completedFixture.ForAway)
-				{
+				} else if (completedFixture.ForHome < completedFixture.ForAway) {
 					fixtureEvent.Description += $"\nLOSS: {fixture.HomeTeam}";
 					fixtureEvent.Description += $"\nWIN:  {fixture.AwayTeam.ToUpper()}";
-				}
-				else if (completedFixture.ForHome == completedFixture.ForAway)
-				{
+				} else if (completedFixture.ForHome == completedFixture.ForAway) {
 					fixtureEvent.Description += $"\nDRAW: {fixture.HomeTeam} and {fixture.AwayTeam}";
 				}
 				fixtureEvent.Description += $"\nScore: {completedFixture.Score}";
@@ -74,6 +66,4 @@ public sealed partial class TT365Reader
 
 		return ical;
 	}
-
 }
-

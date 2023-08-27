@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 
-using Smab.Shared.Helpers;
 using Smab.TTInfo.Server;
 using Smab.TTInfo.Server.EndPoints;
 
@@ -9,26 +7,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
-/*	.AddJsonOptions(options => options.JsonSerializerOptions.AddDateOnlyAndTimeOnlyConverters())*/;
+/*	.AddJsonOptions(options => options.JsonSerializerOptions.AddDateOnlyAndTimeOnlyConverters())*/
+;
 
 builder.Services.AddLocalization();
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new()
 	{
-		CacheFolder  = builder.Configuration.GetValue<string>("TTInfo:CacheFolder")  ?? @"Cache",
-		CacheHours   = builder.Configuration.GetValue<int?>  ("TTInfo:CacheHours")   ?? 6,
-		UseTestFiles = builder.Configuration.GetValue<bool?> ("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
+		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"Cache",
+		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
+		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
+if (!app.Environment.IsDevelopment()) {
 	_ = app.UseExceptionHandler("/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+	_ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();

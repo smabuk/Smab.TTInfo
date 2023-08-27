@@ -11,21 +11,20 @@ public record TeamResult : CompletedFixture
 	{
 		"home" => ForHome,
 		"away" => ForAway,
-		_ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway))
+		_ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway)),
 	};
 
 	public int ScoreForOpposition => HomeOrAway.ToLowerInvariant() switch
 	{
 		"home" => ForAway,
 		"away" => ForHome,
-		_ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway))
+		_ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway)),
 	};
 
 	public string MatchResult => (ScoreForTeam - ScoreForOpposition) switch
 	{
 		> 0 => "win",
 		< 0 => "loss",
-		0 => "draw"
+		0   => "draw",
 	};
-
 }

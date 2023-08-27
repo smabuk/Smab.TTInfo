@@ -15,10 +15,10 @@ public class Player
 	public int RegionalRanking { get; set; }
 	public int NationalRanking { get; set; }
 	public int PlayerId { get; set; }
-	public int Id => PlayerId == 0 
-		? (string.IsNullOrWhiteSpace(PlayerURL) 
+	public int Id => (PlayerId == 0)
+		? (string.IsNullOrWhiteSpace(PlayerURL)
 			? 0
-			: int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "")) 
+			: int.Parse(PlayerURL.Split('/').LastOrDefault() ?? ""))
 		: PlayerId;
 	public string SeasonId => PlayerURL.Split('/').Skip(4).FirstOrDefault() ?? "";
 

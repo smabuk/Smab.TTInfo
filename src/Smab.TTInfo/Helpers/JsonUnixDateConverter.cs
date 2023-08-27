@@ -18,18 +18,13 @@ public sealed class JsonUnixDateConverterWithNulls : JsonConverter<DateTime?>
 
 	public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
 	{
-		if (value is null)
-		{
+		if (value is null) {
 			writer.WriteNullValue();
 		}
-		if (value.HasValue)
-		{
-			if (value.Value.Year == 1)
-			{
+		if (value.HasValue) {
+			if (value.Value.Year == 1) {
 				writer.WriteNullValue();
-			}
-			else
-			{
+			} else {
 				writer.WriteNumberValue((value.Value - Unix.Epoch).TotalSeconds);
 			}
 		}
@@ -45,25 +40,19 @@ internal static class DoubleExtensions
 {
 	public static DateTime FromUnixDate(this double? unixDate)
 	{
-		DateTime dt;
-		if (unixDate > 99999999999)
-			// UNIX Epoch milliseconds
-			dt = Unix.Epoch.AddSeconds(unixDate / (double)1000 ?? 0.0);
-		else
-			// UNIX Epoch seconds
-			dt = Unix.Epoch.AddSeconds(unixDate ?? 0.0);
-		return dt;
+		return unixDate switch
+		{
+			> 99999999999 => Unix.Epoch.AddSeconds(unixDate / 1000 ?? 0.0), // UNIX Epoch milliseconds
+			_             => Unix.Epoch.AddSeconds(unixDate ?? 0.0),        // UNIX Epoch seconds
+		};
 	}
 
-	public static DateTime FromUnixDate(this double unixDate)
+public static DateTime FromUnixDate(this double unixDate)
 	{
-		DateTime dt;
-		if (unixDate > 99999999999)
-			// UNIX Epoch milliseconds
-			dt = Unix.Epoch.AddSeconds(unixDate / 1000);
-		else
-			// UNIX Epoch seconds
-			dt = Unix.Epoch.AddSeconds(unixDate);
-		return dt;
+		return unixDate switch
+		{
+			> 99999999999 => Unix.Epoch.AddSeconds(unixDate / 1000), // UNIX Epoch milliseconds
+			_             => Unix.Epoch.AddSeconds(unixDate),        // UNIX Epoch seconds
+		};
 	}
 }

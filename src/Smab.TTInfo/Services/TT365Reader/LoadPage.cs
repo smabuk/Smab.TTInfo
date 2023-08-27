@@ -9,51 +9,40 @@ public sealed partial class TT365Reader
 		string html;
 		HtmlDocument doc = new();
 
-		if (!Directory.Exists(CacheFolder))
-		{
-			Directory.CreateDirectory(CacheFolder);
+		if (!Directory.Exists(CacheFolder)) {
+			_ = Directory.CreateDirectory(CacheFolder);
 		}
 
 		string source = Path.Combine(CacheFolder, fileName);
 		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < DateTime.UtcNow;
 
 		bool docLoadSuccessful = false;
-		if (!refreshCache || UseTestFiles)
-		{
-			if (File.Exists(source))
-			{
+		if (!refreshCache || UseTestFiles) {
+			if (File.Exists(source)) {
 				doc.Load(source);
 				docLoadSuccessful = true;
 			}
 		}
-		if (!docLoadSuccessful)
-		{
+		if (!docLoadSuccessful) {
 			using HttpClient client = new();
 			HttpResponseMessage? response = await client.GetAsync(url);
-			if (response.IsSuccessStatusCode)
-			{
+			if (response.IsSuccessStatusCode) {
 				html = await response.Content.ReadAsStringAsync();
 				doc.LoadHtml(html);
 				doc.Save(source);
-			}
-			else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
-			{
-				if (File.Exists(source))
-				{
+			} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
+				if (File.Exists(source)) {
 					doc.Load(source);
 					docLoadSuccessful = true;
 				}
-			}
-			else
-			{
-				if (File.Exists(source))
-				{
+			} else {
+				if (File.Exists(source)) {
 					doc.Load(source);
 					docLoadSuccessful = true;
 				}
 			}
 		}
+
 		return doc;
 	}
 }
-

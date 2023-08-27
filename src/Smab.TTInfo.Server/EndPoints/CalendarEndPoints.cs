@@ -7,7 +7,7 @@ public static partial class CalendarEndPoints
 
 	public static void MapCalendarEndPoints(this WebApplication? app)
 	{
-		app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam);
+		_ = (app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam));
 	}
 
 	public static Func<string, string, string?, ITT365Reader, HttpContext, Task<IResult>> GetCalendarByTeam =
@@ -16,9 +16,8 @@ public static partial class CalendarEndPoints
 			TeamName = TeamName.Replace("_", " ");
 			List<Fixture>? fixtures = (await _tt365.GetAllFixtures(LeagueName))?
 						.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
-                        .ToList();
-			if (fixtures is null)
-			{
+						.ToList();
+			if (fixtures is null) {
 				return Results.NotFound();
 			}
 
@@ -27,12 +26,11 @@ public static partial class CalendarEndPoints
 			IcalCalendar ical = _tt365.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
 
 			// Different ways of returning the information
-			switch (Command?.ToUpper())
-			{
+			switch (Command?.ToUpperInvariant()) {
 				case "TEXT":
 					return Results.Content(ical.ToString(), "text/plain");
 				case "CONTENT":
-					context.Response.Headers.Add("content-disposition", $"inline;filename={LeagueName} - {TeamName} Fixtures.ics");
+					context.Response.Headers.Append("content-disposition", $"inline;filename={LeagueName} - {TeamName} Fixtures.ics");
 					return Results.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 				case "FILE":
 					return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
@@ -43,11 +41,7 @@ public static partial class CalendarEndPoints
 				case "NEG":
 					return Results.Content(ical.ToString());
 				default:
-					break;
+					return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
 			}
-
-			return Results.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
-
 		};
-
 }

@@ -5,54 +5,43 @@
 
 <h1>Recent Results</h1>
 
-@if (fixtures.Count == 0)
-{
+@if (fixtures.Count == 0) {
 	<h2>Loading ... Results for the last @NoOfDays days ...</h2>
-}
-else
-{
+} else {
 	<div id="fixtures">
-		@foreach (var fixture in fixtures)
-		{
+		@foreach (var fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
 			<div class="card">
 				<div class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
-						@if (fixture is PostponedFixture pf)
-						{
+						@if (fixture is PostponedFixture pf) {
 							<span class="postponed badge" title="@pf.Reason">P</span>
 						}
 						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-						@if (fixture is CompletedFixture completedFixture1 && fr is not null)
-						{
+						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
 						}
-                        <a href="TeamSummary/@LeagueId/@fixture.HomeTeam">
-						@if (fr is not null && fr.HomeWin)
-						{
-							<strong>@fixture.HomeTeam</strong>
-						} else
-						{
-							<span>@fixture.HomeTeam</span>
-						}
-                        </a>
+						<a href="TeamSummary/@LeagueId/@fixture.HomeTeam">
+							@if (fr is not null && fr.HomeWin) {
+								<strong>@fixture.HomeTeam</strong>
+							} else {
+								<span>@fixture.HomeTeam</span>
+							}
+						</a>
 						vs
-                        <a href="TeamSummary/@LeagueId/@fixture.AwayTeam">
-						@if (fr is not null && fr.AwayWin)
-						{
-							<strong>@fixture.AwayTeam</strong>
-						} else
-						{
-							<span>@fixture.AwayTeam</span>
-						}
-                        </a>
+						<a href="TeamSummary/@LeagueId/@fixture.AwayTeam">
+							@if (fr is not null && fr.AwayWin) {
+								<strong>@fixture.AwayTeam</strong>
+							} else {
+								<span>@fixture.AwayTeam</span>
+							}
+						</a>
 					</div>
 				</div>
-				@if (fixture is PostponedFixture postponed)
-				{
+				@if (fixture is PostponedFixture postponed) {
 					<div class="row">
 						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 							@fixture.Division
@@ -62,16 +51,14 @@ else
 						</div>
 					</div>
 				}
-				@if (fixture is CompletedFixture completedFixture)
-				{
+				@if (fixture is CompletedFixture completedFixture) {
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 							@fixture.Division
 						</div>
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 							Home:
-							@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon))
-							{
+							@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
 								<span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
 							}
 						</div>
@@ -79,8 +66,7 @@ else
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 							Away:
-							@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon))
-							{
+							@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
 								<span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
 							}
 						</div>
@@ -118,13 +104,11 @@ else
 		NoOfDays = NoOfDays ?? 6;
 
 		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
-						.Where(f => f.Date <= today && f.Date >= today.AddDays(- (int)NoOfDays))
+						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
 						.Where(f => f is CompletedFixture || f is PostponedFixture)
 						.ToList();
-		foreach (var fixture in fixtures)
-		{
-			if (fixture is CompletedFixture completedFixture)
-			{
+		foreach (Fixture fixture in fixtures) {
+			if (fixture is CompletedFixture completedFixture) {
 				bool homeWin = (completedFixture.ForHome > completedFixture.ForAway);
 				bool awayWin = (completedFixture.ForHome < completedFixture.ForAway);
 				string fullScore = $"{completedFixture.ForHome} - {completedFixture.ForAway}";

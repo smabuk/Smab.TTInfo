@@ -27,10 +27,10 @@ public sealed partial class TT365Reader
 			if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
 
 			string leagueURL = url;
-			string leagueName = doc.DocumentNode.SelectSingleNode(@"//title").InnerText.Replace("&amp;", "&");
+			string leagueName        = doc.DocumentNode.SelectSingleNode(@"//title").InnerText.Replace("&amp;", "&");
 			string leagueDescription = doc.DocumentNode.SelectSingleNode(@"//meta[@property='og:description']").GetAttributeValue("content", "").Replace("&amp;", "&");
-			string leagueTheme = doc.DocumentNode.SelectSingleNode(@"//body").GetAttributeValue("class", "");
-			string currentSeasonId = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("href", "");
+			string leagueTheme       = doc.DocumentNode.SelectSingleNode(@"//body").GetAttributeValue("class", "");
+			string currentSeasonId   = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("href", "");
 			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf("/") + 1)..];
 
 			league = new(LeagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
@@ -49,7 +49,6 @@ public sealed partial class TT365Reader
 				string seasonName = item.GetAttributeValue("title", "");
 				league.Seasons.Add(new(seasonId, seasonName));
 			}
-
 		} else {
 			league = cachedLeague;
 			league.CurrentSeason.Lookups = await GetLookupTables(LeagueId, league.CurrentSeason.Id);
@@ -60,10 +59,8 @@ public sealed partial class TT365Reader
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFile(jsonString, $"league_{LeagueId}.json");
-		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentSeason.Id}.json");
 		
 		return league;
 	}
 }
-

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Smab.TTInfo.Models.TT365;
+﻿namespace Smab.TTInfo.Models.TT365;
 
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Team
@@ -25,6 +23,4 @@ public class Team
 	public int SetsAgainst {  get; set; }
 	public int Points {  get; set; }
 	public int PointsAdjustment {  get; set; }
-
-
 }

@@ -2,38 +2,37 @@
 
 public static partial class TTEndPoints
 {
-
 	public static RouteGroupBuilder MapTTEndPoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/fixtures/{leagueId}",                       GetFixtures);
-		group.MapGet("/fixtures/{leagueId}/{teamname}",            GetFixtures);
-		group.MapGet("/fixtures/{seasonId}/{leagueId}/{teamName}", GetFixtures);
-		group.MapGet("/fixtures/{year:int}/{leagueId}/{teamName}", GetFixtures);
+		_ = group.MapGet("/fixtures/{leagueId}",                       GetFixtures);
+		_ = group.MapGet("/fixtures/{leagueId}/{teamname}",            GetFixtures);
+		_ = group.MapGet("/fixtures/{seasonId}/{leagueId}/{teamName}", GetFixtures);
+		_ = group.MapGet("/fixtures/{year:int}/{leagueId}/{teamName}", GetFixtures);
 
-		group.MapGet("/team/{leagueId}/{teamName}",            GetTeam);
-		group.MapGet("/team/{seasonId}/{leagueId}/{teamName}", GetTeam);
-		group.MapGet("/team/{year:int}/{leagueId}/{teamName}", GetTeam);
+		_ = group.MapGet("/team/{leagueId}/{teamName}",            GetTeam);
+		_ = group.MapGet("/team/{seasonId}/{leagueId}/{teamName}", GetTeam);
+		_ = group.MapGet("/team/{year:int}/{leagueId}/{teamName}", GetTeam);
 
-		group.MapGet("/teamplayers/{leagueId}/{teamName}",            GetTeamPlayers);
-		group.MapGet("/teamplayers/{seasonId}/{leagueId}/{teamName}", GetTeamPlayers);
-		group.MapGet("/teamplayers/{year:int}/{leagueId}/{teamName}", GetTeamPlayers);
+		_ = group.MapGet("/teamplayers/{leagueId}/{teamName}",            GetTeamPlayers);
+		_ = group.MapGet("/teamplayers/{seasonId}/{leagueId}/{teamName}", GetTeamPlayers);
+		_ = group.MapGet("/teamplayers/{year:int}/{leagueId}/{teamName}", GetTeamPlayers);
 
 		return group;
 	}
 
 	public static void MapTTEndPoints(this WebApplication? app)
 	{
-		app?.MapGet("/api/fixtures/{leagueId}",                       GetFixtures);
-		app?.MapGet("/api/fixtures/{leagueId}/{teamName}",            GetFixtures);
-		app?.MapGet("/api/fixtures/{seasonId}/{leagueId}/{teamName}", GetFixtures);
+		_ = app?.MapGet("/api/fixtures/{leagueId}",                       GetFixtures);
+		_ = app?.MapGet("/api/fixtures/{leagueId}/{teamName}",            GetFixtures);
+		_ = app?.MapGet("/api/fixtures/{seasonId}/{leagueId}/{teamName}", GetFixtures);
 
-		app?.MapGet("/api/team/{leagueId}/{teamName}",            GetTeam);
-		app?.MapGet("/api/team/{seasonId}/{leagueId}/{teamName}", GetTeam);
-		app?.MapGet("/api/team/{year:int}/{leagueId}/{teamName}", GetTeam);
+		_ = app?.MapGet("/api/team/{leagueId}/{teamName}",            GetTeam);
+		_ = app?.MapGet("/api/team/{seasonId}/{leagueId}/{teamName}", GetTeam);
+		_ = app?.MapGet("/api/team/{year:int}/{leagueId}/{teamName}", GetTeam);
 
-		app?.MapGet("/api/teamplayers/{leagueId}/{teamName}",            GetTeamPlayers);
-		app?.MapGet("/api/teamplayers/{seasonId}/{leagueId}/{teamName}", GetTeamPlayers);
-		app?.MapGet("/api/teamplayers/{year:int}/{leagueId}/{teamName}", GetTeamPlayers);
+		_ = app?.MapGet("/api/teamplayers/{leagueId}/{teamName}",            GetTeamPlayers);
+		_ = app?.MapGet("/api/teamplayers/{seasonId}/{leagueId}/{teamName}", GetTeamPlayers);
+		_ = app?.MapGet("/api/teamplayers/{year:int}/{leagueId}/{teamName}", GetTeamPlayers);
 	}
 
 	private static async Task<Ok<List<Fixture>>> GetFixtures(ITT365Reader tt365, string leagueId, int? year, string? seasonId, string? teamName)
@@ -62,8 +61,7 @@ public static partial class TTEndPoints
 			team = null;
 		}
 
-		return team switch
-		{
+		return team switch {
 			null => TypedResults.NotFound(),
 			_    => TypedResults.Ok(team),
 		};
@@ -81,8 +79,7 @@ public static partial class TTEndPoints
 			team = null;
 		}
 
-		return team switch
-		{
+		return team switch {
 			null => TypedResults.NotFound(),
 			_    => TypedResults.Ok(team.Players?.Select(p => $"{p.Name} ({p.WinPercentage}%)").ToList()),
 		};
@@ -99,8 +96,7 @@ public static partial class TTEndPoints
 		return league switch
 		{
 			null => "",
-			_ => year switch
-				{
+			_ => year switch {
 					null => league.CurrentSeason.Id,
 					_    => tt365.GetSeasonId(league.CurrentSeason.Id, (int)year)
 				}

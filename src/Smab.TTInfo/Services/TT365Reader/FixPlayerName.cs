@@ -15,4 +15,3 @@ public sealed partial class TT365Reader
 		return playerName;
 	}
 }
-

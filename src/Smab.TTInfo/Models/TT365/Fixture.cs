@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Smab.TTInfo.Models.TT365;
+﻿namespace Smab.TTInfo.Models.TT365;
 
 [DebuggerDisplay("Fixture: {Date,nq} - {HomeTeam,nq} vs {AwayTeam,nq}")]
 public record Fixture

@@ -6,8 +6,7 @@ public sealed partial class TT365Reader
 	{
 		string output = "";
 
-		foreach (Fixture fixture in Fixtures)
-		{
+		foreach (Fixture fixture in Fixtures) {
 			output += $"{fixture.Date:dd/MM/yyyy},{fixture.HomeTeam},{fixture.AwayTeam},{fixture.Venue}{Environment.NewLine}";
 		}
 

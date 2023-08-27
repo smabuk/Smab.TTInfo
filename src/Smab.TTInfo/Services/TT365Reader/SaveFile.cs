@@ -6,7 +6,7 @@ public sealed partial class TT365Reader
 	{
 		if (!Directory.Exists(CacheFolder))
 		{
-			Directory.CreateDirectory(CacheFolder);
+			_ = Directory.CreateDirectory(CacheFolder);
 		}
 
 		string destination = Path.Combine(CacheFolder, fileName);

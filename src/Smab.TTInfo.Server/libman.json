@@ -10,30 +10,15 @@
         "LICENSE.txt"
       ]
     },
-    {
-      "library": "bootstrap@5.3.1",
-      "destination": "wwwroot/lib/bootstrap/",
-      "files": [
-        "dist/css/bootstrap.min.css",
-        "dist/css/bootstrap.min.css.map",
-         "LICENSE",
-        "README.md"
-      ]
-    },
-    {
-      "library": "open-iconic@1.1.1",
-      "destination": "wwwroot/lib/open-iconic/",
-      "files": [
-        "font/css/open-iconic-bootstrap.min.css",
-        "font/fonts/open-iconic.eot",
-        "font/fonts/open-iconic.otf",
-        "font/fonts/open-iconic.svg",
-        "font/fonts/open-iconic.ttf",
-        "font/fonts/open-iconic.woff",
-        "FONT-LICENSE",
-        "ICON-LICENSE",
-        "README.md"
-      ]
-    }
+	{
+		"library": "bootstrap@5.3.1",
+		"destination": "wwwroot/lib/bootstrap/",
+		"files": [
+			"dist/css/bootstrap.min.css",
+			"dist/css/bootstrap.min.css.map",
+			"LICENSE",
+			"README.md"
+		]
+	}
   ]
 }
