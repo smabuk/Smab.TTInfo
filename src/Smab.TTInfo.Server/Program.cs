@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents();
 ;
 
 builder.Services.AddLocalization();
+builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new()
@@ -34,6 +35,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.MapRazorComponents<App>();
+
+app.MapHealthChecks("/healthz");
 
 app.UseRequestLocalization(
 	new RequestLocalizationOptions()
