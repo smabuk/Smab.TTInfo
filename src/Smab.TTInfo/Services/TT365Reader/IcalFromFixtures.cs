@@ -10,7 +10,7 @@ public sealed partial class TT365Reader
 		IcalCalendar ical = new()
 		{
 			Name = $"{LeagueName} fixtures - {TeamName}",
-			Description = "Fixtures and results of matches for the {LeagueName} league",
+			Description = $"Fixtures and results of matches for the {LeagueName} league",
 			Events = new()
 		};
 
@@ -28,8 +28,8 @@ public sealed partial class TT365Reader
 				Description  = $"\n"
 			};
 
-			if (fixture.Venue.ToUpperInvariant().Contains("CURZON")
-			|| fixture.Venue.ToUpperInvariant().Contains("RBL")) // 7pm start time
+			if (fixture.Venue.Contains("CURZON", StringComparison.InvariantCultureIgnoreCase)
+			|| fixture.Venue.Contains("RBL", StringComparison.InvariantCultureIgnoreCase)) // 7pm start time
 			{
 				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
 			}
