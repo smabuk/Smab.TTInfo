@@ -37,7 +37,7 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		[CommandOption("-v|--vs")]
 		public string? SearchOpponents { get; init; } = null;
 
-		[Description("Cache folder used for storing the html and json files so the server calls can be avoided.")]
+		[Description("Cache folder used for storing the html and json files so that excessive server calls can be avoided.")]
 		[CommandOption("-c|--cacheFolder")]
 		public string CacheFolder { get; init; } = Path.Combine(Path.GetTempPath() , "tt365", "cache");
 	}
