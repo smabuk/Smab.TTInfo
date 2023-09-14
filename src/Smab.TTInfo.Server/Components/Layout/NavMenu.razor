@@ -1,12 +1,12 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="">@Program.SiteName</a><span title="@VersionInfo"><i class="fa fas fa-info-circle"></i></span>
+		<a class="navbar-brand" href="">@Program.SiteName</a><span id="version-info" title="@VersionInfo"><i class="fa fas fa-info-circle"></i></span>
 	</div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" id="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable" onclick="document.querySelector('#navbar-toggler').click()">
 	<nav class="flex-column">
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -33,33 +33,7 @@
 				<span class="emoji">🏓</span> OLOP F
 			</NavLink>
 		</div>
-@*
-	<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace A">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP A
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace C">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP C
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace D">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP D
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace E">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP E
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace G">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP G
-			</NavLink>
-		</div>
- *@
+
 		<div class="nav-item px-3">
 			<NavLink class="nav-link" href="Calendar/Reading/Our Lady Of Peace B?command=json">
 				<span class="bi bi-calendar3" aria-hidden="true"></span> OLOP B
@@ -75,13 +49,6 @@
 				<span class="bi bi-table" aria-hidden="true"></span> Bracknell League
 			</NavLink>
 		</div>
-@*
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/BracknellAndWokingham/OLOP A">
-				<span class="bi" aria-hidden="true">🏓</span> OLOP A Bracknell
-			</NavLink>
-		</div>
- *@
 	</nav>
 </div>
 
