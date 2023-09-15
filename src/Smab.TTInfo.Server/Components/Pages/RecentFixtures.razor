@@ -1,5 +1,6 @@
 ﻿@page "/Recent/{LeagueId}/{NoOfDays:int?}"
 @inject ITT365Reader _tt365
+@attribute [StreamRendering(true)]
 
 <PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
 

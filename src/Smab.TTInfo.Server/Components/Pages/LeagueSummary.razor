@@ -1,5 +1,6 @@
 ﻿@page "/LeagueSummary/{LeagueId}"
 @inject ITT365Reader _tt365
+@attribute [StreamRendering(true)]
 
 <PageTitle>@LeagueName - @Program.SiteName</PageTitle>
 <h1>@LeagueName</h1>

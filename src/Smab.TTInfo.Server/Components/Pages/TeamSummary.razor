@@ -1,5 +1,6 @@
 ﻿@page "/TeamSummary/{LeagueId}/{TeamId}"
 @inject ITT365Reader _tt365
+@attribute [StreamRendering(true)]
 
 <PageTitle>@TeamName - @LeagueId</PageTitle>
 
