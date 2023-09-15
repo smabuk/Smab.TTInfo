@@ -37,15 +37,14 @@ public sealed partial class TT365Reader
 			if (!string.IsNullOrEmpty(TeamName)) // If looking at a particular team add BUSY and 1hr REMINDER
 			{
 				fixtureEvent.Transparency = VEvent.TransparencyType.OPAQUE;
-				fixtureEvent.Alarms = new List<VAlarm>
-					{
-						new VAlarm
-						{
+				fixtureEvent.Alarms =
+					[
+						new() {
 							Trigger = new System.TimeSpan(0, 0, 60, 0),
 							Action = VAlarm.ActionType.DISPLAY,
 							Description = "Reminder"
 						}
-					};
+					];
 			}
 
 			if (fixture is CompletedFixture completedFixture) {

@@ -13,9 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\docker-publish.yml = .github\workflows\docker-publish.yml
 		.github\workflows\TTInfo_Main_Azure.yml = .github\workflows\TTInfo_Main_Azure.yml
+		DevData\_test_fixtures_maidenhead.json = DevData\_test_fixtures_maidenhead.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.TTInfo.Console", "src\Smab.TTInfo.Console\Smab.TTInfo.Console.csproj", "{81D064F6-BC7D-4A76-88B9-06533D9524B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.Console", "src\Smab.TTInfo.Console\Smab.TTInfo.Console.csproj", "{81D064F6-BC7D-4A76-88B9-06533D9524B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,60 @@
+﻿namespace Smab.TTInfo.Models.TTLeagues;
+
+public partial class Match
+{
+	public long Id { get; set; }
+	public MatchTeamInfo Home { get; set; }
+	public MatchTeamInfo Away { get; set; }
+	public DateTimeOffset Date { get; set; }
+	public DateTimeOffset? Time { get; set; }
+	public long Week { get; set; }
+	public string Name { get; set; }
+	public string Venue { get; set; }
+	public object GroupingId { get; set; }
+	public long CompetitionId { get; set; }
+	public long DivisionId { get; set; }
+	public object PreviousLinkId { get; set; }
+	public object Submitted { get; set; }
+	public object Approved { get; set; }
+	public object Rejected { get; set; }
+	public object Overridden { get; set; }
+	public object SubmittedBy { get; set; }
+	public object ApprovedBy { get; set; }
+	public object RejectedBy { get; set; }
+	public object OverriddenBy { get; set; }
+	public long? VenueId { get; set; }
+	public object Forfeit { get; set; }
+	public string ForfeitReason { get; set; }
+	public object ForfeitId { get; set; }
+	public string AbandonedReason { get; set; }
+	public object Abandoned { get; set; }
+	public long LeagueId { get; set; }
+	public object ClubId { get; set; }
+	public object CountyId { get; set; }
+	public string Competition { get; set; }
+	public DateTimeOffset Updated { get; set; }
+	public bool Manual { get; set; }
+	public DateTimeOffset Published { get; set; }
+	public object Archived { get; set; }
+	public object Potm { get; set; }
+	public object PotmType { get; set; }
+	public long Entry { get; set; }
+	public bool HasReport { get; set; }
+	public bool HasComments { get; set; }
+	public long ResultDisplay { get; set; }
+	public bool PlayAll { get; set; }
+	public bool HasResults { get; set; }
+	public long ScoreUp { get; set; }
+	public object Round { get; set; }
+	public object TableNo { get; set; }
+	public object DayId { get; set; }
+	public object HomeScores { get; set; }
+	public object AwayScores { get; set; }
+	public string HomeName { get; set; }
+	public string AwayName { get; set; }
+	public object Number { get; set; }
+	public object Stage { get; set; }
+	public object RoundModel { get; set; }
+	public object HomeHandicap { get; set; }
+	public object AwayHandicap { get; set; }
+}
