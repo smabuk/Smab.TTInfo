@@ -9,7 +9,13 @@ public sealed partial class TTLeaguesReader(IOptions<TTInfoOptions> options, IHt
 	public int CacheHours = options.Value.CacheHours;
 	public bool UseTestFiles { get; set; } = options.Value.UseTestFiles;
 	
-	private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+	//private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 	
 	private readonly static System.Globalization.CultureInfo gbCulture = new("en-GB");
+	private readonly static JsonSerializerOptions jsonSerializerOptions = new()
+	{
+		ReadCommentHandling = JsonCommentHandling.Skip,
+		PropertyNameCaseInsensitive = true,
+	};
+
 }

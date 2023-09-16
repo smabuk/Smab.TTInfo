@@ -2,20 +2,18 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<Fixtures> GetAllFixtures(string leagueId, string? seasonId = null)
+	public async Task<Fixtures> GetAllFixtures(string leagueId, long? competitionId = null)
 	{
-		Fixtures? fixtures = null;
+		Fixtures? fixtures;
+		leagueId = leagueId.ToLowerInvariant();
 
-		JsonSerializerOptions options = new()
-		{
-			ReadCommentHandling = JsonCommentHandling.Skip,
-			PropertyNameCaseInsensitive = true,
-		};
+		fixtures = await CreateHttpClient(leagueId)
+			.GetFromJsonAsync<Fixtures>($"matches/?competitionId={competitionId}");
 
-		string? jsonString = LoadFile($"_test_fixtures_maidenhead.json");
-		if (jsonString is not null) {
-			fixtures = JsonSerializer.Deserialize<Fixtures>(jsonString, options);
-		}
+		//string? jsonString = LoadFile($"_test_fixtures_maidenhead.json");
+		//if (jsonString is not null) {
+		//	fixtures = JsonSerializer.Deserialize<Fixtures>(jsonString, jsonSerializerOptions);
+		//}
 
 		return fixtures ?? new();
 	}

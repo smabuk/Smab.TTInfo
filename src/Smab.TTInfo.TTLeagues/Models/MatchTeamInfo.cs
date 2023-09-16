@@ -7,7 +7,7 @@ public class MatchTeamInfo
 	public long? TeamId { get; set; }
 	public required string Name { get; set; }
 	public required string ShortName { get; set; }
-	public List<object>? Members { get; set; }
+	public List<Member>? Members { get; set; }
 	public long? Score { get; set; }
 	public List<object>? Reserves { get; set; }
 	public long Type { get; set; }

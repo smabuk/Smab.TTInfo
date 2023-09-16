@@ -5,7 +5,7 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
-<PageTitle>Maidenhead json test</PageTitle>
+<PageTitle>Maidenhead fixtures test</PageTitle>
 
 <pre>
 	@JsonSerializer.Serialize(Fixtures, new JsonSerializerOptions { WriteIndented = true });
@@ -17,7 +17,7 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Fixtures is null) {
-			Fixtures = await _ttleagues.GetAllFixtures("maidenhead", "test");
+			Fixtures = await _ttleagues.GetAllFixtures("maidenhead", 2368);
 		}
 	}
 

@@ -1,0 +1,97 @@
+﻿@page "/maidenheadtest2"
+@using Smab.TTInfo.TTLeagues.Models
+@using Smab.TTInfo.TTLeagues.Services
+@using System.Text.Json;
+@inject TTLeaguesReader _ttleagues
+@attribute [StreamRendering(true)]
+
+<PageTitle>Maidenhead League test</PageTitle>
+<h1>@League?.TenantsHost?.Name</h1>
+
+@if (League is null) {
+	<div>Loading...</div>
+} else {
+	<div>
+		@foreach (var division in League.CurrentCompetition.Divisions) {
+			<h2>@division.Name</h2>
+			<div class="division">
+				<table class="table table-bordered table-sm">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Team</th>
+							<th>P</th>
+							<th>W</th>
+							<th>D</th>
+							<th>L</th>
+							<th>SF</th>
+							<th>SA</th>
+							<th>Avg</th>
+							<th>Pts</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var team in division.TeamStandings) {
+							<tr>
+								<td>@team.Position</td>
+								<td>@team.Name </td>
+								<td>@team.Played</td>
+								<td>@team.Won</td>
+								<td>@team.Drawn</td>
+								<td>@team.Lost</td>
+								<td>@team.SetsFor</td>
+								<td>@team.SetsAgainst</td>
+								<td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
+								<td>@team.Points</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+	<br />
+	<dl>
+		<dt>Name</dt>
+		<dd>@League.TenantsHost?.Name</dd>
+		<dt>Description</dt>
+		<dd>@League.WebsitesHost?.Description</dd>
+		<dt>URL</dt>
+		<dd><a href="@($"https://{League.TenantsHost?.Host}")" target="_blank">@($"https://{League.TenantsHost?.Host}")</a></dd>
+		<dt>Theme</dt>
+		@* <dd>@League.Theme</dd> *@
+		<dt>Current Season</dt>
+		<dd>
+			<select @bind="currentCompetition">
+				@if (competitionNames.Any()) {
+					@foreach (var season in competitionNames) {
+						<option value="@season">@season</option>
+					}
+				}
+			</select>
+		</dd>
+		<dt>Previous Seasons</dt>
+		<dd>@string.Join(", ", League.Competitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
+	</dl>
+}
+@* 
+<pre>
+	@JsonSerializer.Serialize(League, new JsonSerializerOptions { WriteIndented = true });
+</pre>
+ *@
+ 
+ @code {
+	public required League? League { get; set; }
+	private string currentCompetition = "";
+	private List<String> competitionNames = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (League is null) {
+			League = await _ttleagues.GetLeague("maidenhead");
+			competitionNames = League?.Competitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
+
+		}
+	}
+
+}

@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject IWebHostEnvironment env
+<div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="">@Program.SiteName</a><span id="version-info" title="@VersionInfo"><i class="fa fas fa-info-circle"></i></span>
 	</div>
@@ -49,16 +50,23 @@
 				<span class="bi bi-table" aria-hidden="true"></span> Bracknell League
 			</NavLink>
 		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="LeagueSummary/Maidenhead">
-				<span class="bi bi-table" aria-hidden="true"></span> Maidenhead League
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="maidenheadtest1">
-				<span class="emoji">🤔</span> Maidenhead Tests
-			</NavLink>
-		</div>
+		@if (env.IsDevelopment()) {
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="LeagueSummary/Maidenhead">
+					<span class="bi bi-table" aria-hidden="true"></span> Maidenhead League
+				</NavLink>
+			</div>
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="maidenheadtest1">
+					<span class="emoji">🤔</span> Maidenhead Fixtures
+				</NavLink>
+			</div>
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="maidenheadtest2">
+					<span class="emoji">🤔</span> Maidenhead League
+				</NavLink>
+			</div>
+		}
 	</nav>
 </div>
 

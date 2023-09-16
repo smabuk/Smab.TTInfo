@@ -36,7 +36,7 @@ public partial class Match
 	public bool Manual { get; set; }
 	public DateTime Published { get; set; }
 	public DateTime? Archived { get; set; }
-	public object? Potm { get; set; }
+	public Potm? Potm { get; set; }
 	public long? PotmType { get; set; }
 	public long Entry { get; set; }
 	public bool HasReport { get; set; }
