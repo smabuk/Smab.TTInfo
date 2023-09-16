@@ -1,10 +1,7 @@
 ﻿using System.Reflection;
 
-using Microsoft.Extensions.Configuration;
-
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
-using Smab.TTInfo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

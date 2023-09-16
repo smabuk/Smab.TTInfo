@@ -5,4 +5,5 @@ global using Spectre.Console;
 global using Spectre.Console.Cli;
 
 global using Smab.TTInfo.Cli;
-global using Smab.TTInfo.Models.TT365;
+global using Smab.TTInfo.TT365.Models;
+global using Smab.TTInfo.TT365.Services;
