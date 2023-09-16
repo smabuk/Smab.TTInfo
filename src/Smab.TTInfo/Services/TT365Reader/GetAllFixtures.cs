@@ -77,7 +77,7 @@ public sealed partial class TT365Reader
 									playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
 								}
 								bool playerPoM = playerNode.HasClass("pom");
-								MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
+                                Models.TT365.MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
 								if (playerNode.ParentNode.HasClass("homeTeam")) {
 									completedFixture.HomePlayers.Add(matchPlayer);
 								} else {
