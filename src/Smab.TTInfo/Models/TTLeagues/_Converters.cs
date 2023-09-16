@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
 
-namespace Smab.TTInfo.Models.___TTLeagues;
+namespace Smab.TTInfo.Models.TTLeagues;
 
 public enum DisplayNameEnum { BourneEndLions, CippenhamNormans, CippenhamSaxons, CippenhamSpartans, CippenhamTitans, CippenhamTrojans, CippenhamVikings, CookhamSocialPumas, Free, NwcaBluejays, NwcaSeahawks, OldGordsHarriers, OlopBears, StokePogesBees };
 

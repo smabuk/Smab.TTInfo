@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 
+using Microsoft.Extensions.Configuration;
+
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
+using Smab.TTInfo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,22 +15,19 @@ builder.Services.AddRazorComponents();
 
 builder.Services.AddLocalization();
 builder.Services.AddHealthChecks();
+builder.Services.AddHttpClient();
+
+builder.Services.Configure<TTInfoOptions>(builder.Configuration.GetSection("TTInfo"));
 
 builder.Services.AddScoped<ITT365Reader, TT365Reader>(
 	tt => new()
 	{
-		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"Cache",
+		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"cache",
 		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
 		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
 	});
 
-builder.Services.AddScoped<TTLeaguesReader>(
-	tt => new()
-	{
-		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"Cache",
-		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
-		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
-	});
+builder.Services.AddScoped<TTLeaguesReader>();
 
 var app = builder.Build();
 

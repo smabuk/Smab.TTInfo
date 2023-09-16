@@ -1,11 +1,13 @@
-﻿namespace Smab.TTInfo;
-public partial class TTLeaguesReader
+﻿using Microsoft.Extensions.Options;
+
+using Smab.TTInfo.Services;
+
+namespace Smab.TTInfo;
+public sealed partial class TTLeaguesReader(IOptions<TTInfoOptions> options)
 {
-	public required string CacheFolder;
-	public int CacheHours = 12;
-	public bool UseTestFiles { get; set; } = false;
+	public required string CacheFolder = options.Value.CacheFolder;
+	public int CacheHours = options.Value.CacheHours;
+	public bool UseTestFiles { get; set; } = options.Value.UseTestFiles;
 
 	private readonly static System.Globalization.CultureInfo gbCulture = new("en-GB");
-	//private static readonly string tt365com = $"{"https"}://www.tabletennis365.com";
-
 }
