@@ -27,11 +27,11 @@ public sealed partial class TT365Reader
 			if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
 
 			string leagueURL = url;
-			string leagueName        = doc.DocumentNode.SelectSingleNode(@"//title").InnerText.Replace("&amp;", "&");
-			string leagueDescription = doc.DocumentNode.SelectSingleNode(@"//meta[@property='og:description']").GetAttributeValue("content", "").Replace("&amp;", "&");
+			string leagueName =        HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode(@"//title").InnerText);
+			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode(@"//meta[@property='og:description']").GetAttributeValue("content", ""));
 			string leagueTheme       = doc.DocumentNode.SelectSingleNode(@"//body").GetAttributeValue("class", "");
 			string currentSeasonId   = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("href", "");
-			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf("/") + 1)..];
+			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf('/') + 1)..];
 
 			league = new(LeagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
 

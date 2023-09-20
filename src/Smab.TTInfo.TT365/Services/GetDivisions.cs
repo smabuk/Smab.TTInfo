@@ -33,7 +33,7 @@ public sealed partial class TT365Reader
 						Name = teamRow.ChildNodes[3].FirstChild.InnerText.Trim(),
 					};
 					team.Id        = lookupTables.TeamLookup.Where(t => t.Name == team.Name).Single().Id;
-					team.ShortName = teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim().Replace("&#39;", "'").Replace("&amp;", "&");
+					team.ShortName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
 					team.URL       = $"{"https"}://www.tabletennis365.com{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
 
 					if (int.TryParse(teamRow.SelectSingleNode(@"td[contains(@class, 'pos')]")?.InnerText ?? "0", out int leaguePosition)) {

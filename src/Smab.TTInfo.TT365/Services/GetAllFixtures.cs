@@ -53,13 +53,13 @@ public sealed partial class TT365Reader
 						fixture.Date = tempDate;
 					};
 					fixture.Division = fixtureNode.SelectSingleNode("div[@class='div']").InnerText;
-					fixture.Venue = fixtureNode.SelectSingleNode("div[@class='venue']/span/a").InnerText.Replace("&amp;", "&");
+					fixture.Venue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='venue']/span/a").InnerText);
 
 					HtmlNode homeNode = fixtureNode.SelectSingleNode("div[@class='home']");
-					fixture.HomeTeam = homeNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+					fixture.HomeTeam = HttpUtility.HtmlDecode(homeNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
 
 					HtmlNode awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
-					fixture.AwayTeam = awayNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText.Replace("&amp;", "&") ?? "";
+					fixture.AwayTeam = HttpUtility.HtmlDecode(awayNode.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
 
 					if (fixture is CompletedFixture completedFixture) {
 						completedFixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
@@ -88,7 +88,7 @@ public sealed partial class TT365Reader
 					}
 
 					if (fixture is PostponedFixture pf) {
-						pf.Reason = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim() ?? "";
+						pf.Reason = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim()) ?? "";
 					}
 
 					if (fixture is VoidFixture vf) {
