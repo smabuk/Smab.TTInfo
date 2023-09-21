@@ -1,7 +1,6 @@
-﻿@page "/maidenheadtest2"
+﻿@page "/TTLeagues/LeagueSummary/{LeagueId}"
 @using Smab.TTInfo.TTLeagues.Models
 @using Smab.TTInfo.TTLeagues.Services
-@using System.Text.Json;
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -74,13 +73,12 @@
 		<dd>@string.Join(", ", League.Competitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
 	</dl>
 }
-@* 
-<pre>
-	@JsonSerializer.Serialize(League, new JsonSerializerOptions { WriteIndented = true });
-</pre>
- *@
  
  @code {
+	[EditorRequired]
+	[Parameter]
+	public string LeagueId { get; set; } = "";
+
 	public required League? League { get; set; }
 	private string currentCompetition = "";
 	private List<String> competitionNames = new();
@@ -88,7 +86,7 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		if (League is null) {
-			League = await _ttleagues.GetLeague("maidenhead");
+			League = await _ttleagues.GetLeague(LeagueId);
 			competitionNames = League?.Competitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
 
 		}

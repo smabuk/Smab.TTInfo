@@ -40,7 +40,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.MapRazorComponents<App>()
-	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.Tests.Maidenhead1).Assembly);
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365.Pages.LeagueSummary).Assembly)
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.LeagueSummary).Assembly);
 
 app.MapHealthChecks("/healthz");
 
