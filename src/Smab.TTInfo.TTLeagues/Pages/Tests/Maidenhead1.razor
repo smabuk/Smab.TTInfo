@@ -7,10 +7,13 @@
 
 <PageTitle>Maidenhead fixtures test</PageTitle>
 
-<pre>
-	@JsonSerializer.Serialize(Fixtures, new JsonSerializerOptions { WriteIndented = true });
-</pre>
-
+@if (Fixtures is null) {
+	<div>Loading...</div>
+} else {
+	<pre>
+		@JsonSerializer.Serialize(Fixtures, new JsonSerializerOptions { WriteIndented = true });
+	</pre>
+}
 @code {
 	public required Fixtures Fixtures { get; set; }
 
