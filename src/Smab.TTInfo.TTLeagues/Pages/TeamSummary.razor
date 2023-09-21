@@ -1,0 +1,246 @@
+﻿@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamId}"
+@inject TTLeaguesReader _ttleagues
+@attribute [StreamRendering(true)]
+
+<PageTitle>@TeamName - @LeagueId</PageTitle>
+
+@if (team is null || fixtures.Count == 0) {
+	<h1>Loading ... @TeamName ...</h1>
+} else {
+	<h1>@TeamName</h1>
+	<div id="fixtures">
+@* 		@foreach (Fixture fixture in fixtures) {
+			FixtureResult? fr;
+			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
+			<div class="card" data-result='@fr?.Result'>
+				<div class="row">
+					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+						@if (fixture is PostponedFixture pf) {
+							<span class="postponed badge" title="@pf.Reason">P</span>
+						}
+						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
+					</div>
+					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
+							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
+						}
+						<a href="TeamSummary/@LeagueId/@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)">
+							<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
+						</a>
+						<span> @@ @fixture.Venue</span>
+					</div>
+				</div>
+				@if (fixture is PostponedFixture postponed) {
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@postponed.Reason
+						</div>
+					</div>
+				}
+				@if (fixture is CompletedFixture completedFixture) {
+					@if (completedFixture.Other is not null) {
+						<div class="row justify-content-end">
+							<div class="col-12 col-md-8 col-lg-9">
+								@completedFixture.Other
+							</div>
+						</div>
+					}
+					@if (fixture.HomeTeam.Equals(@team.Name)) {
+						<div class="row justify-content-end">
+							<div class="col-12 col-md-8 col-lg-9">
+								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
+									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+								}
+							</div>
+						</div>
+						<div class="row justify-content-end">
+							<div class="col-12 col-md-8 col-lg-9">
+								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
+									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+								}
+							</div>
+						</div>
+					} else {
+						<div class="row justify-content-end">
+							<div class="col-12 col-md-8 col-lg-9">
+								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
+									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+								}
+							</div>
+						</div>
+						<div class="row justify-content-end">
+							<div class="col-12 col-md-8 col-lg-9">
+								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
+									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+								}
+							</div>
+						</div>
+					}
+					<div class="row justify-content-end">
+						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+							Doubles: @completedFixture.DoublesWinner
+						</div>
+					</div>
+				} else {
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-8 col-lg-9">
+							@if (fixture.HomeTeam.Equals(@team.Name)) {
+								<text>@(teamPlayersList.ContainsKey(fixture.AwayTeam) ? @teamPlayersList[fixture.AwayTeam] : "Loading ...")</text>
+							} else {
+								<text>@(teamPlayersList.ContainsKey(fixture.HomeTeam) ? @teamPlayersList[fixture.HomeTeam] : "Loading ...")</text>
+							}
+						</div>
+					</div>
+				}
+			</div>
+		}
+ *@
+</div>
+	<h2>Team Stats</h2>
+	<div id="teamstats" class="card">
+		<div>
+			<div>Captain: <span>@team.Captain</span></div>
+			@* <div>Caption: <span>@team.Caption</span></div> *@
+		</div>
+		<div id="players">
+			<h3>Players</h3>
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Played</th>
+						<th>Win %</th>
+						<th>Ranking</th>
+						<th class="">PoM</th>
+						<th>Form</th>
+					</tr>
+				</thead>
+				<tbody>
+@* 
+					@foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played)) {
+						<tr>
+							<td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
+							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
+							<td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
+							<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
+							<td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
+							<td>@player.Form</td>
+						</tr>
+					}
+ *@
+				</tbody>
+			</table>
+		</div>
+		<div id="results">
+			<h3>Results</h3>
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<th>Opposition</th>
+						<th>Home Or Away</th>
+						<th>Date</th>
+						<th>Score</th>
+						<th>Pts</th>
+						<th>Player Of The Match</th>
+					</tr>
+				</thead>
+				<tbody>
+@*
+					@foreach (var result in team.Results!) {
+						<tr data-result='@result.MatchResult'>
+							<td><a href="TeamSummary/@LeagueId/@result.Opposition">@result.Opposition</a></td>
+							<td>@result.HomeOrAway</td>
+							<td>@result.Date.ToString("dd MMM yyyy")</td>
+							<td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
+							<td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
+							<td>@result.PlayerOfTheMatch</td>
+						</tr>
+					}
+ *@
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+
+@code {
+	[EditorRequired]
+	[Parameter]
+	public string TeamId { get; set; } = "";
+
+	[EditorRequired]
+	[Parameter]
+	public string LeagueId { get; set; } = "";
+
+	private record FixtureResult(int Id, string Result, string FullScore);
+
+	public string TeamName { get; set; } = "";
+	private MatchTeamInfo? team;
+	private List<Match> fixtures = new();
+	private Dictionary<string, string> teamPlayersList = new();
+	private Dictionary<int, FixtureResult> fixtureResults = new();
+	private League? league;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		TeamName = TeamId.Replace("_", " ");
+		team = null;
+		fixtures = new();
+		fixtureResults = new();
+		StateHasChanged();
+		league = await _ttleagues.GetLeague(LeagueId);
+		// team = await _ttleagues.GetTeamStats(LeagueId, TeamName);
+		// if (team is not null) {
+
+		// 	fixtures = (await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
+		// 					.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
+		// 					.ToList();
+		// 	foreach (Fixture fixture in fixtures) {
+		// 		if (fixture is CompletedFixture completedFixture) {
+		// 			string result;
+		// 			string fullScore;
+		// 			if (fixture.HomeTeam.Equals(@team.Name)) {
+		// 				result = (completedFixture.ForHome > completedFixture.ForAway) ? "win" : (completedFixture.ForHome < completedFixture.ForAway) ? "loss" : "draw";
+		// 				fullScore = $"{completedFixture.ForHome} - {completedFixture.ForAway}";
+		// 			} else {
+		// 				result = (completedFixture.ForHome > completedFixture.ForAway) ? "loss" : (completedFixture.ForHome < completedFixture.ForAway) ? "win" : "draw";
+		// 				fullScore = $"{completedFixture.ForAway} - {completedFixture.ForHome}";
+		// 			}
+		// 			fixtureResults.TryAdd(completedFixture.Id, new(completedFixture.Id, result, fullScore));
+		// 		}
+		// 	}
+
+		// 	StateHasChanged();
+
+		// 	List<string> teamList = fixtures.Select(t => t.HomeTeam).Union(fixtures.Select(t => t.HomeTeam)).Distinct().Where(t => t != TeamId).ToList();
+		// 	List<Task<string>> tasks = new();
+		// 	foreach (string team in teamList) {
+		// 		tasks.Add(GetTeamPlayers(team));
+		// 	}
+			// await Task.WhenAll(tasks);
+
+		// 	StateHasChanged();
+		// }
+	}
+
+	// protected async Task<string> GetTeamPlayers(string teamName)
+	// {
+	// 	string playersString;
+
+	// 	if (teamPlayersList.ContainsKey(teamName)) {
+	// 		playersString = teamPlayersList[teamName];
+	// 	} else {
+	// 		ICollection<Player>? players = (await _ttleagues.GetTeamStats(LeagueId, teamName))?.Players;
+	// 		if (players is null) {
+	// 			return "";
+	// 		}
+	// 		var playersList = players
+	// 			.OrderByDescending(p => p.WinPercentage)
+	// 			.Select(p => $"{p.Name} ({Math.Round(p.WinPercentage, 0)}%)");
+	// 		playersString = String.Join(", ", playersList);
+	// 		teamPlayersList.TryAdd(teamName, playersString);
+	// 	}
+	// 	return playersString;
+	// }
+}
