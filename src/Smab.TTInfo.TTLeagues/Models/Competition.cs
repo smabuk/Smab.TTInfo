@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public record Competition(
+internal sealed record Competition(
 	int Id,
 	int LeagueId,
 	string Name,

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public class League
+internal sealed class League
 {
 	public required string Id { get; set; }
 	public required long CurrentCompetitionId { get; set; }

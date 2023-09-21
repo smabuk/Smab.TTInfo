@@ -74,12 +74,12 @@
 	</dl>
 }
  
- @code {
+@code {
 	[EditorRequired]
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
-	public required League? League { get; set; }
+	private League? League;
 	private string currentCompetition = "";
 	private List<String> competitionNames = new();
 

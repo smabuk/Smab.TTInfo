@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<League?> GetLeague(string LeagueId)
+	internal async Task<League?> GetLeague(string LeagueId)
 	{
 		League league;
 		League? cachedLeague = null;

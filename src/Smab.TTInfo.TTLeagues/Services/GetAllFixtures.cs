@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<Fixtures> GetAllFixtures(string leagueId, long? competitionId = null)
+	internal async Task<Fixtures> GetAllFixtures(string leagueId, long? competitionId = null)
 	{
 		Fixtures? fixtures;
 		leagueId = leagueId.ToLowerInvariant();

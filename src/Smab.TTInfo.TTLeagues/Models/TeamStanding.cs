@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public record TeamStanding(
+internal sealed record TeamStanding(
 	int EntrantId,
 	int TeamId,
 	string FullName,

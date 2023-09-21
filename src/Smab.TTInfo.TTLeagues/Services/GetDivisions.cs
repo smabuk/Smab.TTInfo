@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<List<Division>> GetDivisions(string leagueId, long competitionId)
+	internal async Task<List<Division>> GetDivisions(string leagueId, long competitionId)
 	{
 		List<Division> divisions;
 

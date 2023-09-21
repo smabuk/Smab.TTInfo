@@ -1,5 +1,5 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
-public record WebsitesHostArchived(
+internal sealed record WebsitesHostArchived(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -10,7 +10,7 @@ public record WebsitesHostArchived(
 	bool Limited
 );
 
-public record WebsitesHostCompetition(
+internal sealed record WebsitesHostCompetition(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -21,7 +21,7 @@ public record WebsitesHostCompetition(
 	bool Limited
 );
 
-public record WebsitesHostConfig(
+internal sealed record WebsitesHostConfig(
 	string ReplyEmail,
 	string FromEmail,
 	bool HomeHeader,
@@ -39,7 +39,7 @@ public record WebsitesHostConfig(
 	object Published
 );
 
-public record WebsitesHostDivision(
+internal sealed record WebsitesHostDivision(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -50,7 +50,7 @@ public record WebsitesHostDivision(
 	bool Limited
 );
 
-public record WebsitesHostFeed(
+internal sealed record WebsitesHostFeed(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -61,7 +61,7 @@ public record WebsitesHostFeed(
 	bool Limited
 );
 
-public record WebsitesHostFooter(
+internal sealed record WebsitesHostFooter(
 	int Id,
 	object ParentId,
 	object Parent,
@@ -78,7 +78,7 @@ public record WebsitesHostFooter(
 	bool Enabled
 );
 
-public record WebsitesHostItem(
+internal sealed record WebsitesHostItem(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -89,7 +89,7 @@ public record WebsitesHostItem(
 	bool Limited
 );
 
-public record WebsitesHostMenu(
+internal sealed record WebsitesHostMenu(
 	IReadOnlyList<WebsitesHostCompetition> Competitions,
 	IReadOnlyList<WebsitesHostDivision> Divisions,
 	IReadOnlyList<WebsitesHostArchived> Archived,
@@ -101,7 +101,7 @@ public record WebsitesHostMenu(
 	IReadOnlyList<WebsitesHostFooter> Footer
 );
 
-public record WebsitesHostNews(
+internal sealed record WebsitesHostNews(
 	string Id,
 	string Name,
 	string MenuGroupId,
@@ -112,13 +112,13 @@ public record WebsitesHostNews(
 	bool Limited
 );
 
-public record WebsitesHostPage(
+internal sealed record WebsitesHostPage(
 	string Name,
 	int Ordering,
 	IReadOnlyList<WebsitesHostItem> Items
 );
 
-public record WebsitesHostPrimary(
+internal sealed record WebsitesHostPrimary(
 	int Id,
 	object ParentId,
 	object Parent,
@@ -135,7 +135,7 @@ public record WebsitesHostPrimary(
 	bool Enabled
 );
 
-public record WebsitesHost(
+internal sealed record WebsitesHost(
 	int TenantId,
 	string Title,
 	string Description,

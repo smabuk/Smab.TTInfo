@@ -1,5 +1,5 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
-public class Member
+internal sealed class Member
 {
 	public int? TeamId { get; set; }
 	public required string MemberId { get; set; }

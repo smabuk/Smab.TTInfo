@@ -1,10 +1,10 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
-public record TenantsHostBooking(
+internal sealed record TenantsHostBooking(
 	int TenantId,
 	bool CompleteProfileRequired,
 	int BookingTimeFrame);
 
-public record TenantsHostCompetition(
+internal sealed record TenantsHostCompetition(
 	int TenantId,
 	int SubmissionType,
 	int ApprovalType,
@@ -13,7 +13,7 @@ public record TenantsHostCompetition(
 	bool RestrictByClub,
 	string RestrictByMembership);
 
-public record TenantsHostConfig(
+internal sealed record TenantsHostConfig(
 	int TenantId,
 	bool AppEnabled,
 	string StripeId,
@@ -32,7 +32,7 @@ public record TenantsHostConfig(
 	TenantsHostCompetition Competition,
 	TenantsHostBooking Booking);
 
-public record TenantsHostOrganisation(
+internal sealed record TenantsHostOrganisation(
 	int Id,
 	string Name,
 	string Logo,
@@ -50,7 +50,7 @@ public record TenantsHostOrganisation(
 	string Facebook,
 	string Instagram);
 
-public record TenantsHost(
+internal sealed record TenantsHost(
 	int Id,
 	string Code,
 	string Host,

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public partial class Group
+internal sealed class Group
 {
 	public List<Match> Matches { get; set; } = new();
 	public long Type { get; set; }

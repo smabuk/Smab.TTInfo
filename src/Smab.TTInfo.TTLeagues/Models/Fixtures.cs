@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public partial class Fixtures
+internal sealed class Fixtures
 {
 	public List<Group> Groups { get; set; } = new();
 	public List<Match> Matches { get; set; } = new();

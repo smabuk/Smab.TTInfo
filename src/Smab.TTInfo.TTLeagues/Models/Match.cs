@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public partial class Match
+internal sealed class Match
 {
 	public long Id { get; set; }
 	public required MatchTeamInfo Home { get; set; }

@@ -1,5 +1,5 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
-public record Division(
+internal sealed record Division(
 	int Id,
 	string Name,
 	string Description,
@@ -41,7 +41,7 @@ public record Division(
 	public List<TeamStanding> TeamStandings { get; set; } = [];
 };
 
-public record DivisionAverages(
+internal sealed record DivisionAverages(
 	int CompetitionId,
 	bool SingleForfeit,
 	bool SingleConcede,
@@ -57,13 +57,13 @@ public record DivisionAverages(
 	bool ConsolidatedAverages
 );
 
-public record DivisionBooking(
+internal sealed record DivisionBooking(
 	int TenantId,
 	bool CompleteProfileRequired,
 	int BookingTimeFrame
 );
 
-public record DivisionCompetition(
+internal sealed record DivisionCompetition(
 	int Id,
 	int OldLeagueId,
 	object OldLeague,
@@ -134,7 +134,7 @@ public record DivisionCompetition(
 	string RestrictByMembership
 );
 
-public record DivisionConfig(
+internal sealed record DivisionConfig(
 	int TenantId,
 	bool AppEnabled,
 	string StripeId,
@@ -154,7 +154,7 @@ public record DivisionConfig(
 	DivisionBooking Booking
 );
 
-public record DivisionMatchCard(
+internal sealed record DivisionMatchCard(
 	int CompetitionId,
 	object Approval,
 	object Layout,
@@ -162,7 +162,7 @@ public record DivisionMatchCard(
 	int PrintoutLayout
 );
 
-public record DivisionOrganisation(
+internal sealed record DivisionOrganisation(
 	int Id,
 	string Name,
 	string Logo,
@@ -181,7 +181,7 @@ public record DivisionOrganisation(
 	string Instagram
 );
 
-public record DivisionReserves(
+internal sealed record DivisionReserves(
 	int CompetitionId,
 	int Type,
 	int MaxStepUp,
@@ -192,7 +192,7 @@ public record DivisionReserves(
 	bool OverrideEnabled
 );
 
-public record DivisionTable(
+internal sealed record DivisionTable(
 	int CompetitionId,
 	bool WinLossDraw,
 	bool SetsForAgainst,
@@ -206,7 +206,7 @@ public record DivisionTable(
 	bool SetAlternative
 );
 
-public record DivisionTenant(
+internal sealed record DivisionTenant(
 	int Id,
 	string Code,
 	string Host,

@@ -1,10 +1,10 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public class Potm
+internal sealed class Potm
 {
-	public string Id { get; set; }
-	public string Name { get; set; }
-	public object MembershipNo { get; set; }
-	public string Email { get; set; }
+	public required string Id { get; set; }
+	public required string Name { get; set; }
+	public object? MembershipNo { get; set; }
+	public required string Email { get; set; }
 	public bool? Disabled { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 
-public class ActionedBy
+internal sealed class ActionedBy
 {
 	public required string Id { get; set; }
 	public required string Name { get; set; }
