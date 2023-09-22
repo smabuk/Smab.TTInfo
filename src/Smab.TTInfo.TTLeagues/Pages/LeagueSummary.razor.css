@@ -1,0 +1,60 @@
+.division {
+	overflow-x: auto;
+}
+
+table {
+	max-width: 50em;
+}
+
+	table td {
+		white-space: nowrap;
+	}
+
+	table th:nth-child(1),
+	table th:nth-child(n+3) {
+		text-align: center;
+		width: 3em;
+	}
+
+	table td:nth-child(1),
+	table td:nth-child(n+3) {
+		text-align: right;
+		padding-right: 0.5em;
+		width: 3em;
+	}
+
+	table td:last-child {
+		font-weight: bold;
+	}
+
+	table a {
+		color: var(--text-color);
+		text-decoration: none;
+	}
+
+		table a:hover, table a:active {
+			color: var(--text-color);
+			text-decoration: underline;
+		}
+
+dd a {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+	dd a:hover, table a:active {
+		color: var(--text-color);
+		text-decoration: underline;
+	}
+
+select {
+	color: var(--text-color);
+	background-color: var(--bg-color);
+}
+
+pre {
+	width: calc(100dvw - 280px);
+	overflow: auto;
+	border: solid;
+	border-width: 1px;
+}

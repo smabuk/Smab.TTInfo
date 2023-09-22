@@ -4,8 +4,6 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<LangVersion>preview</LangVersion>
-		<RazorLangVersion>8.0</RazorLangVersion>
 		<UserSecretsId>f804fb3c-9b13-4705-9a6c-37713a89b33c</UserSecretsId>
 	</PropertyGroup>
 
@@ -32,7 +30,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../Smab.TTInfo/Smab.TTInfo.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.TTLeagues\Smab.TTInfo.TTLeagues.csproj" />
 	</ItemGroup>
 
 </Project>

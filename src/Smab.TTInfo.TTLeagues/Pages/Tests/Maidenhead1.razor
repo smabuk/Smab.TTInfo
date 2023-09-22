@@ -1,0 +1,27 @@
+﻿@page "/maidenheadtest1"
+@using Smab.TTInfo.TTLeagues.Models
+@using Smab.TTInfo.TTLeagues.Services
+@using System.Text.Json;
+@inject TTLeaguesReader _ttleagues
+@attribute [StreamRendering(true)]
+
+<PageTitle>Maidenhead fixtures test</PageTitle>
+
+@if (Fixtures is null) {
+	<div>Loading...</div>
+} else {
+	<pre>
+		@JsonSerializer.Serialize(Fixtures, new JsonSerializerOptions { WriteIndented = true });
+	</pre>
+}
+@code {
+	internal Fixtures? Fixtures { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Fixtures is null) {
+			Fixtures = await _ttleagues.GetAllFixtures("maidenhead", 2368);
+		}
+	}
+
+}

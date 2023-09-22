@@ -1,0 +1,108 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@league=maidenhead
+@competitionId=1741
+@leagueId=127
+@divisionId=5123
+@matchId=531010
+@userId=8a946edb-4904-4e83-87d5-58d16febc514
+
+###
+
+GET https://ttleagues-api.azurewebsites.net/api/competitions/all
+Tenant: {{league}}.ttleagues.com
+###
+
+
+
+
+GET https://ttleagues-api.azurewebsites.net/api/competitions/archives
+Tenant: {{league}}.ttleagues.com
+###
+
+
+
+GET https://ttleagues-api.azurewebsites.net/api/tenants/host
+Tenant: {{league}}.ttleagues.com
+###
+
+
+GET https://ttleagues-api.azurewebsites.net/api/websites/host
+Tenant: {{league}}.ttleagues.com
+###
+
+
+GET https://ttleagues-api.azurewebsites.net/api/leagues/{{leagueId}}
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Get Divisions for the sepecified competition
+GET https://ttleagues-api.azurewebsites.net/api/competitions/{{competitionId}}/divisions
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Get Division standings for the sepecified competition
+GET https://ttleagues-api.azurewebsites.net/api/divisions/{{divisionId}}/standings
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Averages by for the specified division
+GET https://ttleagues-api.azurewebsites.net/api/divisions/{{divisionId}}/averages
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Doubles averages by for the specified division
+GET https://ttleagues-api.azurewebsites.net/api/divisions/{{divisionId}}/doublesaverages
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Doubles averages by for the specified division
+GET https://ttleagues-api.azurewebsites.net/api/divisions/{{divisionId}}/potms
+Tenant: {{league}}.ttleagues.com
+###
+
+
+
+#Player stats
+GET https://ttleagues-api.azurewebsites.net/api/competitions/{{competitionId}}/player/{{userId}}/stats
+Tenant: {{league}}.ttleagues.com
+###
+
+
+
+# Matches - type=1 (without players and scores)
+GET https://ttleagues-api.azurewebsites.net/api/matches/?type=1&competitionId={{competitionId}}
+Tenant: {{league}}.ttleagues.com
+###
+
+# Match results - type=2 (WITH players and scores)
+GET https://ttleagues-api.azurewebsites.net/api/matches/?type=2&competitionId={{competitionId}}
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Match Card
+GET https://ttleagues-api.azurewebsites.net/api/matches/{{matchId}}
+Tenant: {{league}}.ttleagues.com
+###
+
+GET https://ttleagues-api.azurewebsites.net/api/matches/{{matchId}}/results
+Tenant: {{league}}.ttleagues.com
+###
+
+GET https://ttleagues-api.azurewebsites.net/api/matches/{{matchId}}/sets
+Tenant: {{league}}.ttleagues.com
+###
+
+
+
+
+
+
+###
+
