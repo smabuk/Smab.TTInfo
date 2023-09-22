@@ -9,7 +9,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 RUN dotnet --info
 COPY ["src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj", "src/Smab.TTInfo.Server/"]
-COPY ["src/Smab.TTInfo/Smab.TTInfo.csproj", "src/Smab.TTInfo/"]
+COPY ["src/Smab.TTInfo.Shared/Smab.TTInfo.Shared.csproj", "src/Smab.TTInfo.Shared/"]
+COPY ["src/Smab.TTInfo.TT365/Smab.TTInfo.TT365.csproj", "src/Smab.TTInfo.TT365/"]
+COPY ["src/Smab.TTInfo.TTLeagues/Smab.TTInfo.TTLeagues.csproj", "src/Smab.TTInfo.TTLeagues/"]
 RUN dotnet restore "src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj"
 COPY . .
 WORKDIR "/src/src/Smab.TTInfo.Server"
