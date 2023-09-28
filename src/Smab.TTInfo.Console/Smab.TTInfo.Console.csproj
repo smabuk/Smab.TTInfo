@@ -1,23 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<LangVersion>preview</LangVersion>
-		<RazorLangVersion>8.0</RazorLangVersion>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<Authors>Simon Brookes</Authors>
-		<Company>Simon Brookes</Company>
-		<Copyright>Copyright © Simon Brookes</Copyright>
 		<Description>Console application for accessing the information on tabletennis365.com</Description>
-		<VersionPrefix>0.3.0</VersionPrefix>
-		<VersionSuffix Condition=" '$(ComputerName)' != '' ">$(ComputerName)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
-		<VersionSuffix Condition=" '$(Name)' != '' And '$(ComputerName)' == '' ">$(Name)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
-		<VersionSuffix Condition=" '$(Name)' == '' And '$(ComputerName)' == '' ">$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,9 +10,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
-	  <ProjectReference Include="..\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj" />
-	  <ProjectReference Include="..\Smab.TTInfo.TTLeagues\Smab.TTInfo.TTLeagues.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.TTLeagues\Smab.TTInfo.TTLeagues.csproj" />
 	</ItemGroup>
 
 </Project>
