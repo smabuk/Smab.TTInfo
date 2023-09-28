@@ -2,11 +2,11 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
-<PageTitle>@League?.TenantsHost?.Name</PageTitle>
-<h1>@League?.TenantsHost?.Name</h1>
+<PageTitle>@LeagueName</PageTitle>
+<h1>@LeagueName</h1>
 
 @if (League is null) {
-	<div>Loading...</div>
+	<div>Loading... @LeagueName</div>
 } else {
 	<div>
 		@foreach (var division in League.CurrentCompetition.Divisions) {
@@ -77,6 +77,7 @@
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
+	private string LeagueName { get; set; } = "";
 	private League? League;
 	private string currentCompetition = "";
 	private List<String> competitionNames = new();
@@ -84,9 +85,10 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		if (League is null) {
+			LeagueName = $"{LeagueId} League";
 			League = await _ttleagues.GetLeague(LeagueId);
+			LeagueName = @League?.TenantsHost?.Name ?? "";
 			competitionNames = League?.Competitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
-
 		}
 	}
 
