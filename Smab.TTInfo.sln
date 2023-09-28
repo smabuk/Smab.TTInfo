@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.Server", "src\S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99C6692C-6F0D-499C-8B69-1883B2615223}"
 	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
 		.github\workflows\docker-publish.yml = .github\workflows\docker-publish.yml
 		.github\workflows\TTInfo_Main_Azure.yml = .github\workflows\TTInfo_Main_Azure.yml
 		DevData\_test_fixtures_maidenhead.json = DevData\_test_fixtures_maidenhead.json
@@ -20,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.TTLeagues", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.TT365", "src\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj", "{8A13667A-84FD-4ABF-B9B7-D8990BE274F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.TTInfo.Shared", "src\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj", "{49B3CF0F-35F9-4D87-8F5A-52647BDBBBAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smab.TTInfo.Shared", "src\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj", "{49B3CF0F-35F9-4D87-8F5A-52647BDBBBAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
