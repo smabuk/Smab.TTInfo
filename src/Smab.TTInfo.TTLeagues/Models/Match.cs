@@ -5,9 +5,9 @@ internal sealed class Match
 	public long Id { get; set; }
 	public required MatchTeamInfo Home { get; set; }
 	public required MatchTeamInfo Away { get; set; }
-	public DateTime Date { get; set; }
+	public DateTime? Date { get; set; }
 	public DateTime? Time { get; set; }
-	public long Week { get; set; }
+	public long? Week { get; set; }
 	public required string Name { get; set; }
 	public required string Venue { get; set; }
 	public long? GroupingId { get; set; }

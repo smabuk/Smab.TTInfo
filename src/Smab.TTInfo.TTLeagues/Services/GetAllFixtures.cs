@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TTLeagues.Services;
+﻿using Smab.TTInfo.TTLeagues.Models;
+
+namespace Smab.TTInfo.TTLeagues.Services;
 
 public sealed partial class TTLeaguesReader
 {
@@ -7,8 +9,9 @@ public sealed partial class TTLeaguesReader
 		Fixtures? fixtures;
 		leagueId = leagueId.ToLowerInvariant();
 
-		fixtures = await CreateHttpClient(leagueId)
-			.GetFromJsonAsync<Fixtures>($"matches/?competitionId={competitionId}");
+		HttpClient client = CreateHttpClient(leagueId);
+		//string jsonString = await client.GetStringAsync($"matches/?competitionId={competitionId}");
+		fixtures = await client.GetFromJsonAsync<Fixtures>($"matches/?competitionId={competitionId}");
 
 		//string? jsonString = LoadFile($"_test_fixtures_maidenhead.json");
 		//if (jsonString is not null) {
