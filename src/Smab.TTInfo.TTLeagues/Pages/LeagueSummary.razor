@@ -2,7 +2,7 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
-<PageTitle>Maidenhead League test</PageTitle>
+<PageTitle>@League?.TenantsHost?.Name</PageTitle>
 <h1>@League?.TenantsHost?.Name</h1>
 
 @if (League is null) {
