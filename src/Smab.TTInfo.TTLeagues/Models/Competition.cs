@@ -63,9 +63,4 @@ internal sealed record Competition(
 	string NationalRankingCategory,
 	int PrintoutFormat,
 	bool TeamHandicap
-)
-{
-	// Added manually - not part of API call
-	public List<Division> Divisions { get; set; } = [];
-}
-
+);

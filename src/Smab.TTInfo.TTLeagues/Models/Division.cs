@@ -31,7 +31,7 @@ internal sealed record Division(
 	object PreviousLink,
 	object HalfGeneration,
 	string TableNos,
-	bool TableAllocation,
+	bool? TableAllocation,
 	bool HasEntrants,
 	int EntrantCount,
 	IReadOnlyList<object> Days

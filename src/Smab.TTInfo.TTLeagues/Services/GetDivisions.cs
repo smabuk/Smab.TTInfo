@@ -4,10 +4,9 @@ public sealed partial class TTLeaguesReader
 {
 	internal async Task<List<Division>> GetDivisions(string leagueId, long competitionId)
 	{
-		List<Division>? divisions;
-		string fileName = $"{leagueId}_{competitionId}_divisions";
+		string fileName = $"{leagueId}_{competitionId}_divisions.json";
 
-		divisions = await LoadJsonAsync<List<Division>>(
+		List<Division>? divisions = await LoadJsonAsync<List<Division>>(
 			leagueId,
 			$"competitions/{competitionId}/divisions",
 			fileName);
@@ -20,8 +19,7 @@ public sealed partial class TTLeaguesReader
 			}
 		}
 
-		string? jsonString = JsonSerializer.Serialize(divisions);
-		_ = SaveFile(jsonString, fileName);
+		_ = SaveFile(JsonSerializer.Serialize(divisions), fileName);
 		return divisions ?? new();
 	}
 }

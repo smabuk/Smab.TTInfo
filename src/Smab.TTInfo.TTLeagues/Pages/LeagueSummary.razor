@@ -1,4 +1,4 @@
-﻿@page "/TTLeagues/LeagueSummary/{LeagueId}"
+﻿@page "/TTLeagues/LeagueSummary/{LeagueId}/{CompetitionId:int?}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -8,45 +8,51 @@
 @if (League is null) {
 	<div>Loading... @LeagueName</div>
 } else {
-	<div>
-		@foreach (var division in League.CurrentCompetition.Divisions) {
-			<h2>@division.Name</h2>
-			<div class="division">
-				<table class="table table-bordered table-sm">
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>Team</th>
-							<th>P</th>
-							<th>W</th>
-							<th>D</th>
-							<th>L</th>
-							<th>SF</th>
-							<th>SA</th>
-							<th>Avg</th>
-							<th>Pts</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var team in division.TeamStandings) {
+	@foreach (Competition competition in League.CurrentCompetitions.Where(c => CompetitionId is null || c.Id == CompetitionId))
+	{
+		<div>
+			<h2>@competition.Name</h2>
+			@foreach (Division? division in divisionsList[competition.Id])
+			{
+				<h2>@division.Name</h2>
+				<div class="division">
+					<table class="table table-bordered table-sm">
+						<thead>
 							<tr>
-								<td>@team.Position</td>
-								<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
-								<td>@team.Played</td>
-								<td>@team.Won</td>
-								<td>@team.Drawn</td>
-								<td>@team.Lost</td>
-								<td>@team.SetsFor</td>
-								<td>@team.SetsAgainst</td>
-								<td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
-								<td>@team.Points</td>
+								<th>#</th>
+								<th>Team</th>
+								<th>P</th>
+								<th>W</th>
+								<th>D</th>
+								<th>L</th>
+								<th>SF</th>
+								<th>SA</th>
+								<th>Avg</th>
+								<th>Pts</th>
 							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		}
-	</div>
+						</thead>
+						<tbody>
+							@foreach (var team in division.TeamStandings)
+							{
+								<tr>
+									<td>@team.Position</td>
+									<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
+									<td>@team.Played</td>
+									<td>@team.Won</td>
+									<td>@team.Drawn</td>
+									<td>@team.Lost</td>
+									<td>@team.SetsFor</td>
+									<td>@team.SetsAgainst</td>
+									<td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
+									<td>@team.Points</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</div>
+	}
 	<br />
 	<dl>
 		<dt>Name</dt>
@@ -57,7 +63,7 @@
 		<dd><a href="@($"https://{League.TenantsHost?.Host}")" target="_blank">@($"https://{League.TenantsHost?.Host}")</a></dd>
 		<dt>Theme</dt>
 		@* <dd>@League.Theme</dd> *@
-		<dt>Current Season</dt>
+		<dt>Current Seasons</dt>
 		<dd>
 			<select @bind="currentCompetition">
 				@if (competitionNames.Any()) {
@@ -68,7 +74,7 @@
 			</select>
 		</dd>
 		<dt>Previous Seasons</dt>
-		<dd>@string.Join(", ", League.Competitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
+		<dd>@string.Join(", ", League.ArchivedCompetitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
 	</dl>
 }
  
@@ -77,10 +83,17 @@
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
+	[EditorRequired]
+	[Parameter]
+	public int? CompetitionId { get; set; }
+
 	private string LeagueName { get; set; } = "";
 	private League? League;
 	private string currentCompetition = "";
 	private List<String> competitionNames = new();
+	private Dictionary<int, List<Division>> divisionsList = new();
+
+	private List<Division> divisions = new();
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -88,7 +101,16 @@
 			LeagueName = $"{LeagueId} League";
 			League = await _ttleagues.GetLeague(LeagueId);
 			LeagueName = @League?.TenantsHost?.Name ?? "";
-			competitionNames = League?.Competitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
+			competitionNames = League?.CurrentCompetitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
+			if (League?.CurrentCompetitions.Any() ?? false) {
+				foreach (Competition competition in League.CurrentCompetitions) {
+					List<Division>? divisions = await _ttleagues.GetDivisions(LeagueId, competition.Id);
+					divisionsList.TryAdd(competition.Id, divisions);
+				}
+			}
+		}
+		if (CompetitionId is not null) {
+			currentCompetition = League?.CurrentCompetitions.Single(s => s.Id == CompetitionId).Name ?? "";
 		}
 	}
 

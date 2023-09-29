@@ -212,9 +212,12 @@
 		fixtureResults = new();
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(LeagueId);
+		//int teamId = league.CurrentCompetition.Divisions.
+
+
 		// team = await _ttleagues.GetTeamStats(LeagueId, TeamName);
 		// if (team is not null) {
-		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentCompetitionId);
+		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentCompetitions.First().Id);
 
 		fixtures = f?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))

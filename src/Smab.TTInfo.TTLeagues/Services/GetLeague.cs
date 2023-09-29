@@ -7,7 +7,8 @@ public sealed partial class TTLeaguesReader
 		League league;
 		League? cachedLeague = null;
 		string fileName = $"{LeagueId}_league.json";
-		HttpClient client = CreateHttpClient(LeagueId);
+
+		using HttpClient client = CreateHttpClient(LeagueId);
 
 		string? jsonString = LoadFile(fileName);
 		if (jsonString is not null )
@@ -15,7 +16,7 @@ public sealed partial class TTLeaguesReader
 			cachedLeague = JsonSerializer.Deserialize<League>(jsonString);
 		}
 
-		if (cachedLeague is null || cachedLeague.CurrentCompetitionId == 0)
+		if (cachedLeague is null)
 		{
 			TenantsHost? tenantsHost = await client.GetFromJsonAsync<TenantsHost>("tenants/host");
 			WebsitesHost? websitesHost = await client.GetFromJsonAsync<WebsitesHost>("websites/host");
@@ -25,21 +26,16 @@ public sealed partial class TTLeaguesReader
 			league = new()
 			{
 				Id = LeagueId,
-				Competitions = [..currentCompetitions, ..archives],
-				CurrentCompetition = currentCompetitions?.Single()!,
-				CurrentCompetitionId = currentCompetitions?.Single().Id ?? 0,
 				TenantsHost = tenantsHost,
 				WebsitesHost = websitesHost,
+				CurrentCompetitions = [.. currentCompetitions],
+				ArchivedCompetitions = [.. archives],
 			};
 			jsonString = JsonSerializer.Serialize(league);
 			_ = SaveFile(jsonString, fileName);
-			_ = SaveFile(jsonString, fileName.Replace("_league", $"_{league.CurrentCompetitionId}_league"));
 		} else {
 			league = cachedLeague;
 		}
-
-		List<Division>? divisions = await GetDivisions(LeagueId, league.CurrentCompetitionId);
-		league.CurrentCompetition.Divisions = divisions;
 
 		return league;
 	}
