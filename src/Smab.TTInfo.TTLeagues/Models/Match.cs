@@ -5,8 +5,8 @@ internal sealed class Match
 	public int Id { get; set; }
 	public required MatchTeamInfo Home { get; set; }
 	public required MatchTeamInfo Away { get; set; }
-	public DateTime? Date { get; set; }
-	public DateTime? Time { get; set; }
+	public DateTimeOffset? Date { get; set; }
+	public DateTimeOffset? Time { get; set; }
 	public int? Week { get; set; }
 	public required string Name { get; set; }
 	public required string Venue { get; set; }
@@ -14,28 +14,28 @@ internal sealed class Match
 	public long CompetitionId { get; set; }
 	public long DivisionId { get; set; }
 	public long? PreviousLinkId { get; set; }
-	public DateTime? Submitted { get; set; }
-	public DateTime? Approved { get; set; }
-	public DateTime? Rejected { get; set; }
-	public DateTime? Overridden { get; set; }
+	public DateTimeOffset? Submitted { get; set; }
+	public DateTimeOffset? Approved { get; set; }
+	public DateTimeOffset? Rejected { get; set; }
+	public DateTimeOffset? Overridden { get; set; }
 	public ActionedBy? SubmittedBy { get; set; }
 	public ActionedBy? ApprovedBy { get; set; }
 	public ActionedBy? RejectedBy { get; set; }
 	public ActionedBy? OverriddenBy { get; set; }
 	public long? VenueId { get; set; }
-	public DateTime? Forfeit { get; set; }
+	public DateTimeOffset? Forfeit { get; set; }
 	public required string ForfeitReason { get; set; }
 	public long? ForfeitId { get; set; }
 	public required string AbandonedReason { get; set; }
-	public DateTime? Abandoned { get; set; }
+	public DateTimeOffset? Abandoned { get; set; }
 	public long LeagueId { get; set; }
 	public long? ClubId { get; set; }
 	public long? CountyId { get; set; }
 	public required string Competition { get; set; }
-	public DateTime Updated { get; set; }
+	public DateTimeOffset Updated { get; set; }
 	public bool Manual { get; set; }
-	public DateTime Published { get; set; }
-	public DateTime? Archived { get; set; }
+	public DateTimeOffset Published { get; set; }
+	public DateTimeOffset? Archived { get; set; }
 	public Potm? Potm { get; set; }
 	public long? PotmType { get; set; }
 	public long Entry { get; set; }

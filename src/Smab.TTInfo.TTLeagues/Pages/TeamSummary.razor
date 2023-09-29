@@ -18,7 +18,7 @@
 						@if (match.Date is null) {
 							<span class="postponed badge" title="Postponed">P</span>
 						}
-						<time datetime="@match.Date?.ToString("yyyy-MM-dd") @match.Time?.ToShortTimeString()">@match.Date?.ToString("ddd dd MMM") @match.Time?.ToShortTimeString()</time>
+						<time datetime="@match.Time?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")">@match.Time?.ToLocalTime().ToString("ddd dd MMM HH:mm")</time>
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (match.HasResults) {
