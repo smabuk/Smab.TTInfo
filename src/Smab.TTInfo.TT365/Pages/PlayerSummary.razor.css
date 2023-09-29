@@ -125,7 +125,7 @@ caption {
         text-align: right;
     }
 
-    #results tr {
+    #results tr td {
         background-color: rgba(var(--result-color-rgb), .5);
     }
 

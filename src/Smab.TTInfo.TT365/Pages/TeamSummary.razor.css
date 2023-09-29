@@ -122,7 +122,7 @@ caption {
         text-align: left;
     }
 
-    #results tr {
+    #results tr td {
         background-color: rgba(var(--result-color-rgb), .5);
     }
 
