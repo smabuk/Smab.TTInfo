@@ -7,16 +7,19 @@ public sealed partial class TTLeaguesReader
 	internal async Task<Fixtures> GetAllFixtures(string leagueId, long? competitionId = null)
 	{
 		Fixtures? fixtures;
+		string cacheFilename = competitionId is null
+			? $"fixtures_{leagueId}.json"
+			: $"fixtures_{leagueId}_{competitionId}.json";
 		leagueId = leagueId.ToLowerInvariant();
-
-		HttpClient client = CreateHttpClient(leagueId);
-		//string jsonString = await client.GetStringAsync($"matches/?competitionId={competitionId}");
-		fixtures = await client.GetFromJsonAsync<Fixtures>($"matches/?competitionId={competitionId}");
-
-		//string? jsonString = LoadFile($"_test_fixtures_maidenhead.json");
-		//if (jsonString is not null) {
-		//	fixtures = JsonSerializer.Deserialize<Fixtures>(jsonString, jsonSerializerOptions);
-		//}
+		string? jsonString = LoadFile(cacheFilename);
+		if (jsonString is not null) {
+			fixtures = JsonSerializer.Deserialize<Fixtures>(jsonString, jsonSerializerOptions);
+		} else { 
+			HttpClient client = CreateHttpClient(leagueId);
+			jsonString = await client.GetStringAsync($"matches/?competitionId={competitionId}");
+			fixtures = JsonSerializer.Deserialize<Fixtures>(jsonString);
+			_ = SaveFile(jsonString, cacheFilename);
+		}
 
 		return fixtures ?? new();
 	}

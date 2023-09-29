@@ -31,7 +31,7 @@
 						@foreach (var team in division.TeamStandings) {
 							<tr>
 								<td>@team.Position</td>
-								<td>@team.Name </td>
+								<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
 								<td>@team.Played</td>
 								<td>@team.Won</td>
 								<td>@team.Drawn</td>

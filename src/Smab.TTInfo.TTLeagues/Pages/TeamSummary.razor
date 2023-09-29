@@ -4,11 +4,34 @@
 
 <PageTitle>@TeamName - @LeagueId</PageTitle>
 
-@if (team is null || fixtures.Count == 0) {
+@if (fixtures is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
 } else {
 	<h1>@TeamName</h1>
 	<div id="fixtures">
+		@foreach (Match match in fixtures) {
+			FixtureResult? fr;
+			fixtureResults.TryGetValue(match.Id, out fr);
+			<div class="card" data-result='@fr?.Result'>
+				<div class="row">
+					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+						@if (match.Date is null) {
+							<span class="postponed badge" title="Postponed">P</span>
+						}
+						<time datetime="@match.Date?.ToString("yyyy-MM-dd") @match.Time?.ToShortTimeString()">@match.Date?.ToString("ddd dd MMM") @match.Time?.ToShortTimeString()</time>
+					</div>
+					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						@if (match.HasResults) {
+							<a class="badge badge-sm" href="@match.Number" target="_blank" rel="noopener">@fr?.FullScore</a>
+						}
+						<a href="TTLeagues/TeamSummary/@LeagueId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)">
+							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
+						</a>
+						<span> @@ @match.Venue</span>
+					</div>
+				</div>
+			</div>
+		}
 @* 		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
@@ -99,7 +122,7 @@
 	<h2>Team Stats</h2>
 	<div id="teamstats" class="card">
 		<div>
-			<div>Captain: <span>@team.Captain</span></div>
+			<div>Captain: <span>@team?.Captain</span></div>
 			@* <div>Caption: <span>@team.Caption</span></div> *@
 		</div>
 		<div id="players">
@@ -185,31 +208,33 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		TeamName = TeamId.Replace("_", " ");
-		team = null;
+		// team = null;
 		fixtures = new();
 		fixtureResults = new();
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(LeagueId);
 		// team = await _ttleagues.GetTeamStats(LeagueId, TeamName);
 		// if (team is not null) {
+		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentCompetitionId);
 
-		// 	fixtures = (await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
-		// 					.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
-		// 					.ToList();
-		// 	foreach (Fixture fixture in fixtures) {
-		// 		if (fixture is CompletedFixture completedFixture) {
-		// 			string result;
-		// 			string fullScore;
-		// 			if (fixture.HomeTeam.Equals(@team.Name)) {
-		// 				result = (completedFixture.ForHome > completedFixture.ForAway) ? "win" : (completedFixture.ForHome < completedFixture.ForAway) ? "loss" : "draw";
-		// 				fullScore = $"{completedFixture.ForHome} - {completedFixture.ForAway}";
-		// 			} else {
-		// 				result = (completedFixture.ForHome > completedFixture.ForAway) ? "loss" : (completedFixture.ForHome < completedFixture.ForAway) ? "win" : "draw";
-		// 				fullScore = $"{completedFixture.ForAway} - {completedFixture.ForHome}";
-		// 			}
-		// 			fixtureResults.TryAdd(completedFixture.Id, new(completedFixture.Id, result, fullScore));
-		// 		}
-		// 	}
+		fixtures = f.Matches
+			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
+			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
+			.ToList();
+			foreach (Match match in fixtures) {
+				if (match.HasResults) {
+					string result;
+					string fullScore;
+					if (match.Home.Name.Equals(TeamName, StringComparison.CurrentCultureIgnoreCase)) {
+						result = (match.Home.Score > match.Away.Score) ? "win" : (match.Home.Score < match.Away.Score) ? "loss" : "draw";
+						fullScore = $"{match.Home.Score} - {match.Away.Score}";
+					} else {
+						result = (match.Home.Score > match.Away.Score) ? "loss" : (match.Home.Score < match.Away.Score) ? "win" : "draw";
+						fullScore = $"{match.Away.Score} - {match.Home.Score}";
+					}
+					fixtureResults.TryAdd(match.Id, new(match.Id, result, fullScore));
+				}
+			}
 
 		// 	StateHasChanged();
 

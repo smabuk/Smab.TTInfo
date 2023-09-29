@@ -9,7 +9,7 @@ public sealed partial class TTLeaguesReader
 			_ = Directory.CreateDirectory(CacheFolder);
 		}
 
-		string destination = Path.Combine(CacheFolder, fileName);
+		string destination = Path.Combine(CacheFolder,  $"{CACHEFILE_PREFIX}{fileName}");
 
 		File.WriteAllText(destination, contents);
 

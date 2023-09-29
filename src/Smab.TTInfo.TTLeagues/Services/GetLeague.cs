@@ -30,16 +30,15 @@ public sealed partial class TTLeaguesReader
 				TenantsHost = tenantsHost,
 				WebsitesHost = websitesHost,
 			};
+			jsonString = JsonSerializer.Serialize(league);
+			_ = SaveFile(jsonString, $"league_{LeagueId}.json");
+			_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentCompetitionId}.json");
 		} else {
 			league = cachedLeague;
 		}
 
 		List<Division>? divisions = await GetDivisions(LeagueId, league.CurrentCompetitionId);
 		league.CurrentCompetition.Divisions = divisions;
-
-		jsonString = JsonSerializer.Serialize(league);
-		_ = SaveFile(jsonString, $"league_{LeagueId}.json");
-		_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentCompetitionId}.json");
 
 		return league;
 	}
