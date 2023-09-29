@@ -6,9 +6,10 @@ public sealed partial class TTLeaguesReader
 	{
 		League league;
 		League? cachedLeague = null;
+		string fileName = $"{LeagueId}_league.json";
 		HttpClient client = CreateHttpClient(LeagueId);
 
-		string? jsonString = LoadFile($"league_{LeagueId}.json");
+		string? jsonString = LoadFile(fileName);
 		if (jsonString is not null )
 		{
 			cachedLeague = JsonSerializer.Deserialize<League>(jsonString);
@@ -31,8 +32,8 @@ public sealed partial class TTLeaguesReader
 				WebsitesHost = websitesHost,
 			};
 			jsonString = JsonSerializer.Serialize(league);
-			_ = SaveFile(jsonString, $"league_{LeagueId}.json");
-			_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentCompetitionId}.json");
+			_ = SaveFile(jsonString, fileName);
+			_ = SaveFile(jsonString, fileName.Replace("_league", $"_{league.CurrentCompetitionId}_league"));
 		} else {
 			league = cachedLeague;
 		}

@@ -4,6 +4,7 @@
 @competitionId=1741
 @leagueId=127
 @divisionId=5123
+@teamId=52000
 @matchId=531010
 @userId=8a946edb-4904-4e83-87d5-58d16febc514
 
@@ -63,6 +64,18 @@ Tenant: {{league}}.ttleagues.com
 
 # Doubles averages by for the specified division
 GET https://ttleagues-api.azurewebsites.net/api/divisions/{{divisionId}}/potms
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Team
+GET https://ttleagues-api.azurewebsites.net/api/teams/{{teamId}}
+Tenant: {{league}}.ttleagues.com
+###
+
+
+# Team members
+GET https://ttleagues-api.azurewebsites.net/api/teams/{{teamId}}/members
 Tenant: {{league}}.ttleagues.com
 ###
 

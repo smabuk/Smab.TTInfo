@@ -2,6 +2,7 @@
 global using System.Net.Http;
 global using System.Net.Http.Json;
 global using System.Text.Json;
+global using System.Web;
 
 global using System.Text.Json.Serialization;
 

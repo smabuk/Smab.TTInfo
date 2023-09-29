@@ -18,10 +18,10 @@ internal sealed class Match
 	public DateTimeOffset? Approved { get; set; }
 	public DateTimeOffset? Rejected { get; set; }
 	public DateTimeOffset? Overridden { get; set; }
-	public ActionedBy? SubmittedBy { get; set; }
-	public ActionedBy? ApprovedBy { get; set; }
-	public ActionedBy? RejectedBy { get; set; }
-	public ActionedBy? OverriddenBy { get; set; }
+	public Person? SubmittedBy { get; set; }
+	public Person? ApprovedBy { get; set; }
+	public Person? RejectedBy { get; set; }
+	public Person? OverriddenBy { get; set; }
 	public long? VenueId { get; set; }
 	public DateTimeOffset? Forfeit { get; set; }
 	public required string ForfeitReason { get; set; }

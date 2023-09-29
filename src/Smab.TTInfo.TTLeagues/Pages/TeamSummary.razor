@@ -1,4 +1,4 @@
-﻿@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamId}"
+﻿@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamName}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -190,7 +190,7 @@
 @code {
 	[EditorRequired]
 	[Parameter]
-	public string TeamId { get; set; } = "";
+	public string TeamName { get; set; } = "";
 
 	[EditorRequired]
 	[Parameter]
@@ -198,8 +198,7 @@
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
-	public string TeamName { get; set; } = "";
-	private MatchTeamInfo? team;
+	private Team? team;
 	private List<Match> fixtures = new();
 	private Dictionary<string, string> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
@@ -207,7 +206,7 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		TeamName = TeamId.Replace("_", " ");
+		TeamName = HttpUtility.HtmlDecode(TeamName).Replace("_", " ");
 		// team = null;
 		fixtures = new();
 		fixtureResults = new();
@@ -217,10 +216,11 @@
 		// if (team is not null) {
 		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentCompetitionId);
 
-		fixtures = f.Matches
+		fixtures = f?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
-			.ToList();
+			.OrderBy(m => m.Time)
+			.ToList() ?? new();
 			foreach (Match match in fixtures) {
 				if (match.HasResults) {
 					string result;
