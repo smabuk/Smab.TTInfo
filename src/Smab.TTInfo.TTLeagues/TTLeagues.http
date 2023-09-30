@@ -135,6 +135,12 @@ Tenant: {{league}}.ttleagues.com
 ###
 
 
+# Rankings
+GET https://ttleagues-api.azurewebsites.net/api/rankings
+Tenant: {{league}}.ttleagues.com
+###
+
+
 
 
 
