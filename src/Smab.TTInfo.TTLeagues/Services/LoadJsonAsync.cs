@@ -26,8 +26,8 @@ public sealed partial class TTLeaguesReader
 			if (response.IsSuccessStatusCode) {
 				jsonString = await response.Content.ReadAsStringAsync();
 				_ = SaveFile(jsonString, fileName);
-			} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
-				jsonString = LoadFile(fileName);
+			//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
+			//	jsonString = LoadFile(fileName);
 			} else {
 				jsonString = LoadFile(fileName);
 			}
