@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<List<Division>> GetDivisions(string leagueId, long competitionId)
+	internal async Task<List<Division>> GetDivisions(string leagueId, int competitionId)
 	{
 		string fileName = $"{leagueId}_{competitionId}_divisions.json";
 

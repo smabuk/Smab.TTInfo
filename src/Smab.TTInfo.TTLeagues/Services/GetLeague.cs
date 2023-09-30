@@ -1,23 +1,22 @@
-﻿namespace Smab.TTInfo.TTLeagues.Services;
+﻿using Smab.TTInfo.TTLeagues.Models;
+
+namespace Smab.TTInfo.TTLeagues.Services;
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<League?> GetLeague(string LeagueId)
+	internal async Task<League?> GetLeague(string leagueId)
 	{
 		League league;
-		League? cachedLeague = null;
-		string fileName = $"{LeagueId}_league.json";
+		string fileName = $"{leagueId}_league.json";
 
-		using HttpClient client = CreateHttpClient(LeagueId);
-
-		string? jsonString = LoadFile(fileName);
-		if (jsonString is not null )
-		{
-			cachedLeague = JsonSerializer.Deserialize<League>(jsonString);
-		}
+		League? cachedLeague = await LoadJsonAsync<League>(
+			leagueId,
+			null,
+			fileName);
 
 		if (cachedLeague is null)
 		{
+			using HttpClient client = CreateHttpClient(leagueId);
 			TenantsHost? tenantsHost = await client.GetFromJsonAsync<TenantsHost>("tenants/host");
 			WebsitesHost? websitesHost = await client.GetFromJsonAsync<WebsitesHost>("websites/host");
 			List<Competition>? currentCompetitions = await client.GetFromJsonAsync<List<Competition>>("competitions/all");
@@ -25,14 +24,13 @@ public sealed partial class TTLeaguesReader
 
 			league = new()
 			{
-				Id = LeagueId,
+				Id = leagueId,
 				TenantsHost = tenantsHost,
 				WebsitesHost = websitesHost,
 				CurrentCompetitions = [.. currentCompetitions],
 				ArchivedCompetitions = [.. archives],
 			};
-			jsonString = JsonSerializer.Serialize(league);
-			_ = SaveFile(jsonString, fileName);
+			_ = SaveFile(JsonSerializer.Serialize(league), fileName);
 		} else {
 			league = cachedLeague;
 		}

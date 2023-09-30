@@ -10,9 +10,9 @@ internal sealed class Match
 	public int? Week { get; set; }
 	public required string Name { get; set; }
 	public required string Venue { get; set; }
-	public long? GroupingId { get; set; }
-	public long CompetitionId { get; set; }
-	public long DivisionId { get; set; }
+	public int? GroupingId { get; set; }
+	public int CompetitionId { get; set; }
+	public int DivisionId { get; set; }
 	public long? PreviousLinkId { get; set; }
 	public DateTimeOffset? Submitted { get; set; }
 	public DateTimeOffset? Approved { get; set; }
@@ -22,29 +22,29 @@ internal sealed class Match
 	public Person? ApprovedBy { get; set; }
 	public Person? RejectedBy { get; set; }
 	public Person? OverriddenBy { get; set; }
-	public long? VenueId { get; set; }
+	public int? VenueId { get; set; }
 	public DateTimeOffset? Forfeit { get; set; }
 	public required string ForfeitReason { get; set; }
-	public long? ForfeitId { get; set; }
+	public int? ForfeitId { get; set; }
 	public required string AbandonedReason { get; set; }
 	public DateTimeOffset? Abandoned { get; set; }
-	public long LeagueId { get; set; }
-	public long? ClubId { get; set; }
-	public long? CountyId { get; set; }
+	public int LeagueId { get; set; }
+	public int? ClubId { get; set; }
+	public int? CountyId { get; set; }
 	public required string Competition { get; set; }
 	public DateTimeOffset Updated { get; set; }
 	public bool Manual { get; set; }
 	public DateTimeOffset Published { get; set; }
 	public DateTimeOffset? Archived { get; set; }
 	public Potm? Potm { get; set; }
-	public long? PotmType { get; set; }
-	public long Entry { get; set; }
+	public int? PotmType { get; set; }
+	public int Entry { get; set; }
 	public bool HasReport { get; set; }
 	public bool HasComments { get; set; }
-	public long ResultDisplay { get; set; }
+	public int ResultDisplay { get; set; }
 	public bool PlayAll { get; set; }
 	public bool HasResults { get; set; }
-	public long ScoreUp { get; set; }
+	public int ScoreUp { get; set; }
 	public object? Round { get; set; }
 	public object? TableNo { get; set; }
 	public object? DayId { get; set; }

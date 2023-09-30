@@ -74,7 +74,7 @@ Tenant: {{league}}.ttleagues.com
 
 
 # Teams
-GET https://ttleagues-api.azurewebsites.net/api/teams
+GET https://ttleagues-api.azurewebsites.net/api/teams?competition=
 Tenant: {{league}}.ttleagues.com
 ###
 
@@ -90,6 +90,11 @@ GET https://ttleagues-api.azurewebsites.net/api/teams/{{teamId}}/members
 Tenant: {{league}}.ttleagues.com
 ###
 
+
+# Team stats
+GET https://ttleagues-api.azurewebsites.net/api/competitions/1741/team/40152/stats
+Tenant: {{league}}.ttleagues.com
+###
 
 # Team stats
 GET https://ttleagues-api.azurewebsites.net/api/competitions/2368/team/52000/stats

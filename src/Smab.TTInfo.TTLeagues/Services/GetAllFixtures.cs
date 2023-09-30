@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<Fixtures?> GetAllFixtures(string leagueId, long? competitionId = null)
+	internal async Task<Fixtures?> GetAllFixtures(string leagueId, int? competitionId = null)
 	{
 		string fileName = competitionId is null
 			? $"{leagueId}_fixtures.json"

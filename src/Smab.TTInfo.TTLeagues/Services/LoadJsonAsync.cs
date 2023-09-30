@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<T?> LoadJsonAsync<T>(string leagueId, string url, string fileName, int? cacheHours = null)
+	public async Task<T?> LoadJsonAsync<T>(string leagueId, string? url, string fileName, int? cacheHours = null)
 	{
 		string? jsonString = null;
 		T? returnValue = default;
@@ -14,13 +14,13 @@ public sealed partial class TTLeaguesReader
 		string source = Path.Combine(CacheFolder, $"{CACHEFILE_PREFIX}{fileName}");
 		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < DateTime.UtcNow;
 
-		if (!refreshCache || UseTestFiles) {
+		if (!refreshCache || UseTestFiles || url is null) {
 			if (File.Exists(source)) {
 				jsonString = LoadFile(fileName);
 			}
 		}
 
-		if (string.IsNullOrWhiteSpace(jsonString)) {
+		if (string.IsNullOrWhiteSpace(jsonString) && url is not null) {
 			using HttpClient client = CreateHttpClient(leagueId);
 			HttpResponseMessage? response = await client.GetAsync(url);
 			if (response.IsSuccessStatusCode) {

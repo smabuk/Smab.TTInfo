@@ -2,12 +2,14 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public string? LoadFile(string fileName, int? cacheHours = null)
+	public string? LoadFile(string fileName)
 	{
+
 		if (!Directory.Exists(CacheFolder)) {
 			_ = Directory.CreateDirectory(CacheFolder);
 		}
 
+		fileName = fileName.ToLowerInvariant();
 		string source = Path.Combine(CacheFolder, $"{CACHEFILE_PREFIX}{fileName}");
 
 		return File.Exists(source) switch

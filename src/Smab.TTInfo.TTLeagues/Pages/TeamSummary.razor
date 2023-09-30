@@ -22,7 +22,7 @@
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (match.HasResults) {
-							<a class="badge badge-sm" href="@match.Number" target="_blank" rel="noopener">@fr?.FullScore</a>
+							<a class="badge badge-sm" href="@CalculateMatchHref(match)" target="_blank" rel="noopener">@fr?.FullScore</a>
 						}
 						<a href="TTLeagues/TeamSummary/@LeagueId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)">
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
@@ -122,8 +122,8 @@
 	<h2>Team Stats</h2>
 	<div id="teamstats" class="card">
 		<div>
-			<div>Captain: <span>@team?.Captain</span></div>
-			@* <div>Caption: <span>@team.Caption</span></div> *@
+			<div>Captain: <span>@team?.Captain?.Name</span></div>
+			<div>Caption: <span>@teamStats?.Competition.Value > @teamStats?.Division.Value</span></div>
 		</div>
 		<div id="players">
 			<h3>Players</h3>
@@ -139,18 +139,16 @@
 					</tr>
 				</thead>
 				<tbody>
-@* 
-					@foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played)) {
+					@foreach (var player in teamStats?.Players?.OrderByDescending(p => p.Average)?.ThenByDescending(p => p.Played)) {
 						<tr>
-							<td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
+							<td><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
-							<td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
-							<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
-							<td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
-							<td>@player.Form</td>
+							<td><span>@(new string('0', 3 - Math.Round(player.Average, 0).ToString("##0").Length))</span>@($"{Math.Round(player.Average, 0):##0}")%</td>
+							<td><span>@(new string('0', 3 - "n/a".ToString().Length))</span>n/a</td>
+							<td><span>@(new string('0', 2 - (player.Potm).ToString().Length))</span>@(player.Potm)</td>
+							<td>@CalculateForm(player.Matches)</td>
 						</tr>
 					}
- *@
 				</tbody>
 			</table>
 		</div>
@@ -168,18 +166,16 @@
 					</tr>
 				</thead>
 				<tbody>
-@*
-					@foreach (var result in team.Results!) {
-						<tr data-result='@result.MatchResult'>
-							<td><a href="TeamSummary/@LeagueId/@result.Opposition">@result.Opposition</a></td>
-							<td>@result.HomeOrAway</td>
-							<td>@result.Date.ToString("dd MMM yyyy")</td>
-							<td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
-							<td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
-							<td>@result.PlayerOfTheMatch</td>
+					@foreach (var result in teamStats.Results!) {
+						<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
+							<td><a href="TTLeagues/TeamSummary/@LeagueId/@result.Versus.Value">@result.Versus.Value</a></td>
+							<td>@(result.Home ? "Home" : "Away")</td>
+							<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
+							<td><a href="@result.MatchId" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
+							<td><span>@(new string('0', 2 - result.For.ToString().Length))</span>@result.For</td>
+							<td>@result.Potm</td>
 						</tr>
 					}
- *@
 				</tbody>
 			</table>
 		</div>
@@ -199,6 +195,7 @@
 	private record FixtureResult(int Id, string Result, string FullScore);
 
 	private Team? team;
+	private TeamStats? teamStats;
 	private List<Match> fixtures = new();
 	private Dictionary<string, string> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
@@ -212,32 +209,36 @@
 		fixtureResults = new();
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(LeagueId);
-		//int teamId = league.CurrentCompetition.Divisions.
+		int competitionId = league?.CurrentCompetitions.First().Id ?? -1;
+		int teamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? -1;
 
-
-		// team = await _ttleagues.GetTeamStats(LeagueId, TeamName);
-		// if (team is not null) {
-		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, league?.CurrentCompetitions.First().Id);
+		team = await _ttleagues.GetTeam(teamId, LeagueId);
+		StateHasChanged();
+		teamStats = await _ttleagues.GetTeamStats(teamId, LeagueId, competitionId);
+		StateHasChanged();
+		List<TeamMember> teamMembers = await _ttleagues.GetTeamMembers(teamId, LeagueId);
+		StateHasChanged();
+		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, competitionId);
 
 		fixtures = f?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
 			.OrderBy(m => m.Time)
 			.ToList() ?? new();
-			foreach (Match match in fixtures) {
-				if (match.HasResults) {
-					string result;
-					string fullScore;
-					if (match.Home.Name.Equals(TeamName, StringComparison.CurrentCultureIgnoreCase)) {
-						result = (match.Home.Score > match.Away.Score) ? "win" : (match.Home.Score < match.Away.Score) ? "loss" : "draw";
-						fullScore = $"{match.Home.Score} - {match.Away.Score}";
-					} else {
-						result = (match.Home.Score > match.Away.Score) ? "loss" : (match.Home.Score < match.Away.Score) ? "win" : "draw";
-						fullScore = $"{match.Away.Score} - {match.Home.Score}";
-					}
-					fixtureResults.TryAdd(match.Id, new(match.Id, result, fullScore));
+		foreach (Match match in fixtures) {
+			if (match.HasResults) {
+				string result;
+				string fullScore;
+				if (match.Home.Name.Equals(TeamName, StringComparison.CurrentCultureIgnoreCase)) {
+					result = (match.Home.Score > match.Away.Score) ? "win" : (match.Home.Score < match.Away.Score) ? "loss" : "draw";
+					fullScore = $"{match.Home.Score} - {match.Away.Score}";
+				} else {
+					result = (match.Home.Score > match.Away.Score) ? "loss" : (match.Home.Score < match.Away.Score) ? "win" : "draw";
+					fullScore = $"{match.Away.Score} - {match.Home.Score}";
 				}
+				fixtureResults.TryAdd(match.Id, new(match.Id, result, fullScore));
 			}
+		}
 
 		// 	StateHasChanged();
 
@@ -246,7 +247,7 @@
 		// 	foreach (string team in teamList) {
 		// 		tasks.Add(GetTeamPlayers(team));
 		// 	}
-			// await Task.WhenAll(tasks);
+		// await Task.WhenAll(tasks);
 
 		// 	StateHasChanged();
 		// }
@@ -271,4 +272,24 @@
 	// 	}
 	// 	return playersString;
 	// }
+
+	string CalculateForm(IReadOnlyList<TeamStatsMatch> matches)
+	{
+		return String.Join(",", matches.Take(6).Select(m => m.Form.ToString()));
+	}
+
+	string CalculateMatchHref(Match match)
+	{
+		return $"https://{LeagueId}.ttleagues.com/league/{match.CompetitionId}/division/{match.DivisionId}/match/{match.Id}";
+	}
+
+	string CalculateMatchResult(int scoreFor, int scoreAgainst)
+	{
+		return (scoreFor - scoreAgainst) switch
+		{
+			> 0 => "win",
+			< 0 => "loss",
+			0 => "draw",
+		};
+	}
 }

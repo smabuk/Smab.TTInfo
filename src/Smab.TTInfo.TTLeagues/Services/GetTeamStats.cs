@@ -2,21 +2,14 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<Team?> GetTeamStats(string leagueId, int teamId)
+	internal async Task<TeamStats?> GetTeamStats(int teamId, string leagueId, int competitionId)
 	{
-		string filename = $"{leagueId}_team_{teamId}"; 
-		Team? team = await LoadJsonAsync<Team>(
+		string fileName = $"{leagueId}_{competitionId}_team_{teamId}_stats.json"; 
+		TeamStats? teamStats = await LoadJsonAsync<TeamStats>(
 			leagueId,
-			$"teams/{teamId}",
-			filename);
+			$"competitions/{competitionId}/team/{teamId}/stats",
+			fileName);
 
-		if (team is not null) {
-			//foreach (Division division in divisions) {
-			//	List<TeamStanding>? teamStandings = await client.GetFromJsonAsync<List<TeamStanding>>($"divisions/{division.Id}/standings");
-			//	division.TeamStandings.AddRange(teamStandings!);
-			//}
-		}
-
-		return team;
+		return teamStats;
 	}
 }
