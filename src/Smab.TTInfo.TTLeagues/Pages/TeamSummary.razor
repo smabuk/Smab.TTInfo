@@ -30,17 +30,17 @@
 						<span> @@ @match.Venue</span>
 					</div>
 				</div>
-			</div>
-		}
 @*
-				@if (fixture is PostponedFixture postponed) {
+				@if (match.Date is null) {
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-8 col-lg-9">
 							@postponed.Reason
 						</div>
 					</div>
 				}
-				@if (fixture is CompletedFixture completedFixture) {
+ *@
+				@if (match.HasResults) {
+@*
 					@if (completedFixture.Other is not null) {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
@@ -48,57 +48,59 @@
 							</div>
 						</div>
 					}
-					@if (fixture.HomeTeam.Equals(@team.Name)) {
+*@
+					@if (match.Home.TeamId.Equals(TeamId)) {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 					} else {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 					}
+@* 
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-							Doubles: @completedFixture.DoublesWinner
+							Doubles: @match.DoublesWinner
 						</div>
 					</div>
+ *@
 				} else {
-					<div class="row justify-content-end">
+ 					<div class="row justify-content-end">
 						<div class="col-12 col-md-8 col-lg-9">
-							@if (fixture.HomeTeam.Equals(@team.Name)) {
-								<text>@(teamPlayersList.ContainsKey(fixture.AwayTeam) ? @teamPlayersList[fixture.AwayTeam] : "Loading ...")</text>
+							@if (match.Home.TeamId.Equals(TeamId)) {
+								<text>@(teamPlayersList.ContainsKey(match.Away.TeamId ?? -1) ? @teamPlayersList[match.Away.TeamId ?? -1] : "Loading ...")</text>
 							} else {
-								<text>@(teamPlayersList.ContainsKey(fixture.HomeTeam) ? @teamPlayersList[fixture.HomeTeam] : "Loading ...")</text>
+								<text>@(teamPlayersList.ContainsKey(match.Home.TeamId ?? -1) ? @teamPlayersList[match.Home.TeamId ?? -1] : "Loading ...")</text>
 							}
 						</div>
 					</div>
 				}
 			</div>
 		}
- *@
-</div>
+	</div>
 	<h2>Team Stats</h2>
 	<div id="teamstats" class="card">
 		<div>
@@ -186,6 +188,9 @@
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
+	[Parameter]
+	public int TeamId { get; set; }
+
 	private record FixtureResult(int Id, string Result, string FullScore);
 
 	private League? league;
@@ -195,7 +200,7 @@
 	private List<Match> fixtures = [];
 	private Dictionary<string, Ranking> rankings = [];
 	private Dictionary<int, FixtureResult> fixtureResults = [];
-	//private Dictionary<string, string> teamPlayersList = [];
+	private Dictionary<int, string> teamPlayersList = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -206,16 +211,17 @@
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(LeagueId);
 		int competitionId = league?.CurrentCompetitions.First().Id ?? -1;
-		int teamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? -1;
+		TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? -1;
 
-		team = await _ttleagues.GetTeam(teamId, LeagueId);
-		teamStats = await _ttleagues.GetTeamStats(teamId, LeagueId, competitionId);
-		teamMembers = await _ttleagues.GetTeamMembers(teamId, LeagueId);
+		team = await _ttleagues.GetTeam(TeamId, LeagueId);
+		teamStats = await _ttleagues.GetTeamStats(TeamId, LeagueId, competitionId);
+		teamMembers = await _ttleagues.GetTeamMembers(TeamId, LeagueId);
 		rankings = (await _ttleagues.GetRankings(LeagueId)).ToDictionary(r => r.UserId);
 
-		Fixtures? f = await _ttleagues.GetAllFixtures(LeagueId, competitionId);
+		Fixtures? allFixtures = await _ttleagues.GetAllFixtures(LeagueId, competitionId);
+		Fixtures? allResults = await _ttleagues.GetAllResults(LeagueId, competitionId);
 
-		fixtures = f?.Matches
+		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
 			.OrderBy(m => m.Time)
@@ -236,38 +242,42 @@
 			}
 		}
 
-		// 	StateHasChanged();
+		StateHasChanged();
 
-		// 	List<string> teamList = fixtures.Select(t => t.HomeTeam).Union(fixtures.Select(t => t.HomeTeam)).Distinct().Where(t => t != TeamId).ToList();
-		// 	List<Task<string>> tasks = new();
-		// 	foreach (string team in teamList) {
-		// 		tasks.Add(GetTeamPlayers(team));
-		// 	}
-		// await Task.WhenAll(tasks);
+		List<int> teamList = fixtures
+			.Select(t => t.Home.TeamId ?? 0)
+			.Union(fixtures.Select(t => t.Away.TeamId ?? 0))
+			.Where(id => id != TeamId)
+			.Distinct()
+			.ToList();
+		List<Task<string>> tasks = new();
+		foreach (int id in teamList) {
+			tasks.Add(GetTeamPlayers(id, competitionId));			
+		}
+		await Task.WhenAll(tasks);
 
-		// 	StateHasChanged();
-		// }
+		StateHasChanged();
 	}
 
-	// protected async Task<string> GetTeamPlayers(string teamName)
-	// {
-	// 	string playersString;
+	protected async Task<string> GetTeamPlayers(int teamId, int competitionId)
+	{
+		string playersString;
 
-	// 	if (teamPlayersList.ContainsKey(teamName)) {
-	// 		playersString = teamPlayersList[teamName];
-	// 	} else {
-	// 		ICollection<Player>? players = (await _ttleagues.GetTeamStats(LeagueId, teamName))?.Players;
-	// 		if (players is null) {
-	// 			return "";
-	// 		}
-	// 		var playersList = players
-	// 			.OrderByDescending(p => p.WinPercentage)
-	// 			.Select(p => $"{p.Name} ({Math.Round(p.WinPercentage, 0)}%)");
-	// 		playersString = String.Join(", ", playersList);
-	// 		teamPlayersList.TryAdd(teamName, playersString);
-	// 	}
-	// 	return playersString;
-	// }
+		if (teamPlayersList.ContainsKey(teamId)) {
+			playersString = teamPlayersList[teamId];
+		} else {
+			List<TeamStatsPlayer>? players = (await _ttleagues.GetTeamStats(teamId, LeagueId, competitionId))?.Players.ToList();
+			if (players is null) {
+				return "";
+			}
+			var playersList = players
+				.OrderByDescending(p => p.Average)
+				.Select(p => $"{p.Name} ({Math.Round(p.Average, 0)}%)");
+			playersString = String.Join(", ", playersList);
+			teamPlayersList.TryAdd(teamId, playersString);
+		}
+		return playersString;
+	}
 
 	string CalculateForm(IReadOnlyList<TeamStatsMatch> matches)
 	{

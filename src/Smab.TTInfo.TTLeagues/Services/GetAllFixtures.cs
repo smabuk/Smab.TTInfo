@@ -8,9 +8,22 @@ public sealed partial class TTLeaguesReader
 			? $"{leagueId}_fixtures.json"
 			: $"{leagueId}_{competitionId}_fixtures.json";
 
-		return await LoadJsonAsync<Fixtures>(
+		Fixtures? fixtures = await LoadJsonAsync<Fixtures>(
 			leagueId,
-			$"matches/?competitionId={competitionId}",
+			$"matches/?competitionId={competitionId}&type=1",
 			fileName);
+
+		Fixtures? results = await GetAllResults(leagueId, competitionId);
+
+		if (fixtures is not null && results is not null) {
+			Dictionary<int, Match> resultsMatches = results.Matches.ToDictionary(m => m.Id);
+			for (int i = 0; i < fixtures.Matches.Count; i++) {
+				if (resultsMatches.TryGetValue(fixtures.Matches[i].Id, out Match? m)) {
+					fixtures.Matches[i] = m;
+				}
+			}
+		}
+
+		return fixtures;
 	}
 }
