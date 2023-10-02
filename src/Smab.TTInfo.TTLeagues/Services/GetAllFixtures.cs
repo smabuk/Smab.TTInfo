@@ -13,15 +13,21 @@ public sealed partial class TTLeaguesReader
 			$"matches/?competitionId={competitionId}&type=1",
 			fileName);
 
+		if (fixtures is null) {
+			return null;
+		}
+
 		Fixtures? results = await GetAllResults(leagueId, competitionId);
 
-		if (fixtures is not null && results is not null) {
+		if (results is not null) {
+			List<Match> matches = fixtures.Matches.ToList();
 			Dictionary<int, Match> resultsMatches = results.Matches.ToDictionary(m => m.Id);
-			for (int i = 0; i < fixtures.Matches.Count; i++) {
-				if (resultsMatches.TryGetValue(fixtures.Matches[i].Id, out Match? m)) {
-					fixtures.Matches[i] = m;
+			for (int i = 0; i < matches.Count; i++) {
+				if (resultsMatches.TryGetValue(matches[i].Id, out Match? m)) {
+					matches[i] = m;
 				}
 			}
+			return new(fixtures.Groups, matches, fixtures.Type, fixtures.Total);
 		}
 
 		return fixtures;

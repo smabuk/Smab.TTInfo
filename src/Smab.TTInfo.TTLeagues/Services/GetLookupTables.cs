@@ -21,7 +21,8 @@ public sealed partial class TTLeaguesReader
 			List<Division> divisions = await GetDivisions(leagueId, competitionId);
 			foreach (Division division in divisions) {
 				lookup.Add(new(LookupType.Division ,division.Id, division.Name));
-				foreach (TeamStanding team in division.TeamStandings) {
+				List<TeamStanding>? teamStandings = await GetDivisionStandings(division.Id, leagueId);
+				foreach (TeamStanding team in teamStandings ?? []) {
 					lookup.Add(new(LookupType.Team, team.TeamId, team.Name));
 				}
 			}

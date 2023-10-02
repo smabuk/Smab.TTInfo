@@ -8,5 +8,6 @@ global using System.Text.Json.Serialization;
 
 global using Smab.Shared.Helpers;
 global using Smab.TTInfo.TTLeagues.Models;
+global using Smab.TTInfo.TTLeagues.Models.TTLeagues;
 global using Smab.TTInfo.TTLeagues.Services;
 global using Smab.TTInfo.TTLeagues.Interfaces;

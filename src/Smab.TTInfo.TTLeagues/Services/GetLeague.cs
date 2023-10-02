@@ -1,6 +1,4 @@
-﻿using Smab.TTInfo.TTLeagues.Models;
-
-namespace Smab.TTInfo.TTLeagues.Services;
+﻿namespace Smab.TTInfo.TTLeagues.Services;
 
 public sealed partial class TTLeaguesReader
 {
@@ -22,14 +20,12 @@ public sealed partial class TTLeaguesReader
 			List<Competition>? currentCompetitions = await client.GetFromJsonAsync<List<Competition>>("competitions/all");
 			List<Competition>? archives = await client.GetFromJsonAsync<List<Competition>>("competitions/archives");
 
-			league = new()
-			{
-				Id = leagueId,
-				TenantsHost = tenantsHost,
-				WebsitesHost = websitesHost,
-				CurrentCompetitions = [.. currentCompetitions],
-				ArchivedCompetitions = [.. archives],
-			};
+			league = new(
+				Id: leagueId,
+				TenantsHost: tenantsHost,
+				WebsitesHost: websitesHost,
+				CurrentCompetitions: [.. currentCompetitions],
+				ArchivedCompetitions: [.. archives]);
 			_ = SaveFile(JsonSerializer.Serialize(league), fileName);
 		} else {
 			league = cachedLeague;

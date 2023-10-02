@@ -11,16 +11,7 @@ public sealed partial class TTLeaguesReader
 			$"competitions/{competitionId}/divisions",
 			fileName);
 
-		if (divisions is not null && !divisions.First().TeamStandings.Any()) {
-			using HttpClient client = CreateHttpClient(leagueId);
-			foreach (Division division in divisions) {
-				List<TeamStanding>? teamStandings = await client.GetFromJsonAsync<List<TeamStanding>>($"divisions/{division.Id}/standings");
-				division.TeamStandings.AddRange(teamStandings!);
-			}
-		}
-
-		_ = SaveFile(JsonSerializer.Serialize(divisions), fileName);
-		return divisions ?? new();
+		return divisions ?? [];
 	}
 }
 

@@ -35,8 +35,10 @@
 								</tr>
 							</thead>
 							<tbody>
-								@foreach (var team in division.TeamStandings)
-								{
+								@if (!teamStandingsList.TryGetValue(division.Id, out List<TeamStanding>? teamStandings)) {
+									<tr><td colspan="10">Loading @division.Name ... </td></tr>
+								} else {
+									@foreach (TeamStanding team in teamStandings) {
 									<tr>
 										<td>@team.Position</td>
 										<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
@@ -49,6 +51,7 @@
 										<td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
 										<td>@team.Points</td>
 									</tr>
+									}
 								}
 							</tbody>
 						</table>
@@ -96,6 +99,7 @@
 	private string currentCompetition = "";
 	private List<String> competitionNames = new();
 	private Dictionary<int, List<Division>> divisionsList = new();
+	private Dictionary<int, List<TeamStanding>> teamStandingsList = new();
 
 	private List<Division> divisions = new();
 
@@ -118,6 +122,17 @@
 			} else {
 				List<Division>? divisions = await _ttleagues.GetDivisions(LeagueId, (int)CompetitionId);
 				divisionsList.TryAdd((int)CompetitionId, divisions);
+			}
+			foreach (List<Division> divisions in divisionsList.Values) {
+				foreach (Division division in divisions)
+				{
+					List<TeamStanding>? teamStandings = await _ttleagues.GetDivisionStandings(division.Id, LeagueId);
+					if (teamStandings is not null)
+					{
+						teamStandingsList.TryAdd(division.Id, teamStandings);
+					}
+				}
+				StateHasChanged();
 			}
 		}
 		if (CompetitionId is not null) {

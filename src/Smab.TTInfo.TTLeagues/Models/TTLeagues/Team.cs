@@ -1,0 +1,28 @@
+﻿namespace Smab.TTInfo.TTLeagues.Models.TTLeagues;
+internal record Team(
+	int?    Id,
+	int?    CompetitionId,
+	string  Competition,
+	string  Name,
+	Club?   Club,
+	int?    ClubId,
+	Person? Captain,
+	string  ShortName,
+	string  Description,
+	string  CaptainId,
+	int?    Night,
+	DateTimeOffset? Time,
+	int?    VenueId,
+	int?    Play,
+	Venue?  Venue,
+	int?    BadgeId,
+	string  Abbreviation,
+	int?    Ordering,
+	bool?   ReservesOverride,
+	bool?   Locked,
+	bool?   Deleted,
+	string  DisplayName,
+	int?    RetentionId,
+	bool?   Pool,
+	IReadOnlyList<Person>? Members
+);

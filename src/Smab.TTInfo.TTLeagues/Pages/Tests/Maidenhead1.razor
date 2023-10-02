@@ -1,7 +1,4 @@
 ﻿@page "/maidenheadtest1"
-@using Smab.TTInfo.TTLeagues.Models
-@using Smab.TTInfo.TTLeagues.Services
-@using System.Text.Json;
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -23,5 +20,4 @@
 			Fixtures = await _ttleagues.GetAllFixtures("maidenhead", 2368);
 		}
 	}
-
 }
