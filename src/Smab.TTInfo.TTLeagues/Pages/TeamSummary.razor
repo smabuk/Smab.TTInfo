@@ -1,4 +1,5 @@
 ﻿@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamName}"
+@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamName}/{TeamId:int}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -24,7 +25,7 @@
 						@if (match.HasResults) {
 							<a class="badge badge-sm" href="@CalculateMatchHref(match)" target="_blank" rel="noopener">@fr?.FullScore</a>
 						}
-						<a href="TTLeagues/TeamSummary/@LeagueId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)">
+						<a href="TTLeagues/TeamSummary/@LeagueId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)/@(match.Home.Name.Equals(@TeamName) ? match.Away.TeamId : match.Home.TeamId)">
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
 						</a>
 						<span> @@ @match.Venue</span>
@@ -210,10 +211,16 @@
 		fixtureResults = [];
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(LeagueId);
-		int competitionId = league?.CurrentCompetitions.First().Id ?? -1;
-		TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? -1;
+		int competitionId = league?.CurrentCompetitions.First().Id ?? int.MinValue;
+		if (TeamId <= 0) {
+			TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? int.MinValue;
+		}
 
 		team = await _ttleagues.GetTeam(TeamId, LeagueId);
+		if (team is null) {
+			return;
+		}
+		competitionId = team.CompetitionId ?? int.MinValue;
 		teamStats = await _ttleagues.GetTeamStats(TeamId, LeagueId, competitionId);
 		teamMembers = await _ttleagues.GetTeamMembers(TeamId, LeagueId);
 		rankings = (await _ttleagues.GetRankings(LeagueId)).ToDictionary(r => r.UserId);

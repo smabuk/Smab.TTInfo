@@ -41,7 +41,7 @@
 									@foreach (TeamStanding team in teamStandings) {
 									<tr>
 										<td>@team.Position</td>
-										<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
+										<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name/@team.TeamId">@team.Name</a></td>
 										<td>@team.Played</td>
 										<td>@team.Won</td>
 										<td>@team.Drawn</td>
