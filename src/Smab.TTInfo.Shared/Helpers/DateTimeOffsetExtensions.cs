@@ -6,4 +6,10 @@ public static class DateTimeOffsetExtensions
 
 	public static DateTime ToUKTime(this DateTimeOffset dateTimeUtc)
 		=> TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dateTimeUtc.UtcDateTime, "GMT Standard Time");
+	public static DateTime? ToUKTime(this DateTimeOffset? dateTimeUtc)
+		=> dateTimeUtc switch
+		{
+			not null => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(((DateTimeOffset)dateTimeUtc).UtcDateTime, "GMT Standard Time"),
+			null => null
+		};
 }

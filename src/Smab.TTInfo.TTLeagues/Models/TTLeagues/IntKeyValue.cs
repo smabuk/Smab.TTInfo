@@ -1,2 +1,2 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models.TTLeagues;
-internal record KeyValue(int? Key, string Value);
+internal record IntKeyValue(int? Key, string Value);
