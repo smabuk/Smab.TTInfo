@@ -225,7 +225,7 @@
 		teamMembers = await _ttleagues.GetTeamMembers(TeamId, LeagueId);
 		rankings = (await _ttleagues.GetRankings(LeagueId)).ToDictionary(r => r.UserId);
 
-		Fixtures? allFixtures = await _ttleagues.GetAllFixtures(LeagueId, competitionId);
+		Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(LeagueId, competitionId);
 		Fixtures? allResults = await _ttleagues.GetAllResults(LeagueId, competitionId);
 
 		fixtures = allFixtures?.Matches

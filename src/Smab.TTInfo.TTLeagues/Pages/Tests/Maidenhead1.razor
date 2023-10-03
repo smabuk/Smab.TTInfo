@@ -17,7 +17,7 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Fixtures is null) {
-			Fixtures = await _ttleagues.GetAllFixtures("maidenhead", 2368);
+			Fixtures = await _ttleagues.GetAllFixturesWithMatchResults("maidenhead", 2368);
 		}
 	}
 }

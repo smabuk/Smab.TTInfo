@@ -6,11 +6,9 @@ public sealed partial class TTLeaguesReader
 	{
 		string fileName = $"{leagueId}_{competitionId}_competition.json";
 
-		Competition? competition = await LoadJsonAsync<Competition>(
+		return await LoadJsonAsync<Competition>(
 			leagueId,
 			$"competitions/{competitionId}",
 			fileName);
-
-		return competition;
 	}
 }

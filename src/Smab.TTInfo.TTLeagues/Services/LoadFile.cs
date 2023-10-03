@@ -4,9 +4,8 @@ public sealed partial class TTLeaguesReader
 {
 	public string? LoadFile(string fileName)
 	{
-
 		if (!Directory.Exists(CacheFolder)) {
-			_ = Directory.CreateDirectory(CacheFolder);
+			return null;
 		}
 
 		fileName = fileName.ToLowerInvariant();

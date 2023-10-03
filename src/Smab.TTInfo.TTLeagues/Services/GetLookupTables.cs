@@ -1,6 +1,4 @@
-﻿using Smab.TTInfo.TTLeagues.Models.TTLeagues;
-
-namespace Smab.TTInfo.TTLeagues.Services;
+﻿namespace Smab.TTInfo.TTLeagues.Services;
 
 public sealed partial class TTLeaguesReader
 {
