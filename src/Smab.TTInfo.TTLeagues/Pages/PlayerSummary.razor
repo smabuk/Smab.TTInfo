@@ -34,7 +34,7 @@
 								<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
 								<td><a href="@result.MatchId" target="_blank" rel="noopener">@result.For-@result.Against</a></td>
 								<td>@String.Join(", ", result.Games)</td>
-								<td>n/a</td>
+								<td>@(result.Score?.ToString("+##0;-##0;0") ?? "n/a")</td>
 							</tr>
 						}
 					}
