@@ -54,14 +54,14 @@
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
@@ -69,14 +69,14 @@
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
@@ -125,7 +125,7 @@
 					@foreach (var player in teamStats!.Players.OrderByDescending(p => p.Average).ThenByDescending(p => p.Played)) {
 						<tr>
 							@{string rankingPosition = rankings.GetValueOrDefault(player.Id)?.Position.ToString() ?? "";}
-							<td><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
+							<td><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.Average, 0).ToString("##0").Length))</span>@($"{Math.Round(player.Average, 0):##0}")%</td>
 							<td><span>@(new string('0', 3 - rankingPosition.Length))</span>@rankingPosition</td>
@@ -205,7 +205,7 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		TeamName = HttpUtility.HtmlDecode(TeamName).Replace("_", " ");
+		TeamName = HttpUtility.HtmlDecode(TeamName);
 
 		fixtures = [];
 		fixtureResults = [];
