@@ -10,7 +10,7 @@ public sealed partial class TTLeaguesReader
 
 		return await LoadJsonAsync<Fixtures>(
 			leagueId,
-			$"matches/?competitionId={competitionId}&type=2",
+			$"matches/?competitionId={competitionId}&type=1",
 			fileName);
 	}
 }

@@ -226,7 +226,6 @@
 		rankings = (await _ttleagues.GetRankings(LeagueId)).ToDictionary(r => r.UserId);
 
 		Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(LeagueId, competitionId);
-		Fixtures? allResults = await _ttleagues.GetAllResults(LeagueId, competitionId);
 
 		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
