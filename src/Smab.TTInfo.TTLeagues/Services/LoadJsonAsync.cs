@@ -2,7 +2,7 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public async Task<T?> LoadJsonAsync<T>(string leagueId, string? url, string fileName, int? cacheHours = null)
+	public async Task<T?> LoadJsonAsync<T>(string ttinfoId, string? url, string fileName, int? cacheHours = null)
 	{
 		string? jsonString = null;
 		T? returnValue = default;
@@ -22,7 +22,7 @@ public sealed partial class TTLeaguesReader
 		}
 
 		if (string.IsNullOrWhiteSpace(jsonString) && url is not null) {
-			using HttpClient client = CreateHttpClient(leagueId);
+			using HttpClient client = CreateHttpClient(ttinfoId);
 			HttpResponseMessage? response = await client.GetAsync(url);
 			if (response.IsSuccessStatusCode) {
 				jsonString = await response.Content.ReadAsStringAsync();

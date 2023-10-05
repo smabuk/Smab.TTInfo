@@ -20,7 +20,7 @@ public sealed partial class TTLeaguesReader
 			List<Competition>? archives            = await client.GetFromJsonAsync<List<Competition>>("competitions/archives");
 
 			league = new(
-				Id:                   leagueId,
+				TTInfoId:                   leagueId,
 				TenantsHost:          tenantsHost,
 				WebsitesHost:         websitesHost,
 				CurrentCompetitions:  [.. currentCompetitions],

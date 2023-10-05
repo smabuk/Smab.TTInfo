@@ -2,13 +2,13 @@
 
 public sealed partial class TTLeaguesReader
 {
-	public HttpClient CreateHttpClient(string leagueId)
+	public HttpClient CreateHttpClient(string ttinfoId)
 	{
-		leagueId = leagueId.ToLowerInvariant();
+		ttinfoId = ttinfoId.ToLowerInvariant();
 
 		HttpClient client = httpClientFactory.CreateClient();
 		client.BaseAddress = new Uri("https://ttleagues-api.azurewebsites.net/api/");
-		client.DefaultRequestHeaders.Add("Tenant", $"{leagueId}.ttleagues.com");
+		client.DefaultRequestHeaders.Add("Tenant", $"{ttinfoId}.ttleagues.com");
 
 		return client;
 	}

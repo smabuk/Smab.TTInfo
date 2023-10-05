@@ -2,12 +2,12 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<List<TeamMember>> GetTeamMembers(int teamId, string leagueId)
+	internal async Task<List<TeamMember>> GetTeamMembers(int teamId, string ttinfoId)
 	{
-		string fileName = $"{leagueId}_team_{teamId}_members.json";
+		string fileName = $"{ttinfoId}_team_{teamId}_members.json";
 
 		return await LoadJsonAsync<List<TeamMember>>(
-			leagueId,
+			ttinfoId,
 			$"teams/{teamId}/members",
 			fileName) ?? [];
 	}

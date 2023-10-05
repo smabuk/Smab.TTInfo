@@ -2,14 +2,14 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<Fixtures?> GetAllFixturesWithMatchResults(string leagueId, int? competitionId = null)
+	internal async Task<Fixtures?> GetAllFixturesWithMatchResults(string ttinfoId, int? competitionId = null)
 	{
-		Fixtures? fixtures = await GetAllFixtures(leagueId, competitionId);
+		Fixtures? fixtures = await GetAllFixtures(ttinfoId, competitionId);
 		if (fixtures is null) {
 			return null;
 		}
 
-		Fixtures? results = await GetAllResults(leagueId, competitionId);
+		Fixtures? results = await GetAllResults(ttinfoId, competitionId);
 		if (results is not null) {
 			List<Match> matches = fixtures.Matches.ToList();
 			Dictionary<int, Match> resultsMatches = results.Matches.ToDictionary(m => m.Id);

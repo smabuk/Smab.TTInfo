@@ -1,4 +1,4 @@
-﻿@page "/TTLeagues/LeagueSummary/{LeagueId}/{CompetitionId:int?}"
+﻿@page "/TTLeagues/LeagueSummary/{TTInfoId}/{CompetitionId:int?}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
@@ -41,7 +41,7 @@
 									@foreach (TeamStanding team in teamStandings) {
 									<tr>
 										<td>@team.Position</td>
-										<td><a href="TTLeagues/TeamSummary/@LeagueId/@team.Name/@team.TeamId">@team.Name</a></td>
+											<td><a href="TTLeagues/TeamSummary/@TTInfoId/@team.Name/@team.TeamId">@team.Name</a></td>
 										<td>@team.Played</td>
 										<td>@team.Won</td>
 										<td>@team.Drawn</td>
@@ -88,7 +88,7 @@
 @code {
 	[EditorRequired]
 	[Parameter]
-	public string LeagueId { get; set; } = "";
+	public string TTInfoId { get; set; } = "";
 
 	[EditorRequired]
 	[Parameter]
@@ -106,27 +106,27 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		if (League is null) {
-			LeagueName = $"{LeagueId} League";
-			League = await _ttleagues.GetLeague(LeagueId);
+			LeagueName = $"{TTInfoId} League";
+			League = await _ttleagues.GetLeague(TTInfoId);
 			LeagueName = @League?.TenantsHost?.Name ?? "";
 			StateHasChanged();
 			competitionNames = League?.CurrentCompetitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
 			if (CompetitionId is null) {
 				if (League?.CurrentCompetitions.Any() ?? false) {
 					foreach (Competition competition in League.CurrentCompetitions) {
-						List<Division>? divisions = await _ttleagues.GetDivisions(LeagueId, competition.Id);
+						List<Division>? divisions = await _ttleagues.GetDivisions(TTInfoId, competition.Id);
 						divisionsList.TryAdd(competition.Id, divisions);
 						StateHasChanged();
 					}
 				}
 			} else {
-				List<Division>? divisions = await _ttleagues.GetDivisions(LeagueId, (int)CompetitionId);
+				List<Division>? divisions = await _ttleagues.GetDivisions(TTInfoId, (int)CompetitionId);
 				divisionsList.TryAdd((int)CompetitionId, divisions);
 			}
 			foreach (List<Division> divisions in divisionsList.Values) {
 				foreach (Division division in divisions)
 				{
-					List<TeamStanding>? teamStandings = await _ttleagues.GetDivisionStandings(division.Id, LeagueId);
+					List<TeamStanding>? teamStandings = await _ttleagues.GetDivisionStandings(division.Id, TTInfoId);
 					if (teamStandings is not null)
 					{
 						teamStandingsList.TryAdd(division.Id, teamStandings);

@@ -2,12 +2,12 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<Competition?> GetCompetition(string leagueId, int competitionId)
+	internal async Task<Competition?> GetCompetition(string ttinfoId, int competitionId)
 	{
-		string fileName = $"{leagueId}_{competitionId}_competition.json";
+		string fileName = $"{ttinfoId}_{competitionId}_competition.json";
 
 		return await LoadJsonAsync<Competition>(
-			leagueId,
+			ttinfoId,
 			$"competitions/{competitionId}",
 			fileName);
 	}

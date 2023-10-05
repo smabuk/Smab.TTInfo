@@ -1,9 +1,9 @@
-﻿@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamName}"
-@page "/TTLeagues/TeamSummary/{LeagueId}/{TeamName}/{TeamId:int}"
+﻿@page "/TTLeagues/TeamSummary/{TTInfoId}/{TeamName}"
+@page "/TTLeagues/TeamSummary/{TTInfoId}/{TeamName}/{TeamId:int}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
-<PageTitle>@TeamName - @LeagueId</PageTitle>
+<PageTitle>@TeamName - @TTInfoId</PageTitle>
 
 @if (fixtures is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
@@ -25,7 +25,7 @@
 						@if (match.HasResults) {
 							<a class="badge badge-sm" href="@CalculateMatchHref(match)" target="_blank" rel="noopener">@fr?.FullScore</a>
 						}
-						<a href="TTLeagues/TeamSummary/@LeagueId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)/@(match.Home.Name.Equals(@TeamName) ? match.Away.TeamId : match.Home.TeamId)">
+						<a href="TTLeagues/TeamSummary/@TTInfoId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)/@(match.Home.Name.Equals(@TeamName) ? match.Away.TeamId : match.Home.TeamId)">
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
 						</a>
 						<span> @@ @match.Venue</span>
@@ -54,14 +54,14 @@
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
@@ -69,14 +69,14 @@
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
 								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
@@ -125,7 +125,7 @@
 					@foreach (var player in teamStats!.Players.OrderByDescending(p => p.Average).ThenByDescending(p => p.Played)) {
 						<tr>
 							@{string rankingPosition = rankings.GetValueOrDefault(player.Id)?.Position.ToString() ?? "";}
-							<td><a href="TTLeagues/PlayerSummary/@LeagueId/@player.Name/@player.Id">@player.Name</a></td>
+							<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.Average, 0).ToString("##0").Length))</span>@($"{Math.Round(player.Average, 0):##0}")%</td>
 							<td><span>@(new string('0', 3 - rankingPosition.Length))</span>@rankingPosition</td>
@@ -165,7 +165,7 @@
 				<tbody>
 					@foreach (var result in teamStats!.Results) {
 						<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
-							<td><a href="TTLeagues/TeamSummary/@LeagueId/@result.Versus.Value">@result.Versus.Value</a></td>
+							<td><a href="TTLeagues/TeamSummary/@TTInfoId/@result.Versus.Value">@result.Versus.Value</a></td>
 							<td>@(result.Home ? "Home" : "Away")</td>
 							<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
 							<td><a href="@result.MatchId" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
@@ -187,7 +187,7 @@
 
 	[EditorRequired]
 	[Parameter]
-	public string LeagueId { get; set; } = "";
+	public string TTInfoId { get; set; } = "";
 
 	[Parameter]
 	public int TeamId { get; set; }
@@ -210,22 +210,22 @@
 		fixtures = [];
 		fixtureResults = [];
 		StateHasChanged();
-		league = await _ttleagues.GetLeague(LeagueId);
+		league = await _ttleagues.GetLeague(TTInfoId);
 		int competitionId = league?.CurrentCompetitions.First().Id ?? int.MinValue;
 		if (TeamId <= 0) {
-			TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, LeagueId, competitionId) ?? int.MinValue;
+			TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, TTInfoId, competitionId) ?? int.MinValue;
 		}
 
-		team = await _ttleagues.GetTeam(TeamId, LeagueId);
+		team = await _ttleagues.GetTeam(TeamId, TTInfoId);
 		if (team is null) {
 			return;
 		}
 		competitionId = team.CompetitionId ?? int.MinValue;
-		teamStats = await _ttleagues.GetTeamStats(TeamId, LeagueId, competitionId);
-		teamMembers = await _ttleagues.GetTeamMembers(TeamId, LeagueId);
-		rankings = (await _ttleagues.GetRankings(LeagueId)).ToDictionary(r => r.UserId);
+		teamStats = await _ttleagues.GetTeamStats(TeamId, TTInfoId, competitionId);
+		teamMembers = await _ttleagues.GetTeamMembers(TeamId, TTInfoId);
+		rankings = (await _ttleagues.GetRankings(TTInfoId)).ToDictionary(r => r.UserId);
 
-		Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(LeagueId, competitionId);
+		Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(TTInfoId, competitionId);
 
 		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
@@ -272,7 +272,7 @@
 		if (teamPlayersList.ContainsKey(teamId)) {
 			playersString = teamPlayersList[teamId];
 		} else {
-			List<TeamStatsPlayer>? players = (await _ttleagues.GetTeamStats(teamId, LeagueId, competitionId))?.Players.ToList();
+			List<TeamStatsPlayer>? players = (await _ttleagues.GetTeamStats(teamId, TTInfoId, competitionId))?.Players.ToList();
 			if (players is null) {
 				return "";
 			}
@@ -292,7 +292,7 @@
 
 	string CalculateMatchHref(Match match)
 	{
-		return $"https://{LeagueId}.ttleagues.com/league/{match.CompetitionId}/division/{match.DivisionId}/match/{match.Id}";
+		return $"https://{TTInfoId}.ttleagues.com/league/{match.CompetitionId}/division/{match.DivisionId}/match/{match.Id}";
 	}
 
 	string CalculateMatchResult(int scoreFor, int scoreAgainst)

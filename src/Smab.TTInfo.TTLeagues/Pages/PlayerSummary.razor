@@ -1,8 +1,8 @@
-﻿@page "/TTLeagues/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId}"
+﻿@page "/TTLeagues/PlayerSummary/{TTInfoId}/{PlayerName}/{PlayerId}"
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering(true)]
 
-<PageTitle>@PlayerName - @LeagueId</PageTitle>
+<PageTitle>@PlayerName - @TTInfoId</PageTitle>
 
 @if (playerStatsList is null || playerStatsList.Count == 0) {
 	<h1>Loading ... @PlayerName ...</h1>
@@ -28,7 +28,7 @@
 					@foreach (PlayerResult psr in ps.Results) {
 						@foreach (PlayerResult result in psr.Results.OrderByDescending(p => p.Date)) {
 							<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
-								<td><a href="TTLeagues/PlayerSummary/@LeagueId/@result.Opponent.Value/@result.Opponent.Key">@result.Opponent.Value</a></td>
+								<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@result.Opponent.Value/@result.Opponent.Key">@result.Opponent.Value</a></td>
 								<td>@ps.Division.Value.Replace("Division", "".Trim())</td>
 								<td>@result.Versus.Value</td>
 								<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
@@ -55,7 +55,7 @@
 
 	[EditorRequired]
 	[Parameter]
-	public string LeagueId { get; set; } = "";
+	public string TTInfoId { get; set; } = "";
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
@@ -66,7 +66,7 @@
 	{
 		playerStatsList = [];
 		StateHasChanged();
-		league = await _ttleagues.GetLeague(LeagueId);
+		league = await _ttleagues.GetLeague(TTInfoId);
 
 		if (league is not null) {
 			List<int> competitionIds = league
@@ -76,7 +76,7 @@
 				.ToList();
 
 			foreach (int competitionId in competitionIds) {
-				PlayerStats? playerStats = await _ttleagues.GetPlayerStats(PlayerId, LeagueId, competitionId);
+				PlayerStats? playerStats = await _ttleagues.GetPlayerStats(PlayerId, TTInfoId, competitionId);
 				if (playerStats is not null) {
 					playerStatsList.Add(playerStats);
 				}

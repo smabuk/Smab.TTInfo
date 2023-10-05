@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models;
 internal sealed record League(
-	string Id,
+	string TTInfoId,
 	TenantsHost? TenantsHost,
 	WebsitesHost? WebsitesHost,
 	IReadOnlyList<Competition> CurrentCompetitions,
