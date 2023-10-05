@@ -81,13 +81,11 @@
 							</div>
 						</div>
 					}
-@* 
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-							Doubles: @match.DoublesWinner
+							Doubles: @CalculateDoublesWinners(match)
 						</div>
 					</div>
- *@
 				} else {
  					<div class="row justify-content-end">
 						<div class="col-12 col-md-8 col-lg-9">
@@ -288,6 +286,22 @@
 	string CalculateForm(IReadOnlyList<TeamStatsMatch> matches)
 	{
 		return String.Join(",", matches.Take(6).Select(m => m.Form.ToString()));
+	}
+
+	string CalculateDoublesWinners(Match match)
+	{
+		int HomeTotal = match.HomeScores.Select(m => m.Score ?? 0).Sum();
+		int AwayTotal = match.AwayScores.Select(m => m.Score ?? 0).Sum();
+
+		if (match.Home.Score - HomeTotal == 1 && match.Away.Score == AwayTotal) {
+			return match.Home.Name;
+		}
+
+		if (match.Away.Score - AwayTotal == 1 && match.Home.Score == HomeTotal) {
+			return match.Away.Name;
+		}
+
+		return $"??";
 	}
 
 	string CalculateMatchHref(Match match)
