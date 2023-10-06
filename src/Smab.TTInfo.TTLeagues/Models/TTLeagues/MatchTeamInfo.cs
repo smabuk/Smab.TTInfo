@@ -7,7 +7,7 @@ internal sealed record MatchTeamInfo(
 	string  ShortName,
 	IReadOnlyList<Member>? Members,
 	int?    Score,
-	IReadOnlyList<object>? Reserves,
+	IReadOnlyList<Member>? Reserves,
 	int     Type,
 	int?    Points,
 	string  Captain,

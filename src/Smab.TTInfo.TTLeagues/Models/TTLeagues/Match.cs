@@ -32,7 +32,7 @@ internal sealed record Match(
 	string  Competition,
 	DateTimeOffset Updated,
 	bool    Manual,
-	DateTimeOffset Published,
+	DateTimeOffset? Published,
 	DateTimeOffset? Archived,
 	Person? Potm,
 	int?    PotmType,
@@ -46,13 +46,14 @@ internal sealed record Match(
 	object? Round,
 	object? TableNo,
 	object? DayId,
-	IReadOnlyList<MatchPlayer> HomeScores,
-	IReadOnlyList<MatchPlayer> AwayScores,
+	IReadOnlyList<PlayerScore> HomeScores,
+	IReadOnlyList<PlayerScore> AwayScores,
 	string  HomeName,
 	string  AwayName,
 	object? Number,
 	object? Stage,
 	object? RoundModel,
 	object? HomeHandicap,
-	object? AwayHandicap
+	object? AwayHandicap,
+	object? bye
 );

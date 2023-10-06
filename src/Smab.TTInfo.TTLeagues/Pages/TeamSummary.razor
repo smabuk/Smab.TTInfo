@@ -12,7 +12,9 @@
 	<div id="fixtures">
 		@foreach (Match match in fixtures) {
 			FixtureResult? fr;
+			MatchCard? matchCard;
 			fixtureResults.TryGetValue(match.Id, out fr);
+			matchCards.TryGetValue(match.Id, out matchCard);
 			<div class="card" data-result='@fr?.Result'>
 				<div class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
@@ -40,7 +42,7 @@
 					</div>
 				}
  *@
-				@if (match.HasResults) {
+				@if (matchCard is not null) {
 @*
 					@if (completedFixture.Other is not null) {
 						<div class="row justify-content-end">
@@ -53,37 +55,37 @@
 					@if (match.Home.TeamId.Equals(TeamId)) {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+								@foreach (PlayerScore player in matchCard.Results.Home.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == matchCard.Match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+								@foreach (PlayerScore player in matchCard.Results.Away.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == matchCard.Match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 					} else {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in match.AwayScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
+								@foreach (PlayerScore player in matchCard.Results.Away.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == matchCard.Match.Potm?.Id ? "pom" : "")"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-8 col-lg-9">
-								@foreach (MatchPlayer player in match.HomeScores.OrderByDescending(p => p.Score)) {
-									<span class="@(player.UserId == match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
+								@foreach (PlayerScore player in matchCard.Results.Home.OrderByDescending(p => p.Score)) {
+									<span class="@(player.UserId == matchCard.Match.Potm?.Id ? "pom" : "")"><text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@($"{player.Name}")</a> @($" {player.Score} ")</text></span>
 								}
 							</div>
 						</div>
 					}
 					<div class="row justify-content-end">
 						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
-							Doubles: @CalculateDoublesWinners(match)
+							Doubles: @CalculateDoublesWinners(matchCard)
 						</div>
 					</div>
 				} else {
@@ -198,6 +200,7 @@
 	private List<TeamMember> teamMembers = [];
 	private List<Match> fixtures = [];
 	private Dictionary<string, Ranking> rankings = [];
+	private Dictionary<int, MatchCard> matchCards = [];
 	private Dictionary<int, FixtureResult> fixtureResults = [];
 	private Dictionary<int, string> teamPlayersList = [];
 
@@ -223,7 +226,8 @@
 		teamMembers = await _ttleagues.GetTeamMembers(TeamId, TTInfoId);
 		rankings = (await _ttleagues.GetRankings(TTInfoId)).ToDictionary(r => r.UserId);
 
-		Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(TTInfoId, competitionId);
+		// Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(TTInfoId, competitionId);
+		Fixtures? allFixtures = await _ttleagues.GetAllFixtures(TTInfoId, competitionId);
 
 		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
@@ -233,16 +237,21 @@
 
 		foreach (Match match in fixtures) {
 			if (match.HasResults) {
+				MatchCard? matchCard = await _ttleagues.GetMatch(match.Id, TTInfoId);
+				if (matchCard is null) {
+					break;
+				}
+				matchCards.Add(matchCard.Id, matchCard);
 				string result;
 				string fullScore;
-				if (match.Home.Name.Equals(TeamName, StringComparison.CurrentCultureIgnoreCase)) {
-					result = CalculateMatchResult(match.Home.Score ?? 0, match.Away.Score ?? 0);
-					fullScore = $"{match.Home.Score} - {match.Away.Score}";
+				if (matchCard.Match.Home.Name.Equals(TeamName, StringComparison.CurrentCultureIgnoreCase)) {
+					result = CalculateMatchResult(matchCard.Match.Home.Score ?? 0, matchCard.Match.Away.Score ?? 0);
+					fullScore = $"{matchCard.Match.Home.Score} - {matchCard.Match.Away.Score}";
 				} else {
 					result = CalculateMatchResult(match.Away.Score ?? 0, match.Home.Score ?? 0);
-					fullScore = $"{match.Away.Score} - {match.Home.Score}";
+					fullScore = $"{matchCard.Match.Away.Score} - {matchCard.Match.Home.Score}";
 				}
-				fixtureResults.TryAdd(match.Id, new(match.Id, result, fullScore));
+				fixtureResults.TryAdd(matchCard.Id, new(matchCard.Id, result, fullScore));
 			}
 		}
 
@@ -288,17 +297,17 @@
 		return String.Join(",", matches.Take(6).Select(m => m.Form.ToString()));
 	}
 
-	string CalculateDoublesWinners(Match match)
+	string CalculateDoublesWinners(MatchCard matchCard)
 	{
-		int HomeTotal = match.HomeScores.Select(m => m.Score ?? 0).Sum();
-		int AwayTotal = match.AwayScores.Select(m => m.Score ?? 0).Sum();
+		int HomeTotal = matchCard.Results.Home.Select(m => m.Score ?? 0).Sum();
+		int AwayTotal = matchCard.Results.Away.Select(m => m.Score ?? 0).Sum();
 
-		if (match.Home.Score - HomeTotal == 1 && match.Away.Score == AwayTotal) {
-			return match.Home.Name;
+		if (matchCard.Match.Home.Score - HomeTotal >= 1 && matchCard.Match.Away.Score == AwayTotal) {
+			return matchCard.Match.Home.Name;
 		}
 
-		if (match.Away.Score - AwayTotal == 1 && match.Home.Score == HomeTotal) {
-			return match.Away.Name;
+		if (matchCard.Match.Away.Score - AwayTotal >= 1 && matchCard.Match.Home.Score == HomeTotal) {
+			return matchCard.Match.Away.Name;
 		}
 
 		return $"??";
