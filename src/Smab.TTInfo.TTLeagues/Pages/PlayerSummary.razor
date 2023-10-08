@@ -11,25 +11,25 @@
 	<h2>Player Stats</h2>
 	<div id="results">
 		@foreach (PlayerStats ps in playerStatsList.OrderByDescending(p => p.Competition.Key)) {
+			@foreach (PlayerResult psr in ps.Results) {
 			<h3>Results</h3>
-			<table class="table table-bordered table-sm">
-				<thead>
-					<tr>
-						<th>Opponent</th>
-						<th>Div</th>
-						<th>Team</th>
-						<th>Date</th>
-						<th>Games</th>
-						<th>Score</th>
-						<th>Ranking</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (PlayerResult psr in ps.Results) {
+				<table class="table table-bordered table-sm">
+					<thead>
+						<tr>
+							<th>Opponent</th>
+							<th>Div</th>
+							<th>Team</th>
+							<th>Date</th>
+							<th>Games</th>
+							<th>Score</th>
+							<th>Ranking</th>
+						</tr>
+					</thead>
+					<tbody>
 						@foreach (PlayerResult result in psr.Results.OrderByDescending(p => p.Date)) {
 							<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
 								<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@result.Opponent.Value/@result.Opponent.Key">@result.Opponent.Value</a></td>
-								<td>@ps.Division.Value.Replace("Division", "".Trim())</td>
+								<td>@CalculateDivisionName(ps.Division.Value, result.DivisionId)</td>
 								<td>@result.Versus.Value</td>
 								<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
 								<td><a href="@result.MatchId" target="_blank" rel="noopener">@result.For-@result.Against</a></td>
@@ -37,9 +37,9 @@
 								<td>@(result.Score?.ToString("+##0;-##0;0") ?? "n/a")</td>
 							</tr>
 						}
-					}
-				</tbody>
-			</table>
+					</tbody>
+				</table>
+			}
 		}
 	</div>
 }
@@ -57,16 +57,17 @@
 	[Parameter]
 	public string TTInfoId { get; set; } = "";
 
-	private record FixtureResult(int Id, string Result, string FullScore);
-
 	private List<PlayerStats> playerStatsList = [];
+	private Dictionary<int, string> divisionNames = [];
 	private League? league;
+	List<LookupValue> lookup = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
 		playerStatsList = [];
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(TTInfoId);
+		lookup = await _ttleagues.GetLookupTables(TTInfoId);
 
 		if (league is not null) {
 			List<int> competitionIds = league
@@ -83,6 +84,22 @@
 			}
 		}
 		StateHasChanged();
+	}
+
+	string CalculateDivisionName(string name, int id)
+	{
+		if (String.IsNullOrWhiteSpace(name) || String.Equals(name, "no division", StringComparison.InvariantCultureIgnoreCase)) {
+			if (divisionNames.ContainsKey(id)) {
+				name = divisionNames[id];
+			} else {
+				name = lookup
+					.Where(l => l.Type == LookupType.Division && l.Id == id)
+					.Select(l => l.Name)
+					.First();
+				divisionNames.Add(id, name);
+			}
+		}
+		return name.Replace("division", "", StringComparison.InvariantCultureIgnoreCase).Trim();
 	}
 
 	string CalculateMatchResult(int scoreFor, int scoreAgainst)
