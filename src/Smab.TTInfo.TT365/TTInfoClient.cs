@@ -23,7 +23,7 @@ public sealed class TTInfoClient
 
 	public async Task<List<string>> GetTeamPlayers(string TeamName)
 	{
-		return await Client.GetFromJsonAsync<List<string>?>($"api/tt/teamplayerslist/{TeamName}") ?? new();
+		return await Client.GetFromJsonAsync<List<string>?>($"api/tt/teamplayerslist/{TeamName}") ?? [];
 	}
 
 }

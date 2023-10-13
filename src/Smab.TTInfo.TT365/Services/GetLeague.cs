@@ -4,46 +4,48 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<League?> GetLeague(string LeagueId)
+	public async Task<League?> GetLeague(string ttinfoId)
 	{
 		string url;
-		HtmlDocument doc;
-		League league;
-		League? cachedLeague = null;
+		HtmlDocument? doc;
+		string? jsonString;
+		string fileName = $"league_{ttinfoId}.json";
 
-		string? jsonString = LoadFile($"league_{LeagueId}.json");
-		if (jsonString is not null )
-		{
-			cachedLeague = JsonSerializer.Deserialize<League>(jsonString);
-		}
+		League? league = await LoadAsync<League>(
+			ttinfoId,
+			null,
+			fileName);
 
-		if (cachedLeague is null || string.IsNullOrWhiteSpace(cachedLeague.CurrentSeason.Id))
+		if (league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id))
 		{
-			url = $"{tt365com}/{LeagueId}";
-			doc = await LoadPage(
+			url = $"";
+			doc = await LoadAsync<HtmlDocument>(
+				ttinfoId,
 				url,
-				$@"{LeagueId}.html");
+				$@"{ttinfoId}.html");
 
-			if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
+			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
 			string leagueURL = url;
 			string leagueName =        HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode(@"//title").InnerText);
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode(@"//meta[@property='og:description']").GetAttributeValue("content", ""));
 			string leagueTheme       = doc.DocumentNode.SelectSingleNode(@"//body").GetAttributeValue("class", "");
-			string currentSeasonId   = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("href", "");
+			string currentSeasonId   = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{ttinfoId}/Tables/"}')]").GetAttributeValue("href", "");
 			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf('/') + 1)..];
 
-			league = new(LeagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
+			league = new(ttinfoId, leagueName, leagueDescription, leagueURL, leagueTheme);
 
-			string currentSeasonName = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{LeagueId}/Tables/"}')]").GetAttributeValue("title", "").Replace(" Tables", "");
+			string currentSeasonName = doc.DocumentNode.SelectSingleNode(@$"//a[starts-with(@href,'{$"/{ttinfoId}/Tables/"}')]").GetAttributeValue("title", "").Replace(" Tables", "");
 			league.CurrentSeason = new(currentSeasonId, currentSeasonName)
 			{
-				Lookups = await GetLookupTables(LeagueId, currentSeasonId)
+				Lookups = await GetLookupTables(ttinfoId, currentSeasonId)
 			};
 
-			HtmlDocument archives = await LoadPage(
-				$"{tt365com}/{LeagueId}/Results/Archive",
-				$@"{LeagueId}_Archive.html");
+			HtmlDocument archives = await LoadAsync<HtmlDocument>(
+				ttinfoId,
+				$"Results/Archive",
+				$@"{ttinfoId}_Archive.html")
+				?? new();
 
 			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes(@"//td//a"))
 			{
@@ -53,16 +55,14 @@ public sealed partial class TT365Reader
 				league.Seasons.Add(new(seasonId, seasonName));
 			}
 		} else {
-			league = cachedLeague;
-			league.CurrentSeason.Lookups = await GetLookupTables(LeagueId, league.CurrentSeason.Id);
+			league.CurrentSeason.Lookups = await GetLookupTables(ttinfoId, league.CurrentSeason.Id);
 		}
 
-
-		league.CurrentSeason.Divisions = await GetDivisions(LeagueId, league.CurrentSeason.Id);
+		league.CurrentSeason.Divisions = await GetDivisions(ttinfoId, league.CurrentSeason.Id);
 
 		jsonString = JsonSerializer.Serialize(league);
-		_ = SaveFile(jsonString, $"league_{LeagueId}.json");
-		_ = SaveFile(jsonString, $"league_{LeagueId}_{league.CurrentSeason.Id}.json");
+		_ = SaveFileToCache(jsonString, $"league_{ttinfoId}.json");
+		_ = SaveFileToCache(jsonString, $"league_{ttinfoId}_{league.CurrentSeason.Id}.json");
 		
 		return league;
 	}

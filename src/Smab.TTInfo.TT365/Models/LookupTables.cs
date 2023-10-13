@@ -2,8 +2,8 @@
 
 public record LookupTables
 {
-	public List<IdNamePair> DivisionLookup = new();
-	public List<IdNamePair> ClubLookup = new();
-	public List<IdNamePair> TeamLookup = new();
-	public List<IdNamePair> VenueLookup = new();
+	public List<IdNamePair> DivisionLookup = [];
+	public List<IdNamePair> ClubLookup = [];
+	public List<IdNamePair> TeamLookup = [];
+	public List<IdNamePair> VenueLookup = [];
 }

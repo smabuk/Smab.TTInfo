@@ -16,14 +16,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.Configure<TTInfoOptions>(builder.Configuration.GetSection("TTInfo"));
 
-builder.Services.AddScoped<ITT365Reader, TT365Reader>(
-	tt => new()
-	{
-		CacheFolder = builder.Configuration.GetValue<string>("TTInfo:CacheFolder") ?? @"cache",
-		CacheHours = builder.Configuration.GetValue<int?>("TTInfo:CacheHours") ?? 6,
-		UseTestFiles = builder.Configuration.GetValue<bool?>("TTInfo:UseTestFiles") ?? builder.Environment.IsDevelopment()
-	});
-
+builder.Services.AddScoped<ITT365Reader, TT365Reader>();
 builder.Services.AddScoped<TTLeaguesReader>();
 
 var app = builder.Build();

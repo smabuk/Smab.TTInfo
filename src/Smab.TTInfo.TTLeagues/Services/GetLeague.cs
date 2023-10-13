@@ -2,30 +2,30 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<League?> GetLeague(string leagueId)
+	internal async Task<League?> GetLeague(string ttinfoId)
 	{
-		string fileName = $"{leagueId}_league.json";
+		string fileName = $"{ttinfoId}_league.json";
 
 		League? league = await LoadJsonAsync<League>(
-			leagueId,
+			ttinfoId,
 			null,
 			fileName);
 
 		if (league is null)
 		{
-			using HttpClient client = CreateHttpClient(leagueId);
+			using HttpClient client = CreateHttpClient(ttinfoId);
 			TenantsHost?       tenantsHost         = await client.GetFromJsonAsync<TenantsHost>("tenants/host");
 			WebsitesHost?      websitesHost        = await client.GetFromJsonAsync<WebsitesHost>("websites/host");
 			List<Competition>? currentCompetitions = await client.GetFromJsonAsync<List<Competition>>("competitions/all");
 			List<Competition>? archives            = await client.GetFromJsonAsync<List<Competition>>("competitions/archives");
 
 			league = new(
-				TTInfoId:                   leagueId,
+				TTInfoId:             ttinfoId,
 				TenantsHost:          tenantsHost,
 				WebsitesHost:         websitesHost,
 				CurrentCompetitions:  [.. currentCompetitions],
 				ArchivedCompetitions: [.. archives]);
-			_ = SaveFile(JsonSerializer.Serialize(league), fileName);
+			_ = SaveFileToCache(JsonSerializer.Serialize(league), fileName);
 		}
 
 		return league;

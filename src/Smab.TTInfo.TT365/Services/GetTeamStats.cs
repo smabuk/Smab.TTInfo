@@ -4,29 +4,30 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<Team?> GetTeamStats(string LeagueId, string TeamName, string SeasonId = "")
+	public async Task<Team?> GetTeamStats(string ttinfoId, string TeamName, string SeasonId = "")
 	{
 		Team team = new();
 
 		if (string.IsNullOrWhiteSpace(SeasonId)) {
-			League? league = await GetLeague(LeagueId);
+			League? league = await GetLeague(ttinfoId);
 			if (league is null) { return null; };
 			SeasonId = league.CurrentSeason.Id;
 		}
 
-		List<Division> divisions = await GetDivisions(LeagueId, SeasonId);
+		List<Division> divisions = await GetDivisions(ttinfoId, SeasonId);
 		if (divisions.Count == 0) {
 			return null;
 		};
 
-		HttpClient client = new();
 		string lookupTeamName = TeamName.Replace("_", " ");
 
-		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.ToUpperInvariant() == TeamName.ToUpperInvariant()) ?? new();
+		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(TeamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
 
-		HtmlDocument doc = await LoadPage(
-			team.URL,
-			$@"{LeagueId}_{SeasonId}_TeamStats_{TeamName}.html");
+		HtmlDocument doc = await LoadAsync<HtmlDocument>(
+				ttinfoId,
+				team.URL,
+				$@"{ttinfoId}_{SeasonId}_TeamStats_{TeamName}.html")
+			?? new();
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
 
@@ -63,7 +64,7 @@ public sealed partial class TT365Reader
 										  select f.InnerText).ToList();
 					player.Form = string.Join(",", form);
 					List<string> rankings = (from r in cells[3].Descendants("a")
-											 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? new();
+											 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
 					foreach (string? rank in rankings) {
 						if (rank.Contains(':')) {
 							string[]? rTemp = rank.Split(":");
@@ -126,10 +127,10 @@ public sealed partial class TT365Reader
 						Points     = int.Parse(cells[4].InnerText),
 						PlayerOfTheMatch = hasPoM ? cells[5].InnerText : "",
 						Other = other,
-						CardURL = $"{tt365com}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
+						CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
 					};
 					if (DateOnly.TryParse(cells[2].InnerText,
-						   gbCulture,
+						   GB_CULTURE,
 						   System.Globalization.DateTimeStyles.None,
 						   out DateOnly tempDate)) {
 						result.Date = tempDate;

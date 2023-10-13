@@ -1,4 +1,8 @@
-﻿namespace Smab.TTInfo.Cli;
+﻿using Microsoft.Extensions.Options;
+
+using Smab.TTInfo.Shared.Models;
+
+namespace Smab.TTInfo.Cli;
 internal class TTInfoCli
 {
 	public static async Task<int> Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
@@ -7,14 +11,16 @@ internal class TTInfoCli
 		opponentSearchName = opponentSearchName?.ToLowerInvariant() ?? null;
 		showTeamPlayers    = showTeamPlayers?.ToLowerInvariant()    ?? null;
 
-		List<LookupTables> allLookupTables = new();
-		List<Division> allDivisions = new();
+		List<Division>     allDivisions    = [];
+		List<LookupTables> allLookupTables = [];
 
-		TT365Reader tt365 = new()
+		TTInfoOptions ttInfoOptions = new()
 		{
 			CacheFolder = cacheFolder,
 			CacheHours = 10_000_000,
 		};
+
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
@@ -73,7 +79,7 @@ internal class TTInfoCli
 					message = $"*** {ex.Message}";
 				}
 				AnsiConsole.MarkupLine($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3} {TT365Reader.FixPlayerName(newTeam.Captain),-20} {message}");
-				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? new List<Player>()) {
+				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? []) {
 					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.ToLowerInvariant().Contains(playerSearchName);
 					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.ToLowerInvariant().Contains(showTeamPlayers);
 					if (showTeamDetails || showPlayerMatchDetails) {
@@ -110,13 +116,15 @@ internal class TTInfoCli
 		playerSearchName = playerSearchName.ToLowerInvariant();
 		opponentSearchName = opponentSearchName.ToLowerInvariant();
 
-		HashSet<SeasonPlayer> players = new();
+		HashSet<SeasonPlayer> players = [];
 
-		TT365Reader tt365 = new()
+		TTInfoOptions ttInfoOptions = new()
 		{
 			CacheFolder = cacheFolder,
 			CacheHours = 10_000_000,
 		};
+
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)

@@ -4,11 +4,11 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<List<Fixture>?> GetAllFixtures(string LeagueId, string? SeasonId = null)
+	public async Task<List<Fixture>?> GetAllFixtures(string ttinfoId, string? SeasonId = null)
 	{
-		List<Fixture> fixtures = new();
+		List<Fixture> fixtures = [];
 
-		string leagueId = LeagueId;
+		string leagueId = ttinfoId;
 		string? seasonId = SeasonId ?? (await GetLeague(leagueId))?.CurrentSeason.Id;
 
 		ArgumentNullException.ThrowIfNull(seasonId, nameof(seasonId));
@@ -25,12 +25,13 @@ public sealed partial class TT365Reader
 			ShowByWeekNo = true
 		};
 
-		string url = $"{tt365com}/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
-		HtmlDocument doc = await LoadPage(
+		string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
+		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
+					ttinfoId,
 					url,
 					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
 
-		if (string.IsNullOrWhiteSpace(doc.Text)) { return null; }
+		if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return null; }
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']")) {
@@ -64,7 +65,7 @@ public sealed partial class TT365Reader
 					if (fixture is CompletedFixture completedFixture) {
 						completedFixture.ForHome = int.Parse(homeNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.ForAway = int.Parse(awayNode.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						completedFixture.CardURL = $"{tt365com}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
+						completedFixture.CardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a").Attributes["href"].Value.Trim() ?? ""}";
 						HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]");
 						if (playerNodes is not null) {
 							foreach (HtmlNode playerNode in playerNodes) {

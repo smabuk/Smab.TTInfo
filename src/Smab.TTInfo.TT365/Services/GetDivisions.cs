@@ -4,19 +4,22 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<List<Division>> GetDivisions(string LeagueId, string SeasonId = "")
+	public async Task<List<Division>> GetDivisions(string ttinfoId, string SeasonId = "")
 	{
-		List<Division> divisions = new();
-		LookupTables lookupTables = await GetLookupTables(LeagueId, SeasonId);
+		List<Division> divisions = [];
+		LookupTables lookupTables = await GetLookupTables(ttinfoId, SeasonId);
 
 		if (lookupTables.DivisionLookup.Count == 0) {
 			return divisions;
 		}
 
-		string url = $"{tt365com}/{LeagueId}/Tables/{SeasonId}/All_Divisions";
-		HtmlDocument doc = await LoadPage(url, $@"{LeagueId}_{SeasonId}_Divisions_All_Divisions.html");
+		string url = $"Tables/{SeasonId}/All_Divisions";
+		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
+			ttinfoId,
+			url,
+			$@"{ttinfoId}_{SeasonId}_Divisions_All_Divisions.html");
 
-		if (!string.IsNullOrWhiteSpace(doc.Text)) {
+		if (!string.IsNullOrWhiteSpace(doc?.Text)) {
 			foreach (HtmlNode? divTable in doc.DocumentNode.SelectNodes(@"//table")) {
 				if (divTable.SelectSingleNode("caption") is null) {
 					continue;
@@ -34,7 +37,7 @@ public sealed partial class TT365Reader
 					};
 					team.Id        = lookupTables.TeamLookup.Where(t => t.Name == team.Name).Single().Id;
 					team.ShortName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
-					team.URL       = $"{"https"}://www.tabletennis365.com{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
+					team.URL       = $"{TT365_COM}{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
 
 					if (int.TryParse(teamRow.SelectSingleNode(@"td[contains(@class, 'pos')]")?.InnerText ?? "0", out int leaguePosition)) {
 						team.LeaguePosition = leaguePosition;

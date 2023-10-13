@@ -29,7 +29,7 @@ public sealed partial class TTLeaguesReader
 					Results: matchResults,
 					Sets:    matchSets
 					);
-				_ = SaveFile(JsonSerializer.Serialize(matchCard), fileName);
+				_ = SaveFileToCache(JsonSerializer.Serialize(matchCard), fileName);
 			}
 		}
 

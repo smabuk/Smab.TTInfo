@@ -4,11 +4,11 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<Player?> GetPlayerStats(string leagueId, Player player, string seasonId = "")
+	public async Task<Player?> GetPlayerStats(string ttinfoId, Player player, string seasonId = "")
 	{
 		Player newPlayer = player;
 
-		League? league = await GetLeague(leagueId);
+		League? league = await GetLeague(ttinfoId);
 		if (league is null) {
 			return null;
 		}
@@ -18,16 +18,16 @@ public sealed partial class TT365Reader
 			seasonId = league.CurrentSeason.Id;
 		}
 
-		HttpClient client = new();
 		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
 
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
-			player.PlayerURL = $"{tt365com}/{leagueId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
+			player.PlayerURL = $"{TT365_COM}/{ttinfoId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
 		}
-		HtmlDocument doc = await LoadPage(
-			player.PlayerURL,
-			$@"{leagueId}_{seasonId}_PlayerStats_{player.Id}.html");
-
+		HtmlDocument doc = await LoadAsync<HtmlDocument>(
+				ttinfoId,
+				player.PlayerURL,
+				$@"{ttinfoId}_{seasonId}_PlayerStats_{player.Id}.html")
+			?? new();
 
 		HtmlNode? statsNode = doc.DocumentNode.SelectSingleNode("//div[@id='PlayerStats']");
 
@@ -44,7 +44,7 @@ public sealed partial class TT365Reader
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = resultRow.Descendants("td").ToArray();
 				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
-					string opponentHref = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").Single().Attributes["href"].Value}";
+					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = cells[0].Descendants("a").Single().InnerText.Trim();
 					Player opponent = new () {
 						Name = opponentName,
@@ -65,7 +65,7 @@ public sealed partial class TT365Reader
 					bool rankingDiffSuccessful = int.TryParse(cells[5].InnerText, null, out int rankingDiff);
 
 					string result = cells[6].InnerText.Trim();
-					string matchCardUrl = $"{"https"}://www.tabletennis365.com{cells[6].SelectSingleNode("a").Attributes["href"].Value}";
+					string matchCardUrl = $"{TT365_COM}{cells[6].SelectSingleNode("a").Attributes["href"].Value}";
 					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
 
 					PlayerResult playerResult = new(

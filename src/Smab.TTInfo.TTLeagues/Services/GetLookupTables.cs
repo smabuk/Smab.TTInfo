@@ -24,9 +24,9 @@ public sealed partial class TTLeaguesReader
 						lookup.Add(new(LookupType.Team, team.TeamId, team.Name));
 					}
 				}
-				_ = SaveFile(JsonSerializer.Serialize(lookup), $"{ttinfoId}_{competition.Id}_lookup_tables.json");
+				_ = SaveFileToCache(JsonSerializer.Serialize(lookup), $"{ttinfoId}_{competition.Id}_lookup_tables.json");
 			}
-			_ = SaveFile(JsonSerializer.Serialize(lookup), fileNameWithoutCompetitionId);
+			_ = SaveFileToCache(JsonSerializer.Serialize(lookup), fileNameWithoutCompetitionId);
 		}
 
 		return lookup;

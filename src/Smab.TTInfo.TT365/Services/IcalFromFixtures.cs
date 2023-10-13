@@ -11,7 +11,7 @@ public sealed partial class TT365Reader
 		{
 			Name = $"{LeagueName} fixtures - {TeamName}",
 			Description = $"Fixtures and results of matches for the {LeagueName} league",
-			Events = new()
+			Events = []
 		};
 
 		foreach (Fixture fixture in Fixtures) {

@@ -9,7 +9,7 @@ public sealed partial class TTLeaguesReader(IOptions<TTInfoOptions> options, IHt
 {
 	private static readonly string                CACHEFILE_PREFIX      = "ttl_";
 	private static readonly CultureInfo           GB_CULTURE            = new("en-GB");
-	private static readonly JsonSerializerOptions jsonSerializerOptions = new()
+	private static readonly JsonSerializerOptions JSON_SER_OPTIONS      = new()
 	{
 		ReadCommentHandling         = JsonCommentHandling.Skip,
 		PropertyNameCaseInsensitive = true,

@@ -4,12 +4,12 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<LookupTables> GetLookupTables(string leagueId, string seasonId)
+	public async Task<LookupTables> GetLookupTables(string ttinfoId, string seasonId)
 	{
 		LookupTables lookup = new();
 
 		string? jsonString;
-		jsonString = LoadFile($"league_{leagueId}_{seasonId}_lookup_divisions.json");
+		jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_divisions.json");
 		if (jsonString is null) {
 			FixturesViewOptions fvo = new()
 			{
@@ -23,10 +23,12 @@ public sealed partial class TT365Reader
 				ShowByWeekNo = true
 			};
 
-			string url = $"{tt365com}/{leagueId}/Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
-			HtmlDocument doc = await LoadPage(
+			string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
+			HtmlDocument doc = await LoadAsync<HtmlDocument>(
+				ttinfoId,
 				url,
-				$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
+				$@"{ttinfoId}_{seasonId}_Fixtures_All_Divisions.html")
+				?? new();
 
 			if (!string.IsNullOrWhiteSpace(doc.Text)) {
 				HtmlNode node = doc.DocumentNode.SelectSingleNode("//form[@id='FixtureFiltersForm']");
@@ -43,25 +45,25 @@ public sealed partial class TT365Reader
 					foreach (var item in node.SelectNodes("//select[@id='vn']//option")) {
 						lookup.VenueLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
-					_ = SaveFile(JsonSerializer.Serialize(lookup.DivisionLookup), $"league_{leagueId}_{seasonId}_lookup_divisions.json");
-					_ = SaveFile(JsonSerializer.Serialize(lookup.VenueLookup),    $"league_{leagueId}_{seasonId}_lookup_venues.json");
-					_ = SaveFile(JsonSerializer.Serialize(lookup.ClubLookup),     $"league_{leagueId}_{seasonId}_lookup_clubs.json");
-					_ = SaveFile(JsonSerializer.Serialize(lookup.TeamLookup),     $"league_{leagueId}_{seasonId}_lookup_teams.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.DivisionLookup), $"league_{ttinfoId}_{seasonId}_lookup_divisions.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.VenueLookup),    $"league_{ttinfoId}_{seasonId}_lookup_venues.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.ClubLookup),     $"league_{ttinfoId}_{seasonId}_lookup_clubs.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.TeamLookup),     $"league_{ttinfoId}_{seasonId}_lookup_teams.json");
 				}
 			}
 		} else {
-			lookup.DivisionLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? new();
-			jsonString = LoadFile($"league_{leagueId}_{seasonId}_lookup_venues.json");
+			lookup.DivisionLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
+			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_venues.json");
 			if (jsonString is not null) {
-				lookup.VenueLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? new();
+				lookup.VenueLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}
-			jsonString = LoadFile($"league_{leagueId}_{seasonId}_lookup_clubs.json");
+			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_clubs.json");
 			if (jsonString is not null) {
-				lookup.ClubLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? new();
+				lookup.ClubLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}
-			jsonString = LoadFile($"league_{leagueId}_{seasonId}_lookup_teams.json");
+			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_teams.json");
 			if (jsonString is not null) {
-				lookup.TeamLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? new();
+				lookup.TeamLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}
 		}
 

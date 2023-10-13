@@ -1,8 +1,10 @@
-﻿namespace Smab.TTInfo.TTLeagues.Services;
+﻿using HtmlAgilityPack;
 
-public sealed partial class TTLeaguesReader
+namespace Smab.TTInfo.TT365.Services;
+
+public sealed partial class TT365Reader
 {
-	public async Task<T?> LoadJsonAsync<T>(string ttinfoId, string? url, string fileName, string? cacheFolder = null, int? cacheHours = null)
+	public async Task<T?> LoadAsync<T>(string ttinfoId, string? url, string fileName, string? cacheFolder = null, int? cacheHours = null)
 	{
 		string? jsonString = null;
 		T? returnValue = default;
@@ -36,7 +38,12 @@ public sealed partial class TTLeaguesReader
 			}
 		}
 
-		if (!string.IsNullOrWhiteSpace(jsonString)) {
+		if (typeof(T).Name == "HtmlDocument") {
+			HtmlDocument rv = new();
+			rv.LoadHtml(jsonString);
+			rv.Save(source);
+			returnValue = (T?)Convert.ChangeType(rv, typeof(T));
+		} else if (!string.IsNullOrWhiteSpace(jsonString)) {
 			returnValue = JsonSerializer.Deserialize<T>(jsonString, JSON_SER_OPTIONS);
 		}
 

@@ -9,6 +9,6 @@ public record League(
 	)
 {
 	public Season CurrentSeason { get; set; } = new("unknown", "Unknown");
-	public List<Season> Seasons { get; set; } = new();
+	public List<Season> Seasons { get; set; } = [];
 
 }

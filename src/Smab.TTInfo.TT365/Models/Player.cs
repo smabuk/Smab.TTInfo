@@ -22,5 +22,5 @@ public class Player
 		: PlayerId;
 	public string SeasonId => PlayerURL.Split('/').Skip(4).FirstOrDefault() ?? "";
 
-	public List<PlayerResult> PlayerResults { get; set; } = new();
+	public List<PlayerResult> PlayerResults { get; set; } = [];
 }
