@@ -12,8 +12,8 @@
 		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
-			<div class="card" data-result='@fr?.Result'>
-				<div class="row">
+			<details class="card" data-result='@fr?.Result'>
+				<summary class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 						@if (fixture is PostponedFixture pf) {
 							<span class="postponed badge" title="@pf.Reason">P</span>
@@ -29,7 +29,7 @@
 						</a>
 						<span> @@ @fixture.Venue</span>
 					</div>
-				</div>
+				</summary>
 				@if (fixture is PostponedFixture postponed) {
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-8 col-lg-9">
@@ -92,7 +92,7 @@
 						</div>
 					</div>
 				}
-			</div>
+			</details>
 		}
 	</div>
 	<h2>Team Stats</h2>
