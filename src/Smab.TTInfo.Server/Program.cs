@@ -2,6 +2,8 @@
 
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
+using Smab.TTInfo.TT365;
+using Smab.TTInfo.TTLeagues;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +16,8 @@ builder.Services.AddLocalization();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpClient();
 
-builder.Services.Configure<TTInfoOptions>(builder.Configuration.GetSection("TTInfo"));
-
-builder.Services.AddScoped<ITT365Reader, TT365Reader>();
-builder.Services.AddScoped<TTLeaguesReader>();
+builder.Services.AddTT365Service(builder.Configuration);
+builder.Services.AddTTLeaguesService(builder.Configuration);
 
 var app = builder.Build();
 
