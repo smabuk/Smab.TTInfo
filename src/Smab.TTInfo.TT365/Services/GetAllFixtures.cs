@@ -32,6 +32,7 @@ public sealed partial class TT365Reader
 					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
 
 		if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
+
 		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return null; }
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']")) {
@@ -77,6 +78,7 @@ public sealed partial class TT365Reader
 								if (playerIdString is not null) {
 									playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('/').LastOrDefault() ?? "");
 								}
+
 								bool playerPoM = playerNode.HasClass("pom");
                                 MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
 								if (playerNode.ParentNode.HasClass("homeTeam")) {

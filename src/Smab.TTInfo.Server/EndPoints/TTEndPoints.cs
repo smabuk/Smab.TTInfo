@@ -40,7 +40,7 @@ public static partial class TTEndPoints
 	private static async Task<Ok<List<Fixture>>> GetFixtures(ITT365Reader tt365, string leagueId, int? year, string? seasonId, string? teamName)
 	{
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
-		List<Fixture> list = await tt365.GetAllFixtures(leagueId, seasonId) ?? new();
+		List<Fixture> list = await tt365.GetAllFixtures(leagueId, seasonId) ?? [];
 		if (teamName is not null) {
 			teamName = teamName.Replace("_", " ");
 			list = list

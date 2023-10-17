@@ -21,6 +21,7 @@ public sealed class JsonUnixDateConverterWithNulls : JsonConverter<DateTime?>
 		if (value is null) {
 			writer.WriteNullValue();
 		}
+
 		if (value.HasValue) {
 			if (value.Value.Year == 1) {
 				writer.WriteNullValue();

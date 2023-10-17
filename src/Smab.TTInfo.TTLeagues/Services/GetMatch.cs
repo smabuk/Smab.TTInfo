@@ -19,6 +19,7 @@ public sealed partial class TTLeaguesReader
 			if (match is null || match.Home.Score is null) {
 				return null;
 			}
+
 			MatchResults? matchResults = await client.GetFromJsonAsync<MatchResults>($"matches/{matchId}/results");
 			List<MatchSet>?  matchSets = await client.GetFromJsonAsync<List<MatchSet>>($"matches/{matchId}/sets");
 

@@ -99,6 +99,7 @@ public sealed partial class TT365Reader
 							}
 						}
 					}
+
 					team.Players.Add(player);
 				}
 			}
@@ -109,14 +110,16 @@ public sealed partial class TT365Reader
 					HtmlNode[] cells = resultRow.Descendants("td").ToArray();
 					string score = cells[3].InnerText;
 					string? other = null;
-					if (score.ToLowerInvariant() == "void") {
+					if (score.Equals("void", StringComparison.InvariantCultureIgnoreCase)) {
 						score = "0 - 0";
 						other = cells[3].Attributes["title"]?.Value;
 					}
+
 					if (score.EndsWith(" (A)")) {
 						score = score.Replace(" (A)", "");
 						other = cells[3].Attributes["title"]?.Value;
 					}
+
 					bool hasPoM = cells.Length > 6;
 					TeamResult result = new()
 					{

@@ -55,5 +55,5 @@ internal sealed record Match(
 	object? RoundModel,
 	object? HomeHandicap,
 	object? AwayHandicap,
-	object? bye
+	object? Bye
 );

@@ -5,10 +5,8 @@ public static partial class CalendarEndPoints
 {
 	public const string DefaultCalendarByTeamRoute = "/calendar/{LeagueName}/{TeamName}";
 
-	public static void MapCalendarEndPoints(this WebApplication? app)
-	{
-		_ = (app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam));
-	}
+	public static void MapCalendarEndPoints(this WebApplication? app) 
+		=> _ = (app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam));
 
 	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<IcalCalendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, ITT365Reader _tt365, HttpContext context)
 	{

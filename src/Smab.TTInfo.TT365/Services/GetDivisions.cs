@@ -55,6 +55,7 @@ public sealed partial class TT365Reader
 				}
 			}
 		}
+
 		return divisions;
 	}
 }

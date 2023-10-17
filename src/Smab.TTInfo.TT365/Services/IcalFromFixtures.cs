@@ -56,7 +56,7 @@ public sealed partial class TT365Reader
 					fixtureEvent.Description += $"\nWIN:  {fixture.AwayTeam.ToUpper()}";
 				} else if (completedFixture.ForHome == completedFixture.ForAway) {
 					fixtureEvent.Description += $"\nDRAW: {fixture.HomeTeam} and {fixture.AwayTeam}";
-				}
+				};
 				fixtureEvent.Description += $"\nScore: {completedFixture.Score}";
 			}
 

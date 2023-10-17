@@ -23,6 +23,7 @@ public sealed partial class TT365Reader
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
 			player.PlayerURL = $"{TT365_COM}/{ttinfoId}/Results/Player/Statistics/{seasonId}/{lookupPlayerName}/{player.Id}";
 		}
+
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				ttinfoId,
 				player.PlayerURL,
@@ -34,6 +35,7 @@ public sealed partial class TT365Reader
 		if (statsNode == null) {
 			return player;
 		}
+
 		string playerTeamName = doc.DocumentNode.SelectSingleNode("//div[@class='team']").SelectSingleNode("span").InnerText.Trim();
 
 		int index = 1;
@@ -41,6 +43,7 @@ public sealed partial class TT365Reader
 			if (table.SelectSingleNode("caption").InnerText.Contains("&gt;")) {
 				playerTeamName = table.SelectSingleNode("caption").InnerText.Split("&gt;").Last().Trim();
 			}
+
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = resultRow.Descendants("td").ToArray();
 				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
