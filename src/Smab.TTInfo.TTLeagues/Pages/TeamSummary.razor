@@ -21,7 +21,7 @@
 						@if (match.Date is null) {
 							<span class="postponed badge" title="Postponed">P</span>
 						}
-						<time datetime="@match.Time?.ToUKTime().ToString("yyyy-MM-dd HH:mm")">@match.Time?.ToUKTime().ToString("ddd dd MMM HH:mm")</time>
+						<time datetime="@match.Time.ToUtcString()">@match.Time?.ToUKTime().ToString("ddd dd MMM HH:mm")</time>
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (match.HasResults) {

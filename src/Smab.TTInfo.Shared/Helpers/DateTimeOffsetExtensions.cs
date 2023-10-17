@@ -12,4 +12,13 @@ public static class DateTimeOffsetExtensions
 			not null => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(((DateTimeOffset)dateTimeUtc).UtcDateTime, "GMT Standard Time"),
 			null => null
 		};
+	public static string ToUtcString(this DateTimeOffset dateTimeUtc)
+		=> dateTimeUtc.ToString("u").Replace(" ", "T");
+	public static string? ToUtcString(this DateTimeOffset? dateTimeUtc)
+		=> dateTimeUtc switch
+		{
+			not null => ((DateTimeOffset)dateTimeUtc).ToUtcString(),
+			null => null
+		};
+
 }
