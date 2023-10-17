@@ -16,8 +16,9 @@ builder.Services.AddLocalization();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpClient();
 
-builder.Services.AddTT365Service(builder.Configuration);
-builder.Services.AddTTLeaguesService(builder.Configuration);
+builder.Services
+	.AddTT365Service()
+	.AddTTLeaguesService();
 
 var app = builder.Build();
 

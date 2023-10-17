@@ -6,6 +6,7 @@ global using System.Text.Json.Serialization;
 global using System.Web;
 
 global using Smab.Shared.Helpers;
+global using static Smab.TTInfo.Shared.GlobalConstants;
 global using Smab.TTInfo.TT365.Models;
 global using Smab.TTInfo.TT365.Services;
 

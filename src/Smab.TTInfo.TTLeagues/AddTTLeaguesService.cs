@@ -1,24 +1,29 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Smab.TTInfo.TTLeagues;
 public static class TTLeaguesServiceExtensions
 {
-	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, IConfiguration configuration)
+	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, string configSectionName = TTINFO_OPTIONS_NAME)
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-		_ = services.Configure<TTLeaguesOptions>(configuration.GetSection("TTInfo"));
-		_ = services.AddScoped<TTLeaguesReader>();
+		if (string.IsNullOrWhiteSpace(configSectionName)) {
+			throw new ArgumentException($"'{nameof(configSectionName)}' cannot be null or whitespace.", nameof(configSectionName));
+		}
 
-		return services;
+		_ = services.AddOptions<TTLeaguesOptions>()
+			.BindConfiguration(configSectionName)
+			.ValidateDataAnnotations()
+			.ValidateOnStart();
+
+		return services.AddScoped<TTLeaguesReader>();
 	}
 
-	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, IConfiguration configuration, Action<TTLeaguesOptions> options)
+	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, Action<TTLeaguesOptions> options, string configSectionName = "TTInfo")
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-		_ = services.AddTTLeaguesService(configuration);
+		_ = services.AddTTLeaguesService(configSectionName);
 
 		_ = services.PostConfigure(options);
 

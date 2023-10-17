@@ -1,24 +1,29 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Smab.TTInfo.TT365;
 public static class TT365ServiceExtensions
 {
-	public static IServiceCollection AddTT365Service(this IServiceCollection? services, IConfiguration configuration)
+	public static IServiceCollection AddTT365Service(this IServiceCollection? services, string configSectionName = TTINFO_OPTIONS_NAME)
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
+		
+		if (string.IsNullOrWhiteSpace(configSectionName)) {
+			throw new ArgumentException($"'{nameof(configSectionName)}' cannot be null or whitespace.", nameof(configSectionName));
+		}
 
-		_ = services.Configure<TT365Options>(configuration.GetSection("TTInfo"));
-		_ = services.AddScoped<ITT365Reader, TT365Reader>();
+		_ = services.AddOptions<TT365Options>()
+			.BindConfiguration(configSectionName)
+			.ValidateDataAnnotations()
+			.ValidateOnStart();
 
-		return services;
+		return services.AddScoped<ITT365Reader, TT365Reader>();
 	}
 
-	public static IServiceCollection AddTT365Service(this IServiceCollection? services, IConfiguration configuration, Action<TT365Options> options)
+	public static IServiceCollection AddTT365Service(this IServiceCollection? services, Action<TT365Options> options, string configSectionName = TTINFO_OPTIONS_NAME)
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-		_ = services.AddTT365Service(configuration);
+		_ = services.AddTT365Service(configSectionName);
 
 		_ = services.PostConfigure(options);
 
