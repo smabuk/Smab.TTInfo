@@ -1,48 +1,52 @@
 ﻿h1 {
-    font-size: calc(1.3rem + .6vw);
+	font-size: calc(1.3rem + .6vw);
 }
 
 time {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .card {
-    margin-bottom: 1rem;
-    padding: 10px;
-    border-radius: 20px;
-    max-width: 51em;
+	margin-bottom: 1rem;
+	padding: 10px;
+	border-radius: 20px;
+	max-width: 51em;
+	--result-color-rgb: 77,42,245;
+}
+
+[data-result='postponed'] {
+	--result-color-rgb: var(--bs-warning-rgb, 255,193,7);
 }
 
 .pom {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 #fixtures {
 }
 
-    #fixtures .card {
-        --result-color-rgb: 77,42,245;
-        margin-bottom: 0.25rem;
-        box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
-    }
+	#fixtures .card {
+		margin-bottom: 0.25rem;
+		box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
+	}
 
-    #fixtures .badge {
-        background-color: rgb(var(--result-color-rgb));
-        margin-right: 0.5rem;
-        text-decoration: none;
-    }
+	#fixtures .badge {
+		background-color: rgb(var(--result-color-rgb));
+		margin-right: 0.5rem;
+		text-decoration: none;
+		color: white;
+	}
 
-    #fixtures a {
-        color: var(--text-color);
-        text-decoration: none;
-    }
+	#fixtures a {
+		color: var(--text-color);
+		text-decoration: none;
+	}
 
-    #fixtures a:hover {
-        color: var(--text-color);
-        text-decoration: underline;
-    }
+		#fixtures a:hover {
+			color: var(--text-color);
+			text-decoration: underline;
+		}
 
-    #fixtures .postponed {
-        background-color: rgb(var(--bs-warning-rgb, 255,193,7));
-        color: black;
-     }
+	#fixtures .postponed {
+		color: black;
+	}

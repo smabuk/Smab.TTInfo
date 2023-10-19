@@ -13,15 +13,19 @@
 		@foreach (var fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
-			<div class="card">
-				<div class="row">
-					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
-						@if (fixture is PostponedFixture pf) {
-							<span class="postponed badge" title="@pf.Reason">P</span>
-						}
-						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
+			string? fixtureStatus = null;
+			if (fixture is PostponedFixture) {
+				fixtureStatus = "postponed";
+			}
+			<details class="card" data-result='@(fixtureStatus)'>
+				<summary class="row">
+					<div class="col-12 col-sm-3 col-md-3 col-lg-2">
+						<time datetime="@fixture.Date.ToString("yyyy-MM-dd")">@fixture.Date.ToString("ddd dd MMM")</time>
 					</div>
-					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+					<div class="col-12 col-sm-9 col-md-9 col-lg-10">
+						@if (fixture is PostponedFixture pf) {
+							<span class="badge postponed" title="@pf.Reason">P</span>
+						}
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
 						}
@@ -41,23 +45,23 @@
 							}
 						</a>
 					</div>
-				</div>
+				</summary>
 				@if (fixture is PostponedFixture postponed) {
 					<div class="row">
-						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+						<div class="col-12 col-sm-3 col-md-3 col-lg-2">
 							@fixture.Division
 						</div>
-						<div class="col-12 col-md-8 col-lg-9">
+						<div class="col-12 col-md-9 col-lg-10">
 							@postponed.Reason
 						</div>
 					</div>
 				}
 				@if (fixture is CompletedFixture completedFixture) {
 					<div class="row justify-content-end">
-						<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+						<div class="col-12 col-sm-3 col-md-3 col-lg-2">
 							@fixture.Division
 						</div>
-						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 							Home:
 							@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
 								<span class="@(player.PoM ? "pom" : "")"><text>@($"{player.Name} {player.SetsWon} ")</text></span>
@@ -65,7 +69,7 @@
 						</div>
 					</div>
 					<div class="row justify-content-end">
-						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 							Away:
 							@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
 								<span class="@(player.PoM ? "pom" : "")">@($"{player.Name} {player.SetsWon} ")</span>
@@ -73,12 +77,12 @@
 						</div>
 					</div>
 					<div class="row justify-content-end">
-						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 							Doubles: @completedFixture.DoublesWinner
 						</div>
 					</div>
 				}
-			</div>
+			</details>
 		}
 	</div>
 }
@@ -107,6 +111,8 @@
 		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
 						.Where(f => f is CompletedFixture || f is PostponedFixture)
+						.OrderByDescending(f => f.Date)
+						.ThenBy(f => f.Division)
 						.ToList();
 		foreach (Fixture fixture in fixtures) {
 			if (fixture is CompletedFixture completedFixture) {

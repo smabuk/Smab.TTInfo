@@ -19,16 +19,12 @@ public static class TTLeaguesServiceExtensions
 		return services.AddScoped<TTLeaguesReader>();
 	}
 
-	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, Action<TTLeaguesOptions> options, string configSectionName = "TTInfo")
+	public static IServiceCollection? AddTTLeaguesService(this IServiceCollection? services, Action<TTLeaguesOptions> options, string configSectionName = TTINFO_OPTIONS_NAME)
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
 
 		_ = services.AddTTLeaguesService(configSectionName);
-
 		_ = services.PostConfigure(options);
-
-		TTLeaguesOptions ttInfoOptions = new();
-		options.Invoke(ttInfoOptions);
 
 		return services;
 	}

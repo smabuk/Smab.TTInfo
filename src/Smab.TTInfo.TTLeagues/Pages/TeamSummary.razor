@@ -19,7 +19,7 @@
 				<summary class="row">
 					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
 						@if (match.Date is null) {
-							<span class="postponed badge" title="Postponed">P</span>
+							<span class="badge postponed" title="Postponed">P</span>
 						}
 						<time datetime="@match.Time.ToUtcString()">@match.Time?.ToUKTime().ToString("ddd dd MMM HH:mm")</time>
 					</div>
@@ -30,7 +30,9 @@
 						<a href="TTLeagues/TeamSummary/@TTInfoId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)/@(match.Home.Name.Equals(@TeamName) ? match.Away.TeamId : match.Home.TeamId)">
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
 						</a>
-						<span> @@ @match.Venue</span>
+						@if (string.IsNullOrEmpty(match.Venue) is false) {
+							<span class="mx-1"> @@ @match.Venue</span>
+						}
 					</div>
 				</summary>
 @*

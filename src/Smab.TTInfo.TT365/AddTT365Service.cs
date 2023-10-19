@@ -24,11 +24,7 @@ public static class TT365ServiceExtensions
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
 
 		_ = services.AddTT365Service(configSectionName);
-
 		_ = services.PostConfigure(options);
-
-		TT365Options ttInfoOptions = new();
-		options.Invoke(ttInfoOptions);
 
 		return services;
 	}

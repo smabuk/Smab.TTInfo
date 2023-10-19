@@ -10,6 +10,10 @@
 		"Reading 2022 smith": {
 			"commandName": "Project",
 			"commandLineArgs": "Reading 2022 -p smith"
+		},
+		"Fail": {
+			"commandName": "Project",
+			"commandLineArgs": "-p smith"
 		}
 	}
 }

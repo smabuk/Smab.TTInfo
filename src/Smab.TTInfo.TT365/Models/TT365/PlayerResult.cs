@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Smab.TTInfo.TT365.Models;
+namespace Smab.TTInfo.TT365.Models.TT365;
 
 [DebuggerDisplay("Name: {Name,nq}")]
 public record PlayerResult(

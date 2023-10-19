@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.TT365.Models;
+﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
 [DebuggerDisplay("CompletedFixture: {Date,nq} - {HomeTeam,nq} ({ForHome,nq}) vs ({ForAway,nq}) {AwayTeam,nq}")]
 public record CompletedFixture : Fixture

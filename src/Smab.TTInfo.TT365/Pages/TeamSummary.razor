@@ -12,15 +12,19 @@
 		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
-			<details class="card" data-result='@fr?.Result'>
+			string? fixtureStatus = null;
+			if (fixture is PostponedFixture) {
+				fixtureStatus = "postponed";
+			}
+			<details class="card" data-result='@(fr?.Result ?? fixtureStatus)'>
 				<summary class="row">
-					<div class="col-12 col-sm-4 col-md-4 col-lg-3">
+					<div class="col-12 col-sm-3 col-md-3 col-lg-2">
+						<time datetime="@fixture.Date.ToUtcString()">@fixture.Date.ToString("ddd dd MMM")</time>
+					</div>
+					<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 						@if (fixture is PostponedFixture pf) {
 							<span class="postponed badge" title="@pf.Reason">P</span>
 						}
-						<time datetime="@fixture.Date.ToString("yyyy-MM-dd") @(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? "19:00" : "19:30")">@fixture.Date.ToString("ddd dd MMM")@(fixture.HomeTeam.Contains("Curzon") || fixture.HomeTeam.Contains("RBL") ? " 19:00" : "") </time>
-					</div>
-					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
 						}
@@ -32,7 +36,7 @@
 				</summary>
 				@if (fixture is PostponedFixture postponed) {
 					<div class="row justify-content-end">
-						<div class="col-12 col-md-8 col-lg-9">
+						<div class="col-12 col-md-9 col-lg-10">
 							@postponed.Reason
 						</div>
 					</div>
@@ -40,21 +44,21 @@
 				@if (fixture is CompletedFixture completedFixture) {
 					@if (completedFixture.Other is not null) {
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-8 col-lg-9">
+							<div class="col-12 col-md-9 col-lg-10">
 								@completedFixture.Other
 							</div>
 						</div>
 					}
 					@if (fixture.HomeTeam.Equals(@team.Name)) {
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-8 col-lg-9">
+							<div class="col-12 col-md-9 col-lg-10">
 								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
 									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-8 col-lg-9">
+							<div class="col-12 col-md-9 col-lg-10">
 								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
 									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
 								}
@@ -62,14 +66,14 @@
 						</div>
 					} else {
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-8 col-lg-9">
+							<div class="col-12 col-md-9 col-lg-10">
 								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
 									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
 								}
 							</div>
 						</div>
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-8 col-lg-9">
+							<div class="col-12 col-md-9 col-lg-10">
 								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
 									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
 								}
@@ -77,13 +81,13 @@
 						</div>
 					}
 					<div class="row justify-content-end">
-						<div class="col-12 col-sm-8 col-md-8 col-lg-9">
+						<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 							Doubles: @completedFixture.DoublesWinner
 						</div>
 					</div>
 				} else {
 					<div class="row justify-content-end">
-						<div class="col-12 col-md-8 col-lg-9">
+						<div class="col-12 col-md-9 col-lg-10">
 							@if (fixture.HomeTeam.Equals(@team.Name)) {
 								<text>@(teamPlayersList.ContainsKey(fixture.AwayTeam) ? @teamPlayersList[fixture.AwayTeam] : "Loading ...")</text>
 							} else {
@@ -209,7 +213,13 @@
 
 			StateHasChanged();
 
-			List<string> teamList = fixtures.Select(t => t.HomeTeam).Union(fixtures.Select(t => t.HomeTeam)).Distinct().Where(t => t != TeamId).ToList();
+			List<string> teamList = fixtures
+				.Select(t => t.HomeTeam)
+				.Union(fixtures
+						.Select(t => t.HomeTeam))
+						.Distinct()
+						.Where(t => t != TeamId)
+				.ToList();
 			List<Task<string>> tasks = new();
 			foreach (string team in teamList) {
 				tasks.Add(GetTeamPlayers(team));

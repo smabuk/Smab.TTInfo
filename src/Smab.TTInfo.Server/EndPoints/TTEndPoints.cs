@@ -1,6 +1,4 @@
-﻿using Smab.TTInfo.TT365.Models;
-
-namespace Smab.TTInfo.Server.EndPoints;
+﻿namespace Smab.TTInfo.Server.EndPoints;
 
 public static partial class TTEndPoints
 {

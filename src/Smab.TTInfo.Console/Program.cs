@@ -12,4 +12,11 @@ app.Configure(config =>
 #endif
 });
 
-return await app.RunAsync(args);
+try {
+	return await app.RunAsync(args);
+}
+catch (Exception ex) {
+	AnsiConsole.MarkupLine($"Error: [Red]{ex.Message}[/]");
+	return -1;
+}
+

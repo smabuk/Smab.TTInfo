@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.TT365.Models;
+﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
 public record Season(string Id, string Name)
 {

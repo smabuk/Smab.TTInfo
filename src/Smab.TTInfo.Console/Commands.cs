@@ -9,16 +9,16 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		return settings.Year switch
 		{
 			null when settings.SearchPlayers is not null && settings.SearchOpponents is not null 
-			  => TTInfoCli.PlayerVsPlayer(settings.LeagueId, year, settings.CacheFolder, settings.SearchPlayers, settings.SearchOpponents).Result,
-			_ => TTInfoCli.Run(settings.LeagueId, year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result
+			  => TTInfoCli.PlayerVsPlayer(settings.TTInfoId, year, settings.CacheFolder, settings.SearchPlayers, settings.SearchOpponents).Result,
+			_ => TTInfoCli.Run(settings.TTInfoId, year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result
 		};
 	}
 
 	public sealed class Settings : CommandSettings
 	{
-		[Description("The league id. Which is the part of the uri representing the league web site.")]
-		[CommandArgument(0, "<leagueId>")]
-		public string LeagueId { get; init; } = "";
+		[Description("The ttinfo id. Which is the part of the uri representing the league web site.")]
+		[CommandArgument(0, "<TTInfoId>")]
+		public required string TTInfoId { get; init; }
 
 		[Description("The year in which the season starts.")]
 		[CommandArgument(1, "[Year]")]

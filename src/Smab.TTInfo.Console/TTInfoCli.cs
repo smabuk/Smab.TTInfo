@@ -14,13 +14,13 @@ internal class TTInfoCli
 		List<Division>     allDivisions    = [];
 		List<LookupTables> allLookupTables = [];
 
-		TTInfoOptions ttInfoOptions = new()
+		TT365Options ttInfoOptions = new()
 		{
 			CacheFolder = cacheFolder,
 			CacheHours = 10_000_000,
 		};
 
-		TT365Reader tt365 = new(Options.Create((TT365Options)ttInfoOptions));
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
@@ -104,13 +104,13 @@ internal class TTInfoCli
 
 		HashSet<SeasonPlayer> players = [];
 
-		TTInfoOptions ttInfoOptions = new()
+		TT365Options ttInfoOptions = new()
 		{
 			CacheFolder = cacheFolder,
 			CacheHours = 10_000_000,
 		};
 
-		TT365Reader tt365 = new(Options.Create((TT365Options)ttInfoOptions));
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
