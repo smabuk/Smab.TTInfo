@@ -13,11 +13,11 @@ public sealed partial class TTLeaguesReader
 
 		if (league is null)
 		{
-			using HttpClient client = CreateHttpClient(ttinfoId);
-			TenantsHost?       tenantsHost         = await client.GetFromJsonAsync<TenantsHost>("tenants/host");
-			WebsitesHost?      websitesHost        = await client.GetFromJsonAsync<WebsitesHost>("websites/host");
-			List<Competition>? currentCompetitions = await client.GetFromJsonAsync<List<Competition>>("competitions/all");
-			List<Competition>? archives            = await client.GetFromJsonAsync<List<Competition>>("competitions/archives");
+			EnsureDefaultRequestHeaders(ttinfoId);
+			TenantsHost?       tenantsHost         = await httpClient.GetFromJsonAsync<TenantsHost>("tenants/host");
+			WebsitesHost?      websitesHost        = await httpClient.GetFromJsonAsync<WebsitesHost>("websites/host");
+			List<Competition>? currentCompetitions = await httpClient.GetFromJsonAsync<List<Competition>>("competitions/all");
+			List<Competition>? archives            = await httpClient.GetFromJsonAsync<List<Competition>>("competitions/archives");
 
 			league = new(
 				TTInfoId:             ttinfoId,

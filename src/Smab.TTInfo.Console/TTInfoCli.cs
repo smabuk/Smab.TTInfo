@@ -5,7 +5,7 @@ using Smab.TTInfo.Shared.Models;
 namespace Smab.TTInfo.Cli;
 internal class TTInfoCli
 {
-	public static async Task<int> Run(string leagueId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
+	public static async Task<int> Run(string ttinfoId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
 	{
 		playerSearchName   = playerSearchName?.ToLowerInvariant()   ?? null;
 		opponentSearchName = opponentSearchName?.ToLowerInvariant() ?? null;
@@ -20,15 +20,18 @@ internal class TTInfoCli
 			CacheHours = 10_000_000,
 		};
 
-		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
+		AnsiConsole.MarkupLine($"Cache Folder: [green]{ttInfoOptions.CacheFolder}[/]");
+		AnsiConsole.MarkupLine("");
+		
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient());
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {leagueId} ...", async ctx => await tt365.GetLeague(leagueId));
+			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague(ttinfoId));
 
 		if (league is null) {
-			AnsiConsole.MarkupLine($"Couldn't get league: {leagueId}");
+			AnsiConsole.MarkupLine($"Couldn't get league: {ttinfoId}");
 			return -1;
 		}
 
@@ -42,13 +45,13 @@ internal class TTInfoCli
 		LookupTables lookupTables = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {leagueId} {seasonId} ...", async ctx => await tt365.GetLookupTables(leagueId, seasonId));
+			.StartAsync($"Loading... {ttinfoId} {seasonId} ...", async ctx => await tt365.GetLookupTables(ttinfoId, seasonId));
 		allLookupTables.Add(lookupTables);
 
 		List<Division> divisions = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {leagueId} {seasonId} all divisions ...", async ctx => await tt365.GetDivisions(leagueId, seasonId));
+			.StartAsync($"Loading... {ttinfoId} {seasonId} all divisions ...", async ctx => await tt365.GetDivisions(ttinfoId, seasonId));
 		allDivisions.AddRange(divisions);
 
 		foreach (Division division in divisions) {
@@ -61,7 +64,7 @@ internal class TTInfoCli
 					newTeam = await AnsiConsole.Status()
 						.Spinner(Spinner.Known.Circle)
 						.AutoRefresh(true)
-						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats(leagueId, team.Name, seasonId) ?? new());
+						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats(ttinfoId, team.Name, seasonId) ?? new());
 				}
 				catch (Exception ex) {
 					message = $"*** {ex.Message}";
@@ -78,7 +81,7 @@ internal class TTInfoCli
 						Player p2 = await AnsiConsole.Status()
 							.Spinner(Spinner.Known.Circle)
 							.AutoRefresh(true)
-							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats(leagueId, player, seasonId) ?? new());
+							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats(ttinfoId, player, seasonId) ?? new());
 						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase))).OrderBy(pr => pr.Date)) {
 							//bool limitToOpponentMatchDetails = opponentSearchName is null || playerResult.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName);
 							string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
@@ -97,7 +100,7 @@ internal class TTInfoCli
 		return 0;
 	}
 
-	public static async Task<int> PlayerVsPlayer(string leagueId, int year, string cacheFolder, string playerSearchName, string opponentSearchName)
+	public static async Task<int> PlayerVsPlayer(string ttinfoId, int year, string cacheFolder, string playerSearchName, string opponentSearchName)
 	{
 		playerSearchName = playerSearchName.ToLowerInvariant();
 		opponentSearchName = opponentSearchName.ToLowerInvariant();
@@ -110,15 +113,18 @@ internal class TTInfoCli
 			CacheHours = 10_000_000,
 		};
 
-		TT365Reader tt365 = new(Options.Create(ttInfoOptions));
+		AnsiConsole.MarkupLine($"Cache Folder: [green]{ttInfoOptions.CacheFolder}[/]");
+		AnsiConsole.MarkupLine("");
+
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient());
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {leagueId} ...", async ctx => await tt365.GetLeague(leagueId));
+			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague(ttinfoId));
 
 		if (league is null) {
-			AnsiConsole.MarkupLine($"Couldn't get league: {leagueId}");
+			AnsiConsole.MarkupLine($"Couldn't get league: {ttinfoId}");
 			return -1;
 		}
 
@@ -127,12 +133,12 @@ internal class TTInfoCli
 		await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {leagueId} ...", async ctx =>
+			.StartAsync($"Loading... {ttinfoId} ...", async ctx =>
 			{
 				for (int iYear = year; iYear > 2011; iYear--) {
 					string seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, iYear);
 
-					List<Fixture>? fixtures = await tt365.GetAllFixtures(leagueId, seasonId);
+					List<Fixture>? fixtures = await tt365.GetAllFixtures(ttinfoId, seasonId);
 					if (fixtures is not null) {
 						foreach (CompletedFixture fixture in fixtures.OfType<CompletedFixture>()) {
 							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
@@ -161,7 +167,7 @@ internal class TTInfoCli
 							Name = p1.Name,
 							PlayerId = p1.PlayerId,
 						};
-						return await tt365.GetPlayerStats(leagueId, player1, p1.SeasonId) ?? new();
+						return await tt365.GetPlayerStats(ttinfoId, player1, p1.SeasonId) ?? new();
 					});
 
 				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase)).OrderBy(pr => pr.Date)) {

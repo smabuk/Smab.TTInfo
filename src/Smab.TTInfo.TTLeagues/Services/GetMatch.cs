@@ -2,33 +2,31 @@
 
 public sealed partial class TTLeaguesReader
 {
-	internal async Task<MatchCard?> GetMatch(int matchId, string leagueId)
+	internal async Task<MatchCard?> GetMatch(int matchId, string ttinfoId)
 	{
-		string fileName = $"{leagueId}_match_{matchId}.json";
+		string fileName = $"{ttinfoId}_match_{matchId}.json";
 
 		MatchCard? matchCard = await LoadJsonAsync<MatchCard>(
-			leagueId,
+			ttinfoId,
 			null,
 			fileName);
 
-		if (matchCard is null)
-		{
-			using HttpClient client = CreateHttpClient(leagueId);
-
-			Match? match = await client.GetFromJsonAsync<Match>($"matches/{matchId}");
+		if (matchCard is null) {
+			EnsureDefaultRequestHeaders(ttinfoId);
+			Match? match = await httpClient.GetFromJsonAsync<Match>($"matches/{matchId}");
 			if (match is null || match.Home.Score is null) {
 				return null;
 			}
 
-			MatchResults? matchResults = await client.GetFromJsonAsync<MatchResults>($"matches/{matchId}/results");
-			List<MatchSet>?  matchSets = await client.GetFromJsonAsync<List<MatchSet>>($"matches/{matchId}/sets");
+			MatchResults? matchResults = await httpClient.GetFromJsonAsync<MatchResults>($"matches/{matchId}/results");
+			List<MatchSet>? matchSets = await httpClient.GetFromJsonAsync<List<MatchSet>>($"matches/{matchId}/sets");
 
 			if (match is not null && matchSets is not null && matchResults is not null) {
 				matchCard = new(
-					Id:      match.Id,
-					Match:   match,
+					Id: match.Id,
+					Match: match,
 					Results: matchResults,
-					Sets:    matchSets
+					Sets: matchSets
 					);
 				_ = SaveFileToCache(JsonSerializer.Serialize(matchCard), fileName);
 			}

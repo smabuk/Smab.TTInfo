@@ -16,6 +16,7 @@ try {
 	return await app.RunAsync(args);
 }
 catch (Exception ex) {
+	AnsiConsole.MarkupLine("");
 	AnsiConsole.MarkupLine($"Error: [Red]{ex.Message}[/]");
 	return -1;
 }

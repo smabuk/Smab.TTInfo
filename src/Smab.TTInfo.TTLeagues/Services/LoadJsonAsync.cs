@@ -24,8 +24,8 @@ public sealed partial class TTLeaguesReader
 		}
 
 		if (string.IsNullOrWhiteSpace(jsonString) && url is not null) {
-			using HttpClient client = CreateHttpClient(ttinfoId);
-			HttpResponseMessage? response = await client.GetAsync(url);
+			EnsureDefaultRequestHeaders(ttinfoId);
+			HttpResponseMessage? response = await httpClient.GetAsync(url);
 			if (response.IsSuccessStatusCode) {
 				jsonString = await response.Content.ReadAsStringAsync();
 				_ = SaveFileToCache(jsonString, fileName);

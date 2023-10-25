@@ -9,8 +9,18 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		return settings.Year switch
 		{
 			null when settings.SearchPlayers is not null && settings.SearchOpponents is not null 
-			  => TTInfoCli.PlayerVsPlayer(settings.TTInfoId, year, settings.CacheFolder, settings.SearchPlayers, settings.SearchOpponents).Result,
-			_ => TTInfoCli.Run(settings.TTInfoId, year, settings.CacheFolder, settings.ShowTeamSearch, settings.SearchPlayers, settings.SearchOpponents).Result
+			  => TTInfoCli.PlayerVsPlayer(
+					settings.TTInfoId,
+					year,
+					Path.GetFullPath(settings.CacheFolder),
+					settings.SearchPlayers,
+					settings.SearchOpponents).Result,
+			_ => TTInfoCli.Run(settings.TTInfoId,
+					year,
+					Path.GetFullPath(settings.CacheFolder),
+					settings.ShowTeamSearch,
+					settings.SearchPlayers,
+					settings.SearchOpponents).Result
 		};
 	}
 
@@ -39,6 +49,6 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 
 		[Description("Cache folder used for storing the html and json files so that excessive server calls can be avoided.")]
 		[CommandOption("-c|--cacheFolder")]
-		public string CacheFolder { get; init; } = Path.Combine(Path.GetTempPath() , "tt365", "cache");
+		public string CacheFolder { get; init; } = Path.Combine(Path.GetTempPath(), "tt365", "cache");
 	}
 }
