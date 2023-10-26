@@ -177,7 +177,7 @@
 
 	public string TeamName { get; set; } = "";
 	private Team? team;
-	private List<Fixture> fixtures = new();
+	private List<Fixture> fixtures = [];
 	private Dictionary<string, string> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
 	private League? league;
@@ -193,7 +193,7 @@
 		team = await _tt365.GetTeamStats(LeagueId, TeamName);
 		if (team is not null) {
 
-			fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
+			fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? [])
 							.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
 							.ToList();
 			foreach (Fixture fixture in fixtures) {
@@ -220,7 +220,7 @@
 						.Distinct()
 						.Where(t => t != TeamId)
 				.ToList();
-			List<Task<string>> tasks = new();
+			List<Task<string>> tasks = [];
 			foreach (string team in teamList) {
 				tasks.Add(GetTeamPlayers(team));
 			}

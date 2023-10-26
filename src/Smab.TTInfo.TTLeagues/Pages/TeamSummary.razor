@@ -265,7 +265,7 @@
 			.Where(id => id != TeamId)
 			.Distinct()
 			.ToList();
-		List<Task<string>> tasks = new();
+		List<Task<string>> tasks = [];
 		foreach (int id in teamList) {
 			tasks.Add(GetTeamPlayers(id, competitionId));			
 		}

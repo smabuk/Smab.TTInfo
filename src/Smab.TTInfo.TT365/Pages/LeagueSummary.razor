@@ -88,7 +88,7 @@
 			League = await _tt365.GetLeague(LeagueId);
 			LeagueName = League?.Name ?? "";
 			currentSeason = League?.CurrentSeason.Name ?? "";
-			seasons = League?.Seasons.Select(s => s.Name).Append(currentSeason).OrderByDescending(s => s).ToList() ?? new();
+			seasons = League?.Seasons.Select(s => s.Name).Append(currentSeason).OrderByDescending(s => s).ToList() ?? [];
 		}
 	}
 }

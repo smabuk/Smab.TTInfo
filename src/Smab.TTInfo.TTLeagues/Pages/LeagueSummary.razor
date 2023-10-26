@@ -97,11 +97,11 @@
 	private string LeagueName { get; set; } = "";
 	private League? League;
 	private string currentCompetition = "";
-	private List<String> competitionNames = new();
-	private Dictionary<int, List<Division>> divisionsList = new();
-	private Dictionary<int, List<TeamStanding>> teamStandingsList = new();
+	private List<String> competitionNames = [];
+	private Dictionary<int, List<Division>> divisionsList = [];
+	private Dictionary<int, List<TeamStanding>> teamStandingsList = [];
 
-	private List<Division> divisions = new();
+	private List<Division> divisions = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -110,7 +110,7 @@
 			League = await _ttleagues.GetLeague(TTInfoId);
 			LeagueName = @League?.TenantsHost?.Name ?? "";
 			StateHasChanged();
-			competitionNames = League?.CurrentCompetitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? new();
+			competitionNames = League?.CurrentCompetitions.Select(s => s.Name).OrderByDescending(s => s).ToList() ?? [];
 			if (CompetitionId is null) {
 				if (League?.CurrentCompetitions.Any() ?? false) {
 					foreach (Competition competition in League.CurrentCompetitions) {

@@ -96,7 +96,7 @@
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
-	private List<Fixture> fixtures = new();
+	private List<Fixture> fixtures = [];
 	private Dictionary<int, FixtureResult> fixtureResults = new();
 	private League? league;
 
@@ -108,7 +108,7 @@
 		DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 		NoOfDays = NoOfDays ?? 6;
 
-		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? new())
+		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? [])
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
 						.Where(f => f is CompletedFixture || f is PostponedFixture)
 						.OrderByDescending(f => f.Date)

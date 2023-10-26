@@ -55,7 +55,7 @@
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
-	private List<PlayerResult> playerResults = new();
+	private List<PlayerResult> playerResults = [];
 	private League? league;
 
 	protected override async Task OnParametersSetAsync()
