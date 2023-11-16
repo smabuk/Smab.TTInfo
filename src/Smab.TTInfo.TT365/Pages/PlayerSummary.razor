@@ -1,6 +1,6 @@
 ﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
 @inject ITT365Reader _tt365
-@attribute [StreamRendering(true)]
+@attribute [StreamRendering]
 
 <PageTitle>@PlayerName.Replace("_", " ") - @LeagueId</PageTitle>
 

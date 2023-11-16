@@ -1,7 +1,7 @@
 ﻿@page "/TTLeagues/TeamSummary/{TTInfoId}/{TeamName}"
 @page "/TTLeagues/TeamSummary/{TTInfoId}/{TeamName}/{TeamId:int}"
 @inject TTLeaguesReader _ttleagues
-@attribute [StreamRendering(true)]
+@attribute [StreamRendering]
 
 <PageTitle>@TeamName - @TTInfoId</PageTitle>
 
