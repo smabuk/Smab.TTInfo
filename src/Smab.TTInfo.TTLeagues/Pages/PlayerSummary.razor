@@ -7,12 +7,11 @@
 @if (playerStatsList is null || playerStatsList.Count == 0) {
 	<h1>Loading ... @PlayerName ...</h1>
 } else {
-	<h1>@PlayerName</h1>
-	<h2>Player Stats</h2>
+	<h1>Player Stats for @PlayerName</h1>
 	<div id="results">
 		@foreach (PlayerStats ps in playerStatsList.OrderByDescending(p => p.Competition.Key)) {
 			@foreach (PlayerResult psr in ps.Results) {
-			<h3>Results</h3>
+				<h3>@psr.Team.Value</h3>
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>

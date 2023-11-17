@@ -7,36 +7,42 @@
 @if (playerResults is null || playerResults.Count == 0) {
 	<h1>Loading ... @PlayerName ...</h1>
 } else {
-	<h1>@PlayerName</h1>
-	<h2>Player Stats</h2>
+	<h1>Player Stats for @PlayerName</h1>
 	<div id="results">
-		<h3>Results</h3>
-		<table class="table table-bordered table-sm">
-			<thead>
-				<tr>
-					<th>Opponent</th>
-					<th>Div</th>
-					<th>Team</th>
-					<th>Date</th>
-					<th>Games</th>
-					<th>Score</th>
-					<th>Ranking</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (PlayerResult result in playerResults.OrderByDescending(p => p.Date).ThenByDescending(p => p.OriginalSortOrder)) {
-					<tr data-result='@result.Result.ToLower()'>
-						<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
-						<td>@result.Division.Replace("Division_", "")</td>
-						<td>@result.OpponentTeam</td>
-						<td>@result.Date.ToString("dd MMM yyyy")</td>
-						<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
-						<td>@result.Scores.Replace(",",", ")</td>
-						<td>@result.FormattedRankingDiff</td>
+		@foreach (string teamName in playerTeams) {
+			List<PlayerResult> results = [.. playerResults
+				.Where(p => p.PlayerTeamName == teamName)
+				.OrderByDescending(p => p.Date)
+				.ThenByDescending(p => p.OriginalSortOrder)
+				];
+			<h3>@teamName</h3>
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<th>Opponent</th>
+						<th>Div</th>
+						<th>Team</th>
+						<th>Date</th>
+						<th>Games</th>
+						<th>Score</th>
+						<th>Ranking</th>
 					</tr>
-				}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					@foreach (PlayerResult result in results) {
+						<tr data-result='@result.Result.ToLower()'>
+							<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
+							<td>@result.Division.Replace("Division_", "")</td>
+							<td>@result.OpponentTeam</td>
+							<td>@result.Date.ToString("dd MMM yyyy")</td>
+							<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
+							<td>@result.Scores.Replace(",",", ")</td>
+							<td>@result.FormattedRankingDiff</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
 	</div>
 }
 
@@ -56,6 +62,7 @@
 	private record FixtureResult(int Id, string Result, string FullScore);
 
 	private List<PlayerResult> playerResults = [];
+	private List<string> playerTeams = [];
 	private League? league;
 
 	protected override async Task OnParametersSetAsync()
@@ -72,6 +79,11 @@
 		Player playerStats = await _tt365.GetPlayerStats(LeagueId, player) ?? new();
 		if (playerStats is not null) {
 			playerResults = playerStats.PlayerResults.ToList();
+			playerTeams = playerResults
+			.GroupBy(p => p.PlayerTeamName)
+			.OrderByDescending(g => g.Count())
+			.Select(g => g.Key)
+			.ToList();
 			StateHasChanged();
 		}
 	}

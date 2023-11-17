@@ -73,7 +73,7 @@ public sealed partial class TT365Reader
 
 					PlayerResult playerResult = new(
 						Id:                player.Id,
-						Name:              player.Name,
+						Name:              FixPlayerName(player.Name),
 						OriginalSortOrder: index++,
 						Date:              date,
 						PlayerTeamName:    playerTeamName,
@@ -86,6 +86,8 @@ public sealed partial class TT365Reader
 						ResultReason:      resultReason,
 						MatchCardURL:      matchCardUrl
 					);
+
+					playerResult.Opponent.Name = FixPlayerName(opponent.Name);
 
 					newPlayer.PlayerResults.Add(playerResult);
 				}
