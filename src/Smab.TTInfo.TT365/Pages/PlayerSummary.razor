@@ -64,6 +64,7 @@
 	private List<PlayerResult> playerResults = [];
 	private List<string> playerTeams = [];
 	private League? league;
+	private Dictionary<string, List<PlayerResult>> previousPlayerResults = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -71,6 +72,9 @@
 		playerResults = new();
 		StateHasChanged();
 		league = await _tt365.GetLeague(LeagueId);
+		if (league is null) {
+			return;
+		}
 		Player player = new()
 			{
 				Name = PlayerName,
@@ -85,6 +89,26 @@
 			.Select(g => g.Key)
 			.ToList();
 			StateHasChanged();
+			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
+		}
+
+	}
+
+	private async Task UpdatePlayerStatsFromPreviousSeasonAsync(string seasonId)
+	{
+		if (previousPlayerResults.ContainsKey(seasonId)) {
+			return;
+		}
+		PlayerName = PlayerName.Replace("_", " ");
+		// look up player id 
+		Player player = new()
+			{
+				Name = PlayerName,
+				PlayerId = PlayerId,
+			};
+		Player playerStats = await _tt365.GetPlayerStats(LeagueId, player, seasonId) ?? new();
+		if (playerStats is not null) {
+			previousPlayerResults[seasonId] = [..playerStats.PlayerResults];
 		}
 	}
 }

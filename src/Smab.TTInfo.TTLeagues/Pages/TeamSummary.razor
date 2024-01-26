@@ -21,7 +21,7 @@
 						@if (match.Date is null) {
 							<span class="badge postponed" title="Postponed">P</span>
 						}
-						<time datetime="@match.Time.ToUtcString()">@match.Time?.ToUKTime().ToString("ddd dd MMM HH:mm")</time>
+						<time datetime="@match.ActualDateTime.ToUtcString()">@match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM HH:mm")</time>
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (match.HasResults) {
@@ -234,7 +234,7 @@
 		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
-			.OrderBy(m => m.Time)
+			.OrderBy(m => m.ActualDateTime)
 			.ToList() ?? [];
 
 		foreach (Match match in fixtures) {
