@@ -5,7 +5,7 @@ app.Configure(config =>
 	config.AddExample("Reading");
 	config.AddExample("Reading", "2022");
 	config.AddExample("Reading", "-t", "king");
-	config.AddExample("Reading", "-p", "mark", "-v", "paul");
+	config.AddExample("Reading", "-p", "mark", "--vs", "paul");
 #if DEBUG
 	config.PropagateExceptions();
 	config.ValidateExamples();

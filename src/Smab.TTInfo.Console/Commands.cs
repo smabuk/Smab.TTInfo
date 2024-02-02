@@ -44,7 +44,7 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		public string? SearchPlayers { get; init; } = null;
 
 		[Description("Limit match details to these opponents.")]
-		[CommandOption("-v|--vs")]
+		[CommandOption("--vs")]
 		public string? SearchOpponents { get; init; } = null;
 
 		[Description("Cache folder used for storing the html and json files so that excessive server calls can be avoided.")]
