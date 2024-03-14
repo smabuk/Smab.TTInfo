@@ -74,7 +74,7 @@
 		<dd>
 			<select @bind="currentCompetition">
 				@if (competitionNames.Any()) {
-					@foreach (var season in competitionNames) {
+					@foreach (string season in competitionNames) {
 						<option value="@season">@season</option>
 					}
 				}

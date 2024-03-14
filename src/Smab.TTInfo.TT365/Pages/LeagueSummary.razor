@@ -7,7 +7,7 @@
 
 @if (League is not null && League.CurrentSeason.DivisionCount > 0) {
 	<div>
-		@foreach (var division in League.CurrentSeason.Divisions) {
+		@foreach (Division division in League.CurrentSeason.Divisions) {
 			<h2>@division.Name</h2>
 			<div class="division">
 				<table class="table table-bordered table-sm">
@@ -26,7 +26,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var team in division.Teams) {
+						@foreach (Team team in division.Teams) {
 							<tr>
 								<td>@team.LeaguePosition</td>
 								<td><a href="/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
@@ -59,7 +59,7 @@
 		<dd>
 			<select @bind="currentSeason">
 				@if (seasons.Any()) {
-					@foreach (var season in seasons) {
+					@foreach (string season in seasons) {
 						<option value="@season">@season</option>
 					}
 				}

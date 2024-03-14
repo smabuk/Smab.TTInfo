@@ -119,7 +119,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played)) {
+					@foreach (Player player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played)) {
 						<tr>
 							@* <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td> *@
 							<td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
@@ -147,7 +147,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var result in team.Results!) {
+					@foreach (TeamResult result in team.Results!) {
 						<tr data-result='@result.MatchResult'>
 							<td><a href="TeamSummary/@LeagueId/@result.Opposition">@result.Opposition</a></td>
 							<td>@result.HomeOrAway</td>
@@ -241,12 +241,17 @@
 			if (players is null) {
 				return "";
 			}
-			var playersList = players
-				.OrderByDescending(p => p.WinPercentage)
-				.Select(p => $"{p.Name} ({Math.Round(p.WinPercentage, 0)}%)");
-			playersString = String.Join(", ", playersList);
+			playersString = PlayersAverages(players);
 			teamPlayersList.TryAdd(teamName, playersString);
 		}
 		return playersString;
+	}
+
+	private string PlayersAverages(IEnumerable<Player> players)
+	{
+		IEnumerable<string> playersList = players
+			.OrderByDescending(p => p.WinPercentage)
+			.Select(p => $"{p.Name} ({Math.Round(p.WinPercentage, 0)}%)");
+		return String.Join(", ", playersList);
 	}
 }

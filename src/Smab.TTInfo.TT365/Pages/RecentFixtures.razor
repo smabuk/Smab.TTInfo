@@ -10,7 +10,7 @@
 	<h2>Loading ... Results for the last @NoOfDays days ...</h2>
 } else {
 	<div id="fixtures">
-		@foreach (var fixture in fixtures) {
+		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
 			string? fixtureStatus = null;
