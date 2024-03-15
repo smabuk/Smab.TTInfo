@@ -91,12 +91,15 @@
 						</div>
 					</div>
 				} else {
- 					<div class="row justify-content-end">
+					<div class="row justify-content-end">
 						<div class="col-12 col-md-8 col-lg-9">
-							@if (match.Home.TeamId.Equals(TeamId)) {
-								<text>@(teamPlayersList.ContainsKey(match.Away.TeamId ?? -1) ? @teamPlayersList[match.Away.TeamId ?? -1] : "Loading ...")</text>
+							@{ int opposingTeam = match.Home.TeamId.Equals(TeamId) ? match.Away.TeamId ?? -1 : match.Home.TeamId ?? -1; }
+							@if (teamPlayersList.ContainsKey(opposingTeam)) {
+								@foreach (TeamStatsPlayer player in teamPlayersList[opposingTeam].OrderByDescending(p => p.Average)) {
+									<text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.Id">@($"{player.Name}")</a> @($" ({Math.Round(player.Average, 0)}%) ")</text>
+								}
 							} else {
-								<text>@(teamPlayersList.ContainsKey(match.Home.TeamId ?? -1) ? @teamPlayersList[match.Home.TeamId ?? -1] : "Loading ...")</text>
+								<text>Loading ...</text>
 							}
 						</div>
 					</div>
@@ -204,7 +207,7 @@
 	private Dictionary<string, Ranking> rankings = [];
 	private Dictionary<int, MatchCard> matchCards = [];
 	private Dictionary<int, FixtureResult> fixtureResults = [];
-	private Dictionary<int, string> teamPlayersList = [];
+	private Dictionary<int, List<TeamStatsPlayer>> teamPlayersList = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -265,7 +268,7 @@
 			.Where(id => id != TeamId)
 			.Distinct()
 			.ToList();
-		List<Task<string>> tasks = [];
+		List<Task<IEnumerable<TeamStatsPlayer>>> tasks = [];
 		foreach (int id in teamList) {
 			tasks.Add(GetTeamPlayers(id, competitionId));			
 		}
@@ -274,24 +277,22 @@
 		StateHasChanged();
 	}
 
-	protected async Task<string> GetTeamPlayers(int teamId, int competitionId)
+	internal async Task<IEnumerable<TeamStatsPlayer>> GetTeamPlayers(int teamId, int competitionId)
 	{
-		string playersString;
 
 		if (teamPlayersList.ContainsKey(teamId)) {
-			playersString = teamPlayersList[teamId];
+			return teamPlayersList[teamId];
 		} else {
 			List<TeamStatsPlayer>? players = (await _ttleagues.GetTeamStats(teamId, TTInfoId, competitionId))?.Players.ToList();
 			if (players is null) {
-				return "";
+				return [];
 			}
 			IEnumerable<string> playersList = players
 				.OrderByDescending(p => p.Average)
 				.Select(p => $"{p.Name} ({Math.Round(p.Average, 0)}%)");
-			playersString = String.Join(", ", playersList);
-			teamPlayersList.TryAdd(teamId, playersString);
+			teamPlayersList.TryAdd(teamId, players);
+			return players;
 		}
-		return playersString;
 	}
 
 	string CalculateForm(IReadOnlyList<TeamStatsMatch> matches)

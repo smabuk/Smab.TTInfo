@@ -88,10 +88,13 @@
 				} else {
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-9 col-lg-10">
-							@if (fixture.HomeTeam.Equals(@team.Name)) {
-								<text>@(teamPlayersList.ContainsKey(fixture.AwayTeam) ? @teamPlayersList[fixture.AwayTeam] : "Loading ...")</text>
+							@{string opposingTeam = fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam;}
+							@if (teamPlayersList.ContainsKey(opposingTeam)) {
+								@foreach (Player player in teamPlayersList[opposingTeam].OrderByDescending(p => p.WinPercentage)) {
+									<text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" ({Math.Round(player.WinPercentage, 0)}%) ")</text>
+								}
 							} else {
-								<text>@(teamPlayersList.ContainsKey(fixture.HomeTeam) ? @teamPlayersList[fixture.HomeTeam] : "Loading ...")</text>
+								<text>Loading ...</text>
 							}
 						</div>
 					</div>
@@ -178,7 +181,7 @@
 	public string TeamName { get; set; } = "";
 	private Team? team;
 	private List<Fixture> fixtures = [];
-	private Dictionary<string, string> teamPlayersList = new();
+	private Dictionary<string, List<Player>> teamPlayersList = new();
 	private Dictionary<int, FixtureResult> fixtureResults = new();
 	private League? league;
 
@@ -220,7 +223,7 @@
 						.Distinct()
 						.Where(t => t != TeamId)
 				.ToList();
-			List<Task<string>> tasks = [];
+			List<Task<IEnumerable<Player>>> tasks = [];
 			foreach (string team in teamList) {
 				tasks.Add(GetTeamPlayers(team));
 			}
@@ -230,21 +233,19 @@
 		}
 	}
 
-	protected async Task<string> GetTeamPlayers(string teamName)
+	protected async Task<IEnumerable<Player>> GetTeamPlayers(string teamName)
 	{
-		string playersString;
-
 		if (teamPlayersList.ContainsKey(teamName)) {
-			playersString = teamPlayersList[teamName];
+			return teamPlayersList[teamName];
 		} else {
 			ICollection<Player>? players = (await _tt365.GetTeamStats(LeagueId, teamName))?.Players;
 			if (players is null) {
-				return "";
+				return [];
 			}
-			playersString = PlayersAverages(players);
-			teamPlayersList.TryAdd(teamName, playersString);
+			// playersString = PlayersAverages(players);
+			teamPlayersList.TryAdd(teamName, [.. players]);
+			return players;
 		}
-		return playersString;
 	}
 
 	private string PlayersAverages(IEnumerable<Player> players)
