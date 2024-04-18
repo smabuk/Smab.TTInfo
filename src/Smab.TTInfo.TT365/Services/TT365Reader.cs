@@ -14,14 +14,16 @@ public sealed partial class TT365Reader : ITT365Reader
 	};
 	
 	private readonly HttpClient httpClient;
+	private readonly TimeProvider timeProvider;
 
-	public TT365Reader(IOptions<TT365Options> options, HttpClient httpClient)
+	public TT365Reader(IOptions<TT365Options> options, HttpClient httpClient, TimeProvider timeProvider)
 	{
 		CacheFolder = options.Value.CacheFolder;
 		CacheHours = options.Value.CacheHours;
 		UseTestFiles = options.Value.UseTestFiles;
 
 		this.httpClient = httpClient;
+		this.timeProvider = timeProvider;
 	}
 
 	public string CacheFolder  { get; set; }

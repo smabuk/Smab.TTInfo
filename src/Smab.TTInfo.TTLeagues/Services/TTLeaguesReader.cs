@@ -15,14 +15,16 @@ public sealed partial class TTLeaguesReader : ITTLeaguesReader
 	};
 
 	private readonly HttpClient httpClient;
+	private readonly TimeProvider timeProvider;
 
-	public TTLeaguesReader(IOptions<TTLeaguesOptions> options, HttpClient httpClient)
+	public TTLeaguesReader(IOptions<TTLeaguesOptions> options, HttpClient httpClient, TimeProvider timeProvider)
 	{
 		CacheFolder  = options.Value.CacheFolder;
 		CacheHours   = options.Value.CacheHours;
 		UseTestFiles = options.Value.UseTestFiles;
 
 		this.httpClient = httpClient;
+		this.timeProvider = timeProvider;
 		this.httpClient.BaseAddress = new Uri(TTLEAGUES_API);
 	}
 

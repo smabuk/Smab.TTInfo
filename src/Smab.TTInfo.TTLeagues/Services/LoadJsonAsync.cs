@@ -15,7 +15,7 @@ public sealed partial class TTLeaguesReader
 
 		fileName = fileName.ToLowerInvariant();
 		string source = Path.Combine(folder, $"{CACHEFILE_PREFIX}{fileName}");
-		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < DateTime.UtcNow;
+		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < timeProvider.GetUtcNow();
 
 		if (!refreshCache || UseTestFiles || url is null) {
 			if (File.Exists(source)) {

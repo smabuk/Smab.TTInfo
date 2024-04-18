@@ -16,6 +16,8 @@ builder.Services.AddLocalization();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpClient();
 
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+
 builder.Services
 	.AddTT365Service()
 	.AddTTLeaguesService();

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 
-using Smab.TTInfo.Shared.Models;
-
 namespace Smab.TTInfo.Cli;
 internal class TTInfoCli
 {
@@ -23,7 +21,7 @@ internal class TTInfoCli
 		AnsiConsole.MarkupLine($"Cache Folder: [green]{ttInfoOptions.CacheFolder}[/]");
 		AnsiConsole.MarkupLine("");
 		
-		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient());
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient(), TimeProvider.System);
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
@@ -116,7 +114,7 @@ internal class TTInfoCli
 		AnsiConsole.MarkupLine($"Cache Folder: [green]{ttInfoOptions.CacheFolder}[/]");
 		AnsiConsole.MarkupLine("");
 
-		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient());
+		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient(), TimeProvider.System);
 
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)

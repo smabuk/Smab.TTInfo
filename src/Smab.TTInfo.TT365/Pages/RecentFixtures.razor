@@ -1,13 +1,16 @@
 ﻿@page "/Recent/{LeagueId}/{NoOfDays:int?}"
 @inject ITT365Reader _tt365
+@inject TimeProvider timeProvider
 @attribute [StreamRendering]
 
 <PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
 
-<h1>Recent Results</h1>
+<h1>Recent Results for @league?.Name</h1>
 
-@if (fixtures.Count == 0) {
+@if (fixtures is null) {
 	<h2>Loading ... Results for the last @NoOfDays days ...</h2>
+} else if (fixtures.Count == 0) {
+	<p>No fixtures in the last @NoOfDays days.</p>
 } else {
 	<div id="fixtures">
 		@foreach (Fixture fixture in fixtures) {
@@ -96,17 +99,17 @@
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
-	private List<Fixture> fixtures = [];
+	private List<Fixture>? fixtures;
 	private Dictionary<int, FixtureResult> fixtureResults = new();
 	private League? league;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		fixtures = new();
+		NoOfDays = NoOfDays ?? 6;
+		fixtures = null;
 		StateHasChanged();
 		league = await _tt365.GetLeague(LeagueId);
-		DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-		NoOfDays = NoOfDays ?? 6;
+		DateOnly today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
 
 		fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? [])
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
