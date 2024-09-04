@@ -150,15 +150,20 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (TeamResult result in team.Results!) {
-						<tr data-result='@result.MatchResult'>
-							<td><a href="TeamSummary/@LeagueId/@result.Opposition">@result.Opposition</a></td>
-							<td>@result.HomeOrAway</td>
-							<td>@result.Date.ToString("dd MMM yyyy")</td>
-							<td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
-							<td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
-							<td>@result.PlayerOfTheMatch</td>
-						</tr>
+					@if (team.Results is null || team.Results.Count == 0) {
+						<tr><td colspan="6">No results</td></tr>
+					} else {
+						@foreach (TeamResult result in team.Results)
+						{
+							<tr data-result='@result.MatchResult'>
+								<td><a href="TeamSummary/@LeagueId/@result.Opposition">@result.Opposition</a></td>
+								<td>@result.HomeOrAway</td>
+								<td>@result.Date.ToString("dd MMM yyyy")</td>
+								<td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
+								<td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
+								<td>@result.PlayerOfTheMatch</td>
+							</tr>
+						}
 					}
 				</tbody>
 			</table>

@@ -57,13 +57,16 @@
 		<dd>@League.Theme</dd>
 		<dt>Current Season</dt>
 		<dd>
-			<select @bind="currentSeason">
-				@if (seasons.Any()) {
+			@if (seasons.Any()) {
+				<select @bind="currentSeason">
 					@foreach (string season in seasons) {
 						<option value="@season">@season</option>
 					}
-				}
-			</select>
+				</select>
+			} else {
+				<text>No seasons defined yet</text>
+			}
+
 		</dd>
 		<dt>Previous Seasons</dt>
 		<dd>@string.Join(", ", League.Seasons.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>

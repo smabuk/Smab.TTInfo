@@ -168,15 +168,20 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (TeamStatsResult result in teamStats!.Results) {
-						<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
-							<td><a href="TTLeagues/TeamSummary/@TTInfoId/@result.Versus.Value">@result.Versus.Value</a></td>
-							<td>@(result.Home ? "Home" : "Away")</td>
-							<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
-							<td><a href="@result.MatchId" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
-							<td><span>@(new string('0', 2 - result.For.ToString().Length))</span>@result.For</td>
-							<td>@result.Potm</td>
-						</tr>
+					@if (teamStats!.Results is null or [])
+					{
+						<tr><td colspan="6">No results</td></tr>
+					} else {
+						@foreach (TeamStatsResult result in teamStats!.Results) {
+							<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
+								<td><a href="TTLeagues/TeamSummary/@TTInfoId/@result.Versus.Value">@result.Versus.Value</a></td>
+								<td>@(result.Home ? "Home" : "Away")</td>
+								<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
+								<td><a href="@result.MatchId" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
+								<td><span>@(new string('0', 2 - result.For.ToString().Length))</span>@result.For</td>
+								<td>@result.Potm</td>
+							</tr>
+						}
 					}
 				</tbody>
 			</table>

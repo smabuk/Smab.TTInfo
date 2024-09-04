@@ -27,7 +27,7 @@ internal sealed record DivisionCompetition(
 	int     PlayEachOther,
 	object  Deleted,
 	DateTimeOffset Ready,
-	DateTimeOffset Published,
+	DateTimeOffset? Published,
 	object  StartTime,
 	object  Archived,
 	object  Hidden,

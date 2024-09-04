@@ -68,17 +68,19 @@
 		<dd>@League.WebsitesHost?.Description</dd>
 		<dt>URL</dt>
 		<dd><a href="@($"https://{League.TenantsHost?.Host}")" target="_blank">@($"https://{League.TenantsHost?.Host}")</a></dd>
-		<dt>Theme</dt>
+		@* <dt>Theme</dt> *@
 		@* <dd>@League.Theme</dd> *@
 		<dt>Current Seasons</dt>
 		<dd>
-			<select @bind="currentCompetition">
-				@if (competitionNames.Any()) {
+			@if (competitionNames.Any()) {
+				<select @bind="currentCompetition">
 					@foreach (string season in competitionNames) {
 						<option value="@season">@season</option>
 					}
-				}
-			</select>
+				</select>
+			} else {
+				<text>No seasons defined yet</text>
+			}
 		</dd>
 		<dt>Previous Seasons</dt>
 		<dd>@string.Join(", ", League.ArchivedCompetitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
