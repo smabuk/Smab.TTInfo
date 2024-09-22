@@ -9,67 +9,18 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('#navbar-toggler').click()">
 	<nav class="flex-column">
-@*
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-		<span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-			</NavLink>
-		</div>
- *@
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="LeagueSummary/Reading">
-				<span class="bi bi-table" aria-hidden="true"></span> Reading League
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TTLeagues/LeagueSummary/Maidenhead">
-				<span class="bi bi-table" aria-hidden="true"></span> Maidenhead League
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="Recent/Reading">
-				<span class="bi bi-clock-fill" aria-hidden="true"></span> Reading recent
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TeamSummary/Reading/Our Lady Of Peace C">
-				<span class="emoji">🏓</span> OLOP C
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="TTLeagues/TeamSummary/Maidenhead/OLOP Bears">
-				<span class="emoji">🏓</span> OLOP Bears
-			</NavLink>
-		</div>
-
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="Calendar/Reading/Our Lady Of Peace C?command=json">
-				<span class="bi bi-calendar3" aria-hidden="true"></span> OLOP C
-			</NavLink>
-		</div>
-
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="LeagueSummary/BracknellAndWokingham">
-				<span class="bi bi-table" aria-hidden="true"></span> Bracknell League
-			</NavLink>
-		</div>
+		<NavMenuItem Icon="bi-table"      Text="Reading League"    Path="LeagueSummary/Reading" />
+		<NavMenuItem Icon="bi-table"      Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
+		<NavMenuItem Icon="bi-clock-fill" Text="Reading recent"    Path="Recent/Reading" />
+		<NavMenuItem Icon="🏓"            Text="OLOP C"            Path="TeamSummary/Reading/Our Lady Of Peace C" />
+		<NavMenuItem Icon="🏓"            Text="OLOP Bears"        Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
+		<NavMenuItem Icon="bi-calendar3"  Text="OLOP C"            Path="Calendar/Reading/Our Lady Of Peace C?command=json" />
+		<NavMenuItem Icon="bi-table"      Text="Bracknell League"  Path="LeagueSummary/Bracknell" />
 
 		@if (env.IsDevelopment()) {
-			<div class="nav-item px-3">
-				<NavLink class="nav-link" href="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All">
-					<span class="bi bi-table" aria-hidden="true"></span> British League
-				</NavLink>
-			</div>
-			<div class="nav-item px-3">
-				<NavLink class="nav-link" href="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All">
-					<span class="bi bi-table" aria-hidden="true"></span> SBL 2023/24
-				</NavLink>
-			</div>
-			<div class="nav-item px-3">
-				<NavLink class="nav-link" href="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All">
-					<span class="emoji">🏓</span> TT Daily
-				</NavLink>
-			</div>
+			<NavMenuItem Icon="bi-table" Text="British League" Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
+			<NavMenuItem Icon="bi-table" Text="SBL 2023/24"    Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" />
+			<NavMenuItem Icon="🏓"       Text="TT Daily"       Path="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All" />
 		}
 	</nav>
 </div>
