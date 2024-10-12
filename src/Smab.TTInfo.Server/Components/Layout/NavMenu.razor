@@ -12,19 +12,21 @@
 		<NavMenuItem Icon="bi-table"      Text="Reading League"    Path="LeagueSummary/Reading" />
 		<NavMenuItem Icon="bi-table"      Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
 		<NavMenuItem Icon="bi-clock-fill" Text="Reading recent"    Path="Recent/Reading" />
-		<NavMenuItem Icon="🏓"            Text="OLOP C"            Path="TeamSummary/Reading/Our Lady Of Peace C" />
-		<NavMenuItem Icon="🏓"            Text="OLOP Bears"        Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
+		<NavMenuItem Icon="@emojiTT"      Text="OLOP C"            Path="TeamSummary/Reading/Our Lady Of Peace C" />
+		<NavMenuItem Icon="@emojiTT"      Text="OLOP Bears"        Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
 		<NavMenuItem Icon="bi-calendar3"  Text="OLOP C"            Path="Calendar/Reading/Our Lady Of Peace C?command=json" />
 		<NavMenuItem Icon="bi-table"      Text="Bracknell League"  Path="LeagueSummary/Bracknell" />
 
 		@if (env.IsDevelopment()) {
-			<NavMenuItem Icon="bi-table" Text="British League" Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
-			<NavMenuItem Icon="bi-table" Text="SBL 2023/24"    Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" />
-			<NavMenuItem Icon="🏓"       Text="TT Daily"       Path="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All" />
+			<NavMenuItem Icon="bi-table"  Text="British League"    Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
+			<NavMenuItem Icon="bi-table"  Text="SBL 2023/24"       Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" />
+			<NavMenuItem Icon="@emojiTT"  Text="TT Daily"          Path="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All" />
 		}
 	</nav>
 </div>
 
 @code {
 	private string VersionInfo => $"{Program.Name}: {Program.ProductVersion}";
+
+	private const string emojiTT = "🏓";
 }
