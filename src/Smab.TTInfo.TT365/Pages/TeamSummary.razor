@@ -16,6 +16,9 @@
 			if (fixture is PostponedFixture) {
 				fixtureStatus = "postponed";
 			}
+			if (fixture is RearrangedFixture) {
+				fixtureStatus = "rearranged";
+			}
 			<details class="card" data-result='@(fr?.Result ?? fixtureStatus)'>
 				<summary class="row">
 					<div class="col-12 col-sm-3 col-md-3 col-lg-2">
@@ -24,6 +27,9 @@
 					<div class="col-12 col-sm-9 col-md-9 col-lg-10">
 						@if (fixture is PostponedFixture pf) {
 							<span class="postponed badge" title="@pf.Reason">P</span>
+						}
+						@if (fixture is RearrangedFixture rf) {
+							<span class="rearranged badge" title="@rf.Reason (originally @rf.OriginalDate.ToString("ddd dd MMM"))">R</span>
 						}
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>

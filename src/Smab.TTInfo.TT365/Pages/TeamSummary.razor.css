@@ -29,6 +29,10 @@ time {
 	--result-color-rgb: var(--bs-warning-rgb, 255,193,7);
 }
 
+[data-result='rearranged'] {
+	--result-color-rgb: var(--bs-info-rgb, 13, 202, 240);
+}
+
 .pom {
 	font-weight: bold;
 }
@@ -73,6 +77,11 @@ caption {
 		}
 
 	#fixtures .postponed {
+		color: black;
+		cursor: help;
+	}
+
+	#fixtures .rearranged {
 		color: black;
 		cursor: help;
 	}

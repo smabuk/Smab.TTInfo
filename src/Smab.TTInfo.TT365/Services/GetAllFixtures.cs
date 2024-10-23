@@ -49,7 +49,9 @@ public sealed partial class TT365Reader
 							: new CompletedFixture()
 						: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
 							? new PostponedFixture()
-							: (Fixture)new();
+							: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]") is not null
+								? new RearrangedFixture()
+								: (Fixture)new();
 					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
 					if (DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate)) {
 						fixture.Date = tempDate;
@@ -92,6 +94,13 @@ public sealed partial class TT365Reader
 
 					if (fixture is PostponedFixture pf) {
 						pf.Reason = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim()) ?? "";
+					}
+
+					if (fixture is RearrangedFixture rf) {
+						string title = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]")?.Attributes["title"].Value.Trim()) ?? "";
+						string[] tokens = title.Split([':', '-'], StringSplitOptions.TrimEntries);
+						rf.Reason = tokens[^1];
+						rf.OriginalDate = DateOnly.Parse(tokens[2].Split([' '])[0]);
 					}
 
 					if (fixture is VoidFixture vf) {
