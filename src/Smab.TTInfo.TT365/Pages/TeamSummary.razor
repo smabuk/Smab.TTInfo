@@ -12,13 +12,11 @@
 		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;
 			fixtureResults.TryGetValue((fixture as CompletedFixture)?.Id ?? 0, out fr);
-			string? fixtureStatus = null;
-			if (fixture is PostponedFixture) {
-				fixtureStatus = "postponed";
-			}
-			if (fixture is RearrangedFixture) {
-				fixtureStatus = "rearranged";
-			}
+			string? fixtureStatus = fixture switch {
+				PostponedFixture => "postponed",
+				RearrangedFixture => "rearranged",
+				_ => null,
+			};
 			<details class="card" data-result='@(fr?.Result ?? fixtureStatus)'>
 				<summary class="row">
 					<div class="col-12 col-sm-3 col-md-3 col-lg-2">
@@ -44,6 +42,18 @@
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-9 col-lg-10">
 							@postponed.Reason
+						</div>
+					</div>
+				}
+				@if (fixture is RearrangedFixture rearranged) {
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-9 col-lg-10">
+							Original Date: @rearranged.OriginalDate.ToString("ddd dd MMM")
+						</div>
+					</div>
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-9 col-lg-10">
+							Reason: @rearranged.Reason
 						</div>
 					</div>
 				}

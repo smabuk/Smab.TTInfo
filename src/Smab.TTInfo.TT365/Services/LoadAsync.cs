@@ -19,7 +19,7 @@ public sealed partial class TT365Reader
 		string source = Path.Combine(folder, $"{CACHEFILE_PREFIX}{fileName}");
 		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < timeProvider.GetUtcNow();
 
-		if (!refreshCache || UseTestFiles || url is null) {
+		if (!refreshCache || UseTestFiles) {
 			if (File.Exists(source)) {
 				contentString = LoadFileFromCache(fileName);
 			}

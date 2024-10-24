@@ -11,8 +11,6 @@ public sealed partial class TTLeaguesReader
 			null,
 			fileName);
 
-		League? league2 = await LoadJsonAsync<League>(ttinfoId, null, fileName);
-
 		if (league is null)
 		{
 			EnsureDefaultRequestHeaders(ttinfoId);
