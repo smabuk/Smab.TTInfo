@@ -1,17 +1,22 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.TT365.Models.TT365;
+
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<List<Fixture>?> GetAllFixtures(string ttinfoId, string? SeasonId = null)
+	public async Task<List<Fixture>> GetAllFixtures(string ttinfoId, string? SeasonId = null)
 	{
-		List<Fixture> fixtures = [];
-
 		string leagueId = ttinfoId;
 		string? seasonId = SeasonId ?? (await GetLeague(leagueId))?.CurrentSeason.Id;
+		string filename = $@"{leagueId}_{seasonId}_fixtures_all.json";
 
 		ArgumentNullException.ThrowIfNull(seasonId, nameof(seasonId));
+
+		List<Fixture> fixtures = await LoadAsync<List<Fixture>?>(ttinfoId, null, filename) ?? [];
+
+		if (fixtures is not []) { return fixtures; }
 
 		FixturesViewOptions fvo = new()
 		{
@@ -26,14 +31,11 @@ public sealed partial class TT365Reader
 		};
 
 		string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
-		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
-					ttinfoId,
-					url,
-					$@"{leagueId}_{seasonId}_Fixtures_All_Divisions.html");
+		HtmlDocument? doc = await LoadAsync<HtmlDocument>(ttinfoId, url);
 
-		if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
+		if (string.IsNullOrWhiteSpace(doc?.Text)) { return fixtures; }
 
-		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return null; }
+		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return fixtures; }
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']")) {
 			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]")) // This doesn't work as fixtureWeek is a class that would match this
@@ -111,6 +113,9 @@ public sealed partial class TT365Reader
 				}
 			}
 		}
+
+		string jsonString = JsonSerializer.Serialize(fixtures);
+		_ = SaveFileToCache(jsonString, filename);
 
 		return fixtures;
 	}

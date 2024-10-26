@@ -1,5 +1,9 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
+[JsonDerivedType(typeof(CompletedFixture) , typeDiscriminator: "CF")]
+[JsonDerivedType(typeof(PostponedFixture) , typeDiscriminator: "PF")]
+[JsonDerivedType(typeof(RearrangedFixture), typeDiscriminator: "RF")]
+[JsonDerivedType(typeof(VoidFixture)      , typeDiscriminator: "VF")]
 [DebuggerDisplay("Fixture: {Date,nq} - {HomeTeam,nq} vs {AwayTeam,nq}")]
 public record Fixture
 {

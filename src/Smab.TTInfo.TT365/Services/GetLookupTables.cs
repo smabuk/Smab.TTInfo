@@ -9,7 +9,7 @@ public sealed partial class TT365Reader
 		LookupTables lookup = new();
 
 		string? jsonString;
-		jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_divisions.json");
+		jsonString = LoadFileFromCache($"{ttinfoId}_{seasonId}_lookup_divisions.json");
 		if (jsonString is null) {
 			FixturesViewOptions fvo = new()
 			{
@@ -26,8 +26,7 @@ public sealed partial class TT365Reader
 			string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
 			HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				ttinfoId,
-				url,
-				$@"{ttinfoId}_{seasonId}_Fixtures_All_Divisions.html")
+				url)
 				?? new();
 
 			if (!string.IsNullOrWhiteSpace(doc.Text)) {
@@ -49,25 +48,25 @@ public sealed partial class TT365Reader
 						lookup.VenueLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
 
-					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.DivisionLookup), $"league_{ttinfoId}_{seasonId}_lookup_divisions.json");
-					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.VenueLookup),    $"league_{ttinfoId}_{seasonId}_lookup_venues.json");
-					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.ClubLookup),     $"league_{ttinfoId}_{seasonId}_lookup_clubs.json");
-					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.TeamLookup),     $"league_{ttinfoId}_{seasonId}_lookup_teams.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.DivisionLookup), $"{ttinfoId}_{seasonId}_lookup_divisions.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.VenueLookup),    $"{ttinfoId}_{seasonId}_lookup_venues.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.ClubLookup),     $"{ttinfoId}_{seasonId}_lookup_clubs.json");
+					_ = SaveFileToCache(JsonSerializer.Serialize(lookup.TeamLookup),     $"{ttinfoId}_{seasonId}_lookup_teams.json");
 				}
 			}
 		} else {
 			lookup.DivisionLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
-			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_venues.json");
+			jsonString = LoadFileFromCache($"{ttinfoId}_{seasonId}_lookup_venues.json");
 			if (jsonString is not null) {
 				lookup.VenueLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}
 
-			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_clubs.json");
+			jsonString = LoadFileFromCache($"{ttinfoId}_{seasonId}_lookup_clubs.json");
 			if (jsonString is not null) {
 				lookup.ClubLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}
 
-			jsonString = LoadFileFromCache($"league_{ttinfoId}_{seasonId}_lookup_teams.json");
+			jsonString = LoadFileFromCache($"{ttinfoId}_{seasonId}_lookup_teams.json");
 			if (jsonString is not null) {
 				lookup.TeamLookup = JsonSerializer.Deserialize<List<IdNamePair>>(jsonString) ?? [];
 			}

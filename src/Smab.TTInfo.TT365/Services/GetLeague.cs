@@ -9,7 +9,7 @@ public sealed partial class TT365Reader
 		string url;
 		HtmlDocument? doc;
 		string? jsonString;
-		string fileName = $"league_{ttinfoId}.json";
+		string fileName = $"{ttinfoId}.json";
 
 		League? league = await LoadAsync<League>(
 			ttinfoId,
@@ -21,8 +21,7 @@ public sealed partial class TT365Reader
 			url = $"";
 			doc = await LoadAsync<HtmlDocument>(
 				ttinfoId,
-				url,
-				$@"{ttinfoId}.html");
+				url);
 
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
@@ -43,8 +42,7 @@ public sealed partial class TT365Reader
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				ttinfoId,
-				$"Results/Archive",
-				$@"{ttinfoId}_Archive.html")
+				$"Results/Archive")
 				?? new();
 
 			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes(@"//td//a"))
@@ -61,8 +59,8 @@ public sealed partial class TT365Reader
 		league.CurrentSeason.Divisions = await GetDivisions(ttinfoId, league.CurrentSeason.Id);
 
 		jsonString = JsonSerializer.Serialize(league);
-		_ = SaveFileToCache(jsonString, $"league_{ttinfoId}.json");
-		_ = SaveFileToCache(jsonString, $"league_{ttinfoId}_{league.CurrentSeason.Id}.json");
+		_ = SaveFileToCache(jsonString, $"{ttinfoId}.json");
+		_ = SaveFileToCache(jsonString, $"{ttinfoId}_{league.CurrentSeason.Id}.json");
 		
 		return league;
 	}

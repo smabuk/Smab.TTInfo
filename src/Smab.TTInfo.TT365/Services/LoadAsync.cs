@@ -4,24 +4,27 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
-	public async Task<T?> LoadAsync<T>(string ttinfoId, string? url, string fileName, string? cacheFolder = null, int? cacheHours = null)
+	public async Task<T?> LoadAsync<T>(string ttinfoId, string? url, string fileName = "", string? cacheFolder = null, int? cacheHours = null)
 	{
+		bool useCache = !string.IsNullOrWhiteSpace(fileName);
 		string? contentString = null;
 		T? returnValue = default;
 
-		string folder = cacheFolder ?? CacheFolder;
+		if (useCache) {
+			string folder = cacheFolder ?? CacheFolder;
 
-		if (!Directory.Exists(folder)) {
-			_ = Directory.CreateDirectory(folder);
-		}
+			if (!Directory.Exists(folder)) {
+				_ = Directory.CreateDirectory(folder);
+			}
 
-		fileName = fileName.ToLowerInvariant();
-		string source = Path.Combine(folder, $"{CACHEFILE_PREFIX}{fileName}");
-		bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < timeProvider.GetUtcNow();
+			fileName = fileName.ToLowerInvariant();
+			string source = Path.Combine(folder, $"{CACHEFILE_PREFIX}{fileName}");
+			bool refreshCache = File.GetLastWriteTimeUtc(source).AddHours(cacheHours ?? CacheHours) < timeProvider.GetUtcNow();
 
-		if (!refreshCache || UseTestFiles) {
-			if (File.Exists(source)) {
-				contentString = LoadFileFromCache(fileName);
+			if (!refreshCache || UseTestFiles) {
+				if (File.Exists(source)) {
+					contentString = LoadFileFromCache(fileName);
+				}
 			}
 		}
 
@@ -30,11 +33,15 @@ public sealed partial class TT365Reader
 			HttpResponseMessage? response = await httpClient.GetAsync(url);
 			if (response.IsSuccessStatusCode) {
 				contentString = await response.Content.ReadAsStringAsync();
-				_ = SaveFileToCache(contentString, fileName);
+				if (useCache) {
+					_ = SaveFileToCache(contentString, fileName);
+				}
 			//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
 			//	jsonString = LoadFile(fileName);
 			} else {
-				contentString = LoadFileFromCache(fileName);
+				if (useCache) {
+					contentString = LoadFileFromCache(fileName);
+				}
 			}
 		}
 

@@ -1,23 +1,24 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.TT365.Models.TT365;
+
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
 	public async Task<List<Division>> GetDivisions(string ttinfoId, string SeasonId = "")
 	{
-		List<Division> divisions = [];
 		LookupTables lookupTables = await GetLookupTables(ttinfoId, SeasonId);
+		string filename = $@"{ttinfoId}_{SeasonId}_divisions_all.json";
+		if (lookupTables.DivisionLookup.Count == 0) { return []; }
 
-		if (lookupTables.DivisionLookup.Count == 0) {
-			return divisions;
-		}
+		List<Division> divisions = await LoadAsync<List<Division>?>(ttinfoId, null, filename) ?? [];
+		if (divisions is not []) { return divisions; }
 
 		string url = $"Tables/{SeasonId}/All_Divisions";
 		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 			ttinfoId,
-			url,
-			$@"{ttinfoId}_{SeasonId}_Divisions_All_Divisions.html");
+			url);
 
 		if (!string.IsNullOrWhiteSpace(doc?.Text)) {
 			foreach (HtmlNode? divTable in doc.DocumentNode.SelectNodes(@"//table")) {
@@ -55,6 +56,9 @@ public sealed partial class TT365Reader
 				}
 			}
 		}
+
+		string jsonString = JsonSerializer.Serialize(divisions);
+		_ = SaveFileToCache(jsonString, filename);
 
 		return divisions;
 	}

@@ -1,13 +1,13 @@
 ﻿using HtmlAgilityPack;
 
+using Smab.TTInfo.TT365.Models.TT365;
+
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
 	public async Task<Player?> GetPlayerStats(string ttinfoId, Player player, string seasonId = "")
 	{
-		Player newPlayer = player;
-
 		League? league = await GetLeague(ttinfoId);
 		if (league is null) {
 			return null;
@@ -18,6 +18,11 @@ public sealed partial class TT365Reader
 			seasonId = league.CurrentSeason.Id;
 		}
 
+		string filename = $@"{ttinfoId}_{seasonId}_player_stats_{player.Id}.json";
+		Player newPlayer = await LoadAsync<Player>(ttinfoId, null, filename) ?? null!;
+		if (newPlayer is not null) { return newPlayer; }
+		newPlayer = player;
+
 		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
 
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
@@ -26,8 +31,7 @@ public sealed partial class TT365Reader
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				ttinfoId,
-				player.PlayerURL,
-				$@"{ttinfoId}_{seasonId}_PlayerStats_{player.Id}.html")
+				player.PlayerURL)
 			?? new();
 
 		HtmlNode? statsNode = doc.DocumentNode.SelectSingleNode("//div[@id='PlayerStats']");
@@ -93,6 +97,9 @@ public sealed partial class TT365Reader
 				}
 			}
 		}
+
+		string jsonString = JsonSerializer.Serialize(newPlayer);
+		_ = SaveFileToCache(jsonString, filename);
 
 		return newPlayer;
 	}

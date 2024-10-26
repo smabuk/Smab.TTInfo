@@ -1,4 +1,6 @@
-﻿using HtmlAgilityPack;
+﻿using System.Runtime.CompilerServices;
+
+using HtmlAgilityPack;
 
 namespace Smab.TTInfo.TT365.Services;
 
@@ -6,8 +8,6 @@ public sealed partial class TT365Reader
 {
 	public async Task<Team?> GetTeamStats(string ttinfoId, string TeamName, string SeasonId = "")
 	{
-		Team team = new();
-
 		if (string.IsNullOrWhiteSpace(SeasonId)) {
 			League? league = await GetLeague(ttinfoId);
 			if (league is null) { return null; };
@@ -19,14 +19,18 @@ public sealed partial class TT365Reader
 			return null;
 		};
 
+		string filename = $@"{ttinfoId}_{SeasonId}_team_stats_{TeamName}.json";
+		Team team = await LoadAsync<Team>(ttinfoId, null, filename) ?? null!;
+		if (team is not null) { return team; }
+		team = new();
+
 		string lookupTeamName = TeamName.Replace("_", " ");
 
 		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(TeamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				ttinfoId,
-				team.URL,
-				$@"{ttinfoId}_{SeasonId}_TeamStats_{TeamName}.html")
+				team.URL)
 			?? new();
 
 		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
@@ -142,6 +146,9 @@ public sealed partial class TT365Reader
 				}
 			}
 		}
+
+		string jsonString = JsonSerializer.Serialize(team);
+		_ = SaveFileToCache(jsonString, filename);
 
 		return team;
 	}
