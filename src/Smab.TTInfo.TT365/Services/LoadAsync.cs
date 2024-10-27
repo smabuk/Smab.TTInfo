@@ -37,7 +37,7 @@ public sealed partial class TT365Reader
 					_ = SaveFileToCache(contentString, fileName);
 				}
 			//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
-			//	jsonString = LoadFile(fileName);
+			//	contentString = LoadFileFromCache(fileName);
 			} else {
 				if (useCache) {
 					contentString = LoadFileFromCache(fileName);
@@ -45,7 +45,7 @@ public sealed partial class TT365Reader
 			}
 		}
 
-		if (typeof(T).Name == "HtmlDocument") {
+		if (typeof(T).Name == "HtmlDocument" && contentString is not null) {
 			HtmlDocument rv = new();
 			rv.LoadHtml(contentString);
 			//rv.Save(source);
