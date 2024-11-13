@@ -25,7 +25,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (PlayerResult result in psr.Results.OrderByDescending(p => p.Date)) {
+						@foreach (PlayerResult result in psr.Results.Where(res => res.Opponent.Key is not null).OrderByDescending(p => p.Date).ThenByDescending(p => p.SetId)) {
 							<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
 								<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@result.Opponent.Value/@result.Opponent.Key">@result.Opponent.Value</a></td>
 								<td>@CalculateDivisionName(ps.Division.Value, result.DivisionId)</td>
@@ -69,13 +69,8 @@
 		lookup = await _ttleagues.GetLookupTables(TTInfoId);
 
 		if (league is not null) {
-			List<int> competitionIds = league
-				.CurrentCompetitions
-				.Where(c => c.Id is> 0)
-				.Select(c => c.Id)
-				.ToList();
-
-			foreach (int competitionId in competitionIds) {
+			foreach (int competitionId in league.CurrentCompetitions.Select(c => c.Id).Where(id => id is > 0))
+			{
 				PlayerStats? playerStats = await _ttleagues.GetPlayerStats(PlayerId, TTInfoId, competitionId);
 				if (playerStats is not null) {
 					playerStatsList.Add(playerStats);
