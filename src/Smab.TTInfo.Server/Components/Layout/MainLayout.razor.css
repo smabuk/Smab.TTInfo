@@ -65,7 +65,7 @@ h1 {
 	}
 
 	.sidebar {
-		min-width: 200px;
+		min-width: 240px;
 		height: 100vh;
 		position: sticky;
 		top: 0;
