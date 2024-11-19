@@ -277,9 +277,12 @@
 		foreach (int id in teamList) {
 			tasks.Add(GetTeamPlayers(id, competitionId));			
 		}
-		await Task.WhenAll(tasks);
 
-		StateHasChanged();
+		await foreach (Task task in Task.WhenEach(tasks))
+		{
+			StateHasChanged();
+		}
+
 	}
 
 	internal async Task<IEnumerable<TeamStatsPlayer>> GetTeamPlayers(int teamId, int competitionId)

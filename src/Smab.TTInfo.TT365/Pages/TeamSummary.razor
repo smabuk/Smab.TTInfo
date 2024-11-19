@@ -248,9 +248,11 @@
 			foreach (string team in teamList) {
 				tasks.Add(GetTeamPlayers(team));
 			}
-			await Task.WhenAll(tasks);
 
-			StateHasChanged();
+			await foreach (Task task in Task.WhenEach(tasks))
+			{
+				StateHasChanged();
+			}
 		}
 	}
 
