@@ -58,49 +58,59 @@
 					</div>
 				}
 				@if (fixture is CompletedFixture completedFixture) {
-					@if (completedFixture.Other is not null) {
+					@if (  completedFixture.HomePlayers.Count == 0
+						&& completedFixture.AwayPlayers.Count == 0
+						&& (completedFixture.ForHome == 10 || completedFixture.ForAway == 10)) {
 						<div class="row justify-content-end">
 							<div class="col-12 col-md-9 col-lg-10">
-								@completedFixture.Other
-							</div>
-						</div>
-					}
-					@if (fixture.HomeTeam.Equals(@team.Name)) {
-						<div class="row justify-content-end">
-							<div class="col-12 col-md-9 col-lg-10">
-								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
-								}
-							</div>
-						</div>
-						<div class="row justify-content-end">
-							<div class="col-12 col-md-9 col-lg-10">
-								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
-								}
+								Conceded
 							</div>
 						</div>
 					} else {
-						<div class="row justify-content-end">
-							<div class="col-12 col-md-9 col-lg-10">
-								@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
-								}
+						@if (completedFixture.Other is not null) {
+							<div class="row justify-content-end">
+								<div class="col-12 col-md-9 col-lg-10">
+									@completedFixture.Other
+								</div>
 							</div>
-						</div>
+						}
+						@if (fixture.HomeTeam.Equals(@team.Name)) {
+							<div class="row justify-content-end">
+								<div class="col-12 col-md-9 col-lg-10">
+									@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
+										<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+									}
+								</div>
+							</div>
+							<div class="row justify-content-end">
+								<div class="col-12 col-md-9 col-lg-10">
+									@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
+										<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+									}
+								</div>
+							</div>
+						} else {
+							<div class="row justify-content-end">
+								<div class="col-12 col-md-9 col-lg-10">
+									@foreach (MatchPlayer player in completedFixture.AwayPlayers.OrderByDescending(p => p.PoM).OrderByDescending(p => p.SetsWon)) {
+										<span class="@(player.PoM ? "pom" : "")"><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</span>
+									}
+								</div>
+							</div>
+							<div class="row justify-content-end">
+								<div class="col-12 col-md-9 col-lg-10">
+									@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
+										<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
+									}
+								</div>
+							</div>
+						}
 						<div class="row justify-content-end">
-							<div class="col-12 col-md-9 col-lg-10">
-								@foreach (MatchPlayer player in completedFixture.HomePlayers.OrderByDescending(p => p.PoM).ThenByDescending(p => p.SetsWon)) {
-									<span class="@(player.PoM ? "pom" : "")"><text><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" {player.SetsWon} ")</text></span>
-								}
+							<div class="col-12 col-sm-9 col-md-9 col-lg-10">
+								Doubles: @completedFixture.DoublesWinner
 							</div>
 						</div>
 					}
-					<div class="row justify-content-end">
-						<div class="col-12 col-sm-9 col-md-9 col-lg-10">
-							Doubles: @completedFixture.DoublesWinner
-						</div>
-					</div>
 				} else {
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-9 col-lg-10">
