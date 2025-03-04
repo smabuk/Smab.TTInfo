@@ -132,7 +132,7 @@ public sealed partial class TT365Reader
 						ForHome    = int.Parse(score.Split("-")[0]),
 						ForAway    = int.Parse(score.Split("-")[1]),
 						Points     = int.Parse(cells[4].InnerText),
-						PlayerOfTheMatch = hasPoM ? cells[5].InnerText : "",
+						PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
 						Other = other,
 						CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
 					};
