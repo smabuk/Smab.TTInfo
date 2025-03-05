@@ -72,10 +72,9 @@ static partial class Program
 		);
 	public static string FrameworkVersion { get; } = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 
-	private static readonly string[] cultures = CultureInfo
+	private static readonly string[] cultures = [.. CultureInfo
 		.GetCultures(CultureTypes.AllCultures)
-		.Select(c => c.Name)
-		.ToArray();
+		.Select(c => c.Name)];
 
 	private static string VersionWithoutGuid(string version)
 	{

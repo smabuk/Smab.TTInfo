@@ -53,7 +53,7 @@ public sealed partial class TT365Reader
 			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption").InnerText.Contains("Players")).SingleOrDefault();
 			if (playertableNode is not null) {
 				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody").SelectNodes("tr")) {
-					HtmlNode[] cells = playerRow.Descendants("td").ToArray();
+					HtmlNode[] cells = [.. playerRow.Descendants("td")];
 					bool hasPoM = cells.Length > 5;
 					Player player = new()
 					{
@@ -64,8 +64,8 @@ public sealed partial class TT365Reader
 						LeagueRanking = int.Parse(cells[3].InnerText),
 						PoMAwards = hasPoM ? cells[4].InnerText : "",
 					};
-					List<string>? form = (from f in cells[hasPoM ? 5 : 4].Descendants("a")
-										  select f.InnerText).ToList();
+					List<string>? form = [.. (from f in cells[hasPoM ? 5 : 4].Descendants("a")
+										  select f.InnerText)];
 					player.Form = string.Join(",", form);
 					List<string> rankings = (from r in cells[3].Descendants("a")
 											 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
@@ -111,7 +111,7 @@ public sealed partial class TT365Reader
 			HtmlNode? resultstableNode = node.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption").InnerText.Contains("Results"));
 			if (resultstableNode is not null) {
 				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody").SelectNodes("tr")) {
-					HtmlNode[] cells = resultRow.Descendants("td").ToArray();
+					HtmlNode[] cells = [.. resultRow.Descendants("td")];
 					string score = cells[3].InnerText;
 					string? other = null;
 					if (score.Equals("void", StringComparison.InvariantCultureIgnoreCase)) {

@@ -49,7 +49,7 @@ public sealed partial class TT365Reader
 			}
 
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
-				HtmlNode[] cells = resultRow.Descendants("td").ToArray();
+				HtmlNode[] cells = [.. resultRow.Descendants("td")];
 				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
 					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = cells[0].Descendants("a").Single().InnerText.Trim();

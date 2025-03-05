@@ -41,9 +41,7 @@ public static partial class TTEndPoints
 		List<Fixture> list = await tt365.GetAllFixtures(leagueId, seasonId) ?? [];
 		if (teamName is not null) {
 			teamName = teamName.Replace("_", " ");
-			list = list
-				.Where(f => string.Equals(f.HomeTeam,teamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, teamName, StringComparison.CurrentCultureIgnoreCase))
-				.ToList();
+			list = [.. list.Where(f => string.Equals(f.HomeTeam,teamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, teamName, StringComparison.CurrentCultureIgnoreCase))];
 		}
 
 		return TypedResults.Ok(list);

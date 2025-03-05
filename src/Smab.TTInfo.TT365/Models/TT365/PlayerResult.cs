@@ -21,9 +21,9 @@ public record PlayerResult(
 {
 	public string FormattedRankingDiff { get; init; } = RankingDiff?.ToString("+##0;-##0;0", CultureInfo.CurrentCulture) ?? "n/a";
 
-	public List<Score> Games { get; init; } = Scores
+	public List<Score> Games { get; init; } = [.. Scores
 		.Split(",")
-		.Select(score => new Score(int.Parse(score[..score.IndexOf("-")]), int.Parse(score[(score.IndexOf("-") + 1)..]))).ToList();
+		.Select(score => new Score(int.Parse(score[..score.IndexOf("-")]), int.Parse(score[(score.IndexOf("-") + 1)..])))];
 
 	public Score GameScore => new(Games.Count(score => score.Score1 > score.Score2), Games.Count(score => score.Score2 > score.Score1));
 }
