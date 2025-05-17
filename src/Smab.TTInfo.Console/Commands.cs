@@ -1,5 +1,13 @@
 ﻿namespace Smab.TTInfo.Cli;
 
+/// <summary>
+/// Represents a command-line utility for interacting with Table Tennis 365 (TT365) data.
+/// </summary>
+/// <remarks>This command is used to retrieve and process data from the TT365 platform, such as player match
+/// details, team information, and other league-related data. It supports various options for filtering and customizing
+/// the output, including specifying a season year, searching for specific players or opponents, and caching data to
+/// reduce server calls.</remarks>
+
 [Description("TTInfo cli utility for reading Table Tennis 365.")]
 internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 {
@@ -24,6 +32,13 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		};
 	}
 
+	/// <summary>
+	/// Represents the settings for a command that interacts with a league website, allowing users to specify various
+	/// options such as the league identifier, season year, and search filters.
+	/// </summary>
+	/// <remarks>This class provides configuration options for commands, including specifying the league identifier,
+	/// filtering by season year, searching for team members or players, and limiting match details. It also supports
+	/// caching to reduce server calls.</remarks>
 	public sealed class Settings : CommandSettings
 	{
 		[Description("The ttinfo id. Which is the part of the uri representing the league web site.")]

@@ -1,8 +1,37 @@
 ﻿using Microsoft.Extensions.Options;
 
 namespace Smab.TTInfo.Cli;
+
+/// <summary>
+/// Provides methods for interacting with TT365 league data, including retrieving league information, player statistics,
+/// team statistics, and match results.
+/// </summary>
+/// <remarks>This class contains static methods to perform various operations related to TT365 leagues, such as
+/// fetching league details, retrieving player and team statistics, and analyzing match results. The methods rely on
+/// asynchronous operations and may involve network requests to fetch data.</remarks>
 internal class TTInfoCli
 {
+	/// <summary>
+	/// Executes the process of retrieving and displaying league, season, division, team, and player statistics for a
+	/// specified table tennis league and season year.
+	/// </summary>
+	/// <remarks>This method retrieves data from a table tennis league using the provided league identifier and
+	/// season year. It displays league, season, division, team, and player statistics in the console. Optional parameters
+	/// allow filtering of player and match details for specific teams, players, or opponents. The method uses caching to
+	/// optimize data retrieval and displays progress using a console spinner.</remarks>
+	/// <param name="ttinfoId">The unique identifier of the table tennis league to retrieve data for.</param>
+	/// <param name="year">The year of the season to retrieve data for.</param>
+	/// <param name="cacheFolder">The folder path where cached data is stored.</param>
+	/// <param name="showTeamPlayers">An optional parameter specifying a team name. If provided, displays detailed player statistics for the specified
+	/// team.</param>
+	/// <param name="playerSearchName">An optional parameter specifying a player's name. If provided, displays detailed match statistics for the specified
+	/// player.</param>
+	/// <param name="opponentSearchName">An optional parameter specifying an opponent's name. If provided, filters the player's match statistics to include
+	/// only matches against the specified opponent.</param>
+	/// <returns>A task that represents the asynchronous operation. The task result is an integer indicating the success or failure
+	/// of the operation: <list type="bullet"> <item><description>Returns 0 if the operation completes
+	/// successfully.</description></item> <item><description>Returns -1 if the league data could not be
+	/// retrieved.</description></item> </list></returns>
 	public static async Task<int> Run(string ttinfoId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
 	{
 		playerSearchName   = playerSearchName?.ToLowerInvariant()   ?? null;
@@ -98,6 +127,20 @@ internal class TTInfoCli
 		return 0;
 	}
 
+	/// <summary>
+	/// Retrieves and displays the match results between a specified player and their opponents across multiple seasons in
+	/// a table tennis league.
+	/// </summary>
+	/// <remarks>This method queries a table tennis league for match data involving a specific player and their
+	/// opponents. It iterates through seasons starting from the specified year down to 2011, retrieving and displaying
+	/// match results in a formatted output. The method uses caching to optimize data retrieval.</remarks>
+	/// <param name="ttinfoId">The unique identifier of the table tennis league to query.</param>
+	/// <param name="year">The starting year for the search, which will iterate backward to 2011.</param>
+	/// <param name="cacheFolder">The folder path used for caching league data.</param>
+	/// <param name="playerSearchName">The name of the player to search for, case-insensitive.</param>
+	/// <param name="opponentSearchName">The name of the opponent to search for, case-insensitive.</param>
+	/// <returns>A task that represents the asynchronous operation. The task result contains an integer indicating the status of the
+	/// operation: 0 if successful, or -1 if the league could not be retrieved.</returns>
 	public static async Task<int> PlayerVsPlayer(string ttinfoId, int year, string cacheFolder, string playerSearchName, string opponentSearchName)
 	{
 		playerSearchName = playerSearchName.ToLowerInvariant();
@@ -183,6 +226,13 @@ internal class TTInfoCli
 		return 0;
 	}
 
+	/// <summary>
+	/// Determines the color representation for a player's result.
+	/// </summary>
+	/// <param name="playerResult">The player's result, which must contain a <see cref="PlayerResult.Result"/> value indicating the outcome (e.g.,
+	/// "win" or "loss").</param>
+	/// <returns>A string representing the color associated with the player's result.  Returns "green" for a win, "red" for a loss,
+	/// or the current console foreground color for any other result.</returns>
 	private static string GetResultColor(PlayerResult playerResult)
 	{
 		return playerResult.Result.ToLowerInvariant() switch
@@ -193,5 +243,14 @@ internal class TTInfoCli
 		};
 	}
 
+	/// <summary>
+	/// Represents a player participating in a specific season.
+	/// </summary>
+	/// <remarks>This record encapsulates the player's name, unique identifier, and the season they are associated
+	/// with. It is intended to provide a lightweight, immutable representation of a player's seasonal
+	/// participation.</remarks>
+	/// <param name="Name"></param>
+	/// <param name="PlayerId"></param>
+	/// <param name="SeasonId"></param>
 	private record SeasonPlayer(string Name, int PlayerId, string SeasonId);
 }
