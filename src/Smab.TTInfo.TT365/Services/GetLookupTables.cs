@@ -4,6 +4,17 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Retrieves lookup tables containing divisions, clubs, teams, and venues for a specified season and table tennis
+	/// information ID.
+	/// </summary>
+	/// <remarks>This method attempts to load lookup data from the cache. If the data is not found, it fetches the
+	/// data from the source, processes it, and stores it in the cache for subsequent calls. The returned lookup tables can
+	/// be used to populate dropdowns or other UI elements for filtering fixtures.</remarks>
+	/// <param name="ttinfoId">The unique identifier for the table tennis information source.</param>
+	/// <param name="seasonId">The unique identifier for the season.</param>
+	/// <returns>A <see cref="LookupTables"/> object containing lookup data for divisions, clubs, teams, and venues. If the data is
+	/// not available in the cache, it is fetched from the source and cached for future use.</returns>
 	public async Task<LookupTables> GetLookupTables(string ttinfoId, string seasonId)
 	{
 		LookupTables lookup = new();

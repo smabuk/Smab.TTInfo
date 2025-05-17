@@ -2,6 +2,14 @@
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Generates an iCalendar (iCal) string representation of the specified fixtures for a given league and team.
+	/// </summary>
+	/// <param name="LeagueName">The name of the league to which the fixtures belong. Cannot be null or empty.</param>
+	/// <param name="TeamName">The name of the team for which the fixtures are being generated. Cannot be null or empty.</param>
+	/// <param name="Fixtures">A collection of fixtures to include in the iCalendar. Cannot be null or empty.</param>
+	/// <param name="timeZone">The time zone to use for the fixture dates and times. Cannot be null.</param>
+	/// <returns>A string containing the iCalendar representation of the fixtures.</returns>
 	public string IcalStringFromFixtures(string LeagueName, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone)
 		=> IcalFromFixtures(LeagueName, TeamName, Fixtures, timeZone).ToString();
 

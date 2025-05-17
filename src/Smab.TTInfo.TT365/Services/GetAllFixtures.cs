@@ -6,6 +6,16 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Retrieves a list of fixtures for a specified league and season.
+	/// </summary>
+	/// <remarks>This method attempts to load fixtures from a cached file. If the cache is empty or unavailable, it
+	/// fetches the fixtures from an external source. The method supports various fixture types, such as completed,
+	/// postponed, rearranged, and voided fixtures, and populates their respective details.</remarks>
+	/// <param name="ttinfoId">The unique identifier of the league.</param>
+	/// <param name="SeasonId">The unique identifier of the season. If not provided, the current season of the league will be used.</param>
+	/// <returns>A list of <see cref="Fixture"/> objects representing the fixtures for the specified league and season. If no
+	/// fixtures are found, an empty list is returned.</returns>
 	public async Task<List<Fixture>> GetAllFixtures(string ttinfoId, string? SeasonId = null)
 	{
 		string leagueId = ttinfoId;

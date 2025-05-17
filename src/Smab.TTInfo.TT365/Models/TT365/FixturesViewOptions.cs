@@ -1,5 +1,10 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
+/// <summary>
+/// Represents the options for configuring the view of fixtures in a sports management system.
+/// </summary>
+/// <remarks>This record provides various properties to customize the display and filtering of fixtures, such as
+/// season, division, club, team, venue, and additional view preferences.</remarks>
 public record FixturesViewOptions
 {
 	public string Season { get; set; } = "";

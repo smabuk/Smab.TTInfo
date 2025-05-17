@@ -6,6 +6,17 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Retrieves a list of divisions for a specified table tennis information ID and optional season ID.
+	/// </summary>
+	/// <remarks>This method attempts to load division data from a cached file. If the data is not available in the
+	/// cache, it fetches the division information from an external source, processes it, and saves it to the cache for
+	/// future use. The method ensures that the returned list of divisions is populated with the relevant teams and their
+	/// associated details.</remarks>
+	/// <param name="ttinfoId">The unique identifier for the table tennis information. This parameter is required.</param>
+	/// <param name="SeasonId">The identifier for the season. This parameter is optional and defaults to an empty string if not provided.</param>
+	/// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Division"/>
+	/// objects representing the divisions associated with the specified table tennis information and season.</returns>
 	public async Task<List<Division>> GetDivisions(string ttinfoId, string SeasonId = "")
 	{
 		LookupTables lookupTables = await GetLookupTables(ttinfoId, SeasonId);

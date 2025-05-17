@@ -7,6 +7,12 @@ public sealed partial class TT365Reader
 	[GeneratedRegex("""(?<part1>.*)(?<year1>\d\d\d\d)(?<part2>.*)(?<year2>\d\d+)(?<part3>.*)""")]
 	private static partial Regex SeasonRegex();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="seasonId"></param>
+	/// <param name="year"></param>
+	/// <returns></returns>
 	public string GetSeasonId(string seasonId, int year)
 	{
 		string newSeasonId = "";

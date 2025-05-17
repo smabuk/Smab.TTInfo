@@ -1,5 +1,11 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
+/// <summary>
+/// Represents a sports team, including its details, players, fixtures, and results.
+/// </summary>
+/// <remarks>This class provides properties to store information about a team, such as its name, division, 
+/// captain, and performance statistics. It also includes collections for players, fixtures, and results,  allowing for
+/// comprehensive tracking of the team's activities and outcomes.</remarks>
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Team
 {

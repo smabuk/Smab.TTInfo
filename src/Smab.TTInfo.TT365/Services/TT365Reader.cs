@@ -2,6 +2,13 @@
 
 namespace Smab.TTInfo.TT365.Services;
 
+/// <summary>
+/// Provides functionality to interact with the Table Tennis 365 (TT365) API, including caching and configuration
+/// options.
+/// </summary>
+/// <remarks>This class is designed to facilitate communication with the TT365 API, allowing users to configure
+/// caching behavior and toggle the use of test files for development purposes. It is a sealed class and cannot be
+/// inherited.</remarks>
 public sealed partial class TT365Reader : ITT365Reader
 {
 	private static readonly string                CACHEFILE_PREFIX      = "tt365_";

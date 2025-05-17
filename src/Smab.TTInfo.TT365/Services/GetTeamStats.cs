@@ -1,11 +1,22 @@
-﻿using System.Runtime.CompilerServices;
-
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Retrieves detailed statistics for a specified team in a given season.
+	/// </summary>
+	/// <remarks>This method fetches team statistics by first determining the appropriate season (if not explicitly
+	/// provided), then retrieving the relevant divisions and team data. If the team is not found in the divisions, an
+	/// empty <see cref="Team"/> object is returned. The method also attempts to load additional details such as players,
+	/// results, and rankings from the associated HTML document.</remarks>
+	/// <param name="ttinfoId">The unique identifier for the table tennis information source.</param>
+	/// <param name="TeamName">The name of the team for which statistics are to be retrieved. This parameter is case-insensitive.</param>
+	/// <param name="SeasonId">The unique identifier for the season. If not provided, the current season for the league associated with <paramref
+	/// name="ttinfoId"/> will be used.</param>
+	/// <returns>A <see cref="Team"/> object containing the team's statistics, including players, results, and rankings. Returns
+	/// <see langword="null"/> if the team or season cannot be found.</returns>
 	public async Task<Team?> GetTeamStats(string ttinfoId, string TeamName, string SeasonId = "")
 	{
 		if (string.IsNullOrWhiteSpace(SeasonId)) {

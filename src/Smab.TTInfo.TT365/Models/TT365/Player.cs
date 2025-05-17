@@ -1,5 +1,11 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
+/// <summary>
+/// Represents a player with associated statistics, rankings, and performance data.
+/// </summary>
+/// <remarks>This class provides properties to access a player's details, including their name, performance
+/// metrics,  rankings at various levels, and a collection of their results. It also includes derived properties for 
+/// extracting the player's unique identifier and season identifier from the player's URL.</remarks>
 [DebuggerDisplay("Name: {Name,nq}")]
 public class Player
 {

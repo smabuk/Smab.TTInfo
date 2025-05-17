@@ -4,6 +4,16 @@ namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
+	/// <summary>
+	/// Retrieves the league information for the specified identifier.
+	/// </summary>
+	/// <remarks>This method attempts to load the league data from a cached file. If the data is not available  in
+	/// the cache or is incomplete, it fetches the league information from an external source,  including its metadata,
+	/// current season, and historical seasons. The method also updates the  cache with the retrieved data for future
+	/// use.</remarks>
+	/// <param name="ttinfoId">The unique identifier of the league to retrieve. This value cannot be null or empty.</param>
+	/// <returns>A <see cref="League"/> object containing the league's details, including its current season,  or <see
+	/// langword="null"/> if the league cannot be found or the data is unavailable.</returns>
 	public async Task<League?> GetLeague(string ttinfoId)
 	{
 		string url;
