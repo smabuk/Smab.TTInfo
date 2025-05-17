@@ -68,5 +68,197 @@ services.AddTT365Service(options => {
 - `Models/`: Data models for TT365 entities
 - `AddTT365Service.cs`: Extension methods for DI registration
 
+## Relational Models Class Diagram
+
+Below is a class diagram showing all types in the `Smab.TTInfo.TT365.Models.TT365` namespace and their relationships:
+
+```mermaid
+classDiagram
+    class League {
+        string Id
+        string Name
+        string Description
+        string URL
+        string Theme
+        Season CurrentSeason
+        List~Season~ Seasons
+    }
+    class Season {
+        string Id
+        string Name
+        LookupTables Lookups
+        List~Division~ Divisions
+        int DivisionCount
+    }
+    class Division {
+        string Id
+        string Name
+        List~Team~ Teams
+        int TeamCount
+    }
+    class LookupTables {
+        List~IdNamePair~ DivisionLookup
+        List~IdNamePair~ ClubLookup
+        List~IdNamePair~ TeamLookup
+        List~IdNamePair~ VenueLookup
+    }
+    class IdNamePair {
+        string Id
+        string Name
+    }
+    class Team {
+        string Id
+        string URL
+        string Caption
+        string Name
+        string ShortName
+        int ClubId
+        string DivisionName
+        string Captain
+        ICollection~Player~ Players
+        ICollection~Fixture~ Fixtures
+        ICollection~TeamResult~ Results
+        int? LeaguePosition
+        int Played
+        int Won
+        int Drawn
+        int Lost
+        int SetsFor
+        int SetsAgainst
+        int Points
+        int PointsAdjustment
+    }
+    class Player {
+        string Name
+        string PlayerURL
+        int Played
+        float WinPercentage
+        string PoMAwards
+        string Form
+        int ClubRanking
+        int LeagueRanking
+        int CountyRanking
+        int RegionalRanking
+        int NationalRanking
+        int PlayerId
+        int Id
+        string SeasonId
+        List~PlayerResult~ PlayerResults
+    }
+    class PlayerResult {
+        int Id
+        string Name
+        int OriginalSortOrder
+        DateOnly Date
+        string PlayerTeamName
+        Player Opponent
+        string OpponentTeam
+        string Division
+        string Scores
+        int? RankingDiff
+        string Result
+        string ResultReason
+        string MatchCardURL
+        string FormattedRankingDiff
+        List~Score~ Games
+        Score GameScore
+    }
+    class Fixture {
+        string Division
+        string Description
+        DateOnly Date
+        string HomeTeam
+        string AwayTeam
+        string Venue
+    }
+    class CompletedFixture {
+        int ForHome
+        int ForAway
+        string PlayerOfTheMatch
+        string CardURL
+        List~MatchPlayer~ HomePlayers
+        List~MatchPlayer~ AwayPlayers
+        string? Other
+        int Id
+        string DoublesWinner
+        string Score
+    }
+    class PostponedFixture {
+        string Reason
+    }
+    class RearrangedFixture {
+        DateOnly OriginalDate
+        string Reason
+    }
+    class VoidFixture {
+        string Reason
+    }
+    class TeamResult {
+        string Opposition
+        string HomeOrAway
+        int Points
+        int ScoreForTeam
+        int ScoreForOpposition
+        string MatchResult
+    }
+    class MatchPlayer {
+        string Name
+        int Id
+        int SetsWon
+        bool PoM
+    }
+    class Score {
+        int Score1
+        int Score2
+    }
+    class FixturesView {
+        string Caption
+        string URL
+        FixturesViewOptions Options
+        ICollection~Fixture~ Fixtures
+    }
+    class FixturesViewOptions {
+        string Season
+        string DivisionName
+        string ClubId
+        string TeamId
+        string VenueId
+        int ViewModeType
+        bool HideCompletedFixtures
+        bool MergeDivisions
+        bool ShowByWeekNo
+    }
+    class TT365LeagueId {
+        string LeagueId
+    }
+    %% Inheritance
+    CompletedFixture --|> Fixture
+    PostponedFixture --|> Fixture
+    RearrangedFixture --|> Fixture
+    VoidFixture --|> Fixture
+    TeamResult --|> CompletedFixture
+    %% Relationships
+    League o-- Season : CurrentSeason
+    League o-- "*" Season : Seasons
+    Season o-- LookupTables : Lookups
+    Season o-- "*" Division : Divisions
+    Division o-- "*" Team : Teams
+    Team o-- "*" Player : Players
+    Team o-- "*" Fixture : Fixtures
+    Team o-- "*" TeamResult : Results
+    Player o-- "*" PlayerResult : PlayerResults
+    PlayerResult o-- Player : Opponent
+    PlayerResult o-- "*" Score : Games
+    CompletedFixture o-- "*" MatchPlayer : HomePlayers
+    CompletedFixture o-- "*" MatchPlayer : AwayPlayers
+    FixturesView o-- FixturesViewOptions : Options
+    FixturesView o-- "*" Fixture : Fixtures
+    LookupTables o-- "*" IdNamePair : DivisionLookup
+    LookupTables o-- "*" IdNamePair : ClubLookup
+    LookupTables o-- "*" IdNamePair : TeamLookup
+    LookupTables o-- "*" IdNamePair : VenueLookup
+```
+
+ 
 ## License
 See repository for license details.
