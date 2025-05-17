@@ -73,8 +73,13 @@ services.AddTT365Service(options => {
 Below is a class diagram showing all types in the `Smab.TTInfo.TT365.Models.TT365` namespace and their relationships:
 
 ```mermaid
+---
+config:
+  look: classic
+  layout: elk
+---
 classDiagram
-    class League {
+    class League["League (derived from the site)"] {
         string Id
         string Name
         string Description
@@ -210,6 +215,7 @@ classDiagram
     class Score {
         int Score1
         int Score2
+        +ToString() string
     }
     class FixturesView {
         string Caption
@@ -228,15 +234,14 @@ classDiagram
         bool MergeDivisions
         bool ShowByWeekNo
     }
-    class TT365LeagueId {
-        string LeagueId
-    }
+
     %% Inheritance
-    CompletedFixture --|> Fixture
-    PostponedFixture --|> Fixture
+    CompletedFixture  --|> Fixture
+    PostponedFixture  --|> Fixture
     RearrangedFixture --|> Fixture
-    VoidFixture --|> Fixture
-    TeamResult --|> CompletedFixture
+    VoidFixture       --|> Fixture
+    TeamResult  --|> CompletedFixture
+
     %% Relationships
     League o-- Season : CurrentSeason
     League o-- "*" Season : Seasons
