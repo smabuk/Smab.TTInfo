@@ -55,7 +55,7 @@ internal class TTInfoCli
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague(ttinfoId));
+			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague((TT365LeagueId)ttinfoId));
 
 		if (league is null) {
 			AnsiConsole.MarkupLine($"Couldn't get league: {ttinfoId}");
@@ -72,13 +72,13 @@ internal class TTInfoCli
 		LookupTables lookupTables = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {ttinfoId} {seasonId} ...", async ctx => await tt365.GetLookupTables(ttinfoId, seasonId));
+			.StartAsync($"Loading... {ttinfoId} {seasonId} ...", async ctx => await tt365.GetLookupTables((TT365LeagueId)ttinfoId, seasonId));
 		allLookupTables.Add(lookupTables);
 
 		List<Division> divisions = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {ttinfoId} {seasonId} all divisions ...", async ctx => await tt365.GetDivisions(ttinfoId, seasonId));
+			.StartAsync($"Loading... {ttinfoId} {seasonId} all divisions ...", async ctx => await tt365.GetDivisions((TT365LeagueId)ttinfoId, seasonId));
 		allDivisions.AddRange(divisions);
 
 		foreach (Division division in divisions) {
@@ -91,7 +91,7 @@ internal class TTInfoCli
 					newTeam = await AnsiConsole.Status()
 						.Spinner(Spinner.Known.Circle)
 						.AutoRefresh(true)
-						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats(ttinfoId, team.Name, seasonId) ?? new());
+						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats((TT365LeagueId)ttinfoId, team.Name, seasonId) ?? new());
 				}
 				catch (Exception ex) {
 					message = $"*** {ex.Message}";
@@ -108,7 +108,7 @@ internal class TTInfoCli
 						Player p2 = await AnsiConsole.Status()
 							.Spinner(Spinner.Known.Circle)
 							.AutoRefresh(true)
-							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats(ttinfoId, player, seasonId) ?? new());
+							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player, seasonId) ?? new());
 						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase))).OrderBy(pr => pr.Date)) {
 							//bool limitToOpponentMatchDetails = opponentSearchName is null || playerResult.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName);
 							string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
@@ -162,7 +162,7 @@ internal class TTInfoCli
 		League? league = await AnsiConsole.Status()
 			.Spinner(Spinner.Known.Circle)
 			.AutoRefresh(true)
-			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague(ttinfoId));
+			.StartAsync($"Loading... {ttinfoId} ...", async ctx => await tt365.GetLeague((TT365LeagueId)ttinfoId));
 
 		if (league is null) {
 			AnsiConsole.MarkupLine($"Couldn't get league: {ttinfoId}");
@@ -179,7 +179,7 @@ internal class TTInfoCli
 				for (int iYear = year; iYear > 2011; iYear--) {
 					string seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, iYear);
 
-					List<Fixture>? fixtures = await tt365.GetAllFixtures(ttinfoId, seasonId);
+					List<Fixture>? fixtures = await tt365.GetAllFixtures((TT365LeagueId)ttinfoId, seasonId);
 					if (fixtures is not null) {
 						foreach (CompletedFixture fixture in fixtures.OfType<CompletedFixture>()) {
 							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
@@ -208,7 +208,7 @@ internal class TTInfoCli
 							Name = p1.Name,
 							PlayerId = p1.PlayerId,
 						};
-						return await tt365.GetPlayerStats(ttinfoId, player1, p1.SeasonId) ?? new();
+						return await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player1, p1.SeasonId) ?? new();
 					});
 
 				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase)).OrderBy(pr => pr.Date)) {

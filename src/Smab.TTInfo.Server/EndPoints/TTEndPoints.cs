@@ -74,7 +74,7 @@ public static partial class TTEndPoints
 	private static async Task<Ok<List<Fixture>>> GetFixtures(ITT365Reader tt365, string leagueId, int? year, string? seasonId, string? teamName)
 	{
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
-		List<Fixture> list = await tt365.GetAllFixtures(leagueId, seasonId) ?? [];
+		List<Fixture> list = await tt365.GetAllFixtures((TT365LeagueId)leagueId, seasonId) ?? [];
 		if (teamName is not null) {
 			teamName = teamName.Replace("_", " ");
 			list = [.. list.Where(f => string.Equals(f.HomeTeam,teamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, teamName, StringComparison.CurrentCultureIgnoreCase))];
@@ -104,7 +104,7 @@ public static partial class TTEndPoints
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats(leagueId, teamName, seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, seasonId);
 		}
 		catch { 
 			team = null;
@@ -136,7 +136,7 @@ public static partial class TTEndPoints
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats(leagueId, teamName, seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, seasonId);
 		}
 		catch { 
 			team = null;
@@ -167,7 +167,7 @@ public static partial class TTEndPoints
 			return $"{seasonId}";
 		}
 
-		League? league = await tt365.GetLeague(leagueId);
+		League? league = await tt365.GetLeague((TT365LeagueId)leagueId);
 
 		return league switch
 		{

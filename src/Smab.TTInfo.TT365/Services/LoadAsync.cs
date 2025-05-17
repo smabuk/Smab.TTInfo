@@ -11,13 +11,13 @@ public sealed partial class TT365Reader
 	/// Loads data of type <typeparamref name="T"/> from cache or remote source, optionally using a cache file and folder.
 	/// </summary>
 	/// <typeparam name="T">The type to deserialize the data to.</typeparam>
-	/// <param name="ttinfoId">The TT365 league identifier.</param>
+	/// <param name="leagueId">The TT365 league identifier.</param>
 	/// <param name="url">The URL to fetch data from if not found in cache.</param>
 	/// <param name="fileName">The cache file name.</param>
 	/// <param name="cacheFolder">The cache folder path.</param>
 	/// <param name="cacheHours">The cache expiration in hours.</param>
 	/// <returns>The deserialized object or default if not found.</returns>
-	public async Task<T?> LoadAsync<T>(string ttinfoId, string? url, string fileName = "", string? cacheFolder = null, int? cacheHours = null)
+	public async Task<T?> LoadAsync<T>(TT365LeagueId leagueId, string? url, string fileName = "", string? cacheFolder = null, int? cacheHours = null)
 	{
 		bool useCache = !string.IsNullOrWhiteSpace(fileName);
 		string? contentString = null;
@@ -42,7 +42,7 @@ public sealed partial class TT365Reader
 		}
 
 		if (string.IsNullOrWhiteSpace(contentString) && url is not null) {
-			EnsureBaseAddress(ttinfoId);
+			EnsureBaseAddress(leagueId);
 			HttpResponseMessage? response = await httpClient.GetAsync(url);
 			if (response.IsSuccessStatusCode) {
 				contentString = await response.Content.ReadAsStringAsync();
@@ -73,9 +73,7 @@ public sealed partial class TT365Reader
 	/// <summary>
 	/// Ensures the base address of the HTTP client is set for the specified TT365 league.
 	/// </summary>
-	/// <param name="ttinfoId">The TT365 league identifier.</param>
-	private void EnsureBaseAddress(string ttinfoId)
-	{
-		httpClient.BaseAddress ??= new Uri($"{TT365_COM}/{ttinfoId}/");
-	}
+	/// <param name="leagueId">The TT365 league identifier.</param>
+	private void EnsureBaseAddress(TT365LeagueId leagueId)
+		=> httpClient.BaseAddress ??= new Uri($"{TT365_COM}/{leagueId}/");
 }

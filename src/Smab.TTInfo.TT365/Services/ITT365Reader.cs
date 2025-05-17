@@ -13,23 +13,23 @@ public interface ITT365Reader
 	/// <summary>
 	/// Gets all fixtures for a league and optional season.
 	/// </summary>
-	Task<List<Fixture>>   GetAllFixtures(string ttInfoId, string? SeasonId = null);
+	Task<List<Fixture>>   GetAllFixtures(TT365LeagueId leagueId, string? SeasonId = null);
 	/// <summary>
 	/// Gets all divisions for a league and season.
 	/// </summary>
-	Task<List<Division>>  GetDivisions(string ttInfoId, string SeasonId = "");
+	Task<List<Division>>  GetDivisions(TT365LeagueId leagueId, string SeasonId = "");
 	/// <summary>
 	/// Gets the league details for a given league ID.
 	/// </summary>
-	Task<League?>         GetLeague(string ttInfoId);
+	Task<League?>         GetLeague(TT365LeagueId leagueId);
 	/// <summary>
 	/// Gets player statistics for a player and season.
 	/// </summary>
-	Task<Player?>         GetPlayerStats(string ttInfoId, Player player, string SeasonId = "");
+	Task<Player?>         GetPlayerStats(TT365LeagueId leagueId, Player player, string SeasonId = "");
 	/// <summary>
 	/// Gets team statistics for a team and season.
 	/// </summary>
-	Task<Team?>           GetTeamStats(string ttInfoId, string TeamName, string SeasonId = "");
+	Task<Team?>           GetTeamStats(TT365LeagueId leagueId, string TeamName, string SeasonId = "");
 
 	/// <summary>
 	/// Generates a CSV string from a collection of fixtures.
@@ -38,9 +38,9 @@ public interface ITT365Reader
 	/// <summary>
 	/// Generates an iCal calendar from a collection of fixtures.
 	/// </summary>
-	IcalCalendar IcalFromFixtures(string ttInfoId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
+	IcalCalendar IcalFromFixtures(TT365LeagueId leagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
 	/// <summary>
 	/// Generates an iCal string from a collection of fixtures.
 	/// </summary>
-	string IcalStringFromFixtures(string ttInfoId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
+	string IcalStringFromFixtures(TT365LeagueId leagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
 }

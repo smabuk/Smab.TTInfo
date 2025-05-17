@@ -223,11 +223,11 @@
 		fixtures = new();
 		fixtureResults = new();
 		StateHasChanged();
-		league = await _tt365.GetLeague(LeagueId);
-		team = await _tt365.GetTeamStats(LeagueId, TeamName);
+		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
+		team = await _tt365.GetTeamStats((TT365LeagueId)LeagueId, TeamName);
 		if (team is not null) {
 
-			fixtures = (await _tt365.GetAllFixtures(LeagueId, league?.CurrentSeason.Id) ?? [])
+			fixtures = (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.CurrentSeason.Id) ?? [])
 							.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
 							.ToList();
 			foreach (Fixture fixture in fixtures) {
@@ -271,11 +271,10 @@
 		if (teamPlayersList.ContainsKey(teamName)) {
 			return teamPlayersList[teamName];
 		} else {
-			ICollection<Player>? players = (await _tt365.GetTeamStats(LeagueId, teamName))?.Players;
+			ICollection<Player>? players = (await _tt365.GetTeamStats((TT365LeagueId)LeagueId, teamName))?.Players;
 			if (players is null) {
 				return [];
 			}
-			// playersString = PlayersAverages(players);
 			teamPlayersList.TryAdd(teamName, [.. players]);
 			return players;
 		}

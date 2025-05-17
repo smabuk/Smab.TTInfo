@@ -13,22 +13,22 @@ public sealed partial class TT365Reader
 	/// cache, it fetches the division information from an external source, processes it, and saves it to the cache for
 	/// future use. The method ensures that the returned list of divisions is populated with the relevant teams and their
 	/// associated details.</remarks>
-	/// <param name="ttinfoId">The unique identifier for the table tennis information. This parameter is required.</param>
+	/// <param name="leagueId">The unique identifier for the table tennis information. This parameter is required.</param>
 	/// <param name="SeasonId">The identifier for the season. This parameter is optional and defaults to an empty string if not provided.</param>
 	/// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Division"/>
 	/// objects representing the divisions associated with the specified table tennis information and season.</returns>
-	public async Task<List<Division>> GetDivisions(string ttinfoId, string SeasonId = "")
+	public async Task<List<Division>> GetDivisions(TT365LeagueId leagueId, string SeasonId = "")
 	{
-		LookupTables lookupTables = await GetLookupTables(ttinfoId, SeasonId);
-		string filename = $@"{ttinfoId}_{SeasonId}_divisions_all.json";
+		LookupTables lookupTables = await GetLookupTables(leagueId, SeasonId);
+		string filename = $@"{leagueId}_{SeasonId}_divisions_all.json";
 		if (lookupTables.DivisionLookup.Count == 0) { return []; }
 
-		List<Division> divisions = await LoadAsync<List<Division>?>(ttinfoId, null, filename) ?? [];
+		List<Division> divisions = await LoadAsync<List<Division>?>(leagueId, null, filename) ?? [];
 		if (divisions is not []) { return divisions; }
 
 		string url = $"Tables/{SeasonId}/All_Divisions";
 		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
-			ttinfoId,
+			leagueId,
 			url);
 
 		if (!string.IsNullOrWhiteSpace(doc?.Text)) {

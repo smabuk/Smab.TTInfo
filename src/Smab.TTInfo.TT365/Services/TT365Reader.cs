@@ -9,7 +9,7 @@ namespace Smab.TTInfo.TT365.Services;
 /// <remarks>This class is designed to facilitate communication with the TT365 API, allowing users to configure
 /// caching behavior and toggle the use of test files for development purposes. It is a sealed class and cannot be
 /// inherited.</remarks>
-public sealed partial class TT365Reader : ITT365Reader
+public sealed partial class TT365Reader(IOptions<TT365Options> options, HttpClient httpClient, TimeProvider timeProvider) : ITT365Reader
 {
 	private static readonly string                CACHEFILE_PREFIX      = "tt365_";
 	private static readonly CultureInfo           GB_CULTURE            = new("en-GB");
@@ -19,21 +19,8 @@ public sealed partial class TT365Reader : ITT365Reader
 		ReadCommentHandling         = JsonCommentHandling.Skip,
 		PropertyNameCaseInsensitive = true,
 	};
-	
-	private readonly HttpClient httpClient;
-	private readonly TimeProvider timeProvider;
 
-	public TT365Reader(IOptions<TT365Options> options, HttpClient httpClient, TimeProvider timeProvider)
-	{
-		CacheFolder = options.Value.CacheFolder;
-		CacheHours = options.Value.CacheHours;
-		UseTestFiles = options.Value.UseTestFiles;
-
-		this.httpClient = httpClient;
-		this.timeProvider = timeProvider;
-	}
-
-	public string CacheFolder  { get; set; }
-	public int    CacheHours   { get; set; }
-	public bool   UseTestFiles { get; set; }
+	public string CacheFolder  { get; set; } = options.Value.CacheFolder;
+	public int    CacheHours   { get; set; } = options.Value.CacheHours;
+	public bool   UseTestFiles { get; set; } = options.Value.UseTestFiles;
 }

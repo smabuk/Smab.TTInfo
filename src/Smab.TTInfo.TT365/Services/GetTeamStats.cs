@@ -11,36 +11,37 @@ public sealed partial class TT365Reader
 	/// provided), then retrieving the relevant divisions and team data. If the team is not found in the divisions, an
 	/// empty <see cref="Team"/> object is returned. The method also attempts to load additional details such as players,
 	/// results, and rankings from the associated HTML document.</remarks>
-	/// <param name="ttinfoId">The unique identifier for the table tennis information source.</param>
+	/// <param name="leagueId">The unique identifier for the table tennis information source.</param>
 	/// <param name="TeamName">The name of the team for which statistics are to be retrieved. This parameter is case-insensitive.</param>
 	/// <param name="SeasonId">The unique identifier for the season. If not provided, the current season for the league associated with <paramref
-	/// name="ttinfoId"/> will be used.</param>
+	/// name="leagueId"/> will be used.</param>
 	/// <returns>A <see cref="Team"/> object containing the team's statistics, including players, results, and rankings. Returns
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
-	public async Task<Team?> GetTeamStats(string ttinfoId, string TeamName, string SeasonId = "")
+	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string TeamName, string SeasonId = "")
 	{
 		if (string.IsNullOrWhiteSpace(SeasonId)) {
-			League? league = await GetLeague(ttinfoId);
+			League? league = await GetLeague(leagueId);
 			if (league is null) { return null; };
 			SeasonId = league.CurrentSeason.Id;
 		}
 
-		List<Division> divisions = await GetDivisions(ttinfoId, SeasonId);
+		List<Division> divisions = await GetDivisions(leagueId, SeasonId);
 		if (divisions.Count == 0) {
 			return null;
 		};
 
-		string filename = $@"{ttinfoId}_{SeasonId}_team_stats_{TeamName}.json";
-		Team team = await LoadAsync<Team>(ttinfoId, null, filename) ?? null!;
-		if (team is not null) { return team; }
-		team = new();
+		string filename = $@"{leagueId}_{SeasonId}_team_stats_{TeamName}.json";
+		Team team = await LoadAsync<Team>(leagueId, null, filename) ?? null!;
 
+		if (team is not null) { return team; }
+
+		team = new();
 		string lookupTeamName = TeamName.Replace("_", " ");
 
 		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(TeamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
-				ttinfoId,
+				leagueId,
 				team.URL)
 			?? new();
 
@@ -50,17 +51,16 @@ public sealed partial class TT365Reader
 			return team;
 		}
 
-		// fixture.Description = fixtureNode.SelectSingleNode("//meta[@itemprop='description']").Attributes("content").Value
 		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']")) {
-			team.Caption = node.SelectSingleNode("//div[@class='caption']").InnerText.Replace("&gt;", ">");
-			team.Players = new List<Player>();
-			team.Results = new List<TeamResult>();
+			team.Caption = node.SelectSingleNode("//div[@class='caption']")?.InnerText.Replace("&gt;", ">") ?? "";
+			team.Players = [];
+			team.Results = [];
 			try {
-				team.Captain = teamNode.SelectNodes("//div[text()='Captain']").Single().NextSibling.NextSibling.InnerText;
+				team.Captain = teamNode.SelectNodes("//div[text()='Captain']")?.Single().NextSibling.NextSibling.InnerText ?? "";
 			}
 			catch (Exception) {
 			}
-			// For Each playerRow In node.SelectNodes("//tbody/tr")
+
 			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption").InnerText.Contains("Players")).SingleOrDefault();
 			if (playertableNode is not null) {
 				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody").SelectNodes("tr")) {
@@ -76,10 +76,10 @@ public sealed partial class TT365Reader
 						PoMAwards = hasPoM ? cells[4].InnerText : "",
 					};
 					List<string>? form = [.. (from f in cells[hasPoM ? 5 : 4].Descendants("a")
-										  select f.InnerText)];
+									  select f.InnerText)];
 					player.Form = string.Join(",", form);
 					List<string> rankings = (from r in cells[3].Descendants("a")
-											 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
+									 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
 					foreach (string? rank in rankings) {
 						if (rank.Contains(':')) {
 							string[]? rTemp = rank.Split(":");

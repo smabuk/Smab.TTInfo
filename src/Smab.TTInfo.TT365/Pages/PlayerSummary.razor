@@ -71,7 +71,7 @@
 		PlayerName = PlayerName.Replace("_", " ");
 		playerResults = new();
 		StateHasChanged();
-		league = await _tt365.GetLeague(LeagueId);
+		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		if (league is null) {
 			return;
 		}
@@ -80,7 +80,7 @@
 				Name = PlayerName,
 				PlayerId = PlayerId,
 			};
-		Player playerStats = await _tt365.GetPlayerStats(LeagueId, player) ?? new();
+		Player playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player) ?? new();
 		if (playerStats is not null) {
 			playerResults = playerStats.PlayerResults.ToList();
 			playerTeams = playerResults
@@ -106,7 +106,7 @@
 				Name = PlayerName,
 				PlayerId = PlayerId,
 			};
-		Player playerStats = await _tt365.GetPlayerStats(LeagueId, player, seasonId) ?? new();
+		Player playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player, seasonId) ?? new();
 		if (playerStats is not null) {
 			previousPlayerResults[seasonId] = [..playerStats.PlayerResults];
 		}

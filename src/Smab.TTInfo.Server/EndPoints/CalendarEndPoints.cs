@@ -52,7 +52,7 @@ public static partial class CalendarEndPoints
 	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<IcalCalendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, ITT365Reader _tt365, HttpContext context)
 	{
 		TeamName = TeamName.Replace("_", " ");
-		List<Fixture>? fixtures = (await _tt365.GetAllFixtures(LeagueName))?
+		List<Fixture>? fixtures = (await _tt365.GetAllFixtures((TT365LeagueId)LeagueName))?
 					.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
 					.ToList();
 		if (fixtures is null) {
@@ -61,7 +61,7 @@ public static partial class CalendarEndPoints
 
 		TimeZoneInfo gmtZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
 
-		IcalCalendar ical = _tt365.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
+		IcalCalendar ical = _tt365.IcalFromFixtures((TT365LeagueId)LeagueName, TeamName, fixtures, gmtZone);
 
 		// Different ways of returning the information
 		switch (Command?.ToUpperInvariant()) {
