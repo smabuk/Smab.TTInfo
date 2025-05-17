@@ -1,7 +1,20 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Services;
 
+/// <summary>
+/// Provides functionality to read and cache data from TTLeagues.
+/// </summary>
 public sealed partial class TTLeaguesReader
 {
+	/// <summary>
+	/// Loads JSON data asynchronously for a given type and key.
+	/// </summary>
+	/// <typeparam name="T">The type to deserialize the JSON data to.</typeparam>
+	/// <param name="ttinfoId">The TTInfo identifier.</param>
+	/// <param name="url">The URL to fetch the data from.</param>
+	/// <param name="fileName">The file name for caching.</param>
+	/// <param name="cacheFolder">The folder to use for caching. Defaults to the configured cache folder.</param>
+	/// <param name="cacheHours">The number of hours to keep the cache valid. Defaults to the configured cache duration.</param>
+	/// <returns>The deserialized object of type <typeparamref name="T"/>.</returns>
 	public async Task<T?> LoadJsonAsync<T>(string ttinfoId, string? url, string fileName, string? cacheFolder = null, int? cacheHours = null)
 	{
 		string? jsonString = null;

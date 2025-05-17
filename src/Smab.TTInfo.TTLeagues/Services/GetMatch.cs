@@ -1,7 +1,16 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Services;
 
+/// <summary>
+/// Provides functionality to read match data from TTLeagues.
+/// </summary>
 public sealed partial class TTLeaguesReader
 {
+	/// <summary>
+	/// Retrieves a match by TTInfo ID and match ID.
+	/// </summary>
+	/// <param name="ttinfoId">The TTInfo identifier for the league.</param>
+	/// <param name="matchId">The match identifier.</param>
+	/// <returns>The match if found; otherwise, <c>null</c>.</returns>
 	internal async Task<MatchCard?> GetMatch(int matchId, string ttinfoId)
 	{
 		string fileName = $"{ttinfoId}_match_{matchId}.json";

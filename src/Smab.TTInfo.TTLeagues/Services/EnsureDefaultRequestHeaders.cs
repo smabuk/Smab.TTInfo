@@ -1,5 +1,8 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Services;
 
+/// <summary>
+/// Ensures default request headers are set for HTTP requests.
+/// </summary>
 public sealed partial class TTLeaguesReader
 {
 	internal void EnsureDefaultRequestHeaders(string ttinfoId)

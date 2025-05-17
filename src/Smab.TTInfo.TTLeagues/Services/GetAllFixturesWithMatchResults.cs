@@ -1,7 +1,16 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Services;
 
+/// <summary>
+/// Provides methods to read TTLeagues data.
+/// </summary>
 public sealed partial class TTLeaguesReader
 {
+	/// <summary>
+	/// Retrieves all fixtures with match results for a given league.
+	/// </summary>
+	/// <param name="ttinfoId">The TTInfo identifier for the league.</param>
+	/// <param name="competitionId">The optional competition identifier.</param>
+	/// <returns>A collection of fixtures with match results.</returns>
 	internal async Task<Fixtures?> GetAllFixturesWithMatchResults(string ttinfoId, int? competitionId = null)
 	{
 		Fixtures? fixtures = await GetAllFixtures(ttinfoId, competitionId);

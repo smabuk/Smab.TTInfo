@@ -1,7 +1,15 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Services;
 
+/// <summary>
+/// Provides methods to read data from TTLeagues.
+/// </summary>
 public sealed partial class TTLeaguesReader
 {
+	/// <summary>
+	/// Retrieves lookup tables for a given league.
+	/// </summary>
+	/// <param name="ttinfoId">The TTInfo identifier for the league.</param>
+	/// <returns>Lookup tables for the league.</returns>
 	internal async Task<List<LookupValue>> GetLookupTables(string ttinfoId)
 	{
 		string fileNameWithoutCompetitionId = $"{ttinfoId}_lookup_tables.json";
