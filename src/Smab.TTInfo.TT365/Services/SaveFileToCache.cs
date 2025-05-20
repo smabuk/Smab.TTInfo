@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TT365.Services;
+﻿using Smab.TTInfo.Shared.Helpers;
+
+namespace Smab.TTInfo.TT365.Services;
 
 /// <summary>
 /// Provides methods to save files to the local cache for TT365.
@@ -13,20 +15,5 @@ public sealed partial class TT365Reader
 	/// <param name="cacheFolder">The cache folder path (optional).</param>
 	/// <returns>True if the file was saved successfully.</returns>
 	public bool SaveFileToCache(string contents, string fileName, string? cacheFolder = null)
-	{
-		string folder = cacheFolder ?? CacheFolder;
-
-		if (!Directory.Exists(folder))
-		{
-			_ = Directory.CreateDirectory(folder);
-		}
-
-		fileName = fileName.ToLowerInvariant();
-		string destination = Path.Combine(folder,  $"{CACHEFILE_PREFIX}{fileName}");
-
-		File.WriteAllText(destination, contents);
-
-		return true;
-	}
+		=> CacheHelper.SaveFileToCache(contents, $"{CACHEFILE_PREFIX}{fileName}", cacheFolder ?? CacheFolder);
 }
-

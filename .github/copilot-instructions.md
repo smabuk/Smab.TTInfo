@@ -17,11 +17,14 @@ https://github.blog/changelog/2025-01-21-custom-repository-instructions-are-now-
 
 ## Coding Style
 * Always use explict types instead of `var`.
+* Apply coding style defined in `.editorconfig`.
 * Use pattern matching and switch expressions wherever possible.
 * Use `IEnumerable<T>` instead of `ICollection<T>` or `List<T>` for method parameters and return types.
 * Use functional programming techniques instead of imperative programming.
 * Prefer file-scoped namespace declarations and single-line using directives.
 * Use `nameof` instead of string literals when referring to member names.
+* Use records where appropriate for data transfer objects (DTOs) or immutable types or wherever is useful.
+* Use primary constructors.
 * Use `StringBuilder` for string concatenation in loops or when building large strings.
 * Use `String.IsNullOrEmpty` or `String.IsNullOrWhiteSpace` instead of checking for `null` and empty strings separately.
 
@@ -46,4 +49,3 @@ https://github.blog/changelog/2025-01-21-custom-repository-instructions-are-now-
 * Avoid apologizing or making conciliatory statements.
 * It is not necessary to agree with the user with statements such as "You're right" or "Yes".
 * Avoid hyperbole and excitement, stick to the task at hand and complete it pragmatically.
-* 
