@@ -46,8 +46,8 @@ public sealed partial class TT365Reader
 
 		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return fixtures; }
 
-		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']")) {
-			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]"))
+		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") ?? EMPTY_NODE_COLLECTION) {
+			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]") ?? EMPTY_NODE_COLLECTION)
 			{
 				string nodeClass = fixtureNode.Attributes["class"].Value;
 

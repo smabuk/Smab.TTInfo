@@ -32,7 +32,7 @@ public sealed partial class TT365Reader
 			url);
 
 		if (!string.IsNullOrWhiteSpace(doc?.Text)) {
-			foreach (HtmlNode? divTable in doc.DocumentNode.SelectNodes(@"//table")) {
+			foreach (HtmlNode? divTable in doc.DocumentNode.SelectNodes(@"//table") ?? EMPTY_NODE_COLLECTION) {
 				if (divTable.SelectSingleNode("caption") is null) {
 					continue;
 				}
@@ -41,7 +41,7 @@ public sealed partial class TT365Reader
 				Division division = new(Id: lookupTables.DivisionLookup.Where(d => d.Name == divName).Single().Id, Name: divName);
 				divisions.Add(division);
 
-				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr")) {
+				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
 					Team team = new()
 					{
 						DivisionName = divName,

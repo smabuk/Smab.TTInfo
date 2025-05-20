@@ -55,7 +55,7 @@ public sealed partial class TT365Reader
 				$"Results/Archive")
 				?? new();
 
-			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//td//a"))
+			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//td//a") ?? EMPTY_NODE_COLLECTION)
 			{
 				string seasonId = item.GetAttributeValue("href", "");
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];

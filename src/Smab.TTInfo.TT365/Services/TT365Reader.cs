@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 
+using HtmlAgilityPack;
+
 namespace Smab.TTInfo.TT365.Services;
 
 /// <summary>
@@ -19,6 +21,8 @@ public sealed partial class TT365Reader(IOptions<TT365Options> options, HttpClie
 		ReadCommentHandling         = JsonCommentHandling.Skip,
 		PropertyNameCaseInsensitive = true,
 	};
+	private static readonly HtmlNodeCollection EMPTY_NODE_COLLECTION = new(HtmlNode.CreateNode("<div></div>"));
+
 
 	public string CacheFolder  { get; set; } = options.Value.CacheFolder;
 	public int    CacheHours   { get; set; } = options.Value.CacheHours;

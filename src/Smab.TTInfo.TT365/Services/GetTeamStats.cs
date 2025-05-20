@@ -51,7 +51,7 @@ public sealed partial class TT365Reader
 			return team;
 		}
 
-		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']")) {
+		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']") ?? EMPTY_NODE_COLLECTION) {
 			team.Caption = node.SelectSingleNode("//div[@class='caption']")?.InnerText.Replace("&gt;", ">") ?? "";
 			team.Players = [];
 			team.Results = [];
@@ -61,9 +61,9 @@ public sealed partial class TT365Reader
 			catch (Exception) {
 			}
 
-			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption").InnerText.Contains("Players")).SingleOrDefault();
+			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
 			if (playertableNode is not null) {
-				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody").SelectNodes("tr")) {
+				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
 					HtmlNode[] cells = [.. playerRow.Descendants("td")];
 					bool hasPoM = cells.Length > 5;
 					Player player = new()
@@ -119,9 +119,9 @@ public sealed partial class TT365Reader
 				}
 			}
 
-			HtmlNode? resultstableNode = node.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption").InnerText.Contains("Results"));
+			HtmlNode? resultstableNode = node.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false);
 			if (resultstableNode is not null) {
-				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody").SelectNodes("tr")) {
+				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
 					HtmlNode[] cells = [.. resultRow.Descendants("td")];
 					string score = cells[3].InnerText;
 					string? other = null;

@@ -43,19 +43,19 @@ public sealed partial class TT365Reader
 			if (!string.IsNullOrWhiteSpace(doc.Text)) {
 				HtmlNode? node = doc.DocumentNode.SelectSingleNode("//form[@id='FixtureFiltersForm']");
 				if (node is not null) {
-					foreach (HtmlNode item in node.SelectNodes("//select[@id='d']//option")) {
+					foreach (HtmlNode item in node.SelectNodes("//select[@id='d']//option") ?? EMPTY_NODE_COLLECTION) {
 						lookup.DivisionLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
 
-					foreach (HtmlNode item in node.SelectNodes("//select[@id='cl']//option")) {
+					foreach (HtmlNode item in node.SelectNodes("//select[@id='cl']//option") ?? EMPTY_NODE_COLLECTION) {
 						lookup.ClubLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
 
-					foreach (HtmlNode item in node.SelectNodes("//select[@id='t']//option")) {
+					foreach (HtmlNode item in node.SelectNodes("//select[@id='t']//option") ?? EMPTY_NODE_COLLECTION) {
 						lookup.TeamLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
 
-					foreach (HtmlNode item in node.SelectNodes("//select[@id='vn']//option")) {
+					foreach (HtmlNode item in node.SelectNodes("//select[@id='vn']//option") ?? EMPTY_NODE_COLLECTION) {
 						lookup.VenueLookup.Add(new(item.GetAttributeValue("value", ""), item.InnerText));
 					}
 
