@@ -6,7 +6,14 @@
 /// </summary>
 /// <remarks>This record extends the <see cref="Fixture"/> type to include additional details about a rescheduled
 /// fixture. Use this type to track changes to fixture schedules and the reasons for those changes.</remarks>
-public record RearrangedFixture : Fixture
+public record RearrangedFixture(
+	string Division,
+	string Description,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string Venue
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public DateOnly OriginalDate {  get; set; }
 	public string Reason { get; set; } = "";

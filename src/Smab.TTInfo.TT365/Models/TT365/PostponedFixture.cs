@@ -5,7 +5,14 @@
 /// </summary>
 /// <remarks>This record extends the <see cref="Fixture"/> type to include additional information about why the
 /// fixture was postponed.</remarks>
-public record PostponedFixture : Fixture
+public record PostponedFixture(
+	string Division,
+	string Description,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string Venue
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public string Reason { get; set; } = "";
 }

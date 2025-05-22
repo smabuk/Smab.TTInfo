@@ -52,29 +52,29 @@ public sealed partial class TT365Reader
 				string nodeClass = fixtureNode.Attributes["class"].Value;
 
 				if (nodeClass.HasClass("fixture")) {
-					Fixture fixture = nodeClass.HasClass("complete")
+					FixtureType fixtureType = nodeClass.HasClass("complete")
 						? fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]") is not null
-							? new VoidFixture()
-							: new CompletedFixture()
+							? FixtureType.Void
+							: FixtureType.Completed
 						: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
-							? new PostponedFixture()
+							? FixtureType.Postponed
 							: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]") is not null
-								? new RearrangedFixture()
-								: (Fixture)new();
-					fixture.Description = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
-					if (DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly tempDate)) {
-						fixture.Date = tempDate;
-					};
-					fixture.Division = fixtureNode.SelectSingleNode("div[@class='div']")?.InnerText ?? "";
-					fixture.Venue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='venue']/span/a")?.InnerText ?? "");
+								? FixtureType.Rearranged
+								: FixtureType.Fixture;
+					string fixtureDescription = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
+					_ = DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly fixtureDate);
+					string fixtureDivision = fixtureNode.SelectSingleNode("div[@class='div']")?.InnerText ?? "";
+					string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='venue']/span/a")?.InnerText ?? "");
 
 					HtmlNode? homeNode = fixtureNode.SelectSingleNode("div[@class='home']");
-					fixture.HomeTeam = HttpUtility.HtmlDecode(homeNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
+					string fixtureHomeTeam = HttpUtility.HtmlDecode(homeNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
 
 					HtmlNode? awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
-					fixture.AwayTeam = HttpUtility.HtmlDecode(awayNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
+					string fixtureAwayTeam = HttpUtility.HtmlDecode(awayNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
 
-					if (fixture is CompletedFixture completedFixture) {
+					Fixture fixture = new(fixtureDivision, fixtureDescription, fixtureDate, fixtureHomeTeam, fixtureAwayTeam, fixtureVenue);
+					if (fixtureType is FixtureType.Completed) {
+						CompletedFixture completedFixture = (CompletedFixture)fixture;
 						completedFixture.ForHome = int.Parse(homeNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.ForAway = int.Parse(awayNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 						completedFixture.CardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a")?.Attributes["href"].Value.Trim() ?? ""}";
@@ -101,18 +101,21 @@ public sealed partial class TT365Reader
 						}
 					}
 
-					if (fixture is PostponedFixture pf) {
+					if (fixtureType is FixtureType.Postponed) {
+						PostponedFixture pf = (PostponedFixture)fixture;
 						pf.Reason = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim()) ?? "";
 					}
 
-					if (fixture is RearrangedFixture rf) {
+					if (fixtureType is FixtureType.Rearranged) {
+						RearrangedFixture rf = (RearrangedFixture)fixture;
 						string title = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]")?.Attributes["title"].Value.Trim()) ?? "";
 						string[] tokens = title.Split([':', '-'], StringSplitOptions.TrimEntries);
 						rf.Reason = tokens[^1];
 						rf.OriginalDate = DateOnly.Parse(tokens[2].Split([' '])[0]);
 					}
 
-					if (fixture is VoidFixture vf) {
+					if (fixtureType is FixtureType.Void) {
+						VoidFixture vf = (VoidFixture)fixture;
 						vf.Reason = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]")?.Attributes["title"].Value.Trim() ?? "";
 					}
 
@@ -126,4 +129,14 @@ public sealed partial class TT365Reader
 
 		return fixtures;
 	}
+}
+
+enum FixtureType
+{
+	Unknown,
+	Fixture,
+	Completed,
+	Postponed,
+	Rearranged,
+	Void
 }

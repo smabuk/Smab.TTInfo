@@ -6,7 +6,14 @@
 /// <remarks>This type is used to indicate scenarios where a fixture is void, such as when a match or event is
 /// canceled or invalidated. The <see cref="Reason"/> property provides additional context about why the fixture is
 /// void.</remarks>
-public record VoidFixture : Fixture
+public record VoidFixture(
+	string Division,
+	string Description,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string Venue
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public string Reason { get; set; } = "";
 }

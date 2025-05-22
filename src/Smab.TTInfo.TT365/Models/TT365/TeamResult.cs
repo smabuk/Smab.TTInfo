@@ -7,7 +7,14 @@
 /// team played at home or away, the scores for both teams, and the resulting match outcome (win, loss, or
 /// draw).</remarks>
 [DebuggerDisplay("Result: {ScoreForHome,nq} : {ScoreForAway,nq}")]
-public record TeamResult : CompletedFixture
+public record TeamResult(
+	string Division,
+	string Description,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string Venue
+) : CompletedFixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public string Opposition { get; set; } = "";
 	public string HomeOrAway { get; set; } = "";

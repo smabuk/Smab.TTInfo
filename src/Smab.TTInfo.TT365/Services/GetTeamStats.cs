@@ -135,8 +135,13 @@ public sealed partial class TT365Reader
 						other = cells[3].Attributes["title"]?.Value;
 					}
 
+					_ = DateOnly.TryParse(cells[2].InnerText,
+						   GB_CULTURE,
+						   System.Globalization.DateTimeStyles.None,
+						   out DateOnly resultDate);
+
 					bool hasPoM = cells.Length > 6;
-					TeamResult result = new()
+					TeamResult result = new(team.DivisionName, "", resultDate, "", "", "")
 					{
 						Opposition = cells[0].InnerText,
 						HomeOrAway = cells[1].InnerText,
@@ -146,12 +151,6 @@ public sealed partial class TT365Reader
 						PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
 						Other = other,
 						CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
-					};
-					if (DateOnly.TryParse(cells[2].InnerText,
-						   GB_CULTURE,
-						   System.Globalization.DateTimeStyles.None,
-						   out DateOnly tempDate)) {
-						result.Date = tempDate;
 					};
 					team.Results.Add(result);
 				}

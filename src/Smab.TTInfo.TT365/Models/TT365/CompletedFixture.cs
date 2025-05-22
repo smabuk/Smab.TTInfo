@@ -7,7 +7,14 @@
 /// completed matches,  such as the final score, the player of the match, and details about the players who
 /// participated.</remarks>
 [DebuggerDisplay("CompletedFixture: {Date,nq} - {HomeTeam,nq} ({ForHome,nq}) vs ({ForAway,nq}) {AwayTeam,nq}")]
-public record CompletedFixture : Fixture
+public record CompletedFixture(
+	string Division,
+	string Description,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string Venue
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public int ForHome { get; set; }
 	public int ForAway { get; set; }
