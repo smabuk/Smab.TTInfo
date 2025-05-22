@@ -42,13 +42,14 @@ public sealed partial class TT365Reader
 			string currentSeasonId   = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("href", "") ?? "";
 			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf('/') + 1)..];
 
-			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme);
 
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("title", "").Replace(" Tables", "") ?? "";
-			league.CurrentSeason = new(currentSeasonId, currentSeasonName)
+			Season currentSeason = new(currentSeasonId, currentSeasonName)
 			{
 				Lookups = await GetLookupTables(leagueId, currentSeasonId)
 			};
+
+			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [], currentSeason);
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				leagueId,

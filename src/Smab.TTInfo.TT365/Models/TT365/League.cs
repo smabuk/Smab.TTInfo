@@ -10,15 +10,14 @@
 /// <param name="Description"></param>
 /// <param name="URL"></param>
 /// <param name="Theme"></param>
+/// <param name="Seasons"></param>
+/// <param name="CurrentSeason"></param>
 public record League(
 	string Id,
 	string Name,
 	string Description,
 	string URL,
-	string Theme
-	)
-{
-	public Season CurrentSeason { get; set; } = new("unknown", "Unknown");
-	public List<Season> Seasons { get; set; } = [];
-
-}
+	string Theme,
+	List<Season> Seasons,
+	Season CurrentSeason
+	);
