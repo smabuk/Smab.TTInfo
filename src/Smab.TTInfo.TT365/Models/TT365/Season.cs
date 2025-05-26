@@ -14,3 +14,8 @@ public record Season(string Id, string Name)
 	public int DivisionCount => Divisions.Count;
 
 }
+
+public static class SeasonExtensions
+{
+	public static TT365SeasonId GetSeasonId(this Season season) => new(season.Id);
+}

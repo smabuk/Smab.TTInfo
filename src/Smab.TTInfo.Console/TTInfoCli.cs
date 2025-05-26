@@ -179,7 +179,7 @@ internal class TTInfoCli
 				for (int iYear = year; iYear > 2011; iYear--) {
 					string seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, iYear);
 
-					List<Fixture>? fixtures = await tt365.GetAllFixtures((TT365LeagueId)ttinfoId, seasonId);
+					List<Fixture>? fixtures = await tt365.GetAllFixtures((TT365LeagueId)ttinfoId, (TT365SeasonId)seasonId);
 					if (fixtures is not null) {
 						foreach (CompletedFixture fixture in fixtures.OfType<CompletedFixture>()) {
 							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {

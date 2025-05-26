@@ -16,3 +16,18 @@ public record PostponedFixture(
 {
 	public string Reason { get; set; } = "";
 }
+
+public static partial class FixtureExtensions
+{
+	public static PostponedFixture ToPostponed(this Fixture fixture)
+	{
+
+		return new PostponedFixture(
+			fixture.Division,
+			fixture.Description,
+			fixture.Date,
+			fixture.HomeTeam,
+			fixture.AwayTeam,
+			fixture.Venue);
+	}
+}

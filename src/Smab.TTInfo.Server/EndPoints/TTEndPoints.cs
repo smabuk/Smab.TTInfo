@@ -74,7 +74,7 @@ public static partial class TTEndPoints
 	private static async Task<Ok<List<Fixture>>> GetFixtures(ITT365Reader tt365, string leagueId, int? year, string? seasonId, string? teamName)
 	{
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
-		List<Fixture> list = await tt365.GetAllFixtures((TT365LeagueId)leagueId, seasonId) ?? [];
+		List<Fixture> list = await tt365.GetAllFixtures((TT365LeagueId)leagueId, (TT365SeasonId?)seasonId) ?? [];
 		if (teamName is not null) {
 			teamName = teamName.Replace("_", " ");
 			list = [.. list.Where(f => string.Equals(f.HomeTeam,teamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, teamName, StringComparison.CurrentCultureIgnoreCase))];
@@ -104,7 +104,7 @@ public static partial class TTEndPoints
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId);
 		}
 		catch { 
 			team = null;
@@ -136,7 +136,7 @@ public static partial class TTEndPoints
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId);
 		}
 		catch { 
 			team = null;
@@ -160,21 +160,21 @@ public static partial class TTEndPoints
 	/// <param name="year">The specific year for which the season ID is being retrieved. If <see langword="null"/>, the current season ID is
 	/// returned.</param>
 	/// <param name="seasonId">An optional pre-existing season ID. If provided and not empty, it will be returned as-is.</param>
-	/// <returns>A <see cref="string"/> representing the season ID. Returns an empty string if the league cannot be found.</returns>
-	private static async Task<string> GetSeasonId(ITT365Reader tt365, string leagueId, int? year, string? seasonId = "" )
+	/// <returns>A <see cref="TT365SeasonId?"/> representing the season ID. Returns <see langword="null"/> if the league cannot be found.</returns>
+	private static async Task<TT365SeasonId?> GetSeasonId(ITT365Reader tt365, string leagueId, int? year, string? seasonId = "" )
 	{
 		if (!string.IsNullOrWhiteSpace(seasonId)) {
-			return $"{seasonId}";
+			return new(seasonId);
 		}
 
 		League? league = await tt365.GetLeague((TT365LeagueId)leagueId);
 
 		return league switch
 		{
-			null => "",
+			null => null,
 			_ => year switch {
-					null => league.CurrentSeason.Id,
-					_    => tt365.GetSeasonId(league.CurrentSeason.Id, (int)year)
+					null => league.CurrentSeason.GetSeasonId(),
+					_    => tt365.GetSeasonId(league.CurrentSeason.GetSeasonId(), (int)year)
 				}
 		};
 	}

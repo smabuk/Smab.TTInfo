@@ -6,18 +6,18 @@ public sealed partial class TT365Reader
 	/// Converts a collection of fixtures into a CSV-formatted string.
 	/// </summary>
 	/// <remarks>The date field in the CSV output is formatted as "dd/MM/yyyy".</remarks>
-	/// <param name="Fixtures">A collection of <see cref="Fixture"/> objects to be converted. Cannot be null.</param>
+	/// <param name="fixtures">A collection of <see cref="Fixture"/> objects to be converted. Cannot be null.</param>
 	/// <returns>A CSV-formatted string where each line represents a fixture, with fields for the date, home team, away team, and
 	/// venue, separated by commas. Each line ends with a newline character.</returns>
-	public string CsvFromFixtures(ICollection<Fixture> Fixtures)
+	public string CsvFromFixtures(ICollection<Fixture> fixtures)
 	{
-		string output = "";
+		System.Text.StringBuilder output = new();
 
-		foreach (Fixture fixture in Fixtures) {
-			output += $"{fixture.Date:dd/MM/yyyy},{fixture.HomeTeam},{fixture.AwayTeam},{fixture.Venue}{Environment.NewLine}";
+		foreach (Fixture fixture in fixtures) {
+			_ = output.Append($"{fixture.Date:dd/MM/yyyy},{fixture.HomeTeam},{fixture.AwayTeam},{fixture.Venue}{Environment.NewLine}");
 		}
 
-		return output;
+		return output.ToString();
 	}
 }
 

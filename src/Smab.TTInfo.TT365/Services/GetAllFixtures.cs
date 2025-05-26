@@ -13,15 +13,17 @@ public sealed partial class TT365Reader
 	/// fetches the fixtures from an external source. The method supports various fixture types, such as completed,
 	/// postponed, rearranged, and voided fixtures, and populates their respective details.</remarks>
 	/// <param name="leagueId">The unique identifier of the league.</param>
-	/// <param name="SeasonId">The unique identifier of the season. If not provided, the current season of the league will be used.</param>
+	/// <param name="seasonId">The unique identifier of the season. If not provided, the current season of the league will be used.</param>
 	/// <returns>A list of <see cref="Fixture"/> objects representing the fixtures for the specified league and season. If no
 	/// fixtures are found, an empty list is returned.</returns>
-	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, string? SeasonId = null)
+	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? seasonId = null)
 	{
-		string? seasonId = SeasonId ?? (await GetLeague(leagueId))?.CurrentSeason.Id;
-		string filename = $@"{leagueId}_{seasonId}_fixtures_all.json";
+		seasonId ??= (await GetLeague(leagueId))?.CurrentSeason.GetSeasonId();
+		if (!seasonId.HasValue) {
+			throw new ArgumentNullException(nameof(seasonId));
+		}
 
-		ArgumentNullException.ThrowIfNull(seasonId, nameof(seasonId));
+		string filename = $@"{leagueId}_{seasonId}_fixtures_all.json";
 
 		List<Fixture> fixtures = await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? [];
 
@@ -73,11 +75,16 @@ public sealed partial class TT365Reader
 					string fixtureAwayTeam = HttpUtility.HtmlDecode(awayNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
 
 					Fixture fixture = new(fixtureDivision, fixtureDescription, fixtureDate, fixtureHomeTeam, fixtureAwayTeam, fixtureVenue);
+
+					if (fixtureType is FixtureType.Fixture or FixtureType.Unknown) {
+						fixtures.Add(fixture);
+					}
+
 					if (fixtureType is FixtureType.Completed) {
-						CompletedFixture completedFixture = (CompletedFixture)fixture;
-						completedFixture.ForHome = int.Parse(homeNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						completedFixture.ForAway = int.Parse(awayNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
-						completedFixture.CardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a")?.Attributes["href"].Value.Trim() ?? ""}";
+						CompletedFixture cf = fixture.ToCompleted();
+						cf.ForHome = int.Parse(homeNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						cf.ForAway = int.Parse(awayNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
+						cf.CardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("div/div[@class='matchCardIcon']/a")?.Attributes["href"].Value.Trim() ?? ""}";
 						HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//div[@itemprop='performer' and starts-with(@class, 'player')]");
 						if (playerNodes is not null) {
 							foreach (HtmlNode playerNode in playerNodes) {
@@ -93,33 +100,36 @@ public sealed partial class TT365Reader
 								bool playerPoM = playerNode.HasClass("pom");
                                 MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
 								if (playerNode.ParentNode.HasClass("homeTeam")) {
-									completedFixture.HomePlayers.Add(matchPlayer);
+									cf.HomePlayers.Add(matchPlayer);
 								} else {
-									completedFixture.AwayPlayers.Add(matchPlayer);
+									cf.AwayPlayers.Add(matchPlayer);
 								}
 							}
 						}
+
+						fixtures.Add(cf);
 					}
 
 					if (fixtureType is FixtureType.Postponed) {
-						PostponedFixture pf = (PostponedFixture)fixture;
+						PostponedFixture pf = fixture.ToPostponed();
 						pf.Reason = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]")?.Attributes["title"].Value.Trim()) ?? "";
+						fixtures.Add(pf);
 					}
 
 					if (fixtureType is FixtureType.Rearranged) {
-						RearrangedFixture rf = (RearrangedFixture)fixture;
+						RearrangedFixture rf = fixture.ToRearranged();
 						string title = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]")?.Attributes["title"].Value.Trim()) ?? "";
 						string[] tokens = title.Split([':', '-'], StringSplitOptions.TrimEntries);
 						rf.Reason = tokens[^1];
 						rf.OriginalDate = DateOnly.Parse(tokens[2].Split([' '])[0]);
+						fixtures.Add(rf);
 					}
 
 					if (fixtureType is FixtureType.Void) {
-						VoidFixture vf = (VoidFixture)fixture;
+						VoidFixture vf = fixture.ToVoid();
 						vf.Reason = fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]")?.Attributes["title"].Value.Trim() ?? "";
+						fixtures.Add(vf);
 					}
-
-					fixtures.Add(fixture);
 				}
 			}
 		}

@@ -29,3 +29,18 @@ public record CompletedFixture(
 
 	public string Score => $"{ForHome} - {ForAway}";
 }
+
+public static partial class FixtureExtensions
+{
+	public static CompletedFixture ToCompleted(this Fixture fixture) 
+	{
+		
+		return new CompletedFixture(
+			fixture.Division,
+			fixture.Description,
+			fixture.Date,
+			fixture.HomeTeam,
+			fixture.AwayTeam,
+			fixture.Venue);
+	}
+}

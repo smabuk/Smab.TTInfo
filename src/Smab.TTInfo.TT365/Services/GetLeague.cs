@@ -35,14 +35,13 @@ public sealed partial class TT365Reader
 
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
-			string leagueURL = url;
-			string leagueName =        HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText ?? "");
+			string leagueURL         = url;
+			string leagueName        = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText ?? "");
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "")) ?? "";
 			string leagueTheme       = doc.DocumentNode.SelectSingleNode("//body")?.GetAttributeValue("class", "") ?? "";
-			string currentSeasonId   = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("href", "") ?? "";
-			currentSeasonId = currentSeasonId[(currentSeasonId.LastIndexOf('/') + 1)..];
-
-
+			string currentSeasonIdAsString = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("href", "") ?? "";
+			
+			TT365SeasonId currentSeasonId = new(currentSeasonIdAsString[(currentSeasonIdAsString.LastIndexOf('/') + 1)..]);
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("title", "").Replace(" Tables", "") ?? "";
 			Season currentSeason = new(currentSeasonId, currentSeasonName)
 			{
@@ -64,10 +63,10 @@ public sealed partial class TT365Reader
 				league.Seasons.Add(new(seasonId, seasonName));
 			}
 		} else {
-			league.CurrentSeason.Lookups = await GetLookupTables(leagueId, league.CurrentSeason.Id);
+			league.CurrentSeason.Lookups = await GetLookupTables(leagueId, league.CurrentSeason.GetSeasonId());
 		}
 
-		league.CurrentSeason.Divisions = await GetDivisions(leagueId, league.CurrentSeason.Id);
+		league.CurrentSeason.Divisions = await GetDivisions(leagueId, league.CurrentSeason.GetSeasonId());
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFileToCache(jsonString, $"{leagueId}.json");

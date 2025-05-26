@@ -17,3 +17,19 @@ public record VoidFixture(
 {
 	public string Reason { get; set; } = "";
 }
+
+public static partial class FixtureExtensions
+{
+	public static VoidFixture ToVoid(this Fixture fixture)
+	{
+
+		return new VoidFixture(
+			fixture.Division,
+			fixture.Description,
+			fixture.Date,
+			fixture.HomeTeam,
+			fixture.AwayTeam,
+			fixture.Venue);
+	}
+}
+

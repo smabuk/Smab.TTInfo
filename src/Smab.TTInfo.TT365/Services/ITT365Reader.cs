@@ -8,16 +8,16 @@ public interface ITT365Reader
 	/// <summary>
 	/// Gets the season ID for a given year.
 	/// </summary>
-	string GetSeasonId(string seasonId, int year);
+	TT365SeasonId GetSeasonId(string seasonId, int year);
 
 	/// <summary>
 	/// Gets all fixtures for a league and optional season.
 	/// </summary>
-	Task<List<Fixture>>   GetAllFixtures(TT365LeagueId leagueId, string? SeasonId = null);
+	Task<List<Fixture>>   GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? SeasonId = null);
 	/// <summary>
 	/// Gets all divisions for a league and season.
 	/// </summary>
-	Task<List<Division>>  GetDivisions(TT365LeagueId leagueId, string SeasonId = "");
+	Task<List<Division>>  GetDivisions(TT365LeagueId leagueId, TT365SeasonId SeasonId);
 	/// <summary>
 	/// Gets the league details for a given league ID.
 	/// </summary>
@@ -25,11 +25,11 @@ public interface ITT365Reader
 	/// <summary>
 	/// Gets player statistics for a player and season.
 	/// </summary>
-	Task<Player?>         GetPlayerStats(TT365LeagueId leagueId, Player player, string SeasonId = "");
+	Task<Player?>         GetPlayerStats(TT365LeagueId leagueId, Player player, TT365SeasonId? SeasonId = null);
 	/// <summary>
 	/// Gets team statistics for a team and season.
 	/// </summary>
-	Task<Team?>           GetTeamStats(TT365LeagueId leagueId, string TeamName, string SeasonId = "");
+	Task<Team?>           GetTeamStats(TT365LeagueId leagueId, string TeamName, TT365SeasonId? SeasonId = null);
 
 	/// <summary>
 	/// Generates a CSV string from a collection of fixtures.

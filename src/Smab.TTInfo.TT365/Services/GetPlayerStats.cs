@@ -18,16 +18,16 @@ public sealed partial class TT365Reader
 	/// <param name="seasonId">The unique identifier of the season. If not provided or empty, the current season of the league will be used.</param>
 	/// <returns>A <see cref="Player"/> object containing the updated statistics for the specified player, or <see langword="null"/>
 	/// if the league cannot be found.</returns>
-	public async Task<Player?> GetPlayerStats(TT365LeagueId leagueId, Player player, string seasonId = "")
+	public async Task<Player?> GetPlayerStats(TT365LeagueId leagueId, Player player, TT365SeasonId? seasonId = null)
 	{
 		League? league = await GetLeague(leagueId);
 		if (league is null) {
 			return null;
 		}
 
-		if (string.IsNullOrWhiteSpace(seasonId)) {
+		if (seasonId is null) {
 			if (league is null) { return null; };
-			seasonId = league.CurrentSeason.Id;
+			seasonId = league.CurrentSeason.GetSeasonId();
 		}
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";

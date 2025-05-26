@@ -8,13 +8,12 @@ public sealed partial class TT365Reader
 	/// <summary>
 	/// Fixes known issues in player names (e.g., missing apostrophes).
 	/// </summary>
-	/// <param name="PlayerName">The original player name.</param>
+	/// <param name="playerName">The original player name.</param>
 	/// <returns>The fixed player name.</returns>
-	public static string FixPlayerName(string PlayerName)
+	public static string FixPlayerName(string playerName)
 	{
-		string playerName = PlayerName;
+		playerName = HttpUtility.HtmlDecode(playerName).Trim();
 
-		playerName = HttpUtility.HtmlDecode(playerName);
 		playerName = playerName.Replace("OSullivan", "O'Sullivan", StringComparison.InvariantCultureIgnoreCase);
 		playerName = playerName.Replace("OHalloran", "O'Halloran", StringComparison.InvariantCultureIgnoreCase);
 

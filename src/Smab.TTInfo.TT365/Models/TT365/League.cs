@@ -21,3 +21,13 @@ public record League(
 	List<Season> Seasons,
 	Season CurrentSeason
 	);
+
+public static class LeagueExtensions
+{
+	/// <summary>
+	/// Gets the current season of the league.
+	/// </summary>
+	/// <param name="league">The league from which to retrieve the current season.</param>
+	/// <returns>The current season of the league.</returns>
+	public static Season GetCurrentSeason(this League league) => league.CurrentSeason;
+}

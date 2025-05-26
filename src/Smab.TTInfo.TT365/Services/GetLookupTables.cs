@@ -15,7 +15,7 @@ public sealed partial class TT365Reader
 	/// <param name="seasonId">The unique identifier for the season.</param>
 	/// <returns>A <see cref="LookupTables"/> object containing lookup data for divisions, clubs, teams, and venues. If the data is
 	/// not available in the cache, it is fetched from the source and cached for future use.</returns>
-	public async Task<LookupTables> GetLookupTables(TT365LeagueId leagueId, string seasonId)
+	public async Task<LookupTables> GetLookupTables(TT365LeagueId leagueId, TT365SeasonId seasonId)
 	{
 		LookupTables lookup = new();
 

@@ -89,12 +89,12 @@
 			.Select(g => g.Key)
 			.ToList();
 			StateHasChanged();
-			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
+			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].GetSeasonId());
 		}
 
 	}
 
-	private async Task UpdatePlayerStatsFromPreviousSeasonAsync(string seasonId)
+	private async Task UpdatePlayerStatsFromPreviousSeasonAsync(TT365SeasonId seasonId)
 	{
 		if (previousPlayerResults.ContainsKey(seasonId)) {
 			return;

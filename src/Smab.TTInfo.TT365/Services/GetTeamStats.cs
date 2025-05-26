@@ -12,33 +12,33 @@ public sealed partial class TT365Reader
 	/// empty <see cref="Team"/> object is returned. The method also attempts to load additional details such as players,
 	/// results, and rankings from the associated HTML document.</remarks>
 	/// <param name="leagueId">The unique identifier for the table tennis information source.</param>
-	/// <param name="TeamName">The name of the team for which statistics are to be retrieved. This parameter is case-insensitive.</param>
-	/// <param name="SeasonId">The unique identifier for the season. If not provided, the current season for the league associated with <paramref
+	/// <param name="teamName">The name of the team for which statistics are to be retrieved. This parameter is case-insensitive.</param>
+	/// <param name="seasonId">The unique identifier for the season. If not provided, the current season for the league associated with <paramref
 	/// name="leagueId"/> will be used.</param>
 	/// <returns>A <see cref="Team"/> object containing the team's statistics, including players, results, and rankings. Returns
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
-	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string TeamName, string SeasonId = "")
+	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
-		if (string.IsNullOrWhiteSpace(SeasonId)) {
+		if (seasonId is null) {
 			League? league = await GetLeague(leagueId);
 			if (league is null) { return null; };
-			SeasonId = league.CurrentSeason.Id;
+			seasonId = league.CurrentSeason.GetSeasonId();
 		}
 
-		List<Division> divisions = await GetDivisions(leagueId, SeasonId);
+		List<Division> divisions = await GetDivisions(leagueId, seasonId ?? new());
 		if (divisions.Count == 0) {
 			return null;
-		};
+		}
 
-		string filename = $@"{leagueId}_{SeasonId}_team_stats_{TeamName}.json";
+		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamName}.json";
 		Team team = await LoadAsync<Team>(leagueId, null, filename) ?? null!;
 
 		if (team is not null) { return team; }
 
 		team = new();
-		string lookupTeamName = TeamName.Replace("_", " ");
+		string lookupTeamName = teamName.Replace("_", " ");
 
-		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(TeamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
+		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,

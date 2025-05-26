@@ -18,3 +18,18 @@ public record RearrangedFixture(
 	public DateOnly OriginalDate {  get; set; }
 	public string Reason { get; set; } = "";
 }
+
+public static partial class FixtureExtensions
+{
+	public static RearrangedFixture ToRearranged(this Fixture fixture)
+	{
+
+		return new RearrangedFixture(
+			fixture.Division,
+			fixture.Description,
+			fixture.Date,
+			fixture.HomeTeam,
+			fixture.AwayTeam,
+			fixture.Venue);
+	}
+}

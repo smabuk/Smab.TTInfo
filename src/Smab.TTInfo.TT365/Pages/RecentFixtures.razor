@@ -125,7 +125,7 @@
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		DateOnly today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
 
-		fixtures = (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.CurrentSeason.Id) ?? [])
+		fixtures = (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.CurrentSeason.GetSeasonId()) ?? [])
 						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
 						.Where(f => f is CompletedFixture || f is PostponedFixture)
 						.OrderByDescending(f => f.Date)
