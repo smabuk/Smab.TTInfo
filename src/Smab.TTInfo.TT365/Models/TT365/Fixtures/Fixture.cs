@@ -5,6 +5,7 @@
 /// </summary>
 /// <remarks>This class serves as a base type for various fixture states, such as completed, postponed,
 /// rearranged, or voided. Derived types are distinguished using JSON type discriminators.</remarks>
+[JsonDerivedType(typeof(Fixture)          , typeDiscriminator:  "F")]
 [JsonDerivedType(typeof(CompletedFixture) , typeDiscriminator: "CF")]
 [JsonDerivedType(typeof(PostponedFixture) , typeDiscriminator: "PF")]
 [JsonDerivedType(typeof(RearrangedFixture), typeDiscriminator: "RF")]

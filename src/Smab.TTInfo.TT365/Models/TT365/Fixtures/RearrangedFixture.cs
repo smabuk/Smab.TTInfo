@@ -12,24 +12,7 @@ public record RearrangedFixture(
 	DateOnly Date,
 	string HomeTeam,
 	string AwayTeam,
-	string Venue
-) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
-{
-	public DateOnly OriginalDate {  get; set; }
-	public string Reason { get; set; } = "";
-}
-
-public static partial class FixtureExtensions
-{
-	public static RearrangedFixture ToRearranged(this Fixture fixture)
-	{
-
-		return new RearrangedFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue);
-	}
-}
+	string Venue,
+	DateOnly OriginalDate,
+	string Reason = ""
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue);

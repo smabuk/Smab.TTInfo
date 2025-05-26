@@ -12,24 +12,6 @@ public record VoidFixture(
 	DateOnly Date,
 	string HomeTeam,
 	string AwayTeam,
-	string Venue
-) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
-{
-	public string Reason { get; set; } = "";
-}
-
-public static partial class FixtureExtensions
-{
-	public static VoidFixture ToVoid(this Fixture fixture)
-	{
-
-		return new VoidFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue);
-	}
-}
-
+	string Venue,
+	string Reason = ""
+) : Fixture(Division, Description, Date, HomeTeam, AwayTeam, Venue);
