@@ -45,115 +45,112 @@ public sealed partial class TT365Reader
 				team.URL)
 			?? new();
 
-		HtmlNode? teamNode = doc.DocumentNode.SelectSingleNode("//div[@id='TeamStats']");
+		HtmlNode? teamNode = doc.DocumentNode.GetFirstNodeById("TeamStats");
 
-		if (teamNode == null) {
-			return team;
-		}
+		if (teamNode is null) { return team; }
 
-		foreach (HtmlNode? node in doc.DocumentNode.SelectNodes("//div[@id='TeamStats']") ?? EMPTY_NODE_COLLECTION) {
-			team.Caption = node.SelectSingleNode("//div[@class='caption']")?.InnerText.Replace("&gt;", ">") ?? "";
-			team.Players = [];
-			team.Results = [];
-			try {
-				team.Captain = teamNode.SelectNodes("//div[text()='Captain']")?.Single().NextSibling.NextSibling.InnerText ?? "";
-			}
-			catch (Exception) {
-			}
+		team.Caption = teamNode.GetFirstNodeByClass("caption")?.InnerText.Replace("&gt;", ">") ?? "";
+		team.Players = [];
+		team.Results = [];
+		team.Captain = teamNode.SelectNodes("//div[text()='Captain']")?.First()?.NextSibling.NextSibling.InnerText ?? "";
 
-			HtmlNode? playertableNode = node.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
-			if (playertableNode is not null) {
-				foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
-					HtmlNode[] cells = [.. playerRow.Descendants("td")];
-					bool hasPoM = cells.Length > 5;
-					Player player = new()
-					{
-						Name = FixPlayerName(cells[0].InnerText.Trim()),
-						PlayerURL = $"{"https"}://www.tabletennis365.com{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
-						Played = int.Parse(cells[1].InnerText),
-						WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
-						LeagueRanking = int.Parse(cells[3].InnerText),
-						PoMAwards = hasPoM ? cells[4].InnerText : "",
-					};
-					List<string>? form = [.. (from f in cells[hasPoM ? 5 : 4].Descendants("a")
-									  select f.InnerText)];
-					player.Form = string.Join(",", form);
-					List<string> rankings = (from r in cells[3].Descendants("a")
-									 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
-					foreach (string? rank in rankings) {
-						if (rank.Contains(':')) {
-							string[]? rTemp = rank.Split(":");
-							string rankType = rTemp[0].Trim();
-							if (int.TryParse(rTemp[1].Trim(), out int rankValue)) {
-								switch (rankType) {
-									case "OLOP":
-									case "OLOP TTC": {
-											player.ClubRanking = rankValue;
-											break;
-										}
-									case "Reading": {
-											player.LeagueRanking = rankValue;
-											break;
-										}
-									case "Berkshire": {
-											player.CountyRanking = rankValue;
-											break;
-										}
-									case "TTE > South East Region":
-									case "South East": {
-											player.RegionalRanking = rankValue;
-											break;
-										}
-									case "National": {
-											player.NationalRanking = rankValue;
-											break;
-										}
-									default:
+		HtmlNode? playertableNode = teamNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
+		if (playertableNode is not null) {
+			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
+				HtmlNode[] cells = [.. playerRow.Descendants("td")];
+				bool hasPoM = cells.Length > 5;
+				Player player = new()
+				{
+					Name = FixPlayerName(cells[0].InnerText.Trim()),
+					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
+					Played = int.Parse(cells[1].InnerText),
+					WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
+					LeagueRanking = int.Parse(cells[3].InnerText),
+					PoMAwards = hasPoM ? cells[4].InnerText : "",
+				};
+				List<string>? form = [.. 
+					from f in cells[hasPoM ? 5 : 4].Descendants("a")
+					select f.InnerText];
+				player.Form = string.Join(",", form);
+				List<string> rankings = (from r in cells[3].Descendants("a")
+									select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
+				foreach (string? rank in rankings) {
+					if (rank.Contains(':')) {
+						string[]? rTemp = rank.Split(":");
+						string rankType = rTemp[0].Trim();
+						if (int.TryParse(rTemp[1].Trim(), out int rankValue)) {
+							switch (rankType) {
+								case "OLOP":
+								case "OLOP TTC": {
+										player.ClubRanking = rankValue;
 										break;
-								}
+									}
+								case "Reading": {
+										player.LeagueRanking = rankValue;
+										break;
+									}
+								case "Berkshire": {
+										player.CountyRanking = rankValue;
+										break;
+									}
+								case "TTE > South East Region":
+								case "South East": {
+										player.RegionalRanking = rankValue;
+										break;
+									}
+								case "National": {
+										player.NationalRanking = rankValue;
+										break;
+									}
+								default:
+									break;
 							}
 						}
 					}
-
-					team.Players.Add(player);
 				}
+
+				team.Players.Add(player);
 			}
+		}
 
-			HtmlNode? resultstableNode = node.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false);
-			if (resultstableNode is not null) {
-				foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
-					HtmlNode[] cells = [.. resultRow.Descendants("td")];
-					string score = cells[3].InnerText;
-					string? other = null;
-					if (score.Equals("void", StringComparison.InvariantCultureIgnoreCase)) {
-						score = "0 - 0";
-						other = cells[3].Attributes["title"]?.Value;
-					}
-
-					if (score.EndsWith(" (A)")) {
-						score = score.Replace(" (A)", "");
-						other = cells[3].Attributes["title"]?.Value;
-					}
-
-					_ = DateOnly.TryParse(cells[2].InnerText,
-						   GB_CULTURE,
-						   System.Globalization.DateTimeStyles.None,
-						   out DateOnly resultDate);
-
-					bool hasPoM = cells.Length > 6;
-					TeamResult result = new(team.DivisionName, "", resultDate, "", "", "")
-					{
-						Opposition = cells[0].InnerText,
-						HomeOrAway = cells[1].InnerText,
-						ForHome    = int.Parse(score.Split("-")[0]),
-						ForAway    = int.Parse(score.Split("-")[1]),
-						Points     = int.Parse(cells[4].InnerText),
-						PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
-						Other = other,
-						CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}"
-					};
-					team.Results.Add(result);
+		HtmlNode? resultstableNode = teamNode.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false);
+		if (resultstableNode is not null) {
+			foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
+				HtmlNode[] cells = [.. resultRow.Descendants("td")];
+				string score = cells[3].InnerText;
+				string? other = null;
+				if (score.Equals("void", StringComparison.InvariantCultureIgnoreCase)) {
+					score = "0 - 0";
+					other = cells[3].Attributes["title"]?.Value;
 				}
+
+				if (score.EndsWith(" (A)")) {
+					score = score.Replace(" (A)", "");
+					other = cells[3].Attributes["title"]?.Value;
+				}
+
+				_ = DateOnly.TryParse(cells[2].InnerText,
+						GB_CULTURE,
+						System.Globalization.DateTimeStyles.None,
+						out DateOnly resultDate);
+
+				bool hasPoM = cells.Length > 6;
+				TeamResult teamResult = new(team.DivisionName, "", resultDate, "", "", "")
+				{
+					// Set the properties for the CompletedFixture base record
+					ForHome          = int.Parse(score.Split("-")[0]),
+					ForAway          = int.Parse(score.Split("-")[1]),
+					Other            = other,
+					CardURL          = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
+					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
+
+					// Set the properties for the TeamResult record
+					Points     = int.Parse(cells[4].InnerText),
+					Opposition = cells[0].InnerText,
+					HomeOrAway = cells[1].InnerText,
+				};
+
+				team.Results.Add(teamResult);
 			}
 		}
 
