@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.TT365.Models.TT365;
-
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
@@ -38,33 +36,33 @@ public sealed partial class TT365Reader
 				}
 
 				string divName = divTable.SelectSingleNode("caption")?.InnerText.Split(">").Last().Trim() ?? "";
-				Division division = new(Id: lookupTables.DivisionLookup.Where(d => d.Name == divName).Single().Id, Name: divName);
-				divisions.Add(division);
+				string divId   = lookupTables.DivisionLookup.Where(d => d.Name == divName).Single().Id;
 
+				List<Team> teams = [];
 				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
+					string teamName = teamRow.ChildNodes[3].FirstChild.InnerText.Trim();
 					Team team = new()
 					{
-						DivisionName = divName,
-						Name = teamRow.ChildNodes[3].FirstChild.InnerText.Trim(),
+						DivisionName     = divName,
+						Name             = teamName,
+						Id               = lookupTables.TeamLookup.Where(t => t.Name == teamName).Single().Id,
+						ShortName        = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim()),
+						URL              = $"{TT365_COM}{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}",
+						LeaguePosition   = teamRow.GetIntValueOrDefault("pos", null),
+						Played           = teamRow.GetIntValue("played"),
+						Won              = teamRow.GetIntValue("won"),
+						Drawn            = teamRow.GetIntValue("drawn"),
+						Lost             = teamRow.GetIntValue("lost"),
+						SetsFor          = teamRow.GetIntValue("setsFor"),
+						SetsAgainst      = teamRow.GetIntValue("setsAgainst"),
+						PointsAdjustment = teamRow.GetIntValue("pointAdj"),
+						Points           = teamRow.GetIntValue("points"),
 					};
-					team.Id        = lookupTables.TeamLookup.Where(t => t.Name == team.Name).Single().Id;
-					team.ShortName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
-					team.URL       = $"{TT365_COM}{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}";
 
-					if (int.TryParse(teamRow.SelectSingleNode(@"td[contains(@class, 'pos')]")?.InnerText ?? "0", out int leaguePosition)) {
-						team.LeaguePosition = leaguePosition;
-					};
-					team.Played           = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'played')]")?.InnerText ?? "0");
-					team.Won              = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'won')]")?.InnerText ?? "0");
-					team.Drawn            = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'drawn')]")?.InnerText ?? "0");
-					team.Lost             = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'lost')]")?.InnerText ?? "0");
-					team.SetsFor          = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'setsFor')]")?.InnerText ?? "0");
-					team.SetsAgainst      = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'setsAgainst')]")?.InnerText ?? "0");
-					team.PointsAdjustment = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'pointAdj')]")?.InnerText ?? "0");
-					team.Points           = int.Parse(teamRow.SelectSingleNode(@"td[contains(@class, 'points')]")?.InnerText ?? "0");
-
-					division.Teams.Add(team);
+					teams.Add(team);
 				}
+
+				divisions.Add(new(divId, divName, teams));
 			}
 		}
 
@@ -74,4 +72,3 @@ public sealed partial class TT365Reader
 		return divisions;
 	}
 }
-
