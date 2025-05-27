@@ -64,7 +64,7 @@ internal class TTInfoCli
 
 		AnsiConsole.MarkupLine($"{league.Name}   {league.URL}");
 
-		string seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, year);
+		TT365SeasonId seasonId = tt365.GetSeasonId(league.CurrentSeason.Id, year);
 
 		AnsiConsole.MarkupLine("");
 		AnsiConsole.MarkupLine($"{seasonId}");
@@ -99,8 +99,8 @@ internal class TTInfoCli
 
 				AnsiConsole.MarkupLine($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3} {TT365Reader.FixPlayerName(newTeam.Captain),-20} {message}");
 				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? []) {
-					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase);
-					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.Contains(showTeamPlayers, StringComparison.OrdinalIgnoreCase);
+					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase);
+					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.Contains(showTeamPlayers, StringComparison.InvariantCultureIgnoreCase);
 					if (showTeamDetails || showPlayerMatchDetails) {
 						AnsiConsole.MarkupLine($"         {TT365Reader.FixPlayerName(player.Name),-25} {player.Played,6} {(int)player.WinPercentage,3}%");
 					};
@@ -109,7 +109,7 @@ internal class TTInfoCli
 							.Spinner(Spinner.Known.Circle)
 							.AutoRefresh(true)
 							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player, seasonId) ?? new());
-						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.OrdinalIgnoreCase))).OrderBy(pr => pr.Date)) {
+						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase))).OrderBy(pr => pr.Date)) {
 							//bool limitToOpponentMatchDetails = opponentSearchName is null || playerResult.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName);
 							string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
 							dateString = dateString.Length <= 9 ? dateString : dateString[..9];
@@ -182,11 +182,11 @@ internal class TTInfoCli
 					List<Fixture>? fixtures = await tt365.GetAllFixtures((TT365LeagueId)ttinfoId, (TT365SeasonId)seasonId);
 					if (fixtures is not null) {
 						foreach (CompletedFixture fixture in fixtures.OfType<CompletedFixture>()) {
-							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase))) {
+							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
 								_ = players.Add(new SeasonPlayer(matchPlayer.Name, matchPlayer.Id, seasonId));
 							}
 
-							foreach (MatchPlayer matchPlayer in fixture.AwayPlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase))) {
+							foreach (MatchPlayer matchPlayer in fixture.AwayPlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
 								_ = players.Add(new SeasonPlayer(matchPlayer.Name, matchPlayer.Id, seasonId));
 							}
 						}
@@ -208,10 +208,10 @@ internal class TTInfoCli
 							Name = p1.Name,
 							PlayerId = p1.PlayerId,
 						};
-						return await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player1, p1.SeasonId) ?? new();
+						return await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player1, (TT365SeasonId?)p1.SeasonId) ?? new();
 					});
 
-				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.OrdinalIgnoreCase)).OrderBy(pr => pr.Date)) {
+				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase)).OrderBy(pr => pr.Date)) {
 					string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
 					dateString = dateString.Length <= 9 ? dateString : dateString[..9];
 					string resultColor = GetResultColor(playerResult);
@@ -237,7 +237,7 @@ internal class TTInfoCli
 	{
 		return playerResult.Result.ToLowerInvariant() switch
 		{
-			"win" => "green",
+			"win"  => "green",
 			"loss" => "red",
 			_ => AnsiConsole.Foreground.ToString(),
 		};

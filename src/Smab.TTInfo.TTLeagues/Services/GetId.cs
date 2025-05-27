@@ -17,7 +17,7 @@ public sealed partial class TTLeaguesReader
 		List<LookupValue>? lookup = await GetLookupTables(ttinfoId);
 
 		return lookup
-			?.FirstOrDefault(l => l.Type == type && l.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+			?.FirstOrDefault(l => l.Type == type && l.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 			?.Id;
 	}
 }

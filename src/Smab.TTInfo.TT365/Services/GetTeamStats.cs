@@ -38,7 +38,7 @@ public sealed partial class TT365Reader
 		team = new();
 		string lookupTeamName = teamName.Replace("_", " ");
 
-		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.OrdinalIgnoreCase)) ?? new();
+		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,

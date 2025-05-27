@@ -82,7 +82,7 @@
 
 	string CalculateDivisionName(string name, int id)
 	{
-		if (String.IsNullOrWhiteSpace(name) || String.Equals(name, "no division", StringComparison.OrdinalIgnoreCase)) {
+		if (String.IsNullOrWhiteSpace(name) || String.Equals(name, "no division", StringComparison.InvariantCultureIgnoreCase)) {
 			if (divisionNames.ContainsKey(id)) {
 				name = divisionNames[id];
 			} else {
@@ -93,7 +93,7 @@
 				divisionNames.Add(id, name);
 			}
 		}
-		return name.Replace("division", "", StringComparison.OrdinalIgnoreCase).Trim();
+		return name.Replace("division", "", StringComparison.InvariantCultureIgnoreCase).Trim();
 	}
 
 	string CalculateMatchResult(int scoreFor, int scoreAgainst)
