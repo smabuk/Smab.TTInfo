@@ -23,4 +23,7 @@ internal static class HtmlNodeExtensions
 		.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
 		.InnerText
 		.Trim() ?? "";
+
+	public static HtmlNode? GetSingleNodeByClass(this HtmlNode node, string className)
+		=> node.SelectSingleNode($"div[@class='{className}']");
 }

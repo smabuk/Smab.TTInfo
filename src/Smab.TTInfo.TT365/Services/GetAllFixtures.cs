@@ -58,14 +58,14 @@ public sealed partial class TT365Reader
 				if (nodeClass.HasClass("fixture")) {
 					string fixtureDescription = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
 					_ = DateOnly.TryParse(fixtureNode.Descendants("time").SingleOrDefault()?.Attributes["datetime"].Value, out DateOnly fixtureDate);
-					string fixtureDivision = fixtureNode.SelectSingleNode("div[@class='div']")?.InnerText ?? "";
+					string fixtureDivision = fixtureNode.GetSingleNodeByClass("div")?.InnerText ?? "";
 					string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("div[@class='venue']/span/a")?.InnerText ?? "");
 
-					HtmlNode? homeNode = fixtureNode.SelectSingleNode("div[@class='home']");
-					string fixtureHomeTeam = HttpUtility.HtmlDecode(homeNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
+					HtmlNode? homeNode = fixtureNode.GetSingleNodeByClass("home");
+					HtmlNode? awayNode = fixtureNode.GetSingleNodeByClass("away");
 
-					HtmlNode? awayNode = fixtureNode.SelectSingleNode("div[@class='away']");
-					string fixtureAwayTeam = HttpUtility.HtmlDecode(awayNode?.Descendants("div").Where(x => x.HasClass("teamName")).SingleOrDefault()?.InnerText) ?? "";
+					string fixtureHomeTeam = GetTeamName(homeNode);
+					string fixtureAwayTeam = GetTeamName(awayNode);
 
 					Fixture fixture = new(fixtureDivision, fixtureDescription, fixtureDate, fixtureHomeTeam, fixtureAwayTeam, fixtureVenue);
 
@@ -88,6 +88,15 @@ public sealed partial class TT365Reader
 		_ = SaveFileToCache(jsonString, filename);
 
 		return fixtures;
+
+		static string GetTeamName(HtmlNode? homeNode)
+			=> HttpUtility.HtmlDecode(
+				homeNode?
+				.Descendants("div")
+				.Where(x => x.HasClass("teamName"))
+				.SingleOrDefault()?
+				.InnerText
+				) ?? "";
 	}
 
 	/// <summary>
