@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.TT365.Services;
+﻿namespace Smab.TTInfo.TT365.Interfaces;
 
 /// <summary>
 /// Defines the contract for reading TT365 league, team, player, and fixture data.
