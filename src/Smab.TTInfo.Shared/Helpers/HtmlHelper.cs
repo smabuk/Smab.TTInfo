@@ -15,6 +15,6 @@ public static class HtmlHelper
 	{
 		string[] classValues = classString.Split(" ");
 
-		return classValues.Contains(className, StringComparer.InvariantCultureIgnoreCase);
+		return classValues.Contains(className, StringComparer.OrdinalIgnoreCase);
 	}
 }

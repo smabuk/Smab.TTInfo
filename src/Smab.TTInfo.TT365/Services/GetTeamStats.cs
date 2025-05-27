@@ -38,7 +38,7 @@ public sealed partial class TT365Reader
 		team = new();
 		string lookupTeamName = teamName.Replace("_", " ");
 
-		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
+		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.OrdinalIgnoreCase)) ?? new();
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,
@@ -119,7 +119,7 @@ public sealed partial class TT365Reader
 				HtmlNode[] cells = [.. resultRow.Descendants("td")];
 				string score = cells[3].InnerText;
 				string? other = null;
-				if (score.Equals("void", StringComparison.InvariantCultureIgnoreCase)) {
+				if (score.Equals("void", StringComparison.OrdinalIgnoreCase)) {
 					score = "0 - 0";
 					other = cells[3].Attributes["title"]?.Value;
 				}

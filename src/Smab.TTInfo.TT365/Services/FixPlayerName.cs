@@ -14,8 +14,8 @@ public sealed partial class TT365Reader
 	{
 		playerName = HttpUtility.HtmlDecode(playerName).Trim();
 
-		playerName = playerName.Replace("OSullivan", "O'Sullivan", StringComparison.InvariantCultureIgnoreCase);
-		playerName = playerName.Replace("OHalloran", "O'Halloran", StringComparison.InvariantCultureIgnoreCase);
+		playerName = playerName.Replace("OSullivan", "O'Sullivan", StringComparison.OrdinalIgnoreCase);
+		playerName = playerName.Replace("OHalloran", "O'Halloran", StringComparison.OrdinalIgnoreCase);
 
 		return playerName;
 	}

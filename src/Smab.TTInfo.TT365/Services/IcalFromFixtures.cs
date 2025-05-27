@@ -36,8 +36,8 @@ public sealed partial class TT365Reader
 				Description  = $"\n"
 			};
 
-			if (fixture.Venue.Contains("CURZON", StringComparison.InvariantCultureIgnoreCase)
-			|| fixture.Venue.Contains("RBL", StringComparison.InvariantCultureIgnoreCase)) // 7pm start time
+			if (fixture.Venue.Contains("CURZON", StringComparison.OrdinalIgnoreCase)
+			|| fixture.Venue.Contains("RBL", StringComparison.OrdinalIgnoreCase)) // 7pm start time
 			{
 				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
 			}

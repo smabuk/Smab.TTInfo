@@ -10,11 +10,11 @@
 	[Parameter, EditorRequired] public string Icon { get; set; } = "";
 	[Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-	string iconClass => Icon.StartsWith("bi", StringComparison.InvariantCultureIgnoreCase) switch
+	string iconClass => Icon.StartsWith("bi", StringComparison.OrdinalIgnoreCase) switch
 	{
 		true  => $"bi {Icon}",
 		false => "emoji",
 	};
 
-	string? icon => iconClass.StartsWith("bi", StringComparison.InvariantCultureIgnoreCase) ? null : Icon;
+	string? icon => iconClass.StartsWith("bi", StringComparison.OrdinalIgnoreCase) ? null : Icon;
 }
