@@ -16,6 +16,7 @@
 ## Coding Style
 * Always use explict types instead of `var`. NEVER USE `var`.
 * Apply coding style defined in `.editorconfig`.
+* Use collection expressions
 * Use pattern matching and switch expressions wherever possible.
 * Use functional programming techniques instead of imperative programming.
 * Prefer file-scoped namespace declarations and single-line using directives.

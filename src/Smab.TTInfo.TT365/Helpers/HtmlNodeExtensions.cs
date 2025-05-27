@@ -26,4 +26,13 @@ internal static class HtmlNodeExtensions
 
 	public static HtmlNode? GetSingleNodeByClass(this HtmlNode node, string className)
 		=> node.SelectSingleNode($"div[@class='{className}']");
+
+	public static HtmlNode? GetFirstNodeByClass(this HtmlNode node, string className)
+		=> node.SelectSingleNode($"//div[@class='{className}']");
+
+	public static HtmlNode? GetSingleNodeById(this HtmlNode node, string id)
+		=> node.SelectSingleNode($"div[@id='{id}']");
+
+	public static HtmlNode? GetFirstNodeById(this HtmlNode node, string id)
+		=> node.SelectSingleNode($"//div[@id='{id}']");
 }

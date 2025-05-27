@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 
-using Smab.TTInfo.TT365.Models.TT365;
-
 namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
@@ -47,13 +45,13 @@ public sealed partial class TT365Reader
 				player.PlayerURL)
 			?? new();
 
-		HtmlNode? statsNode = doc.DocumentNode.SelectSingleNode("//div[@id='PlayerStats']");
+		HtmlNode? statsNode = doc.DocumentNode.GetFirstNodeById("PlayerStats");
 
-		if (statsNode == null) {
+		if (statsNode is null) {
 			return player;
 		}
 
-		string playerTeamName = doc.DocumentNode.SelectSingleNode("//div[@class='team']")?.SelectSingleNode("span")?.InnerText.Trim() ?? "";
+		string playerTeamName = doc.DocumentNode.GetFirstNodeByClass("team")?.SelectSingleNode("span")?.InnerText.Trim() ?? "";
 
 		int index = 1;
 		foreach (HtmlNode? table in statsNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false)) {
@@ -65,9 +63,9 @@ public sealed partial class TT365Reader
 				HtmlNode[] cells = [.. resultRow.Descendants("td")];
 				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
 					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
-					string opponentName = cells[0].Descendants("a").Single().InnerText.Trim();
+					string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
 					Player opponent = new () {
-						Name = opponentName,
+						Name      = opponentName,
 						PlayerURL = opponentHref,
 					};
 
@@ -103,8 +101,6 @@ public sealed partial class TT365Reader
 						ResultReason:      resultReason,
 						MatchCardURL:      matchCardUrl
 					);
-
-					playerResult.Opponent.Name = FixPlayerName(opponent.Name);
 
 					newPlayer.PlayerResults.Add(playerResult);
 				}
