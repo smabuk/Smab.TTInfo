@@ -31,8 +31,8 @@ public sealed partial class TTLeaguesReader
 				TTInfoId:             ttinfoId,
 				TenantsHost:          tenantsHost,
 				WebsitesHost:         websitesHost,
-				CurrentCompetitions:  [.. currentCompetitions],
-				ArchivedCompetitions: [.. archives]);
+				CurrentCompetitions:  [.. currentCompetitions ?? []],
+				ArchivedCompetitions: [.. archives ?? []]);
 			_ = SaveFileToCache(JsonSerializer.Serialize(league), fileName);
 		}
 
