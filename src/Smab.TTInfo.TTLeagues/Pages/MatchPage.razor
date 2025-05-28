@@ -2,7 +2,7 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering]
 
-<PageTitle>Match Card</PageTitle>
+<PageTitle>@matchCard?.Match.ActualDateTime?.ToUKTime().ToString("yyyy-mm-dd") - @matchCard?.Match.Home.Name v @matchCard?.Match.Away.Name - @TTInfoId</PageTitle>
 
 @if (matchCard is null)
 {
@@ -11,7 +11,7 @@
 else
 {
 	<div class="card match-card">
-		<h1>@matchCard.Match.Home.Name <span class="score">@matchCard.Match.Home.Score</span> v <span class="score">@matchCard.Match.Away.Score</span> @matchCard.Match.Away.Name</h1>
+		<h1><a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Home.Name/@matchCard.Match.Home.TeamId">@matchCard.Match.Home.Name</a> <span class="score">@matchCard.Match.Home.Score</span> v <span class="score">@matchCard.Match.Away.Score</span> <a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Away.Name/@matchCard.Match.Away.TeamId">@matchCard.Match.Away.Name</a></h1>
 		<div class="match-meta">
 			<span>@matchCard.Match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM yyyy")</span>
 			<span>@division?.Name</span>
@@ -23,7 +23,7 @@ else
 				<ul>
 					@foreach (PlayerScore player in matchCard.Results.Home)
 					{
-						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)">@player.Name (@player.Score)</li>
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@player.Name</a> (@player.Score)</li>
 					}
 				</ul>
 			</div>
@@ -32,7 +32,7 @@ else
 				<ul>
 					@foreach (PlayerScore player in matchCard.Results.Away)
 					{
-						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)">@player.Name (@player.Score)</li>
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@player.Name</a> (@player.Score)</li>
 					}
 				</ul>
 			</div>
