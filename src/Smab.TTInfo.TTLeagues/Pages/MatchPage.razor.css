@@ -1,0 +1,133 @@
+﻿h1 {
+	font-size: calc(1.3rem + .6vw);
+	white-space: nowrap;
+}
+
+time {
+	font-weight: bold;
+}
+
+.card {
+	margin-bottom: 1rem;
+	padding: 10px;
+	border-radius: 20px;
+	max-width: 51em;
+}
+
+.pom {
+	font-weight: bold;
+}
+
+table {
+	margin-bottom: 0;
+	max-width: 50em;
+}
+
+td {
+	white-space: nowrap;
+}
+
+caption {
+	caption-side: top;
+	padding-left: 0;
+}
+
+.match-card {
+	max-width: 48em;
+	margin: 2em auto;
+	padding: 2em;
+	border-radius: 20px;
+	/*    background: #fff;*/
+	box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+	.match-card h1 {
+		font-size: 2rem;
+		margin-bottom: 0.5em;
+		text-align: center;
+	}
+
+	.match-card .score {
+		font-size: 2.2rem;
+		font-weight: bold;
+		margin: 0 0.5em;
+	}
+
+.match-meta {
+	display: flex;
+	gap: 2em;
+	justify-content: center;
+	margin-bottom: 1.5em;
+	font-size: 1.1em;
+}
+
+.teams {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 1.5em;
+}
+
+	.teams .team {
+		width: 45%;
+	}
+
+	.teams h2 {
+		font-size: 1.2em;
+		margin-bottom: 0.5em;
+		text-align: center;
+	}
+
+	.teams ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		text-align: left;
+	}
+
+	.teams li {
+		margin-bottom: 0.2em;
+		font-size: 1.1em;
+	}
+
+.match-sets {
+	margin: 1em auto;
+	width: 100%;
+	font-size: 1.1em;
+	background: #f8f9fa;
+}
+
+	.match-sets caption {
+		caption-side: top;
+		font-weight: bold;
+		font-size: 1.1em;
+		margin-bottom: 0.5em;
+	}
+
+	.match-sets th, .match-sets td {
+		text-align: center;
+		vertical-align: middle;
+		padding: 0.2em 0.3em;
+	}
+
+	.match-sets th {
+		/*    background: #e9ecef;*/
+	}
+
+	.match-sets td {
+		/*    background: #fff;*/
+	}
+
+.signatures {
+	margin-top: 2em;
+	text-align: center;
+	font-size: 1.1em;
+}
+
+.signature-line {
+	display: inline-block;
+	border-bottom: 1px solid #333;
+	width: 7em;
+	height: 1.2em;
+	margin: 0 1em;
+	vertical-align: middle;
+}

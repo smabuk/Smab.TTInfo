@@ -1,0 +1,103 @@
+﻿@page "/TTLeagues/Match/{TTInfoId}/{MatchId:int}"
+@inject TTLeaguesReader _ttleagues
+@attribute [StreamRendering]
+
+<PageTitle>Match Card</PageTitle>
+
+@if (matchCard is null)
+{
+	<h1>Loading match ...</h1>
+}
+else
+{
+	<div class="card match-card">
+		<h1>@matchCard.Match.Home.Name <span class="score">@matchCard.Match.Home.Score</span> v <span class="score">@matchCard.Match.Away.Score</span> @matchCard.Match.Away.Name</h1>
+		<div class="match-meta">
+			<span>@matchCard.Match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM yyyy")</span>
+			<span>@division?.Name</span>
+			<span>@matchCard.Match.Venue</span>
+		</div>
+		<div class="teams">
+			<div class="team home">
+				<h2>Home</h2>
+				<ul>
+					@foreach (PlayerScore player in matchCard.Results.Home)
+					{
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)">@player.Name (@player.Score)</li>
+					}
+				</ul>
+			</div>
+			<div class="team away">
+				<h2>Away</h2>
+				<ul>
+					@foreach (PlayerScore player in matchCard.Results.Away)
+					{
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)">@player.Name (@player.Score)</li>
+					}
+				</ul>
+			</div>
+		</div>
+		<table class="table table-bordered match-sets">
+			@* <caption>Sets</caption> *@
+			<thead>
+				<tr>
+					<th></th>
+					@for (int i = 1; i <= matchCard.Sets.Max(s => s.Games.Count); i++)
+					{
+						<th>@i</th>
+					}
+					<th>H</th>
+					<th>A</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (MatchSet set in matchCard.Sets)
+				{
+					<tr>
+						<td>@string.Join(" & ", set.HomePlayers.Select(p => p.Name)) @((MarkupString)(set.HomePlayers.Count > 1 ? "<br/>v<br />" : " v ")) @string.Join(" & ", set.AwayPlayers.Select(p => p.Name))</td>
+							@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
+							{
+								@if (i < set.Games.Count)
+								{
+									MatchGame game = set.Games[i];
+									<td>@(game.Home.HasValue && game.Away.HasValue ? $"{game.Home}-{game.Away}" : "-")</td>
+								}
+								else
+								{
+									<td>-</td>
+								}
+							}
+						<td>@set.HomeScore</td>
+						<td>@set.AwayScore</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		@* <div class="signatures">
+			<div>(Home) <span class="signature-line"></span> Captain's Signatures <span class="signature-line"></span> (Away)</div>
+		</div> *@
+	</div>
+}
+
+@code {
+
+	[EditorRequired]
+	[Parameter]
+	public string TTInfoId { get; set; } = "";
+
+	[EditorRequired]
+	[Parameter]
+	public int MatchId { get; set; }
+
+	private MatchCard? matchCard;
+	private Division? division;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		matchCard ??= await _ttleagues.GetMatch(MatchId, TTInfoId);
+		if (matchCard is not null)
+		{
+			division ??= (await _ttleagues.GetDivisions(TTInfoId, matchCard.Match.CompetitionId)).FirstOrDefault(d => d.Id == matchCard?.Match.DivisionId);
+		}
+	}
+}

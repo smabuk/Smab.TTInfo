@@ -25,7 +25,7 @@
 					</div>
 					<div class="col-12 col-sm-8 col-md-8 col-lg-9">
 						@if (match.HasResults) {
-							<a class="badge badge-sm" href="@CalculateMatchHref(match)" target="_blank" rel="noopener">@fr?.FullScore</a>
+							<a class="badge badge-sm" href="@CalculateMatchHref(match)" rel="noopener">@fr?.FullScore</a>
 						}
 						<a href="TTLeagues/TeamSummary/@TTInfoId/@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)/@(match.Home.Name.Equals(@TeamName) ? match.Away.TeamId : match.Home.TeamId)">
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
@@ -133,7 +133,7 @@
 							<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.Average, 0).ToString("##0").Length))</span>@($"{Math.Round(player.Average, 0):##0}")%</td>
-							<td><span>@(new string('0', 3 - rankingPosition.Length))</span>@rankingPosition</td>
+							<td><span>@(new string('0', 4 - rankingPosition.Length))</span>@rankingPosition</td>
 							<td><span>@(new string('0', 2 - (player.Potm).ToString().Length))</span>@(player.Potm)</td>
 							<td>@CalculateForm(player.Matches)</td>
 						</tr>
@@ -177,7 +177,7 @@
 								<td><a href="TTLeagues/TeamSummary/@TTInfoId/@result.Versus.Value">@result.Versus.Value</a></td>
 								<td>@(result.Home ? "Home" : "Away")</td>
 								<td>@result.Date.ToUKTime().ToString("dd MMM yyyy")</td>
-								<td><a href="@CalculateResultHref(teamStats, result)" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
+								<td><a href="@CalculateResultHref(teamStats, result)" rel="noopener"><span>@(new string('0', 2 - $"{result.For}".Length))</span>@result.For-@result.Against<span>@(new string('0', 2 - $"{result.Against}".Length))</span></a></td>
 								<td><span>@(new string('0', 2 - result.For.ToString().Length))</span>@result.For</td>
 								<td>@result.Potm</td>
 							</tr>
@@ -201,6 +201,8 @@
 
 	[Parameter]
 	public int TeamId { get; set; }
+
+	public bool internalLinks { get; set; } = true;
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
@@ -326,13 +328,17 @@
 
 	string CalculateMatchHref(Match match)
 	{
-		return $"https://{TTInfoId}.ttleagues.com/league/{match.CompetitionId}/division/{match.DivisionId}/match/{match.Id}";
+		return internalLinks
+			? $"TTLeagues/Match/{TTInfoId}/{match.Id}"
+			: $"https://{TTInfoId}.ttleagues.com/league/{match.CompetitionId}/division/{match.DivisionId}/match/{match.Id}";
 	}
 
 
 	string CalculateResultHref(TeamStats teamStats, TeamStatsResult result)
 	{
-		return $"https://{TTInfoId}.ttleagues.com/league/{teamStats.Competition.Key}/division/{result.DivisionId}/match/{result.MatchId}";
+		return internalLinks
+			? $"TTLeagues/Match/{TTInfoId}/{result.MatchId}"
+			: $"https://{TTInfoId}.ttleagues.com/league/{teamStats.Competition.Key}/division/{result.DivisionId}/match/{result.MatchId}";
 	}
 
 	string CalculateMatchResult(int scoreFor, int scoreAgainst)
