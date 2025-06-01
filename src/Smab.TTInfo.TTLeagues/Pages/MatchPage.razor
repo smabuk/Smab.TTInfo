@@ -2,7 +2,7 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering]
 
-<PageTitle>@matchCard?.Match.ActualDateTime?.ToUKTime().ToString("yyyy-mm-dd") - @matchCard?.Match.Home.Name v @matchCard?.Match.Away.Name - @TTInfoId</PageTitle>
+<PageTitle>@matchCard?.Match.ActualDateTime?.ToUKTime().ToString("yyyy-MM-dd") - @matchCard?.Match.Home.Name v @matchCard?.Match.Away.Name - @TTInfoId</PageTitle>
 
 @if (matchCard is null)
 {
