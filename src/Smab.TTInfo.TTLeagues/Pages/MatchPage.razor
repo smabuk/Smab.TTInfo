@@ -11,7 +11,16 @@
 else
 {
 	<div class="card match-card">
-		<h1><a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Home.Name/@matchCard.Match.Home.TeamId">@matchCard.Match.Home.Name</a> <span class="score">@matchCard.Match.Home.Score</span> v <span class="score">@matchCard.Match.Away.Score</span> <a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Away.Name/@matchCard.Match.Away.TeamId">@matchCard.Match.Away.Name</a></h1>
+		<h1>
+			<span class="score-row">
+				<a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Home.Name/@matchCard.Match.Home.TeamId">@matchCard.Match.Home.Name</a>
+				<span class="score">@matchCard.Match.Home.Score</span>
+			</span>
+			<span class="score-row">
+				<a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Away.Name/@matchCard.Match.Away.TeamId">@matchCard.Match.Away.Name</a>
+				<span class="score">@matchCard.Match.Away.Score</span>
+			</span>
+		</h1>
 		<div class="match-meta">
 			<span>@matchCard.Match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM yyyy")</span>
 			<span>@division?.Name</span>
@@ -38,7 +47,6 @@ else
 			</div>
 		</div>
 		<table class="table table-bordered match-sets">
-			@* <caption>Sets</caption> *@
 			<thead>
 				<tr>
 					<th></th>
@@ -48,27 +56,31 @@ else
 					}
 					<th>H</th>
 					<th>A</th>
+					<th>Res</th>
 				</tr>
 			</thead>
 			<tbody>
 				@foreach (MatchSet set in matchCard.Sets)
 				{
 					<tr>
-						<td>@string.Join(" & ", set.HomePlayers.Select(p => p.Name)) @((MarkupString)(set.HomePlayers.Count > 1 ? "<br/>v<br />" : " v ")) @string.Join(" & ", set.AwayPlayers.Select(p => p.Name))</td>
-							@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
+						<td class="players-cell">
+							@string.Join(" & ", set.HomePlayers.Select(p => p.Name)) @((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v ")) @string.Join(" & ", set.AwayPlayers.Select(p => p.Name))
+						</td>
+						@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
+						{
+							@if (i < set.Games.Count)
 							{
-								@if (i < set.Games.Count)
-								{
-									MatchGame game = set.Games[i];
-									<td>@(game.Home.HasValue && game.Away.HasValue ? $"{game.Home}-{game.Away}" : "-")</td>
-								}
-								else
-								{
-									<td>-</td>
-								}
+								MatchGame game = set.Games[i];
+								<td>@(game.Home.HasValue && game.Away.HasValue ? $"{game.Home}-{game.Away}" : "-")</td>
 							}
+							else
+							{
+								<td>-</td>
+							}
+						}
 						<td>@set.HomeScore</td>
 						<td>@set.AwayScore</td>
+						<td>@HomeAwayOrDraw(set)</td>
 					</tr>
 				}
 			</tbody>
@@ -99,5 +111,19 @@ else
 		{
 			division ??= (await _ttleagues.GetDivisions(TTInfoId, matchCard.Match.CompetitionId)).FirstOrDefault(d => d.Id == matchCard?.Match.DivisionId);
 		}
+	}
+
+	private string HomeAwayOrDraw(MatchSet set)
+	{
+		if (set.Completed is null)
+		{
+			return "";
+		}
+
+		return set.HomeScore > set.AwayScore
+		? "Home"
+		: set.AwayScore > set.HomeScore
+			? "Away"
+			: "Draw";
 	}
 }
