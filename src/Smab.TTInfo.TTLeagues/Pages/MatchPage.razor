@@ -120,6 +120,11 @@ else
 			return "";
 		}
 
+		if (set.HomeScore == 0 && set.AwayScore == 0)
+		{
+			return "";
+		}
+
 		return set.HomeScore > set.AwayScore
 		? "Home"
 		: set.AwayScore > set.HomeScore
