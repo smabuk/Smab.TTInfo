@@ -8,6 +8,7 @@
 @if (fixtures is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
 } else {
+	<h1>@teamStats?.Competition.Value</h1>
 	<h1>@TeamName</h1>
 	<div id="fixtures">
 		@foreach (Match match in fixtures) {
