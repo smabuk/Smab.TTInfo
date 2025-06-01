@@ -44,7 +44,7 @@ caption {
 }
 
 .match-card {
-	max-width: 48em;
+	max-width: 51em;
 	margin: 1em auto;
 	padding: 1em;
 	border-radius: 20px;
@@ -63,6 +63,27 @@ caption {
 		margin: 0 0.5em;
 	}
 
+		.match-card .score[data-win] {
+			font-weight: bold;
+			color: rgb(var(--bs-success-rgb, 25,135,84));
+		}
+
+		.match-card .score[data-loss] {
+			font-weight: bold;
+			color: rgb(var(--bs-danger-rgb, 220,53,69));
+		}
+
+		.match-card .score[data-draw] {
+			font-weight: bold;
+			color: rgb(var(--bs-primary-rgb, 13,110,253));
+		}
+
+
+
+[data-win] {
+	font-weight: bold;
+}
+
 .match-meta {
 	display: flex;
 	gap: 2em;
@@ -75,6 +96,7 @@ caption {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 1.5em;
+	padding-left: 1em;
 }
 
 	.teams .team {
@@ -124,6 +146,7 @@ caption {
 		display: table-cell;
 		border: 1px solid #dee2e6;
 		padding: 0.2em 0.3em;
+		margin: 0;
 		text-align: center;
 		vertical-align: middle;
 		box-sizing: border-box;
@@ -133,6 +156,16 @@ caption {
 		.match-sets th:nth-child(1n+7), .match-sets td:nth-child(1n+7) {
 			min-width: 1.5em;
 		}
+
+			.match-sets td:nth-child(1n+7)[data-win] {
+				font-weight: bold;
+				background-color: rgb(var(--bs-success-rgb, 25,135,84));
+			}
+
+			.match-sets td:nth-child(1n+7)[data-loss] {
+				font-weight: bold;
+				background-color: rgb(var(--bs-danger-rgb, 220,53,69));
+			}
 
 	.match-sets th {
 		font-weight: bold;
@@ -148,7 +181,7 @@ caption {
 	.match-sets {
 		display: grid;
 		font-size: 0.9em;
-		grid-template-columns: repeat(5, 14%) repeat(2, 7%) 16%; /* Adjust 5 to match your max columns */
+		grid-template-columns: repeat(5, 1fr) repeat(2, 0.5fr); /* Adjust 5 to match your max columns */
 	}
 
 		.match-sets thead,
@@ -162,7 +195,8 @@ caption {
 		}
 
 		.match-sets th:nth-child(1n+7), .match-sets td:nth-child(1n+7) {
-			min-width: 1.5em;
+			padding: 0.2em 0.1em;
+			min-width: 1em;
 		}
 
 		.match-sets td.players-cell {
@@ -245,6 +279,8 @@ caption {
 	.teams {
 		/*		flex-direction: column;*/
 		gap: 1em;
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 		.teams .team ul {

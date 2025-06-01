@@ -6,7 +6,7 @@
 
 @if (matchCard is null)
 {
-	<h1>Loading match ...</h1>
+	<h1>Loading match #@MatchId ...</h1>
 }
 else
 {
@@ -15,11 +15,19 @@ else
 		<h1>
 			<span class="score-row">
 				<a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Home.Name/@matchCard.Match.Home.TeamId">@matchCard.Match.Home.Name</a>
-				<span class="score">@matchCard.Match.Home.Score</span>
+				<span
+					data-win="@(matchCard.Match.Home.Score > matchCard.Match.Away.Score)"
+					data-loss="@(matchCard.Match.Home.Score < matchCard.Match.Away.Score)"
+					data-draw="@(matchCard.Match.Home.Score == matchCard.Match.Away.Score)"
+					class="score">@matchCard.Match.Home.Score</span>
 			</span>
 			<span class="score-row">
 				<a href="TTLeagues/TeamSummary/@TTInfoId/@matchCard.Match.Away.Name/@matchCard.Match.Away.TeamId">@matchCard.Match.Away.Name</a>
-				<span class="score">@matchCard.Match.Away.Score</span>
+				<span
+					data-win="@(matchCard.Match.Away.Score > matchCard.Match.Home.Score)"
+					data-loss="@(matchCard.Match.Away.Score < matchCard.Match.Home.Score)"
+					data-draw="@(matchCard.Match.Away.Score == matchCard.Match.Home.Score)"
+					class="score">@matchCard.Match.Away.Score</span>
 			</span>
 		</h1>
 		<div class="match-meta">
@@ -57,7 +65,7 @@ else
 					}
 					<th>H</th>
 					<th>A</th>
-					<th>Res</th>
+					@* <th>Res</th> *@
 				</tr>
 			</thead>
 			<tbody>
@@ -65,7 +73,15 @@ else
 				{
 					<tr>
 						<td class="players-cell">
-							@string.Join(" & ", set.HomePlayers.Select(p => p.Name)) @((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v ")) @string.Join(" & ", set.AwayPlayers.Select(p => p.Name))
+							<span
+								data-win="@(set.HomeScore > set.AwayScore)"
+								data-loss="@(set.HomeScore < set.AwayScore)"
+							>@string.Join(" & ", set.HomePlayers.Select(p => p.Name))</span>
+							@((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v "))
+							<span
+								data-win="@(set.AwayScore > set.HomeScore)"
+								data-loss="@(set.AwayScore < set.HomeScore)"
+							>@string.Join(" & ", set.AwayPlayers.Select(p => p.Name))</span>
 						</td>
 						@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
 						{
@@ -79,9 +95,15 @@ else
 								<td>-</td>
 							}
 						}
-						<td>@set.HomeScore</td>
-						<td>@set.AwayScore</td>
-						<td>@HomeAwayOrDraw(set)</td>
+						<td
+							data-win="@(set.HomeScore > set.AwayScore)"
+							data-loss="@(set.HomeScore < set.AwayScore)"
+							>@set.HomeScore</td>
+						<td
+							data-win="@(set.AwayScore > set.HomeScore)"
+							data-loss="@(set.AwayScore < set.HomeScore)"
+							>@set.AwayScore</td>
+						@* <td>@HomeAwayOrDraw(set)</td> *@
 					</tr>
 				}
 			</tbody>
@@ -116,12 +138,7 @@ else
 
 	private string HomeAwayOrDraw(MatchSet set)
 	{
-		if (set.Completed is null)
-		{
-			return "";
-		}
-
-		if (set.HomeScore == 0 && set.AwayScore == 0)
+		if ((set.Completed is null) || (set.HomeScore == 0 && set.AwayScore == 0))
 		{
 			return "";
 		}
