@@ -33,6 +33,10 @@ time {
 	--result-color-rgb: var(--bs-info-rgb, 13, 202, 240);
 }
 
+[data-result='void'] {
+	--result-color-rgb: var(--bs-info-rgb, 13, 202, 240);
+}
+
 .pom {
 	font-weight: bold;
 }

@@ -15,6 +15,7 @@
 			string? fixtureStatus = fixture switch {
 				PostponedFixture => "postponed",
 				RearrangedFixture => "rearranged",
+				VoidFixture => "void",
 				_ => null,
 			};
 			<details class="card" data-result='@(fr?.Result ?? fixtureStatus)'>
@@ -28,6 +29,9 @@
 						}
 						@if (fixture is RearrangedFixture rf) {
 							<span class="rearranged badge" title="@rf.Reason (originally @rf.OriginalDate.ToString("ddd dd MMM"))">R</span>
+						}
+						@if (fixture is VoidFixture vf) {
+							<span class="void badge" title="@vf.Reason">Void</span>
 						}
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
 							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
@@ -54,6 +58,13 @@
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-9 col-lg-10">
 							Reason: @rearranged.Reason
+						</div>
+					</div>
+				}
+				@if (fixture is VoidFixture voidFixture) {
+					<div class="row justify-content-end">
+						<div class="col-12 col-md-9 col-lg-10">
+							@voidFixture.Reason
 						</div>
 					</div>
 				}
@@ -111,7 +122,7 @@
 							</div>
 						</div>
 					}
-				} else {
+				} else if (fixture is not VoidFixture) {
 					<div class="row justify-content-end">
 						<div class="col-12 col-md-9 col-lg-10">
 							@{string opposingTeam = fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam;}

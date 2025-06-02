@@ -119,9 +119,11 @@ public sealed partial class TT365Reader
 				HtmlNode[] cells = [.. resultRow.Descendants("td")];
 				string score = cells[3].InnerText;
 				string? other = null;
+				bool isVoid = false;
 				if (score.Equals("void", StringComparison.OrdinalIgnoreCase)) {
 					score = "0 - 0";
 					other = cells[3].Attributes["title"]?.Value;
+					isVoid = true;
 				}
 
 				if (score.EndsWith(" (A)")) {
@@ -148,6 +150,7 @@ public sealed partial class TT365Reader
 					Points     = int.Parse(cells[4].InnerText),
 					Opposition = cells[0].InnerText,
 					HomeOrAway = cells[1].InnerText,
+					IsVoid     = isVoid,
 				};
 
 				team.Results.Add(teamResult);

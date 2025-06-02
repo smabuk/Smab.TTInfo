@@ -13,7 +13,8 @@ public record TeamResult(
 	DateOnly Date,
 	string HomeTeam,
 	string AwayTeam,
-	string Venue
+	string Venue,
+	bool IsVoid = false
 ) : CompletedFixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
 {
 	public string Opposition { get; set; } = "";
@@ -45,6 +46,7 @@ public record TeamResult(
 	/// </summary>
 	public string MatchResult => (ScoreForTeam - ScoreForOpposition) switch
 	{
+		_ when IsVoid is true => "void",
 		> 0 => "win",
 		< 0 => "loss",
 		  0 => "draw",
