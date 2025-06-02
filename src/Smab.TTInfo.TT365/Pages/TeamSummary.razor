@@ -144,11 +144,11 @@
 		<div>
 			<div>
 				Captain: <span>@team.Captain</span>
-				(<span>@team.CaptainPhone</span>
+				<span> 📞 <a href="tel:@(team.CaptainPhone)">@team.CaptainPhone</a></span>
 				@if (!string.IsNullOrWhiteSpace(@team.CaptainEmailAddress))
 				{
-					<span> / <a href="mailto:@(team.CaptainEmailAddress)">@team.CaptainEmailAddress</a></span>
-				})
+					<span> ✉️ <a href="mailto:@(team.CaptainEmailAddress)">@team.CaptainEmailAddress</a></span>
+				}
 			</div>
 			<div>Caption: <span>@team.Caption</span></div>
 		</div>
