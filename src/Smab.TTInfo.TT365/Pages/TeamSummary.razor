@@ -142,7 +142,14 @@
 	<h2>Team Stats</h2>
 	<div id="teamstats" class="card">
 		<div>
-			<div>Captain: <span>@team.Captain</span></div>
+			<div>
+				Captain: <span>@team.Captain</span>
+				(<span>@team.CaptainPhone</span>
+				@if (!string.IsNullOrWhiteSpace(@team.CaptainEmailAddress))
+				{
+					<span> / <a href="mailto:@(team.CaptainEmailAddress)">@team.CaptainEmailAddress</a></span>
+				})
+			</div>
 			<div>Caption: <span>@team.Caption</span></div>
 		</div>
 		<div id="players">

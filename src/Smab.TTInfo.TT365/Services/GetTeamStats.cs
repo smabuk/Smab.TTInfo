@@ -52,8 +52,12 @@ public sealed partial class TT365Reader
 		team.Caption = teamNode.GetFirstNodeByClass("caption")?.InnerText.Replace("&gt;", ">") ?? "";
 		team.Players = [];
 		team.Results = [];
-		team.Captain = teamNode.SelectNodes("//div[text()='Captain']")?.First()?.NextSibling.NextSibling.InnerText ?? "";
+		HtmlNode? captainNode = teamNode.SelectNodes("//div[text()='Captain']")?.FirstOrDefault();
+		team.Captain = captainNode?.NextSibling.NextSibling.InnerText ?? "";
+		team.CaptainPhone = captainNode?.NextSibling.NextSibling.NextSibling.NextSibling.InnerText ?? "";
+		team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
 
+		Debug.WriteLine(team.CaptainEmailAddress);
 		HtmlNode? playertableNode = teamNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
 		if (playertableNode is not null) {
 			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
@@ -161,5 +165,42 @@ public sealed partial class TT365Reader
 		_ = SaveFileToCache(jsonString, filename);
 
 		return team;
+	}
+
+	/// <summary>
+	/// Extracts an email address from a script tag within the specified HTML node.
+	/// </summary>
+	/// <remarks>This method searches for a script tag in the provided HTML node that dynamically generates a mailto
+	/// link. It decodes the email address embedded in the script content and returns it as a plain string. If the HTML
+	/// node does not contain a valid script tag or the email address cannot be extracted, an empty string is
+	/// returned.</remarks>
+	/// <param name="htmlNode">The HTML node to search for the script tag. Can be null.</param>
+	/// <returns>The decoded email address extracted from the script tag, or an empty string if no valid email address is found.</returns>
+	private static string ExtractEmailAddress(HtmlNode? htmlNode)
+	{
+		const string JOIN_TEXT = "' + '";
+		const string SEARCH_TERM = "lto:";
+		const char SINGLE_QUOTE = '\'';
+
+		// format is in the form of a script tag that writes a mailto link, e.g.:
+		// <script type="text/javascript">document.write('<a href="mai' + 'lto:' + '&#115;&#105;&#109;&#111;&#110;&#46;&#98;&#114;&#111;&#111;&#107;&#101;&#115;' + '&#64;' + '&#98;&#116;&#105;&#110;&#116;&#101;&#114;&#110;&#101;&#116;&#46;&#99;&#111;&#109;' +'">&#115;&#105;&#109;&#111;&#110;&#46;&#98;&#114;&#111;&#111;&#107;&#101;&#115;&#64;' + '&#98;&#116;&#105;&#110;&#116;&#101;&#114;&#110;&#101;&#116;&#46;&#99;&#111;&#109;</a>');</script>
+
+		if (htmlNode is null) { return ""; }
+
+		HtmlNode? scriptNode = htmlNode.Descendants("script").FirstOrDefault();
+		if (scriptNode is null) { return ""; }
+
+		string scriptContent = scriptNode.InnerText.Replace(JOIN_TEXT, "");
+		int mailtoIndex = scriptContent.IndexOf(SEARCH_TERM, StringComparison.OrdinalIgnoreCase);
+		if (mailtoIndex == -1) { return ""; }
+
+		int startIndex = mailtoIndex + SEARCH_TERM.Length;
+		int endIndex = scriptContent.IndexOf(SINGLE_QUOTE, startIndex);
+		
+		return endIndex switch
+		{
+			-1 => "",
+			 _ => HttpUtility.HtmlDecode(scriptContent[startIndex..endIndex])
+		};
 	}
 }

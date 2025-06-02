@@ -50,6 +50,16 @@ td {
 	white-space: nowrap;
 }
 
+a[href] {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+	a[href]:hover {
+		color: var(--text-color);
+		text-decoration: underline;
+	}
+
 caption {
 	caption-side: top;
 	padding-left: 0;
