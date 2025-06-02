@@ -7,6 +7,7 @@
 @if (playerStatsList is null || playerStatsList.Count == 0) {
 	<h1>Loading ... @PlayerName ...</h1>
 } else {
+	<h1>@league?.TTInfoId</h1>
 	<h1>Player Stats for @PlayerName</h1>
 	<div id="results">
 		@foreach (PlayerStats ps in playerStatsList.OrderByDescending(p => p.Competition.Key)) {

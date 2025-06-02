@@ -7,6 +7,7 @@
 @if (team is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
 } else {
+	<h1>@league?.Name @league?.GetCurrentSeason().Name</h1>
 	<h1>@TeamName</h1>
 	<div id="fixtures">
 		@foreach (Fixture fixture in fixtures) {
