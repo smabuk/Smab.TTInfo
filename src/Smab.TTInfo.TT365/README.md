@@ -147,7 +147,7 @@ classDiagram
         int NationalRanking
         int PlayerId
         int Id
-        string SeasonId
+        TT365SeasonId SeasonId
         List~PlayerResult~ PlayerResults
     }
     class PlayerResult {

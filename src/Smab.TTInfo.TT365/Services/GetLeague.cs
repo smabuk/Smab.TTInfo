@@ -35,7 +35,7 @@ public sealed partial class TT365Reader
 
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
-			string leagueURL         = url;
+			string leagueURL         = $"{TT365_COM}/{leagueId}";
 			string leagueName        = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText ?? "");
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "")) ?? "";
 			string leagueTheme       = doc.DocumentNode.SelectSingleNode("//body")?.GetAttributeValue("class", "") ?? "";
@@ -60,7 +60,7 @@ public sealed partial class TT365Reader
 				string seasonId = item.GetAttributeValue("href", "");
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
 				string seasonName = item.InnerText;
-				seasons.Add(new(seasonId, seasonName));
+				seasons.Add(new(new(seasonId), seasonName));
 			}
 
 			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeason);

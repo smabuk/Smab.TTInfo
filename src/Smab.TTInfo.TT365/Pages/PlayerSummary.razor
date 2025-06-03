@@ -90,7 +90,7 @@
 			.Select(g => g.Key)
 			.ToList();
 			StateHasChanged();
-			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].GetSeasonId());
+			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
 		}
 
 	}

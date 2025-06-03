@@ -26,7 +26,10 @@ public class Player
 			? 0
 			: int.Parse(PlayerURL.Split('/').LastOrDefault() ?? "")
 		: PlayerId;
-	public string SeasonId => PlayerURL.Split('/').Skip(4).FirstOrDefault() ?? "";
+	public TT365SeasonId SeasonId
+		=> PlayerURL.Split('/').Skip(4).FirstOrDefault() is string seasonId && !string.IsNullOrWhiteSpace(seasonId)
+		? new TT365SeasonId(seasonId)
+		: default;
 
 	public ImmutableList<PlayerResult> PlayerResults { get; set; } = [];
 }

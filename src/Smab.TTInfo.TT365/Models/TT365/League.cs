@@ -36,5 +36,5 @@ public static class LeagueExtensions
 	/// </summary>
 	/// <param name="league">The league for which the season identifier is being retrieved. Cannot be null.</param>
 	/// <returns>The unique identifier of the current season as a <see cref="TT365SeasonId"/>.</returns>
-	public static TT365SeasonId GetCurrentSeasonId(this League league) => league.CurrentSeason.GetSeasonId();
+	public static TT365SeasonId GetCurrentSeasonId(this League league) => league.CurrentSeason.Id;
 }

@@ -159,12 +159,12 @@ public static partial class TTEndPoints
 	/// <param name="leagueId">The unique identifier of the league for which the season ID is being retrieved.</param>
 	/// <param name="year">The specific year for which the season ID is being retrieved. If <see langword="null"/>, the current season ID is
 	/// returned.</param>
-	/// <param name="seasonId">An optional pre-existing season ID. If provided and not empty, it will be returned as-is.</param>
+	/// <param name="seasonIdAsString">An optional pre-existing season ID. If provided and not empty, it will be returned as-is.</param>
 	/// <returns>A <see cref="TT365SeasonId?"/> representing the season ID. Returns <see langword="null"/> if the league cannot be found.</returns>
-	private static async Task<TT365SeasonId?> GetSeasonId(ITT365Reader tt365, string leagueId, int? year, string? seasonId = "" )
+	private static async Task<TT365SeasonId?> GetSeasonId(ITT365Reader tt365, string leagueId, int? year, string? seasonIdAsString = null )
 	{
-		if (!string.IsNullOrWhiteSpace(seasonId)) {
-			return new(seasonId);
+		if (!string.IsNullOrWhiteSpace(seasonIdAsString)) {
+			return new(seasonIdAsString);
 		}
 
 		League? league = await tt365.GetLeague((TT365LeagueId)leagueId);
@@ -173,8 +173,8 @@ public static partial class TTEndPoints
 		{
 			null => null,
 			_ => year switch {
-					null => league.CurrentSeason.GetSeasonId(),
-					_    => tt365.GetSeasonId(league.CurrentSeason.GetSeasonId(), (int)year)
+					null => league.GetCurrentSeasonId(),
+					_    => tt365.GetSeasonId(league.GetCurrentSeasonId(), (int)year)
 				}
 		};
 	}

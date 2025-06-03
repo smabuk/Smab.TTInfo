@@ -7,15 +7,10 @@
 /// manage and organize season-specific information.</remarks>
 /// <param name="Id"></param>
 /// <param name="Name"></param>
-public record Season(string Id, string Name)
+public record Season(TT365SeasonId Id, string Name)
 {
 	public LookupTables Lookups { get; set; } = new();
 	public List<Division> Divisions { get; set; } = [];
 	public int DivisionCount => Divisions.Count;
 
-}
-
-public static class SeasonExtensions
-{
-	public static TT365SeasonId GetSeasonId(this Season season) => new(season.Id);
 }
