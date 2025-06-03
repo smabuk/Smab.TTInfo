@@ -138,21 +138,20 @@ public sealed partial class TT365Reader
 						out DateOnly resultDate);
 
 				bool hasPoM = cells.Length > 6;
-				TeamResult teamResult = new(team.DivisionName, "", resultDate, "", "", "")
-				{
-					// Set the properties for the CompletedFixture base record
+				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with {
 					ForHome          = int.Parse(score.Split("-")[0]),
 					ForAway          = int.Parse(score.Split("-")[1]),
 					Other            = other,
 					CardURL          = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
 					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
-
-					// Set the properties for the TeamResult record
-					Points     = int.Parse(cells[4].InnerText),
-					Opposition = cells[0].InnerText,
-					HomeOrAway = cells[1].InnerText,
-					IsVoid     = isVoid,
 				};
+
+				TeamResult teamResult = new(
+					completedFixture,
+					Opposition: cells[0].InnerText,
+					HomeOrAway: cells[1].InnerText,
+					Points: int.Parse(cells[4].InnerText),
+					IsVoid: isVoid);
 
 				team.Results = [.. team.Results, teamResult];
 			}

@@ -18,9 +18,9 @@ public sealed partial class TT365Reader
 	public async Task<List<Division>> GetDivisions(TT365LeagueId leagueId, TT365SeasonId seasonId)
 	{
 		LookupTables lookupTables = await GetLookupTables(leagueId, seasonId);
-		string filename = $@"{leagueId}_{seasonId}_divisions_all.json";
 		if (lookupTables.DivisionLookup.Count == 0) { return []; }
 
+		string filename = $@"{leagueId}_{seasonId}_divisions_all.json";
 		List<Division> divisions = await LoadAsync<List<Division>?>(leagueId, null, filename) ?? [];
 		if (divisions is not []) { return divisions; }
 
@@ -62,7 +62,7 @@ public sealed partial class TT365Reader
 					teams.Add(team);
 				}
 
-				divisions.Add(new(divId, divName, teams));
+				divisions.Add(new(divId, divName, [.. teams]));
 			}
 		}
 

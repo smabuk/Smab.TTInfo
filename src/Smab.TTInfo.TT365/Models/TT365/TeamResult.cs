@@ -8,26 +8,33 @@
 /// draw).</remarks>
 [DebuggerDisplay("Result: {ScoreForHome,nq} : {ScoreForAway,nq}")]
 public record TeamResult(
-	string Division,
-	string Description,
-	DateOnly Date,
-	string HomeTeam,
-	string AwayTeam,
-	string Venue,
+	CompletedFixture CompletedFixture,
+	string Opposition,
+	string HomeOrAway,
+	int Points,
 	bool IsVoid = false
-) : CompletedFixture(Division, Description, Date, HomeTeam, AwayTeam, Venue)
+)
 {
-	public string Opposition { get; set; } = "";
-	public string HomeOrAway { get; set; } = "";
-	public int Points { get; set; }
+	public DateOnly Date => CompletedFixture.Date;
+	public string Division => CompletedFixture.Division;
+	public string Description => CompletedFixture.Description;
+	public string Venue => CompletedFixture.Venue;
+	public string HomeTeam => CompletedFixture.HomeTeam;
+	public string AwayTeam => CompletedFixture.AwayTeam;
+	public string Score => CompletedFixture.Score;
+	public int ScoreForHome => CompletedFixture.ForHome;
+	public int ScoreForAway => CompletedFixture.ForAway;
+	public string PlayerOfTheMatch => CompletedFixture.PlayerOfTheMatch;
+	public string CardURL => CompletedFixture.CardURL;
+	public int Id => CompletedFixture.Id;
 
 	/// <summary>
 	/// Gets the score for the team based on whether it is the home or away team.
 	/// </summary>
 	public int ScoreForTeam => HomeOrAway.ToLowerInvariant() switch
 	{
-		"home" => ForHome,
-		"away" => ForAway,
+		"home" => CompletedFixture.ForHome,
+		"away" => CompletedFixture.ForAway,
 		     _ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway)),
 	};
 
@@ -36,8 +43,8 @@ public record TeamResult(
 	/// </summary>
 	public int ScoreForOpposition => HomeOrAway.ToLowerInvariant() switch
 	{
-		"home" => ForAway,
-		"away" => ForHome,
+		"home" => CompletedFixture.ForAway,
+		"away" => CompletedFixture.ForHome,
 		     _ => throw new ArgumentOutOfRangeException(nameof(HomeOrAway)),
 	};
 

@@ -8,4 +8,4 @@
 /// <param name="Id">The unique identifier for the division.</param>
 /// <param name="Name">The name of the division.</param>
 /// <param name="Teams">The list of teams that belong to the division.</param>
-public record Division(string Id, string Name, List<Team> Teams);
+public record Division(string Id, string Name, ImmutableList<Team> Teams);
