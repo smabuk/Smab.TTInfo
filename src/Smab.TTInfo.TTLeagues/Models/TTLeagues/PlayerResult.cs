@@ -23,10 +23,10 @@
 /// <param name="Rank"></param>
 internal sealed record PlayerResult(
 	IntKeyValue Team,
-	IReadOnlyList<PlayerResult> Results,
+	ImmutableList<PlayerResult> Results,
 	StringKeyValue Opponent,
 	DateTimeOffset Date,
-	IReadOnlyList<PlayerGame> Games,
+	ImmutableList<PlayerGame> Games,
 	int         Type,
 	int         SetId,
 	int         For,

@@ -35,7 +35,7 @@ public sealed partial class TTLeaguesReader
 					Id: match.Id,
 					Match: match,
 					Results: matchResults,
-					Sets: matchSets
+					Sets: [.. matchSets]
 					);
 				_ = SaveFileToCache(JsonSerializer.Serialize(matchCard), fileName);
 			}

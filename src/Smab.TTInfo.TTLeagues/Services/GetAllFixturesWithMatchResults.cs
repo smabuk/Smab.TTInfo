@@ -28,7 +28,7 @@ public sealed partial class TTLeaguesReader
 				}
 			}
 
-			return new(fixtures.Groups, matches, fixtures.Type, fixtures.Total);
+			return new(fixtures.Groups, [.. matches], fixtures.Type, fixtures.Total);
 		}
 
 		return fixtures;

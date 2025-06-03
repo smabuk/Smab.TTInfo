@@ -24,8 +24,8 @@ internal sealed record TeamStats(
 	IntKeyValue Competition,
 	IntKeyValue Division,
 	IntKeyValue Club,
-	IReadOnlyList<TeamStatsResult> Results,
-	IReadOnlyList<TeamStatsPlayer> Players,
+	ImmutableList<TeamStatsResult> Results,
+	ImmutableList<TeamStatsPlayer> Players,
 	object   Next,
 	object   Last
  );

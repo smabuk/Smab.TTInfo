@@ -9,6 +9,6 @@
 internal sealed record WebsitesHostPage(
 	string Name,
 	int    Ordering,
-	IReadOnlyList<WebsitesHostItem> Items
+	ImmutableList<WebsitesHostItem> Items
 );
 

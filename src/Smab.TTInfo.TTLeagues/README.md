@@ -79,8 +79,8 @@ classDiagram
         string TTInfoId
         TenantsHost? TenantsHost
         WebsitesHost? WebsitesHost
-        IReadOnlyList~Competition~ CurrentCompetitions
-        IReadOnlyList~Competition~ ArchivedCompetitions
+        ImmutableList~Competition~ CurrentCompetitions
+        ImmutableList~Competition~ ArchivedCompetitions
     }
     class Competition {
         int Id

@@ -13,13 +13,13 @@
 /// <param name="Secondary">List of secondary menu items.</param>
 /// <param name="Footer">List of footer menu items.</param>
 internal sealed record WebsitesHostMenu(
-	IReadOnlyList<WebsitesHostItem>    Competitions,
-	IReadOnlyList<WebsitesHostItem>    Divisions,
-	IReadOnlyList<WebsitesHostItem>    Archived,
-	IReadOnlyList<WebsitesHostItem>    News,
-	IReadOnlyList<WebsitesHostPage>    Pages,
-	IReadOnlyList<WebsitesHostItem>    Feed,
-	IReadOnlyList<WebsitesHostPrimary> Primary,
-	IReadOnlyList<object>              Secondary,
-	IReadOnlyList<WebsitesHostFooter>  Footer
+	ImmutableList<WebsitesHostItem>    Competitions,
+	ImmutableList<WebsitesHostItem>    Divisions,
+	ImmutableList<WebsitesHostItem>    Archived,
+	ImmutableList<WebsitesHostItem>    News,
+	ImmutableList<WebsitesHostPage>    Pages,
+	ImmutableList<WebsitesHostItem>    Feed,
+	ImmutableList<WebsitesHostPrimary> Primary,
+	ImmutableList<object>              Secondary,
+	ImmutableList<WebsitesHostFooter>  Footer
 );

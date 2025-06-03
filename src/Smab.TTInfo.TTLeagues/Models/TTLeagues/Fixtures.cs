@@ -9,8 +9,8 @@
 /// <param name="Total">The total number of fixtures.</param>
 internal sealed record Fixtures
 (
-	IReadOnlyList<Group> Groups,
-	IReadOnlyList<Match> Matches,
+	ImmutableList<Group> Groups,
+	ImmutableList<Match> Matches,
 	long Type,
 	long Total
 );

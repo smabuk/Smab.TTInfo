@@ -53,5 +53,5 @@ internal record Team(
 	string  DisplayName,
 	int?    RetentionId,
 	bool?   Pool,
-	IReadOnlyList<Person>? Members
+	ImmutableList<Person>? Members
 );

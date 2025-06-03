@@ -29,7 +29,7 @@ internal sealed record DivisionOrganisation(
 	string  Logo,
 	int     Import,
 	string  Logins,
-	IReadOnlyList<int> LoginModes,
+	ImmutableList<int> LoginModes,
 	bool    RegistrationEnabled,
 	bool    ReportingEnabled,
 	bool    CompeteMembershipRequired,

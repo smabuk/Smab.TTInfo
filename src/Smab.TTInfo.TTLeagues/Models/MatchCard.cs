@@ -13,5 +13,5 @@ internal sealed record MatchCard(
 	int   Id,
 	Match Match,
 	MatchResults Results,
-	IReadOnlyList<MatchSet> Sets
+	ImmutableList<MatchSet> Sets
 );

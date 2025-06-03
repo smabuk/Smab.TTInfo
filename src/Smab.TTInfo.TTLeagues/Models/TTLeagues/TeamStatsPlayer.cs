@@ -12,7 +12,7 @@
 /// <param name="Potm">The number of player of the match awards.</param>
 internal sealed record TeamStatsPlayer(
 	string Id,
-	IReadOnlyList<TeamStatsMatch> Matches,
+	ImmutableList<TeamStatsMatch> Matches,
 	double Average,
 	string Name,
 	int    Played,

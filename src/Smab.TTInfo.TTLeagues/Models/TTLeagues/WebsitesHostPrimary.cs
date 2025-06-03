@@ -29,7 +29,7 @@ internal sealed record WebsitesHostPrimary(
 	int     Preset,
 	object  Content,
 	string  Url,
-	IReadOnlyList<object> Items,
+	ImmutableList<object> Items,
 	int     Type,
 	bool    Enabled
 );

@@ -1,5 +1,6 @@
 ﻿global using Microsoft.Extensions.Options;
 
+global using System.Collections.Immutable;
 global using System.Diagnostics;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;

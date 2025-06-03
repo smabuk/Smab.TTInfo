@@ -77,5 +77,5 @@ internal sealed record Division(
 	bool?   TableAllocation,
 	bool    HasEntrants,
 	int     EntrantCount,
-	IReadOnlyList<object> Days
+	ImmutableList<object> Days
 );

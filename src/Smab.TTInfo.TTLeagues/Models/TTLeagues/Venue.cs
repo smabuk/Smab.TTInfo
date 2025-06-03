@@ -56,7 +56,7 @@ internal sealed record Venue(
 	string  Website,
 	object  Tables,
 	string  UserId,
-	IReadOnlyList<Club>? Clubs,
+	ImmutableList<Club>? Clubs,
 	bool?   Linked,
 	string  Latitude,
 	string  Longitude,

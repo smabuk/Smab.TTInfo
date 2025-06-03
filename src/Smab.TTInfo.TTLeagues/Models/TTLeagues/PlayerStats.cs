@@ -24,11 +24,11 @@ internal sealed record PlayerStats(
 	IntKeyValue Division,
 	IntKeyValue Team,
 	IntKeyValue Club,
-	IReadOnlyList<PlayerResult> Results,
+	ImmutableList<PlayerResult> Results,
 	PlayerAverage Average,
 	string        Name,
 	PlayerLocalRanking          LocalRanking,
 	PlayerNationalRanking       NationalRanking,
-	IReadOnlyList<PlayerForm>   Form,
-	IReadOnlyList<object>       Rankings
+	ImmutableList<PlayerForm>   Form,
+	ImmutableList<object>       Rankings
 );

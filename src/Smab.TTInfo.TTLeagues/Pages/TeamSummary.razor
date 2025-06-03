@@ -290,7 +290,6 @@
 
 	internal async Task<IEnumerable<TeamStatsPlayer>> GetTeamPlayers(int teamId, int competitionId)
 	{
-
 		if (teamPlayersList.ContainsKey(teamId)) {
 			return teamPlayersList[teamId];
 		} else {
@@ -306,10 +305,8 @@
 		}
 	}
 
-	string CalculateForm(IReadOnlyList<TeamStatsMatch> matches)
-	{
-		return String.Join(",", matches.Take(6).Select(m => m.Form.ToString()));
-	}
+	string CalculateForm(IEnumerable<TeamStatsMatch> matches)
+		=> String.Join(",", matches.Take(6).Select(m => $"{m.Form}"));
 
 	string? CalculateDoublesWinners(MatchCard matchCard)
 	{
