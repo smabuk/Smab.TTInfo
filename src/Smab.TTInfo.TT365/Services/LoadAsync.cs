@@ -69,11 +69,4 @@ public sealed partial class TT365Reader
 
 		return returnValue;
 	}
-
-	/// <summary>
-	/// Ensures the base address of the HTTP client is set for the specified TT365 league.
-	/// </summary>
-	/// <param name="leagueId">The TT365 league identifier.</param>
-	private void EnsureBaseAddress(TT365LeagueId leagueId)
-		=> httpClient.BaseAddress ??= new Uri($"{TT365_COM}/{leagueId}/");
 }

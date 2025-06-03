@@ -20,7 +20,7 @@ public sealed partial class TT365Reader
 	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? seasonId = null)
 	{
 		seasonId ??= (await GetLeague(leagueId))?.GetCurrentSeasonId();
-		if (!seasonId.HasValue) {
+		if (seasonId is null) {
 			// TODO: Log this error
 			return [];
 		}

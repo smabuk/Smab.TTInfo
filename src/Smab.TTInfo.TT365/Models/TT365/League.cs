@@ -13,7 +13,7 @@
 /// <param name="Seasons"></param>
 /// <param name="CurrentSeason"></param>
 public record League(
-	string Id,
+	TT365LeagueId Id,
 	string Name,
 	string Description,
 	string URL,
