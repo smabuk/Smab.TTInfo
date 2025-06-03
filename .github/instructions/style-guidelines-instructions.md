@@ -6,6 +6,10 @@ Coding standards, domain knowledge, and preferences that AI should follow.
 ## Namespaces
 - use file-scoped namespaces that match the folder structure.
 
+## Logic
+- Prefer collection expressions.
+- Prefer swictch expressions over if statements.
+
 ## Immutability
 - Prefer immutable types unless mutability is requested.
 - Prefer records over classes for immutable types.

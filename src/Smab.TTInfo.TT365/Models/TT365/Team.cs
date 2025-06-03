@@ -19,9 +19,9 @@ public class Team
 	public string Captain { get; set; } = "";
 	public string CaptainPhone { get; set; } = "";
 	public string CaptainEmailAddress { get; set; } = "";
-	public ICollection<Player>? Players { get; set; } = [];
-	public ICollection<Fixture>? Fixtures { get; set; } = [];
-	public ICollection<TeamResult>? Results { get; set; } = [];
+	public ImmutableList<Player>? Players { get; set; } = [];
+	public ImmutableList<Fixture>? Fixtures { get; set; } = [];
+	public ImmutableList<TeamResult>? Results { get; set; } = [];
 	public int? LeaguePosition { get; set; }
 	public int Played { get; set; }
 	public int Won { get; set; }

@@ -48,25 +48,27 @@ public sealed partial class TT365Reader
 				Lookups = await GetLookupTables(leagueId, currentSeasonId)
 			};
 
-			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [], currentSeason);
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				leagueId,
 				$"Results/Archive")
 				?? new();
 
+			List<Season> seasons = [currentSeason];
 			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//td//a") ?? EMPTY_NODE_COLLECTION)
 			{
 				string seasonId = item.GetAttributeValue("href", "");
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
 				string seasonName = item.InnerText;
-				league.Seasons.Add(new(seasonId, seasonName));
+				seasons.Add(new(seasonId, seasonName));
 			}
+
+			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeason);
 		} else {
-			league.CurrentSeason.Lookups = await GetLookupTables(leagueId, league.CurrentSeason.GetSeasonId());
+			league.CurrentSeason.Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId());
 		}
 
-		league.CurrentSeason.Divisions = await GetDivisions(leagueId, league.CurrentSeason.GetSeasonId());
+		league.CurrentSeason.Divisions = await GetDivisions(leagueId, league.GetCurrentSeasonId());
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFileToCache(jsonString, $"{leagueId}.json");

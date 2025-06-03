@@ -8,8 +8,8 @@
 /// objects.</remarks>
 public record LookupTables
 {
-	public List<IdNamePair> DivisionLookup = [];
-	public List<IdNamePair> ClubLookup = [];
-	public List<IdNamePair> TeamLookup = [];
-	public List<IdNamePair> VenueLookup = [];
+	public ImmutableList<IdNamePair> DivisionLookup = [];
+	public ImmutableList<IdNamePair> ClubLookup = [];
+	public ImmutableList<IdNamePair> TeamLookup = [];
+	public ImmutableList<IdNamePair> VenueLookup = [];
 }

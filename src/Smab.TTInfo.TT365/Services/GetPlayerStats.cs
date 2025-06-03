@@ -19,14 +19,10 @@ public sealed partial class TT365Reader
 	public async Task<Player?> GetPlayerStats(TT365LeagueId leagueId, Player player, TT365SeasonId? seasonId = null)
 	{
 		League? league = await GetLeague(leagueId);
-		if (league is null) {
-			return null;
-		}
+		if (league is null) { return null; }
 
-		if (seasonId is null) {
-			if (league is null) { return null; };
-			seasonId = league.CurrentSeason.GetSeasonId();
-		}
+		seasonId ??= league.GetCurrentSeasonId();
+		if (seasonId is null) { return null; };
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
 		Player newPlayer = await LoadAsync<Player>(leagueId, null, filename) ?? null!;
@@ -102,7 +98,7 @@ public sealed partial class TT365Reader
 						MatchCardURL:      matchCardUrl
 					);
 
-					newPlayer.PlayerResults.Add(playerResult);
+					newPlayer.PlayerResults = [.. newPlayer.PlayerResults, playerResult];
 				}
 			}
 		}

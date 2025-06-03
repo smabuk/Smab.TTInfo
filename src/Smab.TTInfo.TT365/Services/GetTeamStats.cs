@@ -19,11 +19,8 @@ public sealed partial class TT365Reader
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
 	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
-		if (seasonId is null) {
-			League? league = await GetLeague(leagueId);
-			if (league is null) { return null; };
-			seasonId = league.CurrentSeason.GetSeasonId();
-		}
+		seasonId ??= (await GetLeague(leagueId))?.GetCurrentSeasonId();
+		if (seasonId is null) { return null; };
 
 		List<Division> divisions = await GetDivisions(leagueId, seasonId ?? new());
 		if (divisions.Count == 0) {
@@ -113,7 +110,7 @@ public sealed partial class TT365Reader
 					}
 				}
 
-				team.Players.Add(player);
+				team.Players = [.. team.Players, player];
 			}
 		}
 
@@ -157,7 +154,7 @@ public sealed partial class TT365Reader
 					IsVoid     = isVoid,
 				};
 
-				team.Results.Add(teamResult);
+				team.Results = [.. team.Results, teamResult];
 			}
 		}
 
