@@ -36,12 +36,13 @@ public sealed partial class TT365Reader
 			);
 
 			string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
-			HtmlDocument doc = await LoadAsync<HtmlDocument>(
+			HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				url)
-				?? new();
+				url,
+				$"{leagueId}_{seasonId}_fixtures_all.html"
+			);
 
-			if (!string.IsNullOrWhiteSpace(doc.Text)) {
+			if (!string.IsNullOrWhiteSpace(doc?.Text)) {
 				HtmlNode? node = doc.DocumentNode.SelectSingleNode("//form[@id='FixtureFiltersForm']");
 				if (node is not null) {
 					foreach (HtmlNode item in node.SelectNodes("//select[@id='d']//option") ?? EMPTY_NODE_COLLECTION) {

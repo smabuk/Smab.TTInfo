@@ -45,7 +45,11 @@ public sealed partial class TT365Reader
 		);
 
 		string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
-		HtmlDocument? doc = await LoadAsync<HtmlDocument>(leagueId, url);
+		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
+			leagueId,
+			url,
+			filename.Replace("json", "html")
+		);
 
 		if (string.IsNullOrWhiteSpace(doc?.Text)) { return fixtures; }
 

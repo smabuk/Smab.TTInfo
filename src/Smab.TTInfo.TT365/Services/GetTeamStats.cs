@@ -54,7 +54,6 @@ public sealed partial class TT365Reader
 		team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
 		team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
 
-		Debug.WriteLine(team.CaptainEmailAddress);
 		HtmlNode? playertableNode = teamNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
 		if (playertableNode is not null) {
 			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {

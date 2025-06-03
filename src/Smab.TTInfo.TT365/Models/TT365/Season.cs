@@ -7,10 +7,12 @@
 /// manage and organize season-specific information.</remarks>
 /// <param name="Id"></param>
 /// <param name="Name"></param>
-public record Season(TT365SeasonId Id, string Name)
+public record Season(
+	TT365SeasonId Id,
+	string Name,
+	LookupTables Lookups,
+	ImmutableList<Division> Divisions
+)
 {
-	public LookupTables Lookups { get; set; } = new();
-	public List<Division> Divisions { get; set; } = [];
 	public int DivisionCount => Divisions.Count;
-
 }

@@ -7,7 +7,7 @@
 /// immutable and supports value-based equality.</remarks>
 /// <param name="Score1"></param>
 /// <param name="Score2"></param>
-public record class Score(int Score1, int Score2)
+public record Score(int Score1, int Score2)
 {
 	/// <summary>
 	/// Returns a string representation of the current object, formatted as a score pair.

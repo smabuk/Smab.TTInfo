@@ -43,11 +43,8 @@ public sealed partial class TT365Reader
 			
 			TT365SeasonId currentSeasonId = new(currentSeasonIdAsString[(currentSeasonIdAsString.LastIndexOf('/') + 1)..]);
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("title", "").Replace(" Tables", "") ?? "";
-			Season currentSeason = new(currentSeasonId, currentSeasonName)
-			{
-				Lookups = await GetLookupTables(leagueId, currentSeasonId)
-			};
-
+			LookupTables seasonLookups = await GetLookupTables(leagueId, currentSeasonId);
+			Season currentSeason = new(currentSeasonId, currentSeasonName, seasonLookups, []);
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				leagueId,
@@ -60,15 +57,24 @@ public sealed partial class TT365Reader
 				string seasonId = item.GetAttributeValue("href", "");
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
 				string seasonName = item.InnerText;
-				seasons.Add(new(new(seasonId), seasonName));
+				seasons.Add(new(new(seasonId), seasonName, new(), []));
 			}
 
 			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeason);
 		} else {
-			league.CurrentSeason.Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId());
+			league = league with 
+			{
+				CurrentSeason = league.CurrentSeason with {
+						Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId())
+				}
+			};
 		}
 
-		league.CurrentSeason.Divisions = await GetDivisions(leagueId, league.GetCurrentSeasonId());
+		league = league with {
+			CurrentSeason = league.CurrentSeason with {
+				Divisions = [.. await GetDivisions(leagueId, league.GetCurrentSeasonId())]
+			}
+		};
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFileToCache(jsonString, $"{leagueId}.json");
