@@ -19,7 +19,7 @@ Coding standards, domain knowledge, and preferences that AI should follow.
 
 ## Record Design
 - Define record's properties on the same line with the record declaration.
-- Accompany each record `<anme>` with a `<name>facory` static factory class.
+- Accompany each record `<name>` with a `<name>facory` static factory class.
 - Place the factory class in the same file as the record.
 - Expose static `Create` method in the factory class for instantiation.
 - Place argument validation in the `Create` method.

@@ -22,17 +22,18 @@ public sealed partial class TT365Reader
 		string? jsonString;
 		jsonString = LoadFileFromCache($"{leagueId}_{seasonId}_lookup_divisions.json");
 		if (jsonString is null) {
-			FixturesViewOptions fvo = new()
-			{
-				DivisionName = "All Divisions",
-				ClubId = "",
-				TeamId = "",
-				VenueId = "",
-				ViewModeType = FixturesViewType.Advanced,
-				HideCompletedFixtures = false,
-				MergeDivisions = true,
-				ShowByWeekNo = true
-			};
+			FixturesViewOptions fvo = FixturesViewOptions.Create
+			(
+				season: seasonId,
+				divisionName: "All Divisions",
+				clubId: "",
+				teamId: "",
+				venueId: "",
+				viewModeType: FixturesViewType.Advanced,
+				hideCompletedFixtures: false,
+				mergeDivisions: true,
+				showByWeekNo: true
+			);
 
 			string url = $"Fixtures/{seasonId}/{fvo.DivisionName}?c=False&vm={fvo.ViewModeType}&d={fvo.DivisionName}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&swn={fvo.ShowByWeekNo}&hc={fvo.HideCompletedFixtures}&md={fvo.MergeDivisions}";
 			HtmlDocument doc = await LoadAsync<HtmlDocument>(
