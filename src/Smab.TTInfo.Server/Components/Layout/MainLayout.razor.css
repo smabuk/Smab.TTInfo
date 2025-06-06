@@ -45,7 +45,8 @@ h1 {
 	margin-bottom: 0px;
 }
 
-@media (max-width: 640.98px) {
+/*@media (max-width: 640.98px) {*/
+@media (max-width: 3999.98px) {
 	.top-row:not(.auth) {
 		display: none;
 	}
@@ -59,7 +60,8 @@ h1 {
 	}
 }
 
-@media (min-width: 641px) {
+/*@media (min-width: 641px) {*/
+@media (min-width: 4000px) {
 	.page {
 		flex-direction: row;
 	}

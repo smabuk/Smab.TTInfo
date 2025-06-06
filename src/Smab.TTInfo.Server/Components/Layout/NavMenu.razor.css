@@ -36,7 +36,8 @@
 	display: none;
 }
 
-@media (min-width: 641px) {
+/*@media (min-width: 641px) {*/
+@media (min-width: 4000px) {
 	#navbar-toggler {
 		display: none;
 	}
