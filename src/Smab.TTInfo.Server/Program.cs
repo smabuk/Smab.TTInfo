@@ -60,7 +60,7 @@ app.Run();
 
 static partial class Program
 {
-	public static string SiteName { get; set; } = "🏓 Info";
+	public static string SiteName { get; set; } = "🏓 TT Info";
 	public static string Name { get; set; } = typeof(Program).Assembly
 							.GetName().Name ?? "No assembly name";
 	public static Version Version { get; set; } = typeof(Program).Assembly
