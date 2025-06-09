@@ -140,5 +140,10 @@ caption {
             text-decoration: underline;
         }
 
+#division {
+	margin-top: 0.5em;
+	overflow-x: auto;
+}
+
 
 

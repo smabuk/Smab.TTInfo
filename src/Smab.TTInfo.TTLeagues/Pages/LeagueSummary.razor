@@ -17,45 +17,7 @@
 				<h2>@competition.Name</h2>
 				@foreach (Division? division in divisions)
 				{
-					<h2>@division.Name</h2>
-					<div class="division">
-						<table class="table table-bordered table-sm">
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Team</th>
-									<th>P</th>
-									<th>W</th>
-									<th>D</th>
-									<th>L</th>
-									<th>SF</th>
-									<th>SA</th>
-									<th>Avg</th>
-									<th>Pts</th>
-								</tr>
-							</thead>
-							<tbody>
-								@if (!teamStandingsList.TryGetValue(division.Id, out List<TeamStanding>? teamStandings)) {
-									<tr><td colspan="10">Loading @division.Name ... </td></tr>
-								} else {
-									@foreach (TeamStanding team in teamStandings) {
-									<tr>
-										<td>@team.Position</td>
-											<td><a href="TTLeagues/TeamSummary/@TTInfoId/@team.Name/@team.TeamId">@team.Name</a></td>
-										<td>@team.Played</td>
-										<td>@team.Won</td>
-										<td>@team.Drawn</td>
-										<td>@team.Lost</td>
-										<td>@team.SetsFor</td>
-										<td>@team.SetsAgainst</td>
-										<td>@(team.Points > 0 ? $"{100 * team.Points / (team.SetsAgainst + team.SetsFor):0}%" : "0")</td>
-										<td>@team.Points</td>
-									</tr>
-									}
-								}
-							</tbody>
-						</table>
-					</div>
+					<DivisionSummary TTInfoId="@TTInfoId" CompetitionId="@(CompetitionId ?? 0)" DivisionId="@division.Id"/>
 				}
 			}
 		</div>

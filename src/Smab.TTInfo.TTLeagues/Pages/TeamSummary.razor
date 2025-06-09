@@ -187,6 +187,10 @@
 				</tbody>
 			</table>
 		</div>
+		<div id="division">
+			<DivisionSummary TTInfoId="@TTInfoId" CompetitionId="@(fixtures.FirstOrDefault()?.CompetitionId ?? 0)" DivisionId="@(fixtures.FirstOrDefault()?.DivisionId ?? 0)"/>
+		</div>
+
 	</div>
 }
 
