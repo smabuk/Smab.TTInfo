@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿namespace Smab.TTInfo.TTLeagues.Pages;
 
-namespace Smab.TTInfo.TTLeagues.Pages;
-public partial class PlayerSummary
+public partial class PlayerSummary(TTLeaguesReader _ttleagues)
 {
 	[EditorRequired]
 	[Parameter]
 	public required string PlayerId { get; set; }
 
-	[EditorRequired]
 	[Parameter]
 	public string PlayerName { get; set; } = "";
+
+	[Parameter]
+	public int? CompetitionId { get; set; }
 
 	[EditorRequired]
 	[Parameter]
@@ -26,6 +27,17 @@ public partial class PlayerSummary
 		StateHasChanged();
 		league = await _ttleagues.GetLeague(TTInfoId);
 		lookup = await _ttleagues.GetLookupTables(TTInfoId);
+
+		if (CompetitionId is not null) {
+			PlayerStats? playerStats = await _ttleagues.GetPlayerStats(PlayerId, TTInfoId, (int)CompetitionId);
+			if (playerStats is not null) {
+				PlayerName = playerStats.Name;
+				playerStatsList.Add(playerStats);
+			}
+
+			StateHasChanged();
+			return;
+		}
 
 		if (league is not null) {
 			foreach (int competitionId in league.CurrentCompetitions.Select(c => c.Id).Where(id => id is > 0)) {
@@ -56,7 +68,7 @@ public partial class PlayerSummary
 		return name.Replace("division", "", StringComparison.InvariantCultureIgnoreCase).Trim();
 	}
 
-	static string CalculateMatchResult(int scoreFor, int scoreAgainst)
+	static string CalculateResult(int scoreFor, int scoreAgainst)
 	{
 		return (scoreFor - scoreAgainst) switch
 		{

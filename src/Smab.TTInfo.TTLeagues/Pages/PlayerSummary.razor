@@ -1,5 +1,6 @@
-﻿@page "/TTLeagues/PlayerSummary/{TTInfoId}/{PlayerName}/{PlayerId}"
-@inject TTLeaguesReader _ttleagues
+﻿@page "/TTLeagues/PlayerSummary/{TTInfoId}/{PlayerId}"
+@page "/TTLeagues/PlayerSummary/{TTInfoId}/{PlayerName}/{PlayerId}"
+@page "/TTLeagues/PlayerSummary/{TTInfoId}/{CompetitionId:int}/{PlayerId}"
 @attribute [StreamRendering]
 
 <PageTitle>@PlayerName - @TTInfoId</PageTitle>
@@ -27,7 +28,7 @@
 					</thead>
 					<tbody>
 						@foreach (PlayerResult result in psr.Results.Where(res => res.Opponent.Key is not null).OrderByDescending(p => p.Date).ThenByDescending(p => p.SetId)) {
-							<tr data-result='@CalculateMatchResult(result.For, result.Against)'>
+							<tr data-result='@CalculateResult(result.For, result.Against)'>
 								<td><a href="TTLeagues/PlayerSummary/@TTInfoId/@result.Opponent.Value/@result.Opponent.Key">@result.Opponent.Value</a></td>
 								<td>@CalculateDivisionName(ps.Division.Value, result.DivisionId)</td>
 								<td>@result.Versus.Value</td>
@@ -39,9 +40,34 @@
 						}
 					</tbody>
 				</table>
+				<div id="stats">
+					<h3>Stats</h3>
+					<dl>
+						<dt>Wins:</dt>
+						<dd>@($"{(ps.Average.Won * 100 / ps.Average.Played)}% - {ps.Average.Won} out of {ps.Average.Played}")</dd>
+						<dt>Losses:</dt>
+						<dd>@($"{(100 - (ps.Average.Won * 100 / ps.Average.Played))}% - {ps.Average.Played - ps.Average.Won} out of {ps.Average.Played}")</dd>
+						<dt>Won in 3:</dt>
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win"  && res.Games.Count == 3).Count()</dd>
+						<dt>Won in 4:</dt>															 
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win"  && res.Games.Count == 4).Count()</dd>
+						<dt>Won in 5:</dt>															 
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win"  && res.Games.Count == 5).Count()</dd>
+						<dt>Lost in 5:</dt>
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss" && res.Games.Count == 5).Count()</dd>
+						<dt>Lost in 4:</dt>
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss" && res.Games.Count == 4).Count()</dd>
+						<dt>Lost in 3:</dt>
+						<dd>@psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss" && res.Games.Count == 3).Count()</dd>
+						<dt>Ranking Position:</dt>
+						<dd>@($"{ps.LocalRanking.Position}")</dd>
+						<dt>Ranking Points:</dt>
+						<dd>@($"{ps.LocalRanking.Score}")</dd>
+						<dt>Ranking pts gained:</dt>
+						<dd>@($"{psr.Results.Sum(res => res.Score)}")</dd>
+					</dl>
+				</div>
 			}
 		}
 	</div>
 }
-
-

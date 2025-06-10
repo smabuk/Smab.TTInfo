@@ -143,5 +143,19 @@ caption {
             text-decoration: underline;
         }
 
+dl {
+	display: grid;
+	grid-template-columns: max-content auto;
+	grid-column-gap: 2em;
+	grid-row-gap: 0;
+}
 
+dt {
+	grid-column-start: 1;
+	text-align: end;
+}
+
+dd {
+	grid-column-start: 2;
+}
 
