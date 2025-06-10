@@ -27,8 +27,8 @@ internal sealed record PlayerStats(
 	ImmutableList<PlayerResult> Results,
 	PlayerAverage Average,
 	string        Name,
-	PlayerLocalRanking          LocalRanking,
-	PlayerNationalRanking       NationalRanking,
-	ImmutableList<PlayerForm>   Form,
-	ImmutableList<object>       Rankings
+	PlayerRanking                LocalRanking,
+	PlayerRanking                NationalRanking,
+	ImmutableList<PlayerForm>    Form,
+	ImmutableList<PlayerRanking> Rankings
 );
