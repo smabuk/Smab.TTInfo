@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+using Smab.TTInfo.Shared.Helpers;
+
 namespace Smab.TTInfo.TT365.Pages;
 
 /// <summary>
@@ -52,6 +54,6 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 			.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName);
 	}
 
-	private bool IsPage() => _navManager.Uri.Contains($"DivisionSummary");
+	private bool IsPage() => _navManager.IsPage(nameof(DivisionSummary));
 
 }

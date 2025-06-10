@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+using Smab.TTInfo.Shared.Helpers;
+
 namespace Smab.TTInfo.TTLeagues.Pages;
 
 /// <summary>
@@ -43,5 +45,5 @@ public partial class DivisionSummary(TTLeaguesReader _ttleagues, NavigationManag
 		isLoading = false;
 	}
 
-	private bool IsPage() => _navManager.Uri.Contains($"DivisionSummary");
+	private bool IsPage() => _navManager.IsPage(nameof(DivisionSummary));
 }
