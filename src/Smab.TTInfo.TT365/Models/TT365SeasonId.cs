@@ -15,4 +15,5 @@ public readonly record struct TT365SeasonId(string Value) : IComparable<TT365Sea
 
 	public int CompareTo(TT365SeasonId other)
 		=> string.Compare(Value, other.Value, StringComparison.OrdinalIgnoreCase);
+	public string ToDisplay() => Value.Replace('_', ' ');
 }

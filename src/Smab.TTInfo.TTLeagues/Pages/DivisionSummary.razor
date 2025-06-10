@@ -9,6 +9,7 @@ else if (division is not null)
 {
 	@if (IsPage())
 	{
+		<PageTitle>@division.Name - @division.Competition.Name</PageTitle>
 		<h1>@division.Competition.Name</h1>
 		<h3>@division.Name</h3>
 	} else {

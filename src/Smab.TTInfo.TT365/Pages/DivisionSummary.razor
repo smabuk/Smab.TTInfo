@@ -9,7 +9,8 @@ else if (Division is not null)
 {
 	@if (IsPage())
 	{
-		@* <h1>@league?.Name @league?.GetCurrentSeason().Name</h1> *@
+		<PageTitle>@Division.Name - @leagueId @seasonId.ToDisplay()</PageTitle>
+		<h1>@leagueId @seasonId.ToDisplay()</h1>
 		<h3>@Division.Name</h3>
 	} else {
 		<h3><a href="/DivisionSummary/@LeagueId/@SeasonId/@Division.Name">@Division.Name</a></h3>

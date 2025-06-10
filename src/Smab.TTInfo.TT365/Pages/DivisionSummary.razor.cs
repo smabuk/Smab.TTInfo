@@ -30,11 +30,15 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 	public Division? Division { get; set; } = null;
 
 	private bool isLoading = true;
+	private TT365SeasonId seasonId;
+	private TT365LeagueId leagueId;
 
 	protected override async Task OnParametersSetAsync()
 	{
 		isLoading = true;
 
+		leagueId = (TT365LeagueId)LeagueId;
+		seasonId = (TT365SeasonId)SeasonId;
 		Division ??= await LoadDivision();
 
 		isLoading = false;
