@@ -24,4 +24,10 @@
 		<ProjectReference Include="..\Smab.TTInfo.TTLeagues\Smab.TTInfo.TTLeagues.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Update="wwwroot\robots.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 </Project>
