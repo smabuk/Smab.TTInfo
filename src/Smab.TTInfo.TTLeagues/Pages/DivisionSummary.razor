@@ -1,5 +1,4 @@
-@page "/TTLeagues/DivisionSummary/{TTInfoId}/{CompetitionId:int?}/{DivisionId}"
-@inject TTLeaguesReader _ttleagues
+@page "/TTLeagues/DivisionSummary/{TTInfoId}/{CompetitionId:int?}/{DivisionId:int}"
 @attribute [StreamRendering]
 
 @if (isLoading)
@@ -8,7 +7,13 @@
 }
 else if (division is not null)
 {
-	<h3>@division.Name</h3>
+	@if (IsPage())
+	{
+		<h1>@division.Competition.Name</h1>
+		<h3>@division.Name</h3>
+	} else {
+		<h3><a href="TTLeagues/DivisionSummary/@TTInfoId/@CompetitionId/@DivisionId">@division.Name</a></h3>
+	}
 	<div class="division">
 		<table class="table table-bordered table-sm">
 			<thead>

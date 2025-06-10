@@ -8,12 +8,13 @@ namespace Smab.TTInfo.TT365.Pages;
 /// <remarks>This class is used to encapsulate information about a specific division, including its identifiers,
 /// name, and associated data. It provides functionality to load division details asynchronously based on the provided
 /// parameters.</remarks>
-public partial class DivisionSummary
+public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _navManager)
 {
 	[EditorRequired]
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
+	[EditorRequired]
 	[Parameter]
 	public string SeasonId { get; set; } = "";
 
@@ -50,4 +51,7 @@ public partial class DivisionSummary
 		return (await _tt365.GetDivisions((TT365LeagueId)LeagueId, (TT365SeasonId)SeasonId))
 			.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName);
 	}
+
+	private bool IsPage() => _navManager.Uri.Contains($"DivisionSummary");
+
 }

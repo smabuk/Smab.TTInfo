@@ -27,12 +27,12 @@ table {
 		font-weight: bold;
 	}
 
-	table a {
-		color: var(--text-color);
-		text-decoration: none;
-	}
+a {
+	color: var(--text-color);
+	text-decoration: none;
+}
 
-		table a:hover, table a:active {
-			color: var(--text-color);
-			text-decoration: underline;
-		}
+	a:hover, table a:active {
+		color: var(--text-color);
+		text-decoration: underline;
+	}

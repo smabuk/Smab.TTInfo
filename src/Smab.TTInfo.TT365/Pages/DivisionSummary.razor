@@ -1,5 +1,4 @@
-@page "/DivisionSummary/{LeagueId}/{DivisionName}"
-@inject ITT365Reader _tt365
+@page "/DivisionSummary/{LeagueId}/{SeasonId}/{DivisionName}"
 @attribute [StreamRendering]
 
 @if (isLoading)
@@ -8,7 +7,13 @@
 }
 else if (Division is not null)
 {
-	<h3>@Division.Name</h3>
+	@if (IsPage())
+	{
+		@* <h1>@league?.Name @league?.GetCurrentSeason().Name</h1> *@
+		<h3>@Division.Name</h3>
+	} else {
+		<h3><a href="/DivisionSummary/@LeagueId/@SeasonId/@Division.Name">@Division.Name</a></h3>
+	}
 	<div class="division">
 		<table class="table table-bordered table-sm">
 			<thead>

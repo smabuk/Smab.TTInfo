@@ -8,7 +8,7 @@
 @if (League is not null && League.CurrentSeason.DivisionCount > 0) {
 	<div>
 		@foreach (Division division in League.CurrentSeason.Divisions) {
-			<DivisionSummary Division="@division" LeagueId="@League.Id" />
+			<DivisionSummary Division="@division" LeagueId="@League.Id" SeasonId="@League.CurrentSeason.Id" />
 		}
 	</div>
 	<br />

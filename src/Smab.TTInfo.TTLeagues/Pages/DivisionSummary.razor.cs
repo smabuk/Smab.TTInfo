@@ -8,7 +8,7 @@ namespace Smab.TTInfo.TTLeagues.Pages;
 /// <remarks>This class is used to encapsulate information about a specific division, including its identifiers,
 /// name, and associated data. It provides functionality to load division details asynchronously based on the provided
 /// parameters.</remarks>
-public partial class DivisionSummary
+public partial class DivisionSummary(TTLeaguesReader _ttleagues, NavigationManager _navManager)
 {
 	[EditorRequired]
 	[Parameter]
@@ -42,4 +42,6 @@ public partial class DivisionSummary
 
 		isLoading = false;
 	}
+
+	private bool IsPage() => _navManager.Uri.Contains($"DivisionSummary");
 }
