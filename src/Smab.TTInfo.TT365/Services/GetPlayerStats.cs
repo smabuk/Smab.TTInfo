@@ -57,7 +57,7 @@ public sealed partial class TT365Reader
 
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = [.. resultRow.Descendants("td")];
-				if (cells.Length == 7 && cells[0].Descendants("a").Count() == 1) {
+				if (cells.Length is 6 or 7 && cells[0].Descendants("a").Count() == 1) {
 					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
 					Player opponent = new () {
@@ -76,10 +76,20 @@ public sealed partial class TT365Reader
 
 					string scores = string.Join(",", cells[4].Descendants("span").Select(s => s.InnerText.Trim()));
 
-					bool rankingDiffSuccessful = int.TryParse(cells[5].InnerText, null, out int rankingDiff);
+					bool rankingDiffSuccessful = false;
+					int rankingDiff = 0;
+					string result = "";
+					string matchCardUrl = "";
 
-					string result = cells[6].InnerText.Trim();
-					string matchCardUrl = $"{TT365_COM}{cells[6].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+					if (cells.Length is 7) {
+						rankingDiffSuccessful = int.TryParse(cells[5].InnerText, null, out rankingDiff);
+						result = cells[6].InnerText.Trim();
+						matchCardUrl = $"{TT365_COM}{cells[6].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+					} else {
+						result = cells[5].InnerText.Trim();
+						matchCardUrl = $"{TT365_COM}{cells[5].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+					}
+
 					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
 
 					PlayerResult playerResult = new(
