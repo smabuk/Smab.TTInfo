@@ -19,7 +19,13 @@ public readonly record struct TT365SeasonId(string Value) : IComparable<TT365Sea
 	public string ToDisplay() => Value.Replace('_', ' ');
 }
 
-
+/// <summary>
+/// Converts a <see cref="TT365SeasonId"/> to its string representation and vice versa.
+/// </summary>
+/// <remarks>This converter is designed to facilitate serialization and deserialization of <see
+/// cref="TT365SeasonId"/>  objects by converting them to and from their string representations. It uses a creator
+/// function to  instantiate <see cref="TT365SeasonId"/> from a string and an extractor function to obtain the string 
+/// representation of a <see cref="TT365SeasonId"/>.</remarks>
 public class TT365SeasonIdConverter : SingleValueConverter<TT365SeasonId, string>
 {
 	public TT365SeasonIdConverter() : base(creator => new TT365SeasonId(creator!), extractor => extractor.ToString()) { }

@@ -14,6 +14,13 @@ public readonly record struct TT365LeagueId(string LeagueId)
 	public static explicit operator TT365LeagueId(string value) => new(value);
 }
 
+/// <summary>
+/// Converts a <see cref="TT365LeagueId"/> object to its string representation and vice versa.
+/// </summary>
+/// <remarks>This converter is designed to facilitate serialization and deserialization of <see
+/// cref="TT365LeagueId"/>  objects by converting them to and from their string representations. It uses a creator
+/// function to  instantiate <see cref="TT365LeagueId"/> objects and an extractor function to retrieve their string
+/// values.</remarks>
 public class TT365LeagueIdConverter : SingleValueConverter<TT365LeagueId, string>
 {
 	public TT365LeagueIdConverter() : base(creator => new TT365LeagueId(creator!), extractor => extractor.ToString()) { }
