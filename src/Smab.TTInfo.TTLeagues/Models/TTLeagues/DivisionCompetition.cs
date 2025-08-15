@@ -74,7 +74,7 @@
 /// <param name="GlobalMembers"></param>
 /// <param name="RestrictByClub"></param>
 /// <param name="RestrictByMembership"></param>
-internal sealed record DivisionCompetition(
+public sealed record DivisionCompetition(
 	int     Id,
 	int     OldLeagueId,
 	object  OldLeague,

@@ -25,7 +25,7 @@
 /// <param name="CheckExpiry"></param>
 /// <param name="Type"></param>
 /// <param name="Deleted"></param>
-internal sealed record DivisionTenant(
+public sealed record DivisionTenant(
 	int     Id,
 	string  Code,
 	string  Host,

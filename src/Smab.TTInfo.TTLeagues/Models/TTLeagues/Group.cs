@@ -12,7 +12,7 @@
 /// <param name="Range"></param>
 /// <param name="Week"></param>
 /// <param name="Title"></param>
-internal sealed record Group
+public sealed record Group
 (
 	List<Match>     Matches,
 	int             Type,

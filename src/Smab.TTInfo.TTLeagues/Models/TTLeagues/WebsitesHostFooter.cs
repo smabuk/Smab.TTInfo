@@ -17,7 +17,7 @@
 /// <param name="Items">The list of items under this footer item.</param>
 /// <param name="Type">The type of the footer item.</param>
 /// <param name="Enabled">Indicates if the footer item is enabled.</param>
-internal sealed record WebsitesHostFooter(
+public sealed record WebsitesHostFooter(
 	int    Id,
 	object ParentId,
 	object Parent,

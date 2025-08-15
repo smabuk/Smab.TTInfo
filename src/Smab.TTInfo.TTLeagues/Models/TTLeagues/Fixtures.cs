@@ -7,7 +7,7 @@
 /// <param name="Matches">The list of matches in the fixtures.</param>
 /// <param name="Type">The type of fixtures.</param>
 /// <param name="Total">The total number of fixtures.</param>
-internal sealed record Fixtures
+public sealed record Fixtures
 (
 	ImmutableList<Group> Groups,
 	ImmutableList<Match> Matches,

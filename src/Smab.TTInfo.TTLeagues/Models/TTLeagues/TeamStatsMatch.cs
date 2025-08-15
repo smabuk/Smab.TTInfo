@@ -12,7 +12,7 @@
 /// <param name="Form">A numeric representation of the team's recent performance or form. Can be <see langword="null"/> if the form data is
 /// unavailable.</param>
 /// <param name="Date">The date and time of the match. Can be <see langword="null"/> if the match date is not set.</param>
-internal sealed record TeamStatsMatch(
+public sealed record TeamStatsMatch(
 	int? Id,
 	int? Won,
 	int? Played,

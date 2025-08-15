@@ -23,7 +23,7 @@
 /// <param name="Twitter"></param>
 /// <param name="Facebook"></param>
 /// <param name="Instagram"></param>
-internal sealed record DivisionOrganisation(
+public sealed record DivisionOrganisation(
 	int     Id,
 	string  Name,
 	string  Logo,

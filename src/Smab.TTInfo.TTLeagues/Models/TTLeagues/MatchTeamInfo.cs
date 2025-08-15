@@ -20,7 +20,7 @@
 /// <param name="ClubId"></param>
 /// <param name="CaptainId"></param>
 /// <param name="DisplayName"></param>
-internal sealed record MatchTeamInfo(
+public sealed record MatchTeamInfo(
 	int     Id,
 	string  UserId,
 	int?    TeamId,

@@ -123,8 +123,8 @@ public partial class TeamSummary
 
 	static string? CalculateDoublesWinners(MatchCard matchCard)
 	{
-		int HomeTotal = matchCard.Results.Home.Select(m => m.Score ?? 0).Sum();
-		int AwayTotal = matchCard.Results.Away.Select(m => m.Score ?? 0).Sum();
+		int HomeTotal = matchCard.Results.Home.Select(m => m.Score).Sum();
+		int AwayTotal = matchCard.Results.Away.Select(m => m.Score).Sum();
 
 		if (matchCard.Match.Home.Score - HomeTotal >= 1 && matchCard.Match.Away.Score == AwayTotal) {
 			return $"Doubles: {matchCard.Match.Home.Name}";

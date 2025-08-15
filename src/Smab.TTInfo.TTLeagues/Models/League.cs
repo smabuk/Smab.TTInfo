@@ -10,10 +10,10 @@ namespace Smab.TTInfo.TTLeagues.Models;
 /// <param name="WebsitesHost">The websites host information.</param>
 /// <param name="CurrentCompetitions">The list of current competitions.</param>
 /// <param name="ArchivedCompetitions">The list of archived competitions.</param>
-internal sealed record League(
+public sealed record League(
 	string TTInfoId,
 	TenantsHost? TenantsHost,
 	WebsitesHost? WebsitesHost,
-	ImmutableList<Competition> CurrentCompetitions,
-	ImmutableList<Competition> ArchivedCompetitions
+	ImmutableList<Smab.TTInfo.TTLeagues.Models.TTLeagues.Competition> CurrentCompetitions,
+	ImmutableList<Smab.TTInfo.TTLeagues.Models.TTLeagues.Competition> ArchivedCompetitions
 );

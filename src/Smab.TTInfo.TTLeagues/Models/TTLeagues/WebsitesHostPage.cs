@@ -6,7 +6,7 @@
 /// <param name="Name">The name of the page.</param>
 /// <param name="Ordering">The ordering value for the page.</param>
 /// <param name="Items">The list of menu items on the page.</param>
-internal sealed record WebsitesHostPage(
+public sealed record WebsitesHostPage(
 	string Name,
 	int    Ordering,
 	ImmutableList<WebsitesHostItem> Items

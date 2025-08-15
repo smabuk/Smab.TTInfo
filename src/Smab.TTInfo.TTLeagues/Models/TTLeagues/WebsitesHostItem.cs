@@ -11,7 +11,7 @@
 /// <param name="ForwardTo">The URL or route to forward to.</param>
 /// <param name="Ordering">The ordering value for display.</param>
 /// <param name="Limited">Indicates if the menu item is limited in visibility.</param>
-internal sealed record WebsitesHostItem(
+public sealed record WebsitesHostItem(
 	string Id,
 	string Name,
 	string MenuGroupId,

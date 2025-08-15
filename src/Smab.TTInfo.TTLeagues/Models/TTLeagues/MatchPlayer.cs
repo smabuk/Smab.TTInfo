@@ -23,7 +23,7 @@
 /// <param name="TeamId"></param>
 /// <param name="MembershipNo"></param>
 /// <param name="DoublesPairOrdering"></param>
-internal sealed record MatchPlayer(
+public sealed record MatchPlayer(
 	int?    EntrantId,
 	string  UserId,
 	int?    Ordering,

@@ -24,7 +24,7 @@
 /// <param name="RegistrationsModule"></param>
 /// <param name="Competition"></param>
 /// <param name="Booking"></param>
-internal sealed record DivisionConfig(
+public sealed record DivisionConfig(
 	int     TenantId,
 	bool    AppEnabled,
 	string  StripeId,

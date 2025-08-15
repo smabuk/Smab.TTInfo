@@ -19,7 +19,7 @@
 /// <param name="Twitter"></param>
 /// <param name="Facebook"></param>
 /// <param name="Instagram"></param>
-internal sealed record TenantsHostOrganisation(
+public sealed record TenantsHostOrganisation(
 	int     Id,
 	string  Name,
 	string  Logo,

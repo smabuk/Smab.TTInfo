@@ -28,7 +28,7 @@
 /// <param name="RetentionId">The retention identifier.</param>
 /// <param name="Pool">Indicates if the team is a pool team.</param>
 /// <param name="Members">The list of team members.</param>
-internal record Team(
+public record Team(
 	int?    Id,
 	int?    CompetitionId,
 	string  Competition,

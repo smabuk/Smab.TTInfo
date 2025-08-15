@@ -7,7 +7,7 @@
 /// <param name="CompleteProfileRequired">A value indicating whether a complete user profile is required to proceed with the booking. <see langword="true"/>
 /// if a complete profile is required; otherwise, <see langword="false"/>.</param>
 /// <param name="BookingTimeFrame">The time frame, in minutes, within which the booking must be completed.</param>
-internal sealed record DivisionBooking(
+public sealed record DivisionBooking(
 	int  TenantId,
 	bool CompleteProfileRequired,
 	int  BookingTimeFrame

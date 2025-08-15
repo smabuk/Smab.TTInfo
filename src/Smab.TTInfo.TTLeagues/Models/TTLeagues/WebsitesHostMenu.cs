@@ -12,7 +12,7 @@
 /// <param name="Primary">List of primary menu items.</param>
 /// <param name="Secondary">List of secondary menu items.</param>
 /// <param name="Footer">List of footer menu items.</param>
-internal sealed record WebsitesHostMenu(
+public sealed record WebsitesHostMenu(
 	ImmutableList<WebsitesHostItem>    Competitions,
 	ImmutableList<WebsitesHostItem>    Divisions,
 	ImmutableList<WebsitesHostItem>    Archived,

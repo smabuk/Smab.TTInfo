@@ -8,4 +8,4 @@
 /// <param name="Type"></param>
 /// <param name="Id"></param>
 /// <param name="Name"></param>
-internal record LookupValue(LookupType Type, int Id, string Name);
+public record LookupValue(LookupType Type, int Id, string Name);

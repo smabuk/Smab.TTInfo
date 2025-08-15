@@ -13,7 +13,7 @@
 /// <param name="TransferPlayer"></param>
 /// <param name="MultipleTeams"></param>
 /// <param name="OverrideEnabled"></param>
-internal sealed record DivisionReserves(
+public sealed record DivisionReserves(
 	int     CompetitionId,
 	int     Type,
 	int     MaxStepUp,

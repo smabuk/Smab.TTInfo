@@ -12,7 +12,7 @@
 /// <param name="Rank"></param>
 /// <param name="Start"></param>
 /// <param name="Change"></param>
-internal sealed record Ranking(
+public sealed record Ranking(
 	 int     Id,
 	 string  UserId,
 	 int     Position,

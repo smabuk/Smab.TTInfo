@@ -10,7 +10,7 @@
 /// <param name="Played">The number of matches played.</param>
 /// <param name="Won">The number of matches won.</param>
 /// <param name="Potm">The number of player of the match awards.</param>
-internal sealed record TeamStatsPlayer(
+public sealed record TeamStatsPlayer(
 	string Id,
 	ImmutableList<TeamStatsMatch> Matches,
 	double Average,

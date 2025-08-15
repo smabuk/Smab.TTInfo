@@ -7,4 +7,4 @@
 /// a string value. The <see cref="Key"/> property can be null, indicating the absence of a key.</remarks>
 /// <param name="Key"></param>
 /// <param name="Value"></param>
-internal record IntKeyValue(int? Key, string Value);
+public sealed record IntKeyValue(int Key, string Value);

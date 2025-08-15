@@ -12,7 +12,7 @@
 /// <param name="Score">The player's score associated with the ranking. If <c>null</c>, the player's score is not available.</param>
 /// <param name="Category">The category in which the player is ranked. This is a non-null string that identifies the context of the ranking,
 /// such as "Sports", "Gaming", or "Academics".</param>
-internal sealed record PlayerRanking(
+public sealed record PlayerRanking(
 	int?   Position,
 	int?   Score,
 	string Category

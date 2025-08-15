@@ -15,7 +15,7 @@
 /// <param name="ImageId"></param>
 /// <param name="Team"></param>
 /// <param name="Disabled"></param>
-internal sealed record Member(
+public sealed record Member(
 	int?    TeamId,
 	string  MemberId,
 	string  Name,

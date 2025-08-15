@@ -11,7 +11,7 @@
 /// <param name="PlayerLabels">The labels or identifiers for players included in the match card. The specific type and usage depend on the context
 /// of the application.</param>
 /// <param name="PrintoutLayout">The identifier for the printout layout to be used when rendering the match card for printing.</param>
-internal sealed record DivisionMatchCard(
+public sealed record DivisionMatchCard(
 	int     CompetitionId,
 	object  Approval,
 	object  Layout,

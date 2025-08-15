@@ -34,7 +34,7 @@
 /// <param name="HeaderId"></param>
 /// <param name="PreviewId"></param>
 /// <param name="Deleted"></param>
-internal sealed record Venue(
+public sealed record Venue(
 	int?    Id,
 	string  Name,
 	string  ShortName,

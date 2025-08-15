@@ -42,7 +42,7 @@
 /// <param name="HasEntrants"></param>
 /// <param name="EntrantCount"></param>
 /// <param name="Days"></param>
-internal sealed record Division(
+public sealed record Division(
 	int     Id,
 	string  Name,
 	string  Description,

@@ -17,7 +17,7 @@
 /// <param name="Players"></param>
 /// <param name="Next"></param>
 /// <param name="Last"></param>
-internal sealed record TeamStats(
+public sealed record TeamStats(
 	int?     Id,
 	string   Name,
 	string   ShortName,

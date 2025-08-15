@@ -14,7 +14,7 @@
 /// <param name="MembershipNo"></param>
 /// <param name="Expired"></param>
 /// <param name="Associated"></param>
-internal sealed record TeamMember(
+public sealed record TeamMember(
 	int?    TeamId,
 	string  MemberId,
 	string  Name,

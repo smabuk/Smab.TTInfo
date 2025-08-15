@@ -16,7 +16,7 @@
 /// <param name="PointsRatio"></param>
 /// <param name="OrderType"></param>
 /// <param name="SetAlternative"></param>
-internal sealed record DivisionTable(
+public sealed record DivisionTable(
 	int  CompetitionId,
 	bool WinLossDraw,
 	bool SetsForAgainst,

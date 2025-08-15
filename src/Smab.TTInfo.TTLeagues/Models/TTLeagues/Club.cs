@@ -18,8 +18,8 @@
 /// <param name="Twitter">The Twitter handle.</param>
 /// <param name="Instagram">The Instagram handle.</param>
 /// <param name="Email">The email address of the club.</param>
-internal sealed record Club(
-	int?   Id,
+public sealed record Club(
+	int Id,
 	string Name,
 	string ShortName,
 	string Location,

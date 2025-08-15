@@ -21,7 +21,7 @@
 /// <param name="HomeId"></param>
 /// <param name="Completed"></param>
 /// <param name="Locked"></param>
-internal sealed record MatchSet(
+public sealed record MatchSet(
 	int?    Id,
 	int?    MatchId,
 	string  Scores,

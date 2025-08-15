@@ -8,8 +8,8 @@
 /// <param name="UserId"></param>
 /// <param name="Name"></param>
 /// <param name="Score"></param>
-internal sealed record PlayerScore(
+public sealed record PlayerScore(
 	string UserId,
 	string Name,
-	int?   Score
+	int Score
 );

@@ -8,7 +8,7 @@
 /// <param name="Away">The identifier of the away team. Can be <see langword="null"/> if not assigned.</param>
 /// <param name="Updated">The timestamp indicating when the match game was last updated. Can be <see langword="null"/> if not available.</param>
 /// <param name="Ordering">The ordering value used to sort or prioritize the match game. Can be <see langword="null"/> if not specified.</param>
-internal sealed record MatchGame(
+public sealed record MatchGame(
 	int? Id,
 	int? Home,
 	int? Away,

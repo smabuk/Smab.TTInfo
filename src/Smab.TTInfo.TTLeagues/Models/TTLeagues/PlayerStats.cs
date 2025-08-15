@@ -18,7 +18,7 @@
 /// <param name="NationalRanking"></param>
 /// <param name="Form"></param>
 /// <param name="Rankings"></param>
-internal sealed record PlayerStats(
+public sealed record PlayerStats(
 	string Id,
 	IntKeyValue Competition,
 	IntKeyValue Division,

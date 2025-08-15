@@ -5,7 +5,7 @@
 /// </summary>
 /// <param name="Home">A read-only list of player scores for the home team. Each entry represents an individual player's score.</param>
 /// <param name="Away">A read-only list of player scores for the away team. Each entry represents an individual player's score.</param>
-internal sealed record MatchResults(
+public sealed record MatchResults(
 	ImmutableList<PlayerScore> Home,
 	ImmutableList<PlayerScore> Away
 );

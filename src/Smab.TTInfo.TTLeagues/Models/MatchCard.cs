@@ -9,7 +9,7 @@
 /// <param name="Match">The match associated with this card.</param>
 /// <param name="Results">The results of the match.</param>
 /// <param name="Sets">A read-only list of sets associated with the match.</param>
-internal sealed record MatchCard(
+public sealed record MatchCard(
 	int   Id,
 	Match Match,
 	MatchResults Results,

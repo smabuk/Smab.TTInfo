@@ -18,7 +18,7 @@
 /// <param name="ExcludeNoWins"></param>
 /// <param name="MinimumPlayed"></param>
 /// <param name="ConsolidatedAverages"></param>
-internal sealed record DivisionAverages(
+public sealed record DivisionAverages(
 	int  CompetitionId,
 	bool SingleForfeit,
 	bool SingleConcede,

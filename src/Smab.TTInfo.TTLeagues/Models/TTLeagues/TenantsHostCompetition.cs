@@ -15,7 +15,7 @@
 /// otherwise, <see langword="false"/>.</param>
 /// <param name="RestrictByMembership">A string specifying the membership type required to participate in the competition. This can be an empty string if
 /// no specific membership restriction applies.</param>
-internal sealed record TenantsHostCompetition(
+public sealed record TenantsHostCompetition(
 	int    TenantId,
 	int    SubmissionType,
 	int    ApprovalType,

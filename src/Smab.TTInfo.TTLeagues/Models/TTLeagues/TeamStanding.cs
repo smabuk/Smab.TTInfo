@@ -26,7 +26,7 @@
 /// <param name="PointsAgainst"></param>
 /// <param name="Points"></param>
 /// <param name="CompetitionId"></param>
-internal sealed record TeamStanding(
+public sealed record TeamStanding(
 	int     EntrantId,
 	int     TeamId,
 	string  FullName,

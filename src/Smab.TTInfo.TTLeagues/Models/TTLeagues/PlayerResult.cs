@@ -21,7 +21,7 @@
 /// <param name="CompetitionId"></param>
 /// <param name="Score"></param>
 /// <param name="Rank"></param>
-internal sealed record PlayerResult(
+public sealed record PlayerResult(
 	IntKeyValue Team,
 	ImmutableList<PlayerResult> Results,
 	StringKeyValue Opponent,

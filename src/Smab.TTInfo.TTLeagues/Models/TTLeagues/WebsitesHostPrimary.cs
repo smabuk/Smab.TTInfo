@@ -17,7 +17,7 @@
 /// <param name="Items">The list of items under this primary menu item.</param>
 /// <param name="Type">The type of the menu item.</param>
 /// <param name="Enabled">Indicates if the menu item is enabled.</param>
-internal sealed record WebsitesHostPrimary(
+public sealed record WebsitesHostPrimary(
 	int     Id,
 	object  ParentId,
 	object  Parent,

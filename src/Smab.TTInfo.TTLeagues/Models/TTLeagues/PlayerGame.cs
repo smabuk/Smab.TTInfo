@@ -7,7 +7,7 @@
 /// <see cref="ToString"/> method formats the score as "For-Against".</remarks>
 /// <param name="For"></param>
 /// <param name="Against"></param>
-internal sealed record PlayerGame(
+public sealed record PlayerGame(
 	int? For,
 	int? Against
 )

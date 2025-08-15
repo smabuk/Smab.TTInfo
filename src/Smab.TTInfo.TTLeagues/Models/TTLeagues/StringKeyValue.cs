@@ -7,4 +7,4 @@
 /// value is always required. It is immutable and provides value-based equality semantics.</remarks>
 /// <param name="Key"></param>
 /// <param name="Value"></param>
-internal record StringKeyValue(string? Key, string Value);
+public sealed record StringKeyValue(string Value, string Key);

@@ -16,7 +16,7 @@
 /// <param name="Potm"></param>
 /// <param name="MatchId"></param>
 /// <param name="DivisionId"></param>
-internal sealed record TeamStatsResult(
+public sealed record TeamStatsResult(
 	DateTimeOffset Date,
 	object   Games,
 	int      Type,

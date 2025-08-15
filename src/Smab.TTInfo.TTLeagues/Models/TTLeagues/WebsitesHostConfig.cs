@@ -22,7 +22,7 @@
 /// <param name="CompetitionPreference"></param>
 /// <param name="MaxArticles"></param>
 /// <param name="Published"></param>
-internal sealed record WebsitesHostConfig(
+public sealed record WebsitesHostConfig(
 	string  ReplyEmail,
 	string  FromEmail,
 	bool    HomeHeader,

@@ -1,4 +1,5 @@
 ﻿namespace Smab.TTInfo.TTLeagues.Models.TTLeagues;
+
 /// <summary>
 /// Represents a competition with various attributes and settings, such as league association,  scheduling, format,
 /// eligibility, and organizational details.
@@ -69,7 +70,7 @@
 /// <param name="NationalRankingCategory"></param>
 /// <param name="PrintoutFormat"></param>
 /// <param name="TeamHandicap"></param>
-internal sealed record Competition(
+public sealed record Competition(
 	int     Id,
 	int     LeagueId,
 	string  Name,

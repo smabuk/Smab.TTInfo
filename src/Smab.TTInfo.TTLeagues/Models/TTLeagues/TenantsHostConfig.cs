@@ -23,7 +23,7 @@
 /// <param name="RegistrationsModule"></param>
 /// <param name="Competition"></param>
 /// <param name="Booking"></param>
-internal sealed record TenantsHostConfig(
+public sealed record TenantsHostConfig(
 	int    TenantId,
 	bool   AppEnabled,
 	string StripeId,
