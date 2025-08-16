@@ -11,7 +11,7 @@ public sealed partial class TTLeaguesReader
 	/// <param name="ttinfoId">The TTInfo identifier for the league.</param>
 	/// <param name="competitionId">The optional competition identifier.</param>
 	/// <returns>A collection of fixtures with match results.</returns>
-	internal async Task<Fixtures?> GetAllFixturesWithMatchResults(string ttinfoId, int? competitionId = null)
+	public async Task<Fixtures?> GetAllFixturesWithMatchResults(string ttinfoId, int? competitionId = null)
 	{
 		Fixtures? fixtures = await GetAllFixtures(ttinfoId, competitionId);
 		if (fixtures is null) {
