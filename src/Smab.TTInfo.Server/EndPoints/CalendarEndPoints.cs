@@ -1,5 +1,9 @@
 ﻿using Smab.Calendar;
+
+using Smab.TTInfo.TT365.Interfaces;
+using Smab.TTInfo.TT365.Models;
 using Smab.TTInfo.TT365.Models.TT365;
+
 using Smab.TTInfo.TTLeagues.Models.TTLeagues;
 
 using static Smab.TTInfo.Shared.LeagueRouter;
@@ -88,22 +92,23 @@ public static partial class CalendarEndPoints
 		}
 
 		// Different ways of returning the information
-		switch (Command?.ToUpperInvariant()) {
-			case "TEXT":
-				return TypedResults.Content(ical.ToString(), "text/plain");
-			case "CONTENT":
-				context.Response.Headers.Append("content-disposition", $"inline;filename={LeagueName} - {TeamName} Fixtures.ics");
-				return TypedResults.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
-			case "FILE":
-				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
-			case "CSV":
-				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv");
-			case "JSON":
-				return TypedResults.Json(ical);
-			case "NEG":
-				return TypedResults.Content(ical.ToString());
-			default:
-				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
+		return (Command?.ToLowerInvariant()) switch
+		{
+			"text"    => TypedResults.Content(ical.ToString(), "text/plain"),
+			"content" => GenerateWithFilename(),
+			"file"    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			"csv"     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
+			"json"    => TypedResults.Json(ical),
+			"neg"     => TypedResults.Content(ical.ToString()), // Negotiated content type, default to text/plain
+			_         => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+		};
+
+		ContentHttpResult GenerateWithFilename()
+		{
+			context.Response.Headers.Append("content-disposition", $"inline; filename={LeagueName} - {TeamName} Fixtures.ics");
+			context.Response.ContentType = "text/calendar";
+			context.Response.ContentLength = ical.ToString().Length;
+			return TypedResults.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 		}
 	}
 

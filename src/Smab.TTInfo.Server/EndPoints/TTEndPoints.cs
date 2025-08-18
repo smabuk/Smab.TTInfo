@@ -1,4 +1,8 @@
-﻿namespace Smab.TTInfo.Server.EndPoints;
+﻿using Smab.TTInfo.TT365.Interfaces;
+using Smab.TTInfo.TT365.Models;
+using Smab.TTInfo.TT365.Models.TT365;
+
+namespace Smab.TTInfo.Server.EndPoints;
 
 /// <summary>
 /// Provides extension methods for mapping TT (Table Tennis) API endpoints to a route group or application.
