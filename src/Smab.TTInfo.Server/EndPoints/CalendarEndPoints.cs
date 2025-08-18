@@ -74,6 +74,7 @@ public static partial class CalendarEndPoints
 			Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(ttinfoId);
 
 			List<Match> fixtures = allFixtures?.Matches
+				.Where(f => f.ActualDateTime is not null)
 				.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 				.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
 				.OrderBy(m => m.ActualDateTime)
