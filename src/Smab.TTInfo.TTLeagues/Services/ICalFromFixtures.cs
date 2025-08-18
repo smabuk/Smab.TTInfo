@@ -80,6 +80,24 @@ public sealed partial class TTLeaguesReader
 					fixtureEvent.Description += $"\nDRAW: {homeTeam} and {awayTeam}";
 				}
 				fixtureEvent.Description += $"\nScore: {homeScore}-{awayScore}";
+				// Add player scores
+				if (match.HomeScores is not null && match.AwayScores is not null)
+				{
+					fixtureEvent.Description += "\n\n**Player Scores**\n";
+					fixtureEvent.Description += "Home Team:\n";
+					foreach (PlayerScore score in match.HomeScores)
+					{
+						fixtureEvent.Description += $"- {score.Name}: {score.Score}\n";
+					}
+
+					fixtureEvent.Description += "Away Team:\n";
+					foreach (PlayerScore score in match.AwayScores)
+					{
+						fixtureEvent.Description += $"- {score.Name}: {score.Score}\n";
+					}
+				}
+				// Add all of the set results
+
 			}
 
 			ical.Events.Add(fixtureEvent);
