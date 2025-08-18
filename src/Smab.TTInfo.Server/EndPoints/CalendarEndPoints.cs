@@ -96,8 +96,8 @@ public static partial class CalendarEndPoints
 				return TypedResults.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 			case "FILE":
 				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
-			//case "CSV":
-			//	return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(_tt365.CsvFromFixtures(fixtures)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv");
+			case "CSV":
+				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv");
 			case "JSON":
 				return TypedResults.Json(ical);
 			case "NEG":
@@ -106,4 +106,18 @@ public static partial class CalendarEndPoints
 				return TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics");
 		}
 	}
+
+	public static string CsvFromCalendar(IcalCalendar ical)
+	{
+		System.Text.StringBuilder output = new();
+
+		foreach (VEvent calEvent in ical.Events) {
+			string homeTeam = calEvent.Summary.Split("vs")[0].Replace("🏓", "").Trim();
+			string awayTeam = calEvent.Summary.Split("vs")[1].Trim();
+			_ = output.Append($"{calEvent.DateStart:dd/MM/yyyy},{homeTeam},{awayTeam},{calEvent.Location}{Environment.NewLine}");
+		}
+
+		return output.ToString();
+	}
+
 }
