@@ -6,8 +6,8 @@ public class LeagueRouter
 		// TODO: remove the hard coding for this later
 		return ttinfoId.ToUpperInvariant() switch
 		{
-			"READING"   => LeagueType.TT365,
-			"BRACKNELL" => LeagueType.TT365,
+			"READING" => LeagueType.TT365,
+			"BRACKNELLANDWOKINGHAM" => LeagueType.TT365,
 			_ => LeagueType.TTLeagues
 		};
 	}
