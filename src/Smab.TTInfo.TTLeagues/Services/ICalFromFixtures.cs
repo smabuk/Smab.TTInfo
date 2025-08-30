@@ -31,7 +31,7 @@ public sealed partial class TTLeaguesReader
 
 			VEvent fixtureEvent = new()
 			{
-				UID = $"{ttinfoId} {homeTeam} vs {awayTeam}",
+				UID = $"{ttinfoId}  {dateStart:yyyyMMdd} {homeTeam} vs {awayTeam}",
 				Summary = $"🏓 {homeTeam} vs {awayTeam}",
 				Location = venue,
 				DateStart = dateStart,

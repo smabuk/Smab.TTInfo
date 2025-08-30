@@ -25,7 +25,7 @@ public sealed partial class TT365Reader
 		foreach (Fixture fixture in Fixtures) {
 			VEvent fixtureEvent = new()
 			{
-				UID          = $"TT365 {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				UID          = $"TT365 {fixture.Date:yyyyMMdd} {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Summary      = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Location     = fixture.Venue,
 				DateStart    = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(19, 30)), timeZone), // All matches by default start at 7:30pm
