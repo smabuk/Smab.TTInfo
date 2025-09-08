@@ -1,0 +1,39 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@tenant=olop.ttclubs.co.uk
+
+###
+
+### 2025 Cunningham Cup memberships (now removed)
+### 533 = 2025 Cunningham Cup
+GET https://ttleagues-api.azurewebsites.net/api/memberships/members?count&membershipId=533&page=1
+Tenant: {{tenant}}
+###
+
+### Memberships (public)
+https://ttleagues-api.azurewebsites.net/api/memberships?public=true
+Tenant: {{tenant}}
+###
+
+### Memberships (all)
+https://ttleagues-api.azurewebsites.net/api/memberships?public=false
+Tenant: {{tenant}}
+###
+
+
+
+
+### Memberships (public)
+https://ttleagues-api.azurewebsites.net/api/memberships?public=true
+Tenant: canterburyttc.ttclubs.co.uk
+###
+
+### Memberships (public)
+https://ttleagues-api.azurewebsites.net/api/memberships/members?count&membershipId=477&page=1
+Tenant: canterburyttc.ttclubs.co.uk
+###
+
+
+
+
+###

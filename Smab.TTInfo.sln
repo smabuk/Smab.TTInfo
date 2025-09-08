@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Instructions", "Instruction
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.TTInfo.TTLeaguesAdapter", "src\Smab.TTInfo.TTLeaguesAdapter\Smab.TTInfo.TTLeaguesAdapter.csproj", "{B5F7AB39-D0D3-4192-A396-6956AB4FED5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.TTInfo.TTClubs", "src\Smab.TTInfo.TTClubs\Smab.TTInfo.TTClubs.csproj", "{7E1E57F5-82AA-4FDF-8415-A7C134566BE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{B5F7AB39-D0D3-4192-A396-6956AB4FED5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5F7AB39-D0D3-4192-A396-6956AB4FED5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5F7AB39-D0D3-4192-A396-6956AB4FED5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E1E57F5-82AA-4FDF-8415-A7C134566BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E1E57F5-82AA-4FDF-8415-A7C134566BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E1E57F5-82AA-4FDF-8415-A7C134566BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E1E57F5-82AA-4FDF-8415-A7C134566BE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{5D011D4E-5D00-4C27-C570-590C64A1C062} = {99C6692C-6F0D-499C-8B69-1883B2615223}
 		{9FBAB477-B160-42E6-AA62-E1A9A4048BDA} = {5D011D4E-5D00-4C27-C570-590C64A1C062}
 		{B5F7AB39-D0D3-4192-A396-6956AB4FED5F} = {BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}
+		{7E1E57F5-82AA-4FDF-8415-A7C134566BE4} = {BF5782E6-1396-4EC8-9A90-9DA9DAE7EEAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E34714D7-994E-4923-BB9A-176F6B0ED40D}
