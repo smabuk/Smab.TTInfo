@@ -27,7 +27,7 @@ public static partial class CalendarEndPoints
 	/// that the <paramref name="app"/> parameter is properly initialized before calling this method.</remarks>
 	/// <param name="app">The <see cref="WebApplication"/> instance to which the endpoints will be mapped. Must not be <see
 	/// langword="null"/>.</param>
-	public static void MapCalendarEndPoints(this WebApplication? app) 
+	public static void MapCalendarEndPoints(this WebApplication? app)
 		=> _ = (app?.MapGet(DefaultCalendarByTeamRoute, GetCalendarByTeam));
 
 	/// <summary>
@@ -64,7 +64,7 @@ public static partial class CalendarEndPoints
 		IcalCalendar? ical = default;
 
 		if (leagueType is LeagueType.TT365) {
-			TT365LeagueId leagueId= (TT365LeagueId)LeagueName;
+			TT365LeagueId leagueId = (TT365LeagueId)LeagueName;
 			List<Fixture>? fixtures = (await _tt365.GetAllFixtures(leagueId))?
 						.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
 						.ToList();
@@ -91,16 +91,19 @@ public static partial class CalendarEndPoints
 			ical = _ttleagues.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
 		}
 
+
+		_ = Enum.TryParse<CommandType>(Command, ignoreCase: true, out CommandType commandType);
+
 		// Different ways of returning the information
-		return (Command?.ToLowerInvariant()) switch
+		return commandType switch
 		{
-			"text"    => TypedResults.Content(ical.ToString(), "text/plain"),
-			"content" => GenerateWithFilename(),
-			"file"    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
-			"csv"     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
-			"json"    => TypedResults.Json(ical),
-			"neg"     => TypedResults.Content(ical.ToString()), // Negotiated content type, default to text/plain
-			_         => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.TEXT    => TypedResults.Content(ical.ToString(), "text/plain"),
+			CommandType.CONTENT => GenerateWithFilename(),
+			CommandType.FILE    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.CSV     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
+			CommandType.JSON    => TypedResults.Json(ical),
+			CommandType.NEG     => TypedResults.Content(ical.ToString()), // Negotiated content type, default to text/plain
+			_ => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
 		};
 
 		ContentHttpResult GenerateWithFilename()
@@ -112,7 +115,7 @@ public static partial class CalendarEndPoints
 		}
 	}
 
-	public static string CsvFromCalendar(IcalCalendar ical)
+	private static string CsvFromCalendar(IcalCalendar ical)
 	{
 		System.Text.StringBuilder output = new();
 
@@ -123,6 +126,16 @@ public static partial class CalendarEndPoints
 		}
 
 		return output.ToString();
+	}
+
+	private enum CommandType {
+		UNKNOWN,
+		TEXT,
+		CONTENT,
+		FILE,
+		JSON,
+		NEG,
+		CSV
 	}
 
 }
