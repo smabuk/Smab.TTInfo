@@ -2,7 +2,7 @@
 public class LeagueRouter
 {
 	// TODO: remove the hard coding for this later
-	private readonly static Dictionary<string, LeagueType> _leagueMap = new(StringComparer.CurrentCultureIgnoreCase)
+	private readonly static Dictionary<string, LeagueType> _leagueMap = new(StringComparer.OrdinalIgnoreCase)
 	{
 		{ "Maidenhead"           , LeagueType.TTLeagues },
 		{ "Reading"              , LeagueType.TT365 },

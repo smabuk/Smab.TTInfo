@@ -148,7 +148,7 @@ public sealed partial class TT365Reader
 				TeamResult teamResult = new(
 					completedFixture,
 					Opposition: cells[0].InnerText,
-					HomeOrAway: cells[1].InnerText,
+					HomeOrAway: cells[1].InnerText.ToLowerInvariant(),
 					Points: int.Parse(cells[4].InnerText),
 					IsVoid: isVoid);
 

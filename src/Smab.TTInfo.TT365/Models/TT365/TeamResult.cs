@@ -31,7 +31,7 @@ public record TeamResult(
 	/// <summary>
 	/// Gets the score for the team based on whether it is the home or away team.
 	/// </summary>
-	public int ScoreForTeam => HomeOrAway.ToLowerInvariant() switch
+	public int ScoreForTeam => HomeOrAway switch
 	{
 		"home" => CompletedFixture.ForHome,
 		"away" => CompletedFixture.ForAway,
@@ -41,7 +41,7 @@ public record TeamResult(
 	/// <summary>
 	/// Gets the score for the opposing team based on the current team's home or away status.
 	/// </summary>
-	public int ScoreForOpposition => HomeOrAway.ToLowerInvariant() switch
+	public int ScoreForOpposition => HomeOrAway switch
 	{
 		"home" => CompletedFixture.ForAway,
 		"away" => CompletedFixture.ForHome,
