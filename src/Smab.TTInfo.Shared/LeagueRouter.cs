@@ -1,15 +1,19 @@
 ﻿namespace Smab.TTInfo.Shared;
 public class LeagueRouter
 {
+	// TODO: remove the hard coding for this later
+	private readonly static Dictionary<string, LeagueType> _leagueMap = new(StringComparer.CurrentCultureIgnoreCase)
+	{
+		{ "Maidenhead"           , LeagueType.TTLeagues },
+		{ "Reading"              , LeagueType.TT365 },
+		{ "BracknellAndWokingham", LeagueType.TT365 },
+	};
+
 	public static LeagueType GetLeagueType(string ttinfoId)
 	{
-		// TODO: remove the hard coding for this later
-		return ttinfoId.ToUpperInvariant() switch
-		{
-			"READING" => LeagueType.TT365,
-			"BRACKNELLANDWOKINGHAM" => LeagueType.TT365,
-			_ => LeagueType.TTLeagues
-		};
+		return _leagueMap.TryGetValue(ttinfoId, out var leagueType)
+			? leagueType
+			: LeagueType.TTLeagues;
 	}
 
 	public enum LeagueType
