@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/docs/">
+    <File Path="docs/Diagrams/TTInfo.vpp" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="DevData/_test_fixtures_maidenhead.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/GitHub/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/workflows/docker-publish.yml" />
+    <File Path=".github/workflows/TTInfo_Main_Azure.yml" />
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/Solution Items/GitHub/Instructions/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/instructions/style-guidelines-instructions.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Smab.TTInfo.Console/Smab.TTInfo.Console.csproj" />
+    <Project Path="src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj" />
+    <Project Path="src/Smab.TTInfo.Shared/Smab.TTInfo.Shared.csproj" />
+    <Project Path="src/Smab.TTInfo.TT365/Smab.TTInfo.TT365.csproj" />
+    <Project Path="src/Smab.TTInfo.TTClubs/Smab.TTInfo.TTClubs.csproj" />
+    <Project Path="src/Smab.TTInfo.TTLeagues/Smab.TTInfo.TTLeagues.csproj" />
+    <Project Path="src/Smab.TTInfo.TTLeaguesAdapter/Smab.TTInfo.TTLeaguesAdapter.csproj" />
+  </Folder>
+</Solution>
