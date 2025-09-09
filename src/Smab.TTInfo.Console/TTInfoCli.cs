@@ -34,10 +34,6 @@ internal class TTInfoCli
 	/// retrieved.</description></item> </list></returns>
 	public static async Task<int> Run(string ttinfoId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
 	{
-		playerSearchName   = playerSearchName?.ToLowerInvariant()   ?? null;
-		opponentSearchName = opponentSearchName?.ToLowerInvariant() ?? null;
-		showTeamPlayers    = showTeamPlayers?.ToLowerInvariant()    ?? null;
-
 		List<Division>     allDivisions    = [];
 		List<LookupTables> allLookupTables = [];
 
@@ -99,8 +95,8 @@ internal class TTInfoCli
 
 				AnsiConsole.MarkupLine($"    {team.LeaguePosition,2} {team.Name,-40} {team.Points,3} {TT365Reader.FixPlayerName(newTeam.Captain),-20} {message}");
 				foreach (Player player in newTeam.Players?.OrderByDescending(p => p.WinPercentage).ToList() ?? []) {
-					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase);
-					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.Contains(showTeamPlayers, StringComparison.InvariantCultureIgnoreCase);
+					bool showPlayerMatchDetails = playerSearchName is not null && player.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase);
+					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.Contains(showTeamPlayers, StringComparison.OrdinalIgnoreCase);
 					if (showTeamDetails || showPlayerMatchDetails) {
 						AnsiConsole.MarkupLine($"         {TT365Reader.FixPlayerName(player.Name),-25} {player.Played,6} {(int)player.WinPercentage,3}%");
 					};
@@ -109,14 +105,14 @@ internal class TTInfoCli
 							.Spinner(Spinner.Known.Circle)
 							.AutoRefresh(true)
 							.StartAsync($"Loading player... {TT365Reader.FixPlayerName(player.Name)} ...", async ctx => await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player, seasonId) ?? new());
-						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase))).OrderBy(pr => pr.Date)) {
+						foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.PlayerTeamName == team.Name && (opponentSearchName is null || pr.Opponent.Name.Contains(opponentSearchName, StringComparison.OrdinalIgnoreCase))).OrderBy(pr => pr.Date)) {
 							//bool limitToOpponentMatchDetails = opponentSearchName is null || playerResult.Opponent.Name.ToLowerInvariant().Contains(opponentSearchName);
 							string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
 							dateString = dateString.Length <= 9 ? dateString : dateString[..9];
-							string resultColor = GetResultColor(playerResult);
-							AnsiConsole.MarkupLine($"[{resultColor}]          {dateString,-9} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
+							string resultColour = GetResultColour(playerResult);
+							AnsiConsole.MarkupLine($"[{resultColour}]          {dateString,-9} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
 							if (playerResult.ResultReason.Length != 0) {
-								AnsiConsole.MarkupLine($"[{resultColor}]                  {playerResult.ResultReason}[/]");
+								AnsiConsole.MarkupLine($"[{resultColour}]                  {playerResult.ResultReason}[/]");
 							}
 						}
 					}
@@ -143,9 +139,6 @@ internal class TTInfoCli
 	/// operation: 0 if successful, or -1 if the league could not be retrieved.</returns>
 	public static async Task<int> PlayerVsPlayer(string ttinfoId, int year, string cacheFolder, string playerSearchName, string opponentSearchName)
 	{
-		playerSearchName = playerSearchName.ToLowerInvariant();
-		opponentSearchName = opponentSearchName.ToLowerInvariant();
-
 		HashSet<SeasonPlayer> players = [];
 
 		TT365Options ttInfoOptions = new()
@@ -182,11 +175,11 @@ internal class TTInfoCli
 					List<Fixture>? fixtures = await tt365.GetAllFixtures((TT365LeagueId)ttinfoId, (TT365SeasonId)seasonId);
 					if (fixtures is not null) {
 						foreach (CompletedFixture fixture in fixtures.OfType<CompletedFixture>()) {
-							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
+							foreach (MatchPlayer matchPlayer in fixture.HomePlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase))) {
 								_ = players.Add(new SeasonPlayer(matchPlayer.Name, matchPlayer.Id, seasonId));
 							}
 
-							foreach (MatchPlayer matchPlayer in fixture.AwayPlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.InvariantCultureIgnoreCase))) {
+							foreach (MatchPlayer matchPlayer in fixture.AwayPlayers.Where(p => p.Name.Contains(playerSearchName, StringComparison.OrdinalIgnoreCase))) {
 								_ = players.Add(new SeasonPlayer(matchPlayer.Name, matchPlayer.Id, seasonId));
 							}
 						}
@@ -211,13 +204,13 @@ internal class TTInfoCli
 						return await tt365.GetPlayerStats((TT365LeagueId)ttinfoId, player1, (TT365SeasonId?)p1.SeasonId) ?? new();
 					});
 
-				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.InvariantCultureIgnoreCase)).OrderBy(pr => pr.Date)) {
+				foreach (PlayerResult playerResult in p2.PlayerResults.Where(pr => pr.Opponent.Name.Contains(opponentSearchName, StringComparison.OrdinalIgnoreCase)).OrderBy(pr => pr.Date)) {
 					string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
 					dateString = dateString.Length <= 9 ? dateString : dateString[..9];
-					string resultColor = GetResultColor(playerResult);
-					AnsiConsole.MarkupLine($"[{resultColor}]   {dateString,-9}  Div {playerResult.Division[^1]} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
+					string resultColour = GetResultColour(playerResult);
+					AnsiConsole.MarkupLine($"[{resultColour}]   {dateString,-9}  Div {playerResult.Division[^1]} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
 					if (playerResult.ResultReason.Length != 0) {
-						AnsiConsole.MarkupLine($"                     [{resultColor}]{playerResult.ResultReason}[/]");
+						AnsiConsole.MarkupLine($"                     [{resultColour}]{playerResult.ResultReason}[/]");
 					}
 				}
 			}
@@ -227,19 +220,29 @@ internal class TTInfoCli
 	}
 
 	/// <summary>
-	/// Determines the color representation for a player's result.
+	/// A static dictionary that maps result types to their corresponding colour representations.
+	/// </summary>
+	/// <remarks>The dictionary is case-insensitive, using <see cref="StringComparer.OrdinalIgnoreCase"/> to compare
+	/// keys. It contains predefined mappings for "win" (green) and "loss" (red).</remarks>
+	private readonly static Dictionary<string, string> resultColours = new(StringComparer.OrdinalIgnoreCase)
+	{
+		{ "win",  "green" },
+		{ "loss", "red"   },
+	};
+
+	/// <summary>
+	/// Determines the colour representation for a player's result.
 	/// </summary>
 	/// <param name="playerResult">The player's result, which must contain a <see cref="PlayerResult.Result"/> value indicating the outcome (e.g.,
 	/// "win" or "loss").</param>
-	/// <returns>A string representing the color associated with the player's result.  Returns "green" for a win, "red" for a loss,
-	/// or the current console foreground color for any other result.</returns>
-	private static string GetResultColor(PlayerResult playerResult)
+	/// <returns>A string representing the colour associated with the player's result.  Returns "green" for a win, "red" for a loss,
+	/// or the current console foreground colour for any other result.</returns>
+	private static string GetResultColour(PlayerResult playerResult)
 	{
-		return playerResult.Result.ToLowerInvariant() switch
+		return resultColours.TryGetValue(playerResult.Result, out string? colour) switch
 		{
-			"win"  => "green",
-			"loss" => "red",
-			_ => AnsiConsole.Foreground.ToString(),
+			true => colour,
+			   _ => AnsiConsole.Foreground.ToString(),
 		};
 	}
 
