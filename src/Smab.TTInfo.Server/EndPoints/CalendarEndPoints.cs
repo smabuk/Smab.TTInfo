@@ -33,30 +33,20 @@ public static partial class CalendarEndPoints
 	/// <summary>
 	/// Retrieves the calendar of fixtures for a specified team in a given league and returns it in the requested format.
 	/// </summary>
-	/// <remarks>This method determines the league type based on the <paramref name="LeagueName"/> and retrieves the
-	/// fixtures for the specified <paramref name="TeamName"/>. The fixtures are then converted into an iCalendar format
-	/// and returned in the format specified by <paramref name="Command"/>. If no fixtures are found, a "Not Found" result
-	/// is returned.</remarks>
-	/// <param name="LeagueName">The name of the league to which the team belongs. This value determines the league type.</param>
-	/// <param name="TeamName">The name of the team whose fixtures are to be retrieved. Underscores in the name will be replaced with spaces.</param>
-	/// <param name="Command">The format in which the calendar should be returned. Supported values are: <list type="bullet">
-	/// <item><description><c>TEXT</c>: Returns the calendar as plain text.</description></item>
-	/// <item><description><c>CONTENT</c>: Returns the calendar as an inline calendar file with appropriate
-	/// headers.</description></item> <item><description><c>FILE</c>: Returns the calendar as a downloadable calendar
-	/// file.</description></item> <item><description><c>JSON</c>: Returns the calendar in JSON
-	/// format.</description></item> <item><description><c>NEG</c>: Returns the calendar as plain text (default
-	/// behavior).</description></item> </list> If <paramref name="Command"/> is null or unrecognized, the calendar will be
-	/// returned as a downloadable calendar file.</param>
-	/// <param name="_tt365">An instance of <see cref="ITT365Reader"/> used to retrieve fixtures for TT365 leagues.</param>
-	/// <param name="_ttleagues">An instance of <see cref="TTLeaguesReader"/> used to retrieve fixtures for TTLeagues leagues.</param>
-	/// <param name="context">The current HTTP context, used to set response headers when necessary.</param>
-	/// <returns>A <see cref="Results{T1, T2, T3, T4}"/> object containing one of the following results: <list type="bullet">
-	/// <item><description><see cref="ContentHttpResult"/>: The calendar as plain text or inline
-	/// content.</description></item> <item><description><see cref="FileContentHttpResult"/>: The calendar as a
-	/// downloadable file.</description></item> <item><description><see cref="JsonHttpResult{T}"/>: The calendar in JSON
-	/// format.</description></item> <item><description><see cref="NotFound"/>: Indicates that no fixtures were found for
-	/// the specified team.</description></item> </list></returns>
-	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<IcalCalendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, ITT365Reader _tt365, TTLeaguesReader _ttleagues, HttpContext context)
+	/// <remarks>If no fixtures are found for the specified team and league, a NotFound result is returned. The
+	/// output format is determined by the Command parameter; for example, "CSV" returns a CSV file, while "JSON" returns
+	/// the calendar as JSON. The method supports both TT365 and TTLeagues data sources based on the league name.</remarks>
+	/// <param name="LeagueName">The name of the league containing the team. This determines which data source is used to retrieve fixtures.</param>
+	/// <param name="TeamName">The name of the team for which to retrieve the calendar. Underscores in the name are treated as spaces.</param>
+	/// <param name="Command">An optional command specifying the desired output format. Supported values include "TEXT", "CONTENT", "FILE",
+	/// "CSV", "JSON", and "NEG". If null or unrecognized, the default is a downloadable iCalendar file.</param>
+	/// <param name="venue">An optional venue name to filter fixtures. If specified, only fixtures at this venue are included.</param>
+	/// <param name="_tt365">An implementation of ITT365Reader used to access TT365 league fixture data.</param>
+	/// <param name="_ttleagues">An implementation of TTLeaguesReader used to access TTLeagues fixture data.</param>
+	/// <param name="context">The current HTTP context, used to set response headers and content type.</param>
+	/// <returns>A result containing the team's fixture calendar in the requested format. Returns a content result, file result,
+	/// JSON result, or not found result if no fixtures are available.</returns>
+	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<IcalCalendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, string? venue, ITT365Reader _tt365, TTLeaguesReader _ttleagues, HttpContext context)
 	{
 		TimeZoneInfo gmtZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
 		LeagueType leagueType = GetLeagueType(LeagueName);
@@ -64,11 +54,16 @@ public static partial class CalendarEndPoints
 		IcalCalendar? ical = default;
 
 		if (leagueType is LeagueType.TT365) {
+			bool  teamFilter(Fixture f) => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase);
+			bool venueFilter(Fixture f) => string.Equals(f.Venue, venue, StringComparison.CurrentCultureIgnoreCase);
+
+			Func<Fixture, bool> filterFixtures = venue is null
+				? teamFilter
+				: venueFilter;
+
 			TT365LeagueId leagueId = (TT365LeagueId)LeagueName;
-			List<Fixture>? fixtures = (await _tt365.GetAllFixtures(leagueId))?
-						.Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))
-						.ToList();
-			if (fixtures is null) {
+			List<Fixture> fixtures = [.. (await _tt365.GetAllFixtures(leagueId))?.Where(filterFixtures) ?? []];
+			if (fixtures is []) {
 				return TypedResults.NotFound();
 			}
 
