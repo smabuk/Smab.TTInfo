@@ -53,12 +53,12 @@ td {
 a[href] {
 	color: var(--text-color);
 	text-decoration: none;
-}
 
-	a[href]:hover {
+	&:hover {
 		color: var(--text-color);
 		text-decoration: underline;
 	}
+}
 
 caption {
 	caption-side: top;
@@ -66,106 +66,106 @@ caption {
 }
 
 #fixtures {
-}
-
-	#fixtures .card {
+	.card {
 		margin-bottom: 0.25rem;
 		box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
 	}
 
-	#fixtures .badge {
+	.badge {
 		background-color: rgb(var(--result-color-rgb));
 		margin-right: 0.5rem;
 		text-decoration: none;
 		color: white;
 	}
 
-	#fixtures a {
+	a {
 		color: var(--text-color);
 		text-decoration: none;
-	}
 
-		#fixtures a:hover {
+		&:hover {
 			color: var(--text-color);
 			text-decoration: underline;
 		}
+	}
 
-	#fixtures .postponed {
+	.postponed {
 		color: black;
 		cursor: help;
 	}
 
-	#fixtures .rearranged {
+	.rearranged {
 		color: black;
 		cursor: help;
 	}
+}
 
 #players {
 	text-align: center;
 	overflow-x: auto;
-}
 
-	#players h3 {
+	h3 {
 		text-align: left;
 		margin-top: 0.3em;
 	}
 
-	#players th:first-child,
-	#players th:last-child,
-	#players td:first-child,
-	#players td:last-child {
+	th:first-child,
+	th:last-child,
+	td:first-child,
+	td:last-child {
 		text-align: left;
 	}
 
-	#players td span {
+	td span {
 		visibility: hidden;
 	}
 
-	#players a {
+	a {
 		color: var(--text-color);
 		text-decoration: none;
-	}
 
-		#players a:hover, #players a:active {
+		&:hover,
+		&:active {
 			color: var(--text-color);
 			text-decoration: underline;
 		}
-
+	}
+}
 
 #results {
 	text-align: center;
 	overflow-x: auto;
-}
 
-	#results h3 {
+	h3 {
 		text-align: left;
 		margin-top: 0.5em;
 	}
 
-	#results th:first-child,
-	#results th:last-child,
-	#results td:first-child,
-	#results td:last-child {
+	th:first-child,
+	th:last-child,
+	td:first-child,
+	td:last-child {
 		text-align: left;
 	}
 
-	#results tr td {
+	tr td {
 		background-color: rgba(var(--result-color-rgb), .5);
 	}
 
-	#results span {
+	span {
 		visibility: hidden;
 	}
 
-	#results a {
+	a {
 		color: var(--text-color);
 		text-decoration: none;
-	}
 
-		#results a:hover, #results a:active {
+		&:hover,
+		&:active {
 			color: var(--text-color);
 			text-decoration: underline;
 		}
+	}
+}
 
 #division {
 	margin-top: 0.5em;

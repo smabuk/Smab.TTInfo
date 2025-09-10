@@ -1,147 +1,144 @@
 ﻿h1 {
-    font-size: calc(1.3rem + .6vw);
+	font-size: calc(1.3rem + .6vw);
 }
 
 time {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .card {
-    margin-bottom: 1rem;
-    padding: 10px;
-    border-radius: 20px;
-    max-width: 51em;
+	margin-bottom: 1rem;
+	padding: 10px;
+	border-radius: 20px;
+	max-width: 51em;
 }
 
 [data-result='win'] {
-    --result-color-rgb: var(--bs-success-rgb, 25,135,84);
+	--result-color-rgb: var(--bs-success-rgb, 25,135,84);
 }
 
 [data-result='loss'] {
-    --result-color-rgb: var(--bs-danger-rgb, 220,53,69);
+	--result-color-rgb: var(--bs-danger-rgb, 220,53,69);
 }
 
 [data-result='draw'] {
-    --result-color-rgb: var(--bs-primary-rgb, 13,110,253);
+	--result-color-rgb: var(--bs-primary-rgb, 13,110,253);
 }
 
 .pom {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 table {
-    margin-bottom: 0;
-    max-width: 50em;
+	margin-bottom: 0;
+	max-width: 50em;
 }
 
 td {
-    white-space: nowrap;
+	white-space: nowrap;
 }
 
 caption {
-    caption-side: top;
-    padding-left: 0;
+	caption-side: top;
+	padding-left: 0;
 }
 
 #fixtures {
+	.card {
+		margin-bottom: 0.25rem;
+		box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
+	}
+
+	.badge {
+		background-color: rgb(var(--result-color-rgb));
+		margin-right: 0.5rem;
+		text-decoration: none;
+	}
+
+	a {
+		color: var(--text-color);
+		text-decoration: none;
+
+		&:hover {
+			color: var(--text-color);
+			text-decoration: underline;
+		}
+	}
+
+	.postponed {
+		background-color: rgb(var(--bs-warning-rgb, 255,193,7));
+		color: black;
+		cursor: help;
+	}
 }
-
-    #fixtures .card {
-        margin-bottom: 0.25rem;
-        box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
-    }
-
-    #fixtures .badge {
-        background-color: rgb(var(--result-color-rgb));
-        margin-right: 0.5rem;
-        text-decoration: none;
-    }
-
-    #fixtures a {
-        color: var(--text-color);
-        text-decoration: none;
-    }
-
-    #fixtures a:hover {
-        color: var(--text-color);
-        text-decoration: underline;
-    }
-
-    #fixtures .postponed {
-        background-color: rgb(var(--bs-warning-rgb, 255,193,7));
-        color: black;
-        cursor: help;
-    }
-
 
 #players {
-    text-align: center;
-    overflow-x: auto;
+	text-align: center;
+	overflow-x: auto;
+
+	h3 {
+		text-align: left;
+		margin-top: 0.3em;
+	}
+
+	th:first-child,
+	th:last-child,
+	td:first-child,
+	td:last-child {
+		text-align: left;
+	}
+
+	td span {
+		visibility: hidden;
+	}
+
+	a {
+		color: var(--text-color);
+		text-decoration: none;
+
+		&:hover,
+		&:active {
+			color: var(--text-color);
+			text-decoration: underline;
+		}
+	}
 }
-    #players h3 {
-        text-align: left;
-        margin-top: 0.3em;
-    }
-
-    #players th:first-child,
-    #players th:last-child,
-    #players td:first-child,
-    #players td:last-child {
-        text-align: left;
-    }
-
-    #players td span {
-        visibility: hidden;
-    }
-
-    #players a {
-        color: var(--text-color);
-        text-decoration: none;
-    }
-
-        #players a:hover, #players a:active {
-            color: var(--text-color);
-            text-decoration: underline;
-        }
-
 
 #results {
-    text-align: left;
-    overflow-x: auto;
+	text-align: left;
+	overflow-x: auto;
+
+	h3 {
+		text-align: left;
+		margin-top: 0.5em;
+	}
+
+	td:nth-child(2),
+	td:nth-child(5) {
+		text-align: center;
+	}
+
+	td:last-child {
+		padding-right: 1em;
+		text-align: right;
+	}
+
+	tr td {
+		background-color: rgba(var(--result-color-rgb), .5);
+	}
+
+	span {
+		visibility: hidden;
+	}
+
+	a {
+		color: var(--text-color);
+		text-decoration: none;
+
+		&:hover,
+		&:active {
+			color: var(--text-color);
+			text-decoration: underline;
+		}
+	}
 }
-
-    #results h3 {
-        text-align: left;
-        margin-top: 0.5em;
-    }
-
-    #results td:nth-child(2),
-    #results td:nth-child(5) {
-        text-align: center;
-    }
-
-    #results td:last-child {
-        padding-right: 1em;
-        text-align: right;
-    }
-
-    #results tr td {
-        background-color: rgba(var(--result-color-rgb), .5);
-    }
-
-    #results span {
-        visibility: hidden;
-    }
-
-    #results a {
-        color: var(--text-color);
-        text-decoration: none;
-    }
-
-        #results a:hover, #results a:active {
-            color: var(--text-color);
-            text-decoration: underline;
-        }
-
-
-

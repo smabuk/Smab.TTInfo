@@ -23,30 +23,29 @@ time {
 }
 
 #fixtures {
-}
-
-	#fixtures .card {
+	.card {
 		margin-bottom: 0.25rem;
 		box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
 	}
 
-	#fixtures .badge {
+	.badge {
 		background-color: rgb(var(--result-color-rgb));
 		margin-right: 0.5rem;
 		text-decoration: none;
 		color: white;
 	}
 
-	#fixtures a {
+	a {
 		color: var(--text-color);
 		text-decoration: none;
-	}
 
-		#fixtures a:hover {
+		&:hover {
 			color: var(--text-color);
 			text-decoration: underline;
 		}
+	}
 
-	#fixtures .postponed {
+	.postponed {
 		color: black;
 	}
+}

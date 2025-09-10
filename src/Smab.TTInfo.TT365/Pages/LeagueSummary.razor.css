@@ -1,12 +1,13 @@
 ﻿dd a {
-    color: var(--text-color);
-    text-decoration: none;
-}
+	color: var(--text-color);
+	text-decoration: none;
 
-    dd a:hover, table a:active {
-        color: var(--text-color);
-        text-decoration: underline;
-    }
+	&:hover,
+	&:active {
+		color: var(--text-color);
+		text-decoration: underline;
+	}
+}
 
 select {
 	color: var(--text-color);
