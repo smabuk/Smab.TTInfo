@@ -4,8 +4,10 @@
 
 <PageTitle>@PlayerName.Replace("_", " ") - @LeagueId</PageTitle>
 
-@if (playerResults is null || playerResults.Count == 0) {
+@if (playerResults is null) {
 	<h1>Loading ... @PlayerName ...</h1>
+} else if (playerResults.Count == 0) {
+	<h1>No results found for @PlayerName</h1>
 } else {
 	<h1>@league?.Name @league?.GetCurrentSeason().Name</h1>
 	<h1>Player Stats for @PlayerName</h1>

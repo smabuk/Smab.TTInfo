@@ -37,7 +37,8 @@ public partial class PlayerSummary
 			Name = PlayerName,
 			PlayerId = PlayerId,
 		};
-		Player playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player) ?? new();
+
+		Player? playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player) ?? new();
 		if (playerStats is not null) {
 			playerResults = [.. playerStats.PlayerResults];
 			playerTeams = [.. playerResults
@@ -57,7 +58,7 @@ public partial class PlayerSummary
 		}
 
 		PlayerName = PlayerName.Replace("_", " ");
-		// look up player id 
+		// look up player id
 		Player player = new()
 		{
 			Name = PlayerName,
