@@ -9,6 +9,11 @@ main {
 	margin-bottom: var(--sb-footer-size, 50px);
 }
 
+article {
+	max-inline-size: 900px;
+	margin: 0 auto;
+}
+
 .sidebar {
 	background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
