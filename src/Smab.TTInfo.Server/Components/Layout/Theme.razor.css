@@ -1,0 +1,11 @@
+﻿span::after {
+    content: "💻";
+
+    @media (prefers-color-scheme: light) {
+        content: "☀️";
+    }
+
+    @media (prefers-color-scheme: dark) {
+        content: "🌙";
+    }
+}
