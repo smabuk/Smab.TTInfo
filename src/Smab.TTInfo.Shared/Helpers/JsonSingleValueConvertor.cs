@@ -26,7 +26,7 @@ public class SingleValueConverter<TRecord, TValue>(Func<TValue?, TRecord> creato
 	public override TRecord Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
 		// Handle nulls explicitly
-		if (reader.TokenType == JsonTokenType.Null) {
+		if (reader.TokenType is JsonTokenType.Null) {
 			return creator(default);
 		}
 
@@ -46,7 +46,36 @@ public class SingleValueConverter<TRecord, TValue>(Func<TValue?, TRecord> creato
 	/// langword="null"/>.</param>
 	public override void Write(Utf8JsonWriter writer, TRecord value, JsonSerializerOptions options)
 	{
-		TValue? innerValue = extractor(value);
-		JsonSerializer.Serialize(writer, innerValue, options);
+		TValue? extractedValue = extractor(value);
+		JsonSerializer.Serialize(writer, extractedValue, options);
+	}
+
+	/// <summary>
+	/// Reads a property name from JSON and converts it to an instance of the record type.
+	/// </summary>
+	/// <remarks>This method supports dictionary key deserialization by reading the property name as a string
+	/// and using the creator function to create the corresponding record instance.</remarks>
+	/// <param name="reader">The <see cref="Utf8JsonReader"/> used to read the JSON property name.</param>
+	/// <param name="typeToConvert">The type of the record to convert the property name into.</param>
+	/// <param name="options">Options to customize the JSON serialization behavior.</param>
+	/// <returns>An instance of <typeparamref name="TRecord"/> created from the property name.</returns>
+	public override TRecord ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	{
+		string? propertyName = reader.GetString();
+		return creator((TValue?)(object?)propertyName);
+	}
+
+	/// <summary>
+	/// Writes the record as a JSON property name.
+	/// </summary>
+	/// <remarks>This method supports dictionary key serialization by extracting the value from the record
+	/// and writing it as a property name.</remarks>
+	/// <param name="writer">The <see cref="Utf8JsonWriter"/> to write the property name to.</param>
+	/// <param name="value">The record value to write as a property name.</param>
+	/// <param name="options">Options to customize the JSON serialization behavior.</param>
+	public override void WriteAsPropertyName(Utf8JsonWriter writer, TRecord value, JsonSerializerOptions options)
+	{
+		TValue? extractedValue = extractor(value);
+		writer.WritePropertyName(extractedValue?.ToString() ?? string.Empty);
 	}
 }
