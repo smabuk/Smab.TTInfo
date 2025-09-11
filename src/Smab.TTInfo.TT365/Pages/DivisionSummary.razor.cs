@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using Smab.TTInfo.Shared.Helpers;
+﻿using Smab.TTInfo.Shared.Helpers;
 
 namespace Smab.TTInfo.TT365.Pages;
 

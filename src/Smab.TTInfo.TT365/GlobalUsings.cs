@@ -1,4 +1,5 @@
-﻿global using Microsoft.Extensions.Options;
+﻿global using Microsoft.AspNetCore.Components;
+global using Microsoft.Extensions.Options;
 
 global using System.Collections.Immutable;
 global using System.Diagnostics;

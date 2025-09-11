@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace Smab.TTInfo.TTLeagues.Pages;
+﻿namespace Smab.TTInfo.TTLeagues.Pages;
 public partial class MatchPage
 {
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace Smab.TTInfo.TT365.Pages;
+﻿namespace Smab.TTInfo.TT365.Pages;
 public partial class PlayerSummary
 {
 	[EditorRequired]
