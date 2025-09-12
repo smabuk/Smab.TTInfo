@@ -1,0 +1,96 @@
+@page "/club/{clubId}/membership"
+@page "/club/{clubId}/membership/{MembershipId:int?}"
+@inject TTClubsReader _TTClubsReader
+@* @rendermode InteractiveServer *@
+
+<PageTitle>@($"{ClubId}") - @MembershipName</PageTitle>
+
+<h2>@($"{ClubId}") - @MembershipName</h2>
+
+<div class="d-flex justify-content-center">
+	<QuickGrid ref="membershipGrid" Items="@FilteredItems?.AsQueryable()">
+		<PropertyColumn Title="Name" Property="@(m => m.Contact.FullName)" Sortable="true" />
+		<PropertyColumn Title="TTE #" Property="@(m => m.Contact.User.MembershipNo)" Sortable="true" />
+		<PropertyColumn Title="Gender" Property="@(m => m.Contact.User.Gender == 1 ? "Male" : "Female")" Sortable="true" />
+		<PropertyColumn Title="Membership Type" Property="@(m => Pretty(m.Contact.User.MembershipType))" Sortable="true" />
+		<PropertyColumn Title="Phone #" Property="@(m => PrettyPhone(m.Contact.User.PhoneNumber))" Sortable="false" />
+		@* <PropertyColumn Title="Emergency Name" Property="@(m => m.Contact.EmergencyName)" Sortable="false" /> *@
+		@* <PropertyColumn Title="Emergency #" Property="@(m => PrettyPhone(m.Contact.EmergencyNumber))" Sortable="false" /> *@
+	</QuickGrid>
+</div>
+
+<br />
+<p><span><strong>Total Members: @FilteredItems?.Count()</strong></span></p>
+
+@code {
+	[Parameter]
+	public string ClubId { get; set; } = "";
+
+	[Parameter]
+	public int? MembershipId { get; set; } = null;
+
+	// [PersistentState]
+	public Memberships? Memberships { get; set; }
+
+	// [PersistentState]
+	public Membership? Membership { get; set; }
+
+	private string MembershipName => Memberships?.Items.SingleOrDefault(m => m.Id == MembershipId)?.Name ?? "No Entries";
+
+	private IEnumerable<MembershipItem>? FilteredItems => Membership?.Items;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		Memberships ??= await _TTClubsReader.GetMemberships(ClubId.ToLowerInvariant());
+		if (MembershipId is null) {
+			if (Memberships is not null) {
+				MembershipId = Memberships.Items.First().Id;
+			}
+		}
+
+		if (MembershipId is not null) {
+			Membership ??= await _TTClubsReader.GetMembership(ClubId.ToLowerInvariant(), (int)MembershipId);
+		}
+
+	}
+
+	string Pretty(string input)
+	{
+		string newString = $"{input[0]}";
+
+		for (int i = 1; i < input.Length; i++) {
+			if (char.IsUpper(input[i])) {
+				newString = $"{newString} {input[i]}";
+			} else {
+				newString = $"{newString}{input[i]}";
+			}
+		}
+
+		return newString;
+	}
+
+	string PrettyPhone(string input)
+	{
+		if (string.IsNullOrWhiteSpace(input))
+		{
+			return "";
+		}
+		string newString = $"{input}";
+
+		newString = newString
+		.Replace("+44 0", "+44")
+		.Replace("+44 ", "+44")
+		.Replace("+44", "+44 ")
+		.Trim();
+
+		if (newString[0] == '0') {
+			newString = $"+44 {newString[1..]}";
+		}
+
+		if (newString[8] != ' ') {
+			newString = $"{newString[..8]} {newString[8..]}";
+		}
+
+		return newString;
+	}
+}

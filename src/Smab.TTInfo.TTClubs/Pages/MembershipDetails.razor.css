@@ -1,0 +1,16 @@
+h1, h2 {
+	text-align: center ;
+	padding-bottom: 1.5rem;
+}
+
+p {
+	display: flex;
+	justify-content: center;
+}
+
+::deep .col-title,
+::deep.header-content,
+::deep button .col-title-text
+{
+	color: var(--text-color);
+}

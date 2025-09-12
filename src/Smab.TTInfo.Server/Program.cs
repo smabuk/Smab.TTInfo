@@ -4,6 +4,7 @@ using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
 using Smab.TTInfo.TT365;
 using Smab.TTInfo.TTLeagues;
+using Smab.TTInfo.TTClubs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,8 @@ builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 
 builder.Services
 	.AddTT365Service()
-	.AddTTLeaguesService();
+	.AddTTLeaguesService()
+	.AddTTClubsService();
 
 var app = builder.Build();
 
@@ -40,6 +42,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365.Pages.LeagueSummary).Assembly)
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs.Pages.MembershipDetails).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.LeagueSummary).Assembly);
 
 app.MapHealthChecks("/healthz");

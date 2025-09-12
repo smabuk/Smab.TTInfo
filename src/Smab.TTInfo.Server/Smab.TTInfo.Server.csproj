@@ -21,6 +21,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
 		<ProjectReference Include="..\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj" />
+		<ProjectReference Include="..\Smab.TTInfo.TTClubs\Smab.TTInfo.TTClubs.csproj" />
 		<ProjectReference Include="..\Smab.TTInfo.TTLeagues\Smab.TTInfo.TTLeagues.csproj" />
 	</ItemGroup>
 
