@@ -9,7 +9,8 @@ using Smab.TTInfo.TTClubs.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents();
+builder.Services.AddRazorComponents()
+	.AddInteractiveServerComponents()
 /*	.AddJsonOptions(options => options.JsonSerializerOptions.AddDateOnlyAndTimeOnlyConverters())*/
 ;
 
@@ -41,6 +42,7 @@ app.MapStaticAssets();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
+	.AddInteractiveServerRenderMode()
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365.Pages.LeagueSummary).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs.Pages.MembershipDetails).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.LeagueSummary).Assembly);
