@@ -7,10 +7,3 @@ p {
 	display: flex;
 	justify-content: center;
 }
-
-::deep .col-title,
-::deep.header-content,
-::deep button .col-title-text
-{
-	color: var(--text-color);
-}
