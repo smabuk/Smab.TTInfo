@@ -25,38 +25,22 @@
 				<tr>
 					<th scope="col">
 						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Name))">
-							Name
-							@if (_currentSortField == nameof(SortableField.Name))
-							{
-								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
-							}
+							Name @SortIndicator(SortableField.Name)
 						</button>
 					</th>
 					<th scope="col">
 						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipNo))">
-							TTE #
-							@if (_currentSortField == nameof(SortableField.MembershipNo))
-							{
-								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
-							}
+							TTE # @SortIndicator(SortableField.MembershipNo)
 						</button>
 					</th>
 					<th scope="col">
 						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Gender))">
-							Gender
-							@if (_currentSortField == nameof(SortableField.Gender))
-							{
-								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
-							}
+							Gender @SortIndicator(SortableField.Gender)
 						</button>
 					</th>
 					<th scope="col">
 						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipType))">
-							Membership Type
-							@if (_currentSortField == nameof(SortableField.MembershipType))
-							{
-								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
-							}
+							Membership Type @SortIndicator(SortableField.MembershipType)
 						</button>
 					</th>
 					@if (IsDevelopment)
@@ -141,8 +125,8 @@
 					? FilteredItems.OrderBy(m => m.Contact.User.MembershipNo)
 					: FilteredItems.OrderByDescending(m => m.Contact.User.MembershipNo),
 				nameof(SortableField.Gender) => _sortAscending
-					? FilteredItems.OrderBy(m => m.Contact.User.Gender)
-					: FilteredItems.OrderByDescending(m => m.Contact.User.Gender),
+					? FilteredItems.OrderByDescending(m => m.Contact.User.Gender)
+					: FilteredItems.OrderBy(m => m.Contact.User.Gender),
 				nameof(SortableField.MembershipType) => _sortAscending
 					? FilteredItems.OrderBy(m => m.Contact.User.MembershipType)
 					: FilteredItems.OrderByDescending(m => m.Contact.User.MembershipType),
@@ -172,6 +156,15 @@
 			_sortAscending = true;
 		}
 	}
+
+	private RenderFragment SortIndicator(SortableField sortableField) => builder =>
+	{
+		if (_currentSortField == sortableField.ToString()) {
+			builder.OpenElement(0, "span");
+			builder.AddAttribute(1, "data-sort-indicator", _sortAscending ? "asc" : "desc");
+			builder.CloseElement();
+		}
+	};
 
 	string Pretty(string input)
 	{

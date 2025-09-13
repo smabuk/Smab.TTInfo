@@ -8,7 +8,7 @@ h2 {
 	span {
 		text-wrap: nowrap;
 		font-weight: normal;
-		font-size: 0.8em;        /* Smaller font size for the span */
+		font-size: 0.8em;        /* Smaller font size for the subheading */
 		filter: brightness(80%); /* Slightly dim the text */
 	}
 }
@@ -18,30 +18,28 @@ button {
 	font-weight: bold;
 	text-decoration: none;
 	padding: 0;
-}
 
-/* Sort indicator styles */
-.sort-button {
+	/* All buttons on this page are sort buttons */
 	position: relative;
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
 }
 
-[data-sort-indicator] {
+::deep [data-sort-indicator] {
 	display: inline-block;
 	width: 0;
 	height: 0;
 	vertical-align: middle;
 }
 
-[data-sort-indicator="asc"] {
+::deep [data-sort-indicator="asc"] {
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	border-bottom: 6px solid currentColor;
 }
 
-[data-sort-indicator="desc"] {
+::deep [data-sort-indicator="desc"] {
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	border-top: 6px solid currentColor;
