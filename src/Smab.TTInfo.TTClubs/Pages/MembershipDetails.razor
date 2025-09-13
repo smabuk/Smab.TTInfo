@@ -127,6 +127,7 @@
 		} else
 		{
 			Membership ??= await _TTClubsReader.GetMembership(ClubId.ToLowerInvariant(), (int)MembershipId);
+			MembershipName ??= (await _TTClubsReader.GetMemberships(ClubId.ToLowerInvariant()))?.Items.SingleOrDefault(m => m.Id == MembershipId)?.Name ?? "Unknown";
 		}
 	}
 
