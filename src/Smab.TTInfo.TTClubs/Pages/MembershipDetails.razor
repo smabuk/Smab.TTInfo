@@ -24,38 +24,38 @@
 			<thead class="table-dark">
 				<tr>
 					<th scope="col">
-						<button class="btn btn-link text-white p-0 text-decoration-none sort-button" @onclick="() => SortBy(nameof(SortableField.Name))">
+						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Name))">
 							Name
 							@if (_currentSortField == nameof(SortableField.Name))
 							{
-								<span class="sort-indicator @(_sortAscending ? "asc" : "desc")"></span>
+								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
 							}
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn btn-link text-white p-0 text-decoration-none sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipNo))">
+						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipNo))">
 							TTE #
 							@if (_currentSortField == nameof(SortableField.MembershipNo))
 							{
-								<span class="sort-indicator @(_sortAscending ? "asc" : "desc")"></span>
+								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
 							}
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn btn-link text-white p-0 text-decoration-none sort-button" @onclick="() => SortBy(nameof(SortableField.Gender))">
+						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Gender))">
 							Gender
 							@if (_currentSortField == nameof(SortableField.Gender))
 							{
-								<span class="sort-indicator @(_sortAscending ? "asc" : "desc")"></span>
+								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
 							}
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn btn-link text-white p-0 text-decoration-none sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipType))">
+						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipType))">
 							Membership Type
 							@if (_currentSortField == nameof(SortableField.MembershipType))
 							{
-								<span class="sort-indicator @(_sortAscending ? "asc" : "desc")"></span>
+								<span data-sort-indicator="@(_sortAscending ? "asc" : "desc")"></span>
 							}
 						</button>
 					</th>
@@ -107,7 +107,7 @@
 	public Membership? Membership { get; set; }
 
 	[Parameter]
-	public string MembershipName { get; set; }
+	public string? MembershipName { get; set; }
 
 	private string _currentSortField = "";
 	private bool _sortAscending = true;
@@ -153,19 +153,6 @@
 		}
 	}
 
-	private void SortBy(string field)
-	{
-		if (_currentSortField == field)
-		{
-			_sortAscending = !_sortAscending;
-		}
-		else
-		{
-			_currentSortField = field;
-			_sortAscending = true;
-		}
-	}
-
 	protected override async Task OnParametersSetAsync()
 	{
 		if (MembershipId is null) {
@@ -173,6 +160,16 @@
 		} else
 		{
 			Membership ??= await _TTClubsReader.GetMembership(ClubId.ToLowerInvariant(), (int)MembershipId);
+		}
+	}
+
+	private void SortBy(string field)
+	{
+		if (_currentSortField == field) {
+			_sortAscending = !_sortAscending;
+		} else {
+			_currentSortField = field;
+			_sortAscending = true;
 		}
 	}
 
