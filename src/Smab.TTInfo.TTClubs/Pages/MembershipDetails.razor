@@ -17,35 +17,36 @@
 {
 	@* <PageTitle>@($"{ClubId}") - @MembershipName</PageTitle> *@
 
-	<h2>@MembershipName <span>(@FilteredItems?.Count() members)</span></h2>
+	<h2>@MembershipName <span>(@FilteredItems.Count() members)</span></h2>
 
 	<div class="table-responsive">
 		<table class="table table-striped table-hover">
 			<thead class="table-dark">
 				<tr>
 					<th scope="col">
-						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Name))">
+						<button class="btn" @onclick="() => SortBy(nameof(SortableField.Name))">
 							Name @SortIndicator(SortableField.Name)
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipNo))">
+						<button class="btn" @onclick="() => SortBy(nameof(SortableField.MembershipNo))">
 							TTE # @SortIndicator(SortableField.MembershipNo)
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.Gender))">
+						<button class="btn" @onclick="() => SortBy(nameof(SortableField.Gender))">
 							Gender @SortIndicator(SortableField.Gender)
 						</button>
 					</th>
 					<th scope="col">
-						<button class="btn sort-button" @onclick="() => SortBy(nameof(SortableField.MembershipType))">
+						<button class="btn" @onclick="() => SortBy(nameof(SortableField.MembershipType))">
 							Membership Type @SortIndicator(SortableField.MembershipType)
 						</button>
 					</th>
 					@if (IsDevelopment)
 					{
-						<th scope="col">Phone #</th>
+						<th scope="col">Email</th>
+						<th scope="col">Phone</th>
 						<th scope="col">Address</th>
 					}
 					@* <th scope="col">Emergency Name</th> *@
@@ -64,6 +65,7 @@
 							<td>@Pretty(member.Contact.User.MembershipType)</td>
 							@if (IsDevelopment)
 							{
+								<td>@member.Contact.User.Email</td>
 								<td>@PrettyPhone(member.Contact.User.PhoneNumber)</td>
 								<td>@PrettyAddress(member.Contact)</td>
 							}
@@ -96,27 +98,12 @@
 	private string _currentSortField = "";
 	private bool _sortAscending = true;
 
-	private enum SortableField
-	{
-		Name,
-		MembershipNo,
-		Gender,
-		MembershipType
-	}
-
 	private bool IsDevelopment => string.Equals(_configuration["ASPNETCORE_ENVIRONMENT"], "Development", StringComparison.OrdinalIgnoreCase);
 
-	private IEnumerable<MembershipItem>? FilteredItems => Membership?.Items;
+	private IEnumerable<MembershipItem> FilteredItems => Membership?.Items ?? [];
 
-	private IEnumerable<MembershipItem>? SortedItems
-	{
-		get
-		{
-			if (FilteredItems is null) {
-				return null;
-			}
-
-			IEnumerable<MembershipItem> sorted = _currentSortField switch
+	private IEnumerable<MembershipItem> SortedItems
+		=> _currentSortField switch
 			{
 				nameof(SortableField.Name) => _sortAscending
 					? FilteredItems.OrderBy(m => m.Contact.FullName)
@@ -132,10 +119,6 @@
 					: FilteredItems.OrderByDescending(m => m.Contact.User.MembershipType),
 				_ => FilteredItems
 			};
-
-			return sorted;
-		}
-	}
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -212,6 +195,15 @@
 			newString = $"{newString[..8]} {newString[8..]}";
 		}
 
-		return newString;
+		return newString
+			.Replace("+44 ", "0");
+	}
+
+	private enum SortableField
+	{
+		Name,
+		MembershipNo,
+		Gender,
+		MembershipType
 	}
 }
