@@ -10,8 +10,16 @@ main {
 }
 
 article {
-	max-inline-size: 900px;
+	max-inline-size: 1000px;
 	margin: 0 auto;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+
+	@media (max-width: 640.98px) {
+		max-inline-size: 100vw;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
 }
 
 .sidebar {
