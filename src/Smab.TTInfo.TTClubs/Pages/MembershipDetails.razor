@@ -65,8 +65,8 @@
 							<td>@Pretty(member.Contact.User.MembershipType)</td>
 							@if (IsDevelopment)
 							{
-								<td>@member.Contact.User.Email</td>
-								<td>@PrettyPhone(member.Contact.User.PhoneNumber)</td>
+								<td><a href="mailTo:@member.Contact.User.Email">@member.Contact.User.Email</a></td>
+								<td><a href="tel:@PrettyPhone(member.Contact.User.PhoneNumber)">@PrettyPhone(member.Contact.User.PhoneNumber)</a></td>
 								<td>@PrettyAddress(member.Contact)</td>
 							}
 							@* <td>@member.Contact.EmergencyName</td> *@
