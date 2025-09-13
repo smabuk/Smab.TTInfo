@@ -14,6 +14,7 @@
 		<PropertyColumn Title="Gender" Property="@(m => m.Contact.User.Gender == 1 ? "Male" : "Female")" Sortable="true" />
 		<PropertyColumn Title="Membership Type" Property="@(m => Pretty(m.Contact.User.MembershipType))" Sortable="true" />
 		<PropertyColumn Title="Phone #" Property="@(m => PrettyPhone(m.Contact.User.PhoneNumber))" Sortable="false" />
+		<PropertyColumn Title="Address" Property="@(m => PrettyAddress(m.Contact))" Sortable="false" />
 		@* <PropertyColumn Title="Emergency Name" Property="@(m => m.Contact.EmergencyName)" Sortable="false" /> *@
 		@* <PropertyColumn Title="Emergency #" Property="@(m => PrettyPhone(m.Contact.EmergencyNumber))" Sortable="false" /> *@
 	</QuickGrid>
@@ -67,6 +68,19 @@
 		}
 
 		return newString;
+	}
+
+	string PrettyAddress(Contact contact)
+	{
+		List<string> parts = [
+			contact.AddressLine1,
+			contact.AddressLine2,
+			contact.Town,
+			contact.County,
+			contact.Postcode,
+			contact.Country
+		];
+		return string.Join(", ", parts.Where(p => string.IsNullOrWhiteSpace(p) is false));
 	}
 
 	string PrettyPhone(string input)
