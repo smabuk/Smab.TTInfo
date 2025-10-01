@@ -217,7 +217,10 @@ caption {
 		font-size: 0.9em;
 		grid-template-columns: repeat(5, 1fr) repeat(2, 0.5fr); /* Adjust 5 to match your max columns */
 
-		thead,
+		thead {
+			display: none;
+		}
+
 		tbody,
 		tr {
 			display: contents;
