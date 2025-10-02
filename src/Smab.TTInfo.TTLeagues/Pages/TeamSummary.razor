@@ -97,7 +97,7 @@
 							@{ int opposingTeam = match.Home.TeamId.Equals(TeamId) ? match.Away.TeamId ?? -1 : match.Home.TeamId ?? -1; }
 							@if (teamPlayersList.ContainsKey(opposingTeam)) {
 								@foreach (TeamStatsPlayer player in teamPlayersList[opposingTeam].OrderByDescending(p => p.Average)) {
-									<text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.Id">@($"{player.Name}")</a> @($" ({Math.Round(player.Average, 0)}%) ")</text>
+									<text><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.Id">@($"{player.Name}")</a> @(player.Played == 0 ? "(n/a) " : $" ({Math.Round(player.Average, 0)}%) ")</text>
 								}
 							} else {
 								<text>Loading ...</text>

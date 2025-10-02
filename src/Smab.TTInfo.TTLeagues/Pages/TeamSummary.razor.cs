@@ -100,17 +100,30 @@ public partial class TeamSummary
 
 	internal async Task<IEnumerable<TeamStatsPlayer>> GetTeamPlayers(int teamId, int competitionId)
 	{
-		if (teamPlayersList.TryGetValue(teamId, out List<TeamStatsPlayer>? value)) {
-			return value;
+		List<TeamStatsPlayer>? players = [];
+		if (teamPlayersList.TryGetValue(teamId, out players)) {
+			return players;
 		} else {
-			List<TeamStatsPlayer>? players = (await _ttleagues.GetTeamStats(teamId, TTInfoId, competitionId))?.Players.ToList();
+			players = (await _ttleagues.GetTeamStats(teamId, TTInfoId, competitionId))?.Players.ToList();
 			if (players is null) {
 				return [];
 			}
 
-			IEnumerable<string> playersList = players
-				.OrderByDescending(p => p.Average)
-				.Select(p => $"{p.Name} ({Math.Round(p.Average, 0)}%)");
+			List<TeamMember> members = await _ttleagues.GetTeamMembers(teamId, TTInfoId);
+
+			List<TeamStatsPlayer> playersWithoutResults = [.. members.ExceptBy(players.Select(p => p.Id), m => m.MemberId)
+				.Select(m => new TeamStatsPlayer(
+					m.MemberId,
+					[],
+					0.0,
+					m.Name,
+					0,
+					0,
+					0
+				))];
+
+			players = [.. players.Union(playersWithoutResults)];
+
 			_ = teamPlayersList.TryAdd(teamId, players);
 			return players;
 		}
