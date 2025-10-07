@@ -18,6 +18,7 @@ try {
 catch (Exception ex) {
 	AnsiConsole.MarkupLine("");
 	AnsiConsole.MarkupLine($"Error: [Red]{ex.Message}[/]");
+	Environment.ExitCode = -1;
 	return -1;
 }
 
