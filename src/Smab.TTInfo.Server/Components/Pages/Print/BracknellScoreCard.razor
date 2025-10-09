@@ -13,19 +13,19 @@
 				<div class="top-info">
 					<div class="info-field">
 						<span class="label">Division</span>
-						<span class="dots">……………………</span>
+						<span class="dots">@Spaces(30)</span>
 						<span class="label">Date</span>
-						<span class="dots">…………………………</span>
+						<span class="dots">@Spaces(20)</span>
 						<span class="label">Week No.</span>
-						<span class="dots">…………</span>
+						<span class="dots">@Spaces(8)</span>
 					</div>
 				</div>
 
 				<div class="teams-header">
 					<div class="team-line">
-						<span class="dots">……………………………………</span>
+						<span class="dots">@Spaces(48)</span>
 						<span class="vs">V</span>
-						<span class="dots">……………………………………</span>
+						<span class="dots">@Spaces(48)</span>
 					</div>
 					<div class="team-labels">
 						<span class="home-label">Home Team No. & Name</span>
@@ -45,60 +45,43 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td rowspan="3" class="team-label">Home</td>
-							<td class="player-letter">A</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-						</tr>
-						<tr>
-							<td class="player-letter">B</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-						</tr>
-						<tr>
-							<td class="player-letter">C</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-						</tr>
-						<tr>
-							<td rowspan="3" class="team-label">Away</td>
-							<td class="player-letter">X</td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="player-letter">Y</td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="player-letter">Z</td>
-							<td></td>
-							<td></td>
-							<td class="won-cell filled"></td>
-							<td></td>
-						</tr>
+						@foreach (string playerLetter in (string[])["A", "B", "C"])
+						{
+							<tr>
+								@if (playerLetter is "A")
+								{
+									<td rowspan="3" class="team-label">Home</td>
+								}
+								<td class="player-letter">@playerLetter</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td class="won-cell filled"></td>
+							</tr>
+						}
+						@foreach (string playerLetter in (string[])["X", "Y", "Z"])
+						{
+							<tr>
+								@if (playerLetter is "X")
+								{
+									<td rowspan="3" class="team-label">Away</td>
+								}
+								<td class="player-letter">@playerLetter</td>
+								<td></td>
+								<td></td>
+								<td class="won-cell filled"></td>
+								<td></td>
+							</tr>
+						}
+					</tbody>
+					<tfoot>
 						<tr>
 							<td colspan="3" class="doubles-note">(½ each for the doubles)</td>
 							<td>Result</td>
-							<td></td>
-							<td></td>
+							<td colspan="2">-</td>
 						</tr>
-					</tbody>
+					</tfoot>
 				</table>
-
-				@* <div class="doubles-note">(½ each for the doubles)</div> *@
 
 				<table class="matches-table">
 					<thead>
@@ -109,96 +92,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="match-label">A v X</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">B v Y</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">C v Z</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">B v X</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">A v Z</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label doubles-label">Doubles<br><span class="small-text">v</span></td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">C v Y</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">B v Z</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">C v X</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td class="match-label">A v Y</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td class="score-cell">-</td>
-							<td></td>
-						</tr>
+						@foreach (var match in MatchMarkupStrings) {
+							<tr>
+								<td class="match-label">@match</td>
+								<td class="score-cell">-</td>
+								<td class="score-cell">-</td>
+								<td class="score-cell">-</td>
+								<td class="score-cell">-</td>
+								<td class="score-cell">-</td>
+								<td></td>
+							</tr>
+						}
 					</tbody>
 				</table>
 			</div>
@@ -209,7 +113,7 @@
 				</div>
 				<div class="info-field">
 					<span class="label">Player of the Match:</span>
-					<span class="dots">……………………</span>
+					<span class="dots">@Spaces(20)</span>
 				</div>
 				<div class="info-field">
 					<span class="label">Match Highlights:</span>
@@ -218,11 +122,11 @@
 				<div class="signature-section">
 					<div class="signature-label">Signed:</div>
 					<div class="signature-line">
-						<span class="dots">……………………………</span>
+						<span class="fill-dots"></span>
 						<div class="caption">Home Team Captain</div>
 					</div>
 					<div class="signature-line">
-						<span class="dots">……………………………</span>
+						<span class="fill-dots"></span>
 						<div class="caption">Away Team Captain</div>
 					</div>
 				</div>
@@ -238,4 +142,8 @@
 @code {
 	private int noOfScoreCards = 2;
 
+	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
+	private IEnumerable<MarkupString> MatchMarkupStrings => matchOrder.Select(s => (MarkupString)s);
+
+	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "Doubles<br><br>v", "C v Y", "B v Z", "C v X", "A v Y"];
 }
