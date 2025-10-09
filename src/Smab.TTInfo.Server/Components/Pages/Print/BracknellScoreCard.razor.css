@@ -1,19 +1,19 @@
-.score-sheet {
+﻿.score-sheet {
 	font-family: Arial, sans-serif;
-	max-width: 95%;
+	max-width: 800px;
 	margin: 0 auto;
 	padding: 20px;
-	background-color: #f5f5f5; /* shaded card */
+	/*background-color: #f5f5f5;*/ /* shaded card */
 	background-color: #fff;
 	color: #000;
 	--base-font-size: 11px;
 	--h1-font-size: 14px;
 	--h2-font-size: 12px;
 	font-size: var(--base-font-size);
+	line-height: 0.6;
 
 	@media print {
 		max-width: 100%;
-		line-height: 0.6;
 	}
 }
 
@@ -45,13 +45,12 @@
 	gap: 20px;
 }
 
-.left-section {
+.left-panel {
 	flex: 1;
 }
 
 .right-panel {
 	width: 200px;
-	font-size: var(--base-font-size);
 	display: flex;
 	flex-direction: column;
 	gap: 15px;
@@ -59,7 +58,6 @@
 
 .top-info {
 	margin-bottom: 15px;
-	font-size: var(--base-font-size);
 
 	.info-field {
 		margin-bottom: 5px;
@@ -90,6 +88,7 @@
 
 .notes-section {
 	margin-bottom: 5px;
+	font-weight: bold;
 }
 
 table {
@@ -103,7 +102,6 @@ table {
 
 .teams-header {
 	margin-bottom: 10px;
-	font-size: var(--base-font-size);
 }
 
 .team-line {
@@ -134,12 +132,11 @@ table {
 	width: 100%;
 	border-collapse: collapse;
 	margin-bottom: 5px;
-	font-size: var(--base-font-size);
 
 	th,
 	td {
 		border: 1px solid #000;
-		padding: 4px 8px;
+		padding: 4px 0;
 	}
 
 	thead th {
@@ -149,6 +146,7 @@ table {
 
 		&:nth-child(1),
 		&:nth-child(3) {
+			padding: 0 8px;
 			text-align: left;
 			border-right-style: none;
 		}
@@ -160,7 +158,8 @@ table {
 		}
 
 		&:nth-last-child(-n+2) {
-			width: 5%;
+			font-weight: bold;
+			width: 6%;
 		}
 	}
 
@@ -185,6 +184,20 @@ table {
 				border-left-style: none;
 			}
 		}
+
+		.team-label {
+			font-weight: bold;
+			width: 50px;
+		}
+
+		.player-letter {
+			font-weight: bold;
+			width: 30px;
+		}
+
+		.filled {
+			background-color: #000;
+		}
 	}
 
 	tfoot td {
@@ -196,6 +209,7 @@ table {
 
 		&:nth-child(2) {
 			border-left-style: none;
+			padding: 0 8px;
 		}
 
 		&:last-child {
@@ -204,100 +218,68 @@ table {
 	}
 }
 
-.team-label {
-	font-weight: bold;
-	text-align: center;
-	vertical-align: middle;
-	background-color: #fff;
-	width: 4rem;
-}
-
-.player-letter {
-	font-weight: bold;
-	text-align: center;
-	width: 30px;
-	background-color: #fff;
-}
-
-.won-cell {
-	text-align: center;
-	background-color: #fff;
-}
-
-.won-cell.filled {
-	background-color: #000;
-}
-
 .matches-table {
 	width: 100%;
 	border-collapse: collapse;
-	font-size: var(--base-font-size);
 
 	th,
 	td {
 		border: 1px solid #000;
-		padding: 4px 8px;
+		padding: 4px 0;
 		text-align: center;
 	}
 
 	thead th {
 		background-color: #fff;
-		font-weight: normal;
 	}
-}
 
+	tbody {
+		td:first-child {
+			width: 88px;
+			font-weight: bold;
+		}
 
-.match-label {
-	font-weight: bold;
-	text-align: center;
-	width: 80px;
-	background-color: #fff;
-}
+		/* Score cells */
+		td:nth-child(n+2):nth-child(-n+6) {
+			width: 110px;
+		}
 
-.score-cell {
-	width: 110px;
-	background-color: #fff;
-}
-
-.doubles-label {
-	vertical-align: middle;
-}
-
-.small-text {
-/*	font-size: small;*/
+		td:last-child {
+			width: 12%;
+			font-weight: bold;
+		}
+	}
 }
 
 .signature-section {
 	display: flex;
 	flex-direction: column;
-/*	gap: 10px;*/
-	margin-top: auto;
-}
-
-.signature-label {
-	font-weight: normal;
-	margin-bottom: 5px;
-}
-
-.signature-line {
-	display: flex;
-	flex-direction: column;
 	gap: 5px;
-	margin-top: 20px;
-}
+	margin-top: auto;
 
-.caption {
-	font-size: xx-small;
-	text-align: left;
+	.signature-label {
+		font-weight: normal;
+		margin-bottom: 5px;
+	}
+
+	.signature-line {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		margin-top: 20px;
+
+		.caption {
+			font-size: xx-small;
+			text-align: left;
+		}
+	}
 }
 
 .page-break {
-	/*	page-break-after: always;*/
-	margin: 40px 0;
+	margin: 80px 0;
 	border-top: 2px dashed #ccc;
 
-	/* @media print {
+	@media print {
 		border: none;
-		margin: 0px;
-	} */
+	}
 }

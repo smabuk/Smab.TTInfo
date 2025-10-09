@@ -1,7 +1,7 @@
 ﻿@page "/print/bracknellscorecard"
 @layout PrintLayout
 
-@for (int i = 1; i <= noOfScoreCards; i++) {
+@for (int i = 1; i <= NoOfScoreCards; i++) {
 	<div class="score-sheet" data-bordered="@Bordered">
 		<div class="header">
 			<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="main-content">
-			<div class="left-section">
+			<div class="left-panel">
 				<div class="top-info">
 					<div class="info-field">
 						<span class="label">Division</span>
@@ -59,14 +59,14 @@
 									<td class="player-letter">@playerLetter</td>
 									<td></td>
 									<td></td>
-									@if (homeOrAway is "Home")
+									@if (playerLetter[0] < 'L')
 									{
-										<td class="won-cell"></td>
-										<td class="won-cell filled"></td>
+										<td></td>
+										<td class="filled"></td>
 									} else
 									{
-										<td class="won-cell filled"></td>
-										<td class="won-cell"></td>
+										<td class="filled"></td>
+										<td></td>
 									}
 								</tr>
 							}
@@ -92,12 +92,12 @@
 					<tbody>
 						@foreach (MarkupString match in matchOrder) {
 							<tr>
-								<td class="match-label">@match</td>
-								<td class="score-cell">-</td>
-								<td class="score-cell">-</td>
-								<td class="score-cell">-</td>
-								<td class="score-cell">-</td>
-								<td class="score-cell">-</td>
+								<td>@match</td>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
+								<td>-</td>
 								<td></td>
 							</tr>
 						}
@@ -107,7 +107,7 @@
 
 			<div class="right-panel">
 				<div class="notes-section">
-					<strong>Enter notes here:</strong>
+					<span>Enter notes here:</span>
 				</div>
 				<div class="info-field">
 					<span class="label">Player of the Match:</span>
@@ -132,16 +132,17 @@
 		</div>
 	</div>
 
-	@if (i < noOfScoreCards) {
+	@if (i < NoOfScoreCards) {
 		<div class="page-break"></div>
 	}
 }
 
 @code {
-	private const int noOfScoreCards = 2;
-
 	[Parameter, SupplyParameterFromQuery]
 	public bool Bordered { get; set; } = false;
+
+	[Parameter, SupplyParameterFromQuery]
+	public int? NoOfScoreCards { get; set; }
 
 	private (string HomeOrAway, string[] Letters)[] playerLetters = [
 		("Home", ["A", "B", "C"]),
@@ -150,6 +151,11 @@
 
 	// Order of matches as per Bracknell League rules
 	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "Doubles<br><br>v", "C v Y", "B v Z", "C v X", "A v Y"];
+
+	protected override void OnParametersSet()
+	{
+		NoOfScoreCards ??= 2;
+	}
 
 	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
 }
