@@ -2,7 +2,7 @@
 @layout PrintLayout
 
 @for (int i = 1; i <= noOfScoreCards; i++) {
-	<div class="score-sheet">
+	<div class="score-sheet" data-bordered="@Bordered">
 		<div class="header">
 			<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
 			<h2>LEAGUE SCORE SHEET</h2>
@@ -138,8 +138,10 @@
 }
 
 @code {
-	private int noOfScoreCards = 2;
+	private const int noOfScoreCards = 2;
 
+	[Parameter, SupplyParameterFromQuery]
+	public bool Bordered { get; set; } = false;
 
 	private (string HomeOrAway, string[] Letters)[] playerLetters = [
 		("Home", ["A", "B", "C"]),

@@ -1,22 +1,24 @@
 .score-sheet {
 	font-family: Arial, sans-serif;
-	max-width: 100%;
+	max-width: 95%;
 	margin: 0 auto;
 	padding: 20px;
 	background-color: #f5f5f5; /* shaded card */
 	background-color: #fff;
 	color: #000;
-
-/*	border: 1px solid #000;*/
-
 	--base-font-size: 11px;
 	--h1-font-size: 14px;
 	--h2-font-size: 12px;
 	font-size: var(--base-font-size);
 
 	@media print {
+		max-width: 100%;
 		line-height: 0.6;
 	}
+}
+
+[data-bordered] {
+	border: 1px solid #000;
 }
 
 .header {
