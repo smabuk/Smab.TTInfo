@@ -13,7 +13,7 @@
 				<div class="top-info">
 					<div class="info-field">
 						<span class="label">Division</span>
-						<span class="dots">@Spaces(30)</span>
+						<span class="dots">@Spaces(20)</span>
 						<span class="label">Date</span>
 						<span class="dots">@Spaces(20)</span>
 						<span class="label">Week No.</span>
@@ -24,7 +24,7 @@
 				<div class="teams-header">
 					<div class="team-line">
 						<span class="dots">@Spaces(48)</span>
-						<span class="vs">V</span>
+						<span class="vs">v</span>
 						<span class="dots">@Spaces(48)</span>
 					</div>
 					<div class="team-labels">
@@ -45,38 +45,36 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (string playerLetter in (string[])["A", "B", "C"])
+						@foreach ((string homeOrAway, string[] letters) in playerLetters)
 						{
-							<tr>
-								@if (playerLetter is "A")
-								{
-									<td rowspan="3" class="team-label">Home</td>
-								}
-								<td class="player-letter">@playerLetter</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td class="won-cell filled"></td>
-							</tr>
-						}
-						@foreach (string playerLetter in (string[])["X", "Y", "Z"])
-						{
-							<tr>
-								@if (playerLetter is "X")
-								{
-									<td rowspan="3" class="team-label">Away</td>
-								}
-								<td class="player-letter">@playerLetter</td>
-								<td></td>
-								<td></td>
-								<td class="won-cell filled"></td>
-								<td></td>
-							</tr>
+							bool homeOrAwayChanged = true;
+							foreach (string playerLetter in letters)
+							{
+								<tr>
+									@if (homeOrAwayChanged)
+									{
+										<td rowspan="3" class="team-label">@homeOrAway</td>
+										homeOrAwayChanged = false;
+									}
+									<td class="player-letter">@playerLetter</td>
+									<td></td>
+									<td></td>
+									@if (homeOrAway is "Home")
+									{
+										<td class="won-cell"></td>
+										<td class="won-cell filled"></td>
+									} else
+									{
+										<td class="won-cell filled"></td>
+										<td class="won-cell"></td>
+									}
+								</tr>
+							}
 						}
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="3" class="doubles-note">(½ each for the doubles)</td>
+							<td colspan="3">(½ each for the doubles)</td>
 							<td>Result</td>
 							<td colspan="2">-</td>
 						</tr>
@@ -92,7 +90,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var match in MatchMarkupStrings) {
+						@foreach (MarkupString match in matchOrder) {
 							<tr>
 								<td class="match-label">@match</td>
 								<td class="score-cell">-</td>
@@ -142,8 +140,14 @@
 @code {
 	private int noOfScoreCards = 2;
 
-	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
-	private IEnumerable<MarkupString> MatchMarkupStrings => matchOrder.Select(s => (MarkupString)s);
 
+	private (string HomeOrAway, string[] Letters)[] playerLetters = [
+		("Home", ["A", "B", "C"]),
+		("Away", ["X", "Y", "Z"])
+	];
+
+	// Order of matches as per Bracknell League rules
 	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "Doubles<br><br>v", "C v Y", "B v Z", "C v X", "A v Y"];
+
+	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
 }
