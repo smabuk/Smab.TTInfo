@@ -1,6 +1,15 @@
 ﻿@page "/print/bracknellscorecard"
 @layout PrintLayout
 
+@if (Shaded is false) {
+	<style>
+		.score-sheet {
+			--override-shading-colour: #fff;
+			--override-edit-colour: #fff;
+		}
+	</style>
+}
+
 @for (int i = 1; i <= NoOfScoreCards; i++) {
 	<div class="score-sheet" data-bordered="@Bordered">
 		<div class="header">
@@ -13,9 +22,9 @@
 				<div class="top-info">
 					<div class="info-field">
 						<span class="label">Division</span>
-						<span class="dots">@Spaces(20)</span>
+						<span class="dots">@Spaces(23)</span>
 						<span class="label">Date</span>
-						<span class="dots">@Spaces(20)</span>
+						<span class="dots">@Spaces(23)</span>
 						<span class="label">Week No.</span>
 						<span class="dots">@Spaces(8)</span>
 					</div>
@@ -23,9 +32,9 @@
 
 				<div class="teams-header">
 					<div class="team-line">
-						<span class="dots">@Spaces(48)</span>
+						<span class="dots">@Spaces(50)</span>
 						<span class="vs">v</span>
-						<span class="dots">@Spaces(48)</span>
+						<span class="dots">@Spaces(50)</span>
 					</div>
 					<div class="team-labels">
 						<span class="home-label">Home Team No. & Name</span>
@@ -53,10 +62,10 @@
 								<tr>
 									@if (homeOrAwayChanged)
 									{
-										<td rowspan="3" class="team-label">@homeOrAway</td>
+										<td rowspan="3">@homeOrAway</td>
 										homeOrAwayChanged = false;
 									}
-									<td class="player-letter">@playerLetter</td>
+									<td>@playerLetter</td>
 									<td></td>
 									<td></td>
 									@if (playerLetter[0] < 'L')
@@ -92,7 +101,7 @@
 					<tbody>
 						@foreach (MarkupString match in matchOrder) {
 							<tr>
-								<td>@match</td>
+								<td data-match="@match">@match</td>
 								<td>-</td>
 								<td>-</td>
 								<td>-</td>
@@ -139,7 +148,10 @@
 
 @code {
 	[Parameter, SupplyParameterFromQuery]
-	public bool Bordered { get; set; } = false;
+	public bool? Bordered { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Shaded { get; set; }
 
 	[Parameter, SupplyParameterFromQuery]
 	public int? NoOfScoreCards { get; set; }
@@ -150,11 +162,13 @@
 	];
 
 	// Order of matches as per Bracknell League rules
-	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "Doubles<br><br>v", "C v Y", "B v Z", "C v X", "A v Y"];
+	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "v", "C v Y", "B v Z", "C v X", "A v Y"];
 
 	protected override void OnParametersSet()
 	{
 		NoOfScoreCards ??= 2;
+		Bordered ??= false;
+		Shaded ??= true;
 	}
 
 	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));

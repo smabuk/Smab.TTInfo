@@ -13,10 +13,11 @@
 		<NavMenuItem Icon="bi-table"      Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
 		<NavMenuItem Icon="bi-table"      Text="Bracknell League"  Path="LeagueSummary/BracknellAndWokingham" />
 		<NavMenuItem Icon="bi-table"      Text="British League"    Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
-
-		<NavMenuItem Icon="bi-postcard"   Text="Bracknell Scorecard"    Path="print/bracknellscorecard?bordered=true"/>
+		<hr />
+		<NavMenuItem Icon="bi-postcard"   Text="Bracknell Scorecard"    Path="print/bracknellscorecard?bordered=true&shaded=false"/>
 
 		@if (env.IsDevelopment()) {
+			<hr />
 			<NavMenuItem Icon="bi-clock-fill"   Text="Reading recent"        Path="Recent/Reading" />
 			<NavMenuItem Icon="@emojiTT"        Text="OLOP D"                Path="TeamSummary/Reading/Our Lady Of Peace D" />
 			<NavMenuItem Icon="@emojiTT"        Text="OLOP Bears"            Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
