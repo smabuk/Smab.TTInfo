@@ -19,7 +19,7 @@
 	}
 }
 
-[data-bordered] {
+.bordered {
 	border: 1px solid #000;
 }
 

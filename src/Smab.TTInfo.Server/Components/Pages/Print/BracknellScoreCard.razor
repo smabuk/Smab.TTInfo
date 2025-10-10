@@ -11,7 +11,7 @@
 }
 
 @for (int i = 1; i <= NoOfScoreCards; i++) {
-	<div class="score-sheet" data-bordered="@Bordered">
+	<div class="score-sheet@(Bordered is true ? " bordered" : null)">
 		<div class="header">
 			<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
 			<h2>LEAGUE SCORE SHEET</h2>
