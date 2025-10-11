@@ -1,150 +1,147 @@
 ﻿@page "/print/bracknellscorecard"
 @layout PrintLayout
 
-@if (Shaded is false) {
-	<style>
-		.score-sheet {
-			--override-shading-colour: #fff;
-			--override-edit-colour: #fff;
-		}
-	</style>
-}
+<div>
+	@if (Shaded is false) {
+		<style>
+			:root {
+				--ttinfo-override-shading-colour: #fff;
+				--ttinfo-override-edit-colour: #fff;
+			}
+		</style>
+	}
 
-@for (int i = 1; i <= NoOfScoreCards; i++) {
-	<div class="score-sheet@(Bordered is true ? " bordered" : null)">
-		<div class="header">
-			<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
-			<h2>LEAGUE SCORE SHEET</h2>
-		</div>
+	@for (int i = 1; i <= NoOfScoreCards; i++) {
+		<div class="score-sheet@(Bordered is true ? " bordered" : null)">
+			<div class="header">
+				<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
+				<h2>LEAGUE SCORE SHEET</h2>
+			</div>
 
-		<div class="main-content">
-			<div class="left-panel">
-				<div class="top-info">
-					<div class="info-field">
-						<span class="label">Division</span>
-						<span class="dots">@Spaces(23)</span>
-						<span class="label">Date</span>
-						<span class="dots">@Spaces(23)</span>
-						<span class="label">Week No.</span>
-						<span class="dots">@Spaces(8)</span>
+			<div class="main-content">
+				<div class="left-panel">
+					<div class="top-info">
+						<div class="info-field">
+							<span class="label">Division</span>
+							<span class="dots">@Spaces(23)</span>
+							<span class="label">Date</span>
+							<span class="dots">@Spaces(23)</span>
+							<span class="label">Week No.</span>
+							<span class="dots">@Spaces(8)</span>
+						</div>
 					</div>
-				</div>
 
-				<div class="teams-header">
-					<div class="team-line">
-						<span class="dots">@Spaces(50)</span>
-						<span class="vs">v</span>
-						<span class="dots">@Spaces(50)</span>
+					<div class="teams-header">
+						<div class="team-line">
+							<span class="dots">@Spaces(50)</span>
+							<span class="vs">v</span>
+							<span class="dots">@Spaces(50)</span>
+						</div>
+						<div class="team-labels">
+							<span class="home-label">Home Team No. & Name</span>
+							<span class="away-label">Away Team No. & Name</span>
+						</div>
 					</div>
-					<div class="team-labels">
-						<span class="home-label">Home Team No. & Name</span>
-						<span class="away-label">Away Team No. & Name</span>
-					</div>
-				</div>
 
-				<table class="players-table">
-					<thead>
-						<tr>
-							<th></th>
-							<th></th>
-							<th>First Name</th>
-							<th>Surname</th>
-							<th>Won</th>
-							<th class="won-cell">Won</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach ((string homeOrAway, string[] letters) in playerLetters)
-						{
-							bool homeOrAwayChanged = true;
-							foreach (string playerLetter in letters)
-							{
+					<table class="players-table">
+						<thead>
+							<tr>
+								<th></th>
+								<th></th>
+								<th>First Name</th>
+								<th>Surname</th>
+								<th>Won</th>
+								<th class="won-cell">Won</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach ((string homeOrAway, string[] letters) in playerLetters) {
+								bool homeOrAwayChanged = true;
+								foreach (string playerLetter in letters) {
+									<tr>
+										@if (homeOrAwayChanged) {
+											<td rowspan="3">@homeOrAway</td>
+											homeOrAwayChanged = false;
+										}
+										<td>@playerLetter</td>
+										<td></td>
+										<td></td>
+										@if (playerLetter[0] < 'L') {
+											<td></td>
+											<td class="filled"></td>
+										} else {
+											<td class="filled"></td>
+											<td></td>
+										}
+									</tr>
+								}
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="3">(½ each for the doubles)</td>
+								<td>Result</td>
+								<td colspan="2">-</td>
+							</tr>
+						</tfoot>
+					</table>
+
+					<table class="matches-table">
+						<thead>
+							<tr>
+								<th></th>
+								<th colspan="5">Scores</th>
+								<th>H/A</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (MarkupString match in matchOrder) {
 								<tr>
-									@if (homeOrAwayChanged)
-									{
-										<td rowspan="3">@homeOrAway</td>
-										homeOrAwayChanged = false;
-									}
-									<td>@playerLetter</td>
+									<td data-match="@match">@match</td>
+									<td>-</td>
+									<td>-</td>
+									<td>-</td>
+									<td>-</td>
+									<td>-</td>
 									<td></td>
-									<td></td>
-									@if (playerLetter[0] < 'L')
-									{
-										<td></td>
-										<td class="filled"></td>
-									} else
-									{
-										<td class="filled"></td>
-										<td></td>
-									}
 								</tr>
 							}
-						}
-					</tbody>
-					<tfoot>
-						<tr>
-							<td colspan="3">(½ each for the doubles)</td>
-							<td>Result</td>
-							<td colspan="2">-</td>
-						</tr>
-					</tfoot>
-				</table>
-
-				<table class="matches-table">
-					<thead>
-						<tr>
-							<th></th>
-							<th colspan="5">Scores</th>
-							<th>H/A</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (MarkupString match in matchOrder) {
-							<tr>
-								<td data-match="@match">@match</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td></td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-
-			<div class="right-panel">
-				<div class="notes-section">
-					<span>Enter notes here:</span>
-				</div>
-				<div class="info-field">
-					<span class="label">Player of the Match:</span>
-					<span class="dots">@Spaces(20)</span>
-				</div>
-				<div class="info-field">
-					<span class="label">Match Highlights:</span>
+						</tbody>
+					</table>
 				</div>
 
-				<div class="signature-section">
-					<div class="signature-label">Signed:</div>
-					<div class="signature-line">
-						<span class="fill-dots"></span>
-						<div class="caption">Home Team Captain</div>
+				<div class="right-panel">
+					<div class="notes-section">
+						<span>Enter notes here:</span>
 					</div>
-					<div class="signature-line">
-						<span class="fill-dots"></span>
-						<div class="caption">Away Team Captain</div>
+					<div class="info-field">
+						<span class="label">Player of the Match:</span>
+						<span class="dots">@Spaces(20)</span>
+					</div>
+					<div class="info-field">
+						<span class="label">Match Highlights:</span>
+					</div>
+
+					<div class="signature-section">
+						<div class="signature-label">Signed:</div>
+						<div class="signature-line">
+							<span class="fill-dots"></span>
+							<div class="caption">Home Team Captain</div>
+						</div>
+						<div class="signature-line">
+							<span class="fill-dots"></span>
+							<div class="caption">Away Team Captain</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	@if (i < NoOfScoreCards) {
-		<div class="page-break"></div>
+		@if (i < NoOfScoreCards) {
+			<div class="page-break"></div>
+		}
 	}
-}
+</div>
 
 @code {
 	[Parameter, SupplyParameterFromQuery]
