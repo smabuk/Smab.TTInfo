@@ -54,33 +54,16 @@
 	flex: 1;
 }
 
-.right-panel {
-	width: 200px;
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
-}
-
 .top-info {
 	margin-bottom: 15px;
 
 	.info-field {
 		margin-bottom: 5px;
 
-		span.dots {
+		span.fill-dots {
 			margin-right: 20px;
 		}
 	}
-}
-
-.label {
-	font-weight: normal;
-}
-
-.dots {
-	letter-spacing: 1px;
-	text-decoration-style: dotted;
-	text-decoration-line: underline;
 }
 
 .fill-dots {
@@ -88,7 +71,7 @@
 	border-bottom: 1px dotted var(--ttinfo-text-colour);
 	min-width: 0;
 	height: 1em;
-	margin: 0 2px;
+	margin: 0;
 }
 
 .notes-section {
@@ -252,26 +235,41 @@ table {
 	}
 }
 
-.signature-section {
+.right-panel {
+	width: 200px;
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
-	margin-top: auto;
+	gap: 15px;
+}
 
-	.signature-label {
+.signature-section {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+
+	label:first-child {
 		font-weight: normal;
-		margin-bottom: 5px;
+		margin-bottom: 15px;
 	}
 
-	.signature-line {
+	.signatures {
 		display: flex;
-		flex-direction: column;
-		gap: 5px;
-		margin-top: 20px;
+		flex-direction: row;
+		justify-content: space-between;
+		margin: 0;
 
-		.caption {
-			font-size: xx-small;
-			text-align: left;
+		.signature-line {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			margin: 0;
+			margin-top: 20px;
+
+			label {
+				font-size: xx-small;
+				text-align: left;
+				padding: 0 7px;
+			}
 		}
 	}
 }
