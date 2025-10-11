@@ -1,110 +1,126 @@
-﻿div:first-child {
-	--ttinfo-base-font-size: 11px;
-	--ttinfo-h1-font-size: 14px;
-	--ttinfo-h2-font-size: 12px;
+﻿@page {
+	size: A4;
+	margin: 1cm;
+}
+
+article {
+	--ttinfo-base-font-size: 9pt;
+	--ttinfo-h1-font-size: 11pt;
+	--ttinfo-h2-font-size: 10pt;
 	--ttinfo-shading-colour: var(--ttinfo-override-shading-colour, #f5f5f5);
 	--ttinfo-edit-colour: var(--ttinfo-override-edit-colour, #fff);
 	--ttinfo-text-colour: var(--ttinfo-override-text-colour, #000);
-}
-
-.score-sheet {
 	font-family: Arial, sans-serif;
-	font-size: var(--ttinfo-base-font-size);
-	max-width: 800px;
-	margin: 0 auto;
-	padding: 20px;
-	background-color: var(--ttinfo-shading-colour);
-	color: var(--ttinfo-text-colour);
-	line-height: 0.7;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
 	@media print {
-		max-width: 100%;
+		height: 100vh;
 	}
 }
 
-.bordered {
-	border: 1px solid var(--ttinfo-text-colour);
+.score-sheet {
+	font-size: var(--ttinfo-base-font-size);
+	max-width: 190mm;
+	margin: 0 auto;
+	padding: 4mm;
+	background-color: var(--ttinfo-shading-colour);
+	color: var(--ttinfo-text-colour);
+	line-height: 0.6;
+
+	&.bordered {
+		border: thin solid color-mix(in srgb, var(--ttinfo-text-colour) 70%, white);
+	}
+
+	@media print {
+		max-width: 190mm;
+	}
 }
 
 .header {
 	text-align: center;
-	margin-bottom: 20px;
+	margin-bottom: 3mm;
+	/*	letter-spacing: 0.13mm;*/
 
 	h1 {
 		font-size: var(--ttinfo-h1-font-size);
 		font-weight: bold;
-		margin: 0 0 5px 0;
-		letter-spacing: 0.5px;
+		margin: 0 0 0 0;
 	}
 
 	h2 {
 		font-size: var(--ttinfo-h2-font-size);
 		font-weight: bold;
 		margin: 0;
-		letter-spacing: 0.5px;
-	}
-}
-
-.main-content {
-	display: flex;
-	gap: 20px;
-}
-
-.left-panel {
-	flex: 1;
-}
-
-.top-info {
-	margin-bottom: 15px;
-
-	.info-field {
-		margin-bottom: 5px;
-
-		span.fill-dots {
-			margin-right: 20px;
-		}
 	}
 }
 
 .fill-dots {
 	flex: 1;
-	border-bottom: 1px dotted var(--ttinfo-text-colour);
+	border-bottom: thin dotted var(--ttinfo-text-colour);
 	min-width: 0;
 	height: 1em;
 	margin: 0;
 }
 
-.notes-section {
-	margin-bottom: 5px;
-	font-weight: bold;
+.main-content {
+	display: flex;
+	gap: 5mm;
+}
+
+.left-panel {
+	flex: 1;
+
+	.top-info {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 4mm;
+
+		div > span {
+			margin-left: 2mm;
+		}
+
+		div:nth-child(1) > span {
+			padding-right: 3cm;
+		}
+
+		div:nth-child(2) > span {
+			padding-right: 3cm;
+		}
+
+		div:nth-child(3) > span {
+			padding-right: 2cm;
+		}
+	}
 }
 
 .teams-header {
-	margin-bottom: 10px;
+	margin-bottom: 2.5mm;
+
+	.team-line {
+		text-align: center;
+		margin-bottom: 1.5mm;
+		display: flex;
+		justify-content: space-between;
+		font-weight: normal;
+	}
+
+	.vs {
+		margin: 0 2.5mm;
+	}
+
+	.team-labels {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 3mm;
+		font-weight: normal;
+		font-size: x-small;
+	}
+
 }
 
-.team-line {
-	text-align: center;
-	margin-bottom: 5px;
-}
-
-.vs {
-	margin: 0 10px;
-}
-
-.team-labels {
-	display: flex;
-	justify-content: space-between;
-	font-weight: normal;
-}
-
-.home-label {
-	padding-left: 20px;
-}
-
-.away-label {
-	padding-right: 20px;
-}
 
 table {
 	vertical-align: middle;
@@ -117,12 +133,12 @@ table {
 
 .players-table {
 	width: 100%;
-	margin-bottom: 5px;
+	margin-bottom: 2mm;
 
 	th,
 	td {
-		border: 1px solid var(--ttinfo-text-colour);
-		padding: 4px 0;
+		border: thin solid var(--ttinfo-text-colour);
+		padding: 1.3mm 0;
 	}
 
 	thead th {
@@ -130,16 +146,16 @@ table {
 		text-align: center;
 
 		&:nth-child(1) {
-			width: 50px;
+			width: 13mm;
 		}
 
 		&:nth-child(2) {
-			width: 30px;
+			width: 8mm;
 		}
 
 		&:nth-child(1),
 		&:nth-child(3) {
-			padding: 0 8px;
+			padding: 0 1rem;
 			text-align: left;
 			border-right-style: none;
 		}
@@ -151,7 +167,7 @@ table {
 		}
 
 		&:nth-last-child(-n+2) {
-			width: 30px;
+			width: 8mm;
 		}
 	}
 
@@ -193,7 +209,7 @@ table {
 		&:nth-child(2) {
 			text-align: right;
 			border-style: none;
-			padding: 0 8px;
+			padding: 0 0.5rem;
 		}
 
 		&:last-child {
@@ -208,8 +224,8 @@ table {
 
 	th,
 	td {
-		border: 1px solid var(--ttinfo-text-colour);
-		padding: 4px 0;
+		border: thin solid var(--ttinfo-text-colour);
+		padding: 1.3mm 0;
 		text-align: center;
 	}
 
@@ -217,11 +233,11 @@ table {
 		font-weight: normal;
 
 		&:first-child {
-			width: 80px;
+			width: 21mm;
 		}
 
 		&:last-child {
-			width: 60px;
+			width: 16mm;
 		}
 	}
 
@@ -236,10 +252,19 @@ table {
 }
 
 .right-panel {
-	width: 200px;
+	width: 52mm;
 	display: flex;
 	flex-direction: column;
-	gap: 15px;
+	gap: 6mm;
+
+	.notes-section {
+		font-weight: bold;
+	}
+
+	&>div:nth-child(2) > span.fill-dots {
+		margin-left: 2mm;
+		padding-right: 2cm;
+	}
 }
 
 .signature-section {
@@ -249,36 +274,35 @@ table {
 
 	label:first-child {
 		font-weight: normal;
-		margin-bottom: 15px;
 	}
 
 	.signatures {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		margin: 0;
 
 		.signature-line {
 			display: flex;
 			flex-direction: column;
-			gap: 5px;
+			gap: 1mm;
 			margin: 0;
-			margin-top: 20px;
+			margin-top: 12mm;
 
 			label {
 				font-size: xx-small;
 				text-align: left;
-				padding: 0 7px;
+				padding-right: 3.6mm;
 			}
 		}
 	}
 }
 
 .page-break {
-	margin: 80px 0;
+	margin: 7mm 0;
 	border-top: 2px dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
 
 	@media print {
-		border: none;
+		margin: 0;
+		border-top: thin dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
 	}
 }

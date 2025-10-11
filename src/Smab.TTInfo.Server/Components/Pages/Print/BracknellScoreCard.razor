@@ -1,7 +1,7 @@
 ﻿@page "/print/bracknellscorecard"
 @layout PrintLayout
 
-<div>
+<article>
 	@if (Shaded is false) {
 		<style>
 			:root {
@@ -21,25 +21,29 @@
 			<div class="main-content">
 				<div class="left-panel">
 					<div class="top-info">
-						<div class="info-field">
+						<div>
 							<label>Division</label>
-							<span class="fill-dots">@Spaces(30)</span>
+							<span class="fill-dots"></span>
+						</div>
+						<div>
 							<label>Date</label>
-							<span class="fill-dots">@Spaces(33)</span>
+							<span class="fill-dots"></span>
+						</div>
+						<div>
 							<label>Week No.</label>
-							<span class="fill-dots">@Spaces(14)</span>
+							<span class="fill-dots"></span>
 						</div>
 					</div>
 
 					<div class="teams-header">
 						<div class="team-line">
-							<span class="fill-dots">@Spaces(64)</span>
+							<span class="fill-dots"></span>
 							<span class="vs">v</span>
-							<span class="fill-dots">@Spaces(64)</span>
+							<span class="fill-dots"></span>
 						</div>
 						<div class="team-labels">
-							<label class="home-label">Home Team No. & Name</label>
-							<label class="away-label">Away Team No. & Name</label>
+							<label>Home Team Name & No.</label>
+							<label>Away Team Name & No.</label>
 						</div>
 					</div>
 
@@ -114,13 +118,11 @@
 					<div class="notes-section">
 						<span>Enter notes here:</span>
 					</div>
-					<div class="info-field">
+					<div>
 						<label>Player of the Match:</label>
-						<span class="fill-dots">@Spaces(30)</span>
+						<span class="fill-dots"></span>
 					</div>
-					<div class="info-field">
-						<label>Match Highlights:</label>
-					</div>
+					<label>Match Highlights:</label>
 
 					<div class="signature-section">
 						<label>Signed:</label>
@@ -143,7 +145,7 @@
 			<div class="page-break"></div>
 		}
 	}
-</div>
+</article>
 
 @code {
 	[Parameter, SupplyParameterFromQuery]
