@@ -1,8 +1,21 @@
 ﻿@page "/print/scorecard/bracknell"
 @layout PrintLayout
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Print Bracknell Score Cards</PageTitle>
+
 
 <article>
-	@if (Shaded is false) {
+	<div class="control-panel">
+		<button class="btn btn-primary m-3" @onclick="PrintCards">Print All Scorecards</button>
+		<label for="no-of-pages">No of pages:</label><InputNumber id="no-of-pages" @bind-Value="NoOfPages" inputmode="number" min="1" max="99" step="1" />
+		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
+		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
+	</div>
+	<div class="page-break"></div>
+
+	@if (isShaded is false) {
 		<style>
 			:root {
 				--ttinfo-override-shading-colour: #fff;
@@ -15,7 +28,7 @@
 	@for (int page = 0; page < NoOfPages; page++) {
 		<div class="page">
 			@foreach (int i in (int[])[1, 2]) {
-				<div class="score-sheet@(Bordered is true ? " bordered" : null)">
+				<div class="score-sheet@(isBordered is true ? " bordered" : null)">
 					<header>
 						<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
 						<h2>LEAGUE SCORE SHEET</h2>
@@ -170,6 +183,9 @@
 	[Parameter, SupplyParameterFromQuery]
 	public int? NoOfPages { get; set; }
 
+	private bool isBordered;
+	private bool isShaded;
+
 	private (string HomeOrAway, string[] Letters)[] playerLetters = [
 		("Home", ["A", "B", "C"]),
 		("Away", ["X", "Y", "Z"])
@@ -181,9 +197,10 @@
 	protected override void OnParametersSet()
 	{
 		NoOfPages ??= 1;
-		Bordered ??= false;
-		Shaded ??= true;
+		isBordered = Bordered ?? true;
+		isShaded = Shaded ?? false;
 	}
 
 	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
+	private void PrintCards() => JS.InvokeVoidAsync("window.print");
 }

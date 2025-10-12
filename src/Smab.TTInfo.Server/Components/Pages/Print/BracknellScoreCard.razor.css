@@ -16,6 +16,22 @@ article {
 
 }
 
+::deep .control-panel {
+	color: var(--ttinfo-text-colour);
+
+	input[type="number"] {
+		width: 3rem;
+	}
+
+	label {
+		margin-left: 10px;
+	}
+
+	@media print {
+		display: none;
+	}
+}
+
 .page {
 	display: flex;
 	flex-direction: column;
@@ -309,7 +325,7 @@ table {
 	page-break-after: auto;
 
 	margin: 7mm 0;
-	border-top: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
+	border-top: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 80%, white);
 
 	@media print {
 		margin: 0;
