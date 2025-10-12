@@ -14,6 +14,9 @@ article {
 
 	font-family: Arial, sans-serif;
 
+}
+
+.page {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -292,13 +295,25 @@ table {
 	}
 }
 
-.page-break {
+.mid-break {
 	margin: 7mm 0;
 	border-top: 2px dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
 
 	@media print {
 		margin: 0;
 		border-top: 0.12mm dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
+	}
+}
+
+.page-break {
+	page-break-after: auto;
+
+	margin: 7mm 0;
+	border-top: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
+
+	@media print {
+		margin: 0;
+		border-top: none;
 	}
 }
 

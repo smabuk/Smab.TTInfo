@@ -1,4 +1,4 @@
-﻿@page "/print/bracknellscorecard"
+﻿@page "/print/scorecard/bracknell"
 @layout PrintLayout
 
 <article>
@@ -11,145 +11,152 @@
 		</style>
 	}
 
-	@for (int i = 1; i <= NoOfScoreCards; i++) {
-		<div class="score-sheet@(Bordered is true ? " bordered" : null)">
-			<header>
-				<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
-				<h2>LEAGUE SCORE SHEET</h2>
-			</header>
 
-			<div class="main-content">
-				<div class="left-panel">
-					<section>
-						<h3 class="visually-hidden">Fixture Information</h3>
-						<div class="top-info">
-							<div>
-								<span>Division</span>
-								<span class="dots"></span>
-							</div>
-							<div>
-								<span>Date</span>
-								<span class="dots"></span>
-							</div>
-							<div>
-								<span>Week No.</span>
-								<span class="dots"></span>
-							</div>
-						</div>
+	@for (int page = 0; page < NoOfPages; page++) {
+		<div class="page">
+			@foreach (int i in (int[])[1, 2]) {
+				<div class="score-sheet@(Bordered is true ? " bordered" : null)">
+					<header>
+						<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
+						<h2>LEAGUE SCORE SHEET</h2>
+					</header>
 
-						<div class="teams-header">
-							<div class="team-line">
-								<span class="dots"></span>
-								<span class="vs">v</span>
-								<span class="dots"></span>
-							</div>
-							<div class="team-labels">
-								<span>Home Team Name</span>
-								<span>Away Team Name</span>
-							</div>
-						</div>
+					<div class="main-content">
+						<div class="left-panel">
+							<section>
+								<h3 class="visually-hidden">Fixture Information</h3>
+								<div class="top-info">
+									<div>
+										<span>Division</span>
+										<span class="dots"></span>
+									</div>
+									<div>
+										<span>Date</span>
+										<span class="dots"></span>
+									</div>
+									<div>
+										<span>Week No.</span>
+										<span class="dots"></span>
+									</div>
+								</div>
 
-					</section>
-					<section>
-						<h3 class="visually-hidden">Players</h3>
-						<table class="players-table">
-							<thead>
-								<tr>
-									<th></th>
-									<th></th>
-									<th>First Name</th>
-									<th>Surname</th>
-									<th>Won</th>
-									<th class="won-cell">Won</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach ((string homeOrAway, string[] letters) in playerLetters) {
-									bool homeOrAwayChanged = true;
-									foreach (string playerLetter in letters) {
+								<div class="teams-header">
+									<div class="team-line">
+										<span class="dots"></span>
+										<span class="vs">v</span>
+										<span class="dots"></span>
+									</div>
+									<div class="team-labels">
+										<span>Home Team Name</span>
+										<span>Away Team Name</span>
+									</div>
+								</div>
+
+							</section>
+							<section>
+								<h3 class="visually-hidden">Players</h3>
+								<table class="players-table">
+									<thead>
 										<tr>
-											@if (homeOrAwayChanged) {
-												<td rowspan="3">@homeOrAway</td>
-												homeOrAwayChanged = false;
-											}
-											<td>@playerLetter</td>
-											<td></td>
-											<td></td>
-											@if (playerLetter[0] < 'L') {
-												<td></td>
-												<td class="filled"></td>
-											} else {
-												<td class="filled"></td>
-												<td></td>
-											}
+											<th></th>
+											<th></th>
+											<th>First Name</th>
+											<th>Surname</th>
+											<th>Won</th>
+											<th class="won-cell">Won</th>
 										</tr>
-									}
-								}
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="3">(½ each for the doubles)</td>
-									<td>Result</td>
-									<td colspan="2">-</td>
-								</tr>
-							</tfoot>
-						</table>
-					</section>
-					<section>
-						<h3 class="visually-hidden">Match Results</h3>
-						<table class="matches-table">
-							<thead>
-								<tr>
-									<th></th>
-									<th colspan="5">Scores</th>
-									<th>H/A</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (MarkupString match in matchOrder) {
-									<tr>
-										<td data-match="@match">@match</td>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-										<td>-</td>
-										<td></td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</section>
+									</thead>
+									<tbody>
+										@foreach ((string homeOrAway, string[] letters) in playerLetters) {
+											bool homeOrAwayChanged = true;
+											foreach (string playerLetter in letters) {
+												<tr>
+													@if (homeOrAwayChanged) {
+														<td rowspan="3">@homeOrAway</td>
+														homeOrAwayChanged = false;
+													}
+													<td>@playerLetter</td>
+													<td></td>
+													<td></td>
+													@if (playerLetter[0] < 'L') {
+														<td></td>
+														<td class="filled"></td>
+													} else {
+														<td class="filled"></td>
+														<td></td>
+													}
+												</tr>
+											}
+										}
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="3">(½ each for the doubles)</td>
+											<td>Result</td>
+											<td colspan="2">-</td>
+										</tr>
+									</tfoot>
+								</table>
+							</section>
+							<section>
+								<h3 class="visually-hidden">Match Results</h3>
+								<table class="matches-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th colspan="5">Scores</th>
+											<th>H/A</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (MarkupString match in matchOrder) {
+											<tr>
+												<td data-match="@match">@match</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td></td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</section>
+						</div>
+
+						<aside class="right-panel">
+							<strong>Enter notes here:</strong>
+							<div>
+								<span>Player of the Match:</span>
+								<span class="dots"></span>
+							</div>
+							<span>Match Highlights:</span>
+
+							<div class="signature-section">
+								<span>Signed:</span>
+								<div class="signatures">
+									<div class="signature-line">
+										<span class="dots"></span>
+										<span>Home Team Captain</span>
+									</div>
+									<div class="signature-line">
+										<span class="dots"></span>
+										<span>Away Team Captain</span>
+									</div>
+								</div>
+							</div>
+						</aside>
+					</div>
 				</div>
 
-				<aside class="right-panel">
-					<strong>Enter notes here:</strong>
-					<div>
-						<span>Player of the Match:</span>
-						<span class="dots"></span>
-					</div>
-					<span>Match Highlights:</span>
-
-					<div class="signature-section">
-						<span>Signed:</span>
-						<div class="signatures">
-							<div class="signature-line">
-								<span class="dots"></span>
-								<span>Home Team Captain</span>
-							</div>
-							<div class="signature-line">
-								<span class="dots"></span>
-								<span>Away Team Captain</span>
-							</div>
-						</div>
-					</div>
-				</aside>
-			</div>
+				@if (int.IsOddInteger(i)) {
+					<div class="mid-break"></div>
+				}
+			}
 		</div>
 
-		@if (i < NoOfScoreCards) {
-			<div class="page-break"></div>
-		}
+		<div class="page-break"></div>
 	}
 </article>
 
@@ -161,7 +168,7 @@
 	public bool? Shaded { get; set; }
 
 	[Parameter, SupplyParameterFromQuery]
-	public int? NoOfScoreCards { get; set; }
+	public int? NoOfPages { get; set; }
 
 	private (string HomeOrAway, string[] Letters)[] playerLetters = [
 		("Home", ["A", "B", "C"]),
@@ -173,7 +180,7 @@
 
 	protected override void OnParametersSet()
 	{
-		NoOfScoreCards ??= 2;
+		NoOfPages ??= 1;
 		Bordered ??= false;
 		Shaded ??= true;
 	}
