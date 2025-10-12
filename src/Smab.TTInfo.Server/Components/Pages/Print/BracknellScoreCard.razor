@@ -13,131 +13,137 @@
 
 	@for (int i = 1; i <= NoOfScoreCards; i++) {
 		<div class="score-sheet@(Bordered is true ? " bordered" : null)">
-			<div class="header">
+			<header>
 				<h1>BRACKNELL, WOKINGHAM & DISTRICT TABLE TENNIS ASSOCIATION</h1>
 				<h2>LEAGUE SCORE SHEET</h2>
-			</div>
+			</header>
 
 			<div class="main-content">
 				<div class="left-panel">
-					<div class="top-info">
-						<div>
-							<label>Division</label>
-							<span class="fill-dots"></span>
+					<section>
+						<h3 class="visually-hidden">Fixture Information</h3>
+						<div class="top-info">
+							<div>
+								<span>Division</span>
+								<span class="dots"></span>
+							</div>
+							<div>
+								<span>Date</span>
+								<span class="dots"></span>
+							</div>
+							<div>
+								<span>Week No.</span>
+								<span class="dots"></span>
+							</div>
 						</div>
-						<div>
-							<label>Date</label>
-							<span class="fill-dots"></span>
-						</div>
-						<div>
-							<label>Week No.</label>
-							<span class="fill-dots"></span>
-						</div>
-					</div>
 
-					<div class="teams-header">
-						<div class="team-line">
-							<span class="fill-dots"></span>
-							<span class="vs">v</span>
-							<span class="fill-dots"></span>
+						<div class="teams-header">
+							<div class="team-line">
+								<span class="dots"></span>
+								<span class="vs">v</span>
+								<span class="dots"></span>
+							</div>
+							<div class="team-labels">
+								<span>Home Team Name</span>
+								<span>Away Team Name</span>
+							</div>
 						</div>
-						<div class="team-labels">
-							<label>Home Team Name & No.</label>
-							<label>Away Team Name & No.</label>
-						</div>
-					</div>
 
-					<table class="players-table">
-						<thead>
-							<tr>
-								<th></th>
-								<th></th>
-								<th>First Name</th>
-								<th>Surname</th>
-								<th>Won</th>
-								<th class="won-cell">Won</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach ((string homeOrAway, string[] letters) in playerLetters) {
-								bool homeOrAwayChanged = true;
-								foreach (string playerLetter in letters) {
+					</section>
+					<section>
+						<h3 class="visually-hidden">Players</h3>
+						<table class="players-table">
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th>First Name</th>
+									<th>Surname</th>
+									<th>Won</th>
+									<th class="won-cell">Won</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach ((string homeOrAway, string[] letters) in playerLetters) {
+									bool homeOrAwayChanged = true;
+									foreach (string playerLetter in letters) {
+										<tr>
+											@if (homeOrAwayChanged) {
+												<td rowspan="3">@homeOrAway</td>
+												homeOrAwayChanged = false;
+											}
+											<td>@playerLetter</td>
+											<td></td>
+											<td></td>
+											@if (playerLetter[0] < 'L') {
+												<td></td>
+												<td class="filled"></td>
+											} else {
+												<td class="filled"></td>
+												<td></td>
+											}
+										</tr>
+									}
+								}
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="3">(½ each for the doubles)</td>
+									<td>Result</td>
+									<td colspan="2">-</td>
+								</tr>
+							</tfoot>
+						</table>
+					</section>
+					<section>
+						<h3 class="visually-hidden">Match Results</h3>
+						<table class="matches-table">
+							<thead>
+								<tr>
+									<th></th>
+									<th colspan="5">Scores</th>
+									<th>H/A</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (MarkupString match in matchOrder) {
 									<tr>
-										@if (homeOrAwayChanged) {
-											<td rowspan="3">@homeOrAway</td>
-											homeOrAwayChanged = false;
-										}
-										<td>@playerLetter</td>
+										<td data-match="@match">@match</td>
+										<td>-</td>
+										<td>-</td>
+										<td>-</td>
+										<td>-</td>
+										<td>-</td>
 										<td></td>
-										<td></td>
-										@if (playerLetter[0] < 'L') {
-											<td></td>
-											<td class="filled"></td>
-										} else {
-											<td class="filled"></td>
-											<td></td>
-										}
 									</tr>
 								}
-							}
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="3">(½ each for the doubles)</td>
-								<td>Result</td>
-								<td colspan="2">-</td>
-							</tr>
-						</tfoot>
-					</table>
-
-					<table class="matches-table">
-						<thead>
-							<tr>
-								<th></th>
-								<th colspan="5">Scores</th>
-								<th>H/A</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach (MarkupString match in matchOrder) {
-								<tr>
-									<td data-match="@match">@match</td>
-									<td>-</td>
-									<td>-</td>
-									<td>-</td>
-									<td>-</td>
-									<td>-</td>
-									<td></td>
-								</tr>
-							}
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</section>
 				</div>
 
-				<div class="right-panel">
-					<div class="notes-section">
-						<span>Enter notes here:</span>
-					</div>
+				<aside class="right-panel">
+					<strong>Enter notes here:</strong>
 					<div>
-						<label>Player of the Match:</label>
-						<span class="fill-dots"></span>
+						<span>Player of the Match:</span>
+						<span class="dots"></span>
 					</div>
-					<label>Match Highlights:</label>
+					<span>Match Highlights:</span>
 
 					<div class="signature-section">
-						<label>Signed:</label>
+						<span>Signed:</span>
 						<div class="signatures">
 							<div class="signature-line">
-								<span class="fill-dots"></span>
-								<label>Home Team Captain</label>
+								<span class="dots"></span>
+								<span>Home Team Captain</span>
 							</div>
 							<div class="signature-line">
-								<span class="fill-dots"></span>
-								<label>Away Team Captain</label>
+								<span class="dots"></span>
+								<span>Away Team Captain</span>
 							</div>
 						</div>
 					</div>
-				</div>
+				</aside>
 			</div>
 		</div>
 
