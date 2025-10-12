@@ -1,0 +1,354 @@
+﻿@page {
+	size: A4 landscape;
+	margin: 1cm;
+}
+
+article {
+	--ttinfo-base-font-size: 9pt;
+	--ttinfo-h1-font-size: 11pt;
+	--ttinfo-h2-font-size: 10pt;
+	--ttinfo-shading-colour: var(--ttinfo-override-shading-colour, #f5f5f5);
+	--ttinfo-edit-colour: var(--ttinfo-override-edit-colour, #fff);
+	--ttinfo-text-colour: var(--ttinfo-override-text-colour, #000);
+	--ttinfo-thin-border: 0.1mm solid var(--ttinfo-text-colour);
+	--ttinfo-double-border: 0.4mm double var(--ttinfo-text-colour);
+
+	font-family: 'Times New Roman', serif;
+
+}
+
+::deep .control-panel {
+	color: var(--ttinfo-text-colour);
+
+	input[type="number"] {
+		width: 3rem;
+	}
+
+	label {
+		margin-left: 10px;
+	}
+
+	@media print {
+		display: none;
+	}
+}
+
+.page {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	@media print {
+		width: 100vw;
+	}
+}
+
+.score-sheet {
+	font-size: var(--ttinfo-base-font-size);
+	max-width: 190mm;
+	margin: 0 auto;
+	padding: 4mm;
+	background-color: var(--ttinfo-shading-colour);
+	color: var(--ttinfo-text-colour);
+	line-height: 0.6;
+
+	&.bordered {
+		border: var(--ttinfo-thin-border);
+	}
+
+	@media print {
+		max-width: 140mm;
+	}
+}
+
+header {
+	text-align: center;
+	margin-bottom: 3mm;
+
+	h1 {
+		font-size: var(--ttinfo-h1-font-size);
+		font-weight: bold;
+		margin: 0;
+	}
+
+	h2 {
+		font-size: var(--ttinfo-h2-font-size);
+		font-weight: bold;
+		margin: 0;
+	}
+}
+
+.dots {
+	flex: 1;
+	border-bottom: 0.1mm solid var(--ttinfo-text-colour);
+	min-width: 0;
+	height: 1em;
+	margin: 0;
+}
+
+.main-content {
+	display: flex;
+	gap: 5mm;
+}
+
+.left-panel {
+	flex: 1;
+}
+
+.top-info {
+	display: flex;
+	justify-content: space-between;
+	overflow-x: clip;
+	gap: 6mm;
+	margin-bottom: 4mm;
+
+	div > span {
+		margin-right: 2mm;
+	}
+
+	div:nth-child(1) > span.dots {
+		padding-right: 3cm;
+	}
+
+	div:nth-child(2) > span.dots {
+		padding-right: 3cm;
+	}
+
+	div:nth-child(3) > span.dots {
+		padding-right: 1.5cm;
+	}
+}
+
+.teams-header {
+	margin-bottom: 2.5mm;
+
+	.team-line {
+		text-align: center;
+		margin-bottom: 1.5mm;
+		display: flex;
+		justify-content: space-between;
+		font-weight: normal;
+	}
+
+	.vs {
+		margin: 0 2.5mm;
+	}
+
+	.team-labels {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 3mm;
+		font-weight: normal;
+		font-size: x-small;
+	}
+
+}
+
+table {
+	vertical-align: middle;
+	border-collapse: collapse;
+
+	td {
+		text-align: center;
+	}
+}
+
+.players-table {
+	width: 100%;
+	margin-bottom: 2mm;
+
+	th,
+	td {
+		border: var(--ttinfo-thin-border);
+		padding: 1.3mm 0;
+	}
+
+	thead th {
+		font-weight: normal;
+		text-align: center;
+
+		&:nth-child(1) {
+			width: 13mm;
+		}
+
+		&:nth-child(2) {
+			width: 8mm;
+		}
+
+		&:nth-child(1),
+		&:nth-child(3) {
+			padding: 0 1rem;
+			text-align: left;
+			border-right-style: none;
+		}
+
+		&:nth-child(2),
+		&:nth-child(4) {
+			text-align: left;
+			border-left-style: none;
+		}
+
+		&:nth-last-child(-n+2) {
+			width: 8mm;
+		}
+	}
+
+	tbody {
+		tr:nth-child(3n+1) {
+			td:nth-child(3),
+			td:nth-child(4) {
+				background-color: var(--ttinfo-edit-colour);
+				border-left-style: none;
+				border-right-style: none;
+			}
+		}
+
+		tr:nth-child(3n+2),
+		tr:nth-child(3n+3) {
+			td:nth-child(2),
+			td:nth-child(3) {
+				background-color: var(--ttinfo-edit-colour);
+				border-left-style: none;
+				border-right-style: none;
+			}
+		}
+
+		td:nth-last-child(-n+2) {
+			background-color: var(--ttinfo-edit-colour);
+
+			&.filled {
+				background-color: var(--ttinfo-text-colour);
+			}
+		}
+	}
+
+	tfoot td {
+		&:first-child {
+			border-style: none;
+			text-align: right;
+		}
+
+		&:nth-child(2) {
+			text-align: right;
+			border-style: none;
+			padding: 0 0.5rem;
+		}
+
+		&:last-child {
+			background-color: var(--ttinfo-edit-colour);
+		}
+	}
+}
+
+.matches-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+
+	th,
+	td {
+		border: var(--ttinfo-thin-border);
+		padding: 1.3mm 0;
+		text-align: center;
+		box-sizing: border-box;
+	}
+
+	thead th {
+		font-weight: normal;
+
+		&:first-child {
+			width: 21mm;
+		}
+
+		&:nth-last-child(-n+2) {
+			border: var(--ttinfo-double-border);
+			width: 10mm;
+		}
+	}
+
+	tbody {
+		td:nth-child(n+2):nth-child(-n+6),
+		td:nth-last-child(-n+2),
+		td[data-match='v'] {
+			background-color: var(--ttinfo-edit-colour);
+		}
+
+		td:nth-last-child(-n+2) {
+			border: var(--ttinfo-double-border);
+		}
+	}
+}
+
+/*.right-panel {
+	width: 50mm;
+	display: flex;
+	flex-direction: column;
+	gap: 6mm;
+
+	&>div:nth-child(2) > span.dots {
+		margin-left: 2mm;
+		padding-right: 2cm;
+	}
+}
+*/
+.signature-section {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	display: none;
+
+	.signatures {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		.signature-line {
+			font-size: xx-small;
+			display: flex;
+			flex-direction: column;
+			gap: 1mm;
+			margin: 0;
+			margin-top: 12mm;
+
+			span {
+				text-align: left;
+				padding-right: 3mm;
+			}
+		}
+	}
+}
+
+.mid-break {
+	margin: 0 7mm;
+	border-left: 2px dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
+
+	@media print {
+		margin: 0 7mm;
+		border-left: 0.12mm dashed color-mix(in srgb, var(--ttinfo-text-colour) 20%, white);
+	}
+}
+
+.page-break {
+	page-break-after: auto;
+
+	margin: 7mm 0;
+	border-top: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 80%, white);
+
+	@media print {
+		margin: 0;
+		border-top: none;
+	}
+}
+
+/* Visible to screen readers, invisible to sighted users */
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

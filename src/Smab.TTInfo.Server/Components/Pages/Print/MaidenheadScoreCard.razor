@@ -1,0 +1,202 @@
+﻿@page "/print/scorecard/maidenhead"
+@layout PrintLayout
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Print Maidenhead Score Cards</PageTitle>
+
+
+<article>
+	<div class="control-panel">
+		<button class="btn btn-primary m-3" @onclick="PrintCards">Print All Scorecards</button>
+		<label for="no-of-pages">No of pages:</label><InputNumber id="no-of-pages" @bind-Value="NoOfPages" inputmode="number" min="1" max="99" step="1" />
+		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
+		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
+	</div>
+	<div class="page-break"></div>
+
+	@if (isShaded is false) {
+		<style>
+			:root {
+				--ttinfo-override-shading-colour: #fff;
+				--ttinfo-override-edit-colour: #fff;
+			}
+		</style>
+	}
+
+
+	@for (int page = 0; page < NoOfPages; page++) {
+		<div class="page">
+			@foreach (int i in (int[])[1, 2]) {
+				<div class="score-sheet@(isBordered is true ? " bordered" : null)">
+					<header>
+						<h1>MAIDENHEAD & DISTRICT TABLE TENNIS ASSOCIATION</h1>
+					</header>
+
+					<div class="main-content">
+						<div class="left-panel">
+							<section>
+								<h3 class="visually-hidden">Fixture Information</h3>
+								<div class="top-info">
+									<div>
+										<span>Division</span>
+										<span class="dots"></span>
+									</div>
+									<div>
+										<span>Date</span>
+										<span class="dots"></span>
+									</div>
+									<div>
+										<span>Week No.</span>
+										<span class="dots"></span>
+									</div>
+								</div>
+
+								<div class="teams-header">
+									<div class="team-line">
+										<span class="dots"></span>
+										<span class="vs">v</span>
+										<span class="dots"></span>
+									</div>
+									<div class="team-labels">
+										<span>Home Team Name</span>
+										<span>Away Team Name</span>
+									</div>
+								</div>
+
+							</section>
+							<section>
+								<h3 class="visually-hidden">Players</h3>
+								<table class="players-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th></th>
+											<th>First Name</th>
+											<th>Surname</th>
+											<th>Won</th>
+											<th class="won-cell">Won</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ((string homeOrAway, string[] letters) in playerLetters) {
+											bool homeOrAwayChanged = true;
+											foreach (string playerLetter in letters) {
+												<tr>
+													@if (homeOrAwayChanged) {
+														<td rowspan="3">@homeOrAway</td>
+														homeOrAwayChanged = false;
+													}
+													<td>@playerLetter</td>
+													<td></td>
+													<td></td>
+													@if (playerLetter[0] < 'L') {
+														<td></td>
+														<td class="filled"></td>
+													} else {
+														<td class="filled"></td>
+														<td></td>
+													}
+												</tr>
+											}
+										}
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="3">(½ each for the doubles)</td>
+											<td>Result</td>
+											<td colspan="2">-</td>
+										</tr>
+									</tfoot>
+								</table>
+							</section>
+							<section>
+								<h3 class="visually-hidden">Match Results</h3>
+								<table class="matches-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th>1</th>
+											<th>2</th>
+											<th>3</th>
+											<th>4</th>
+											<th>5</th>
+											<th>H</th>
+											<th>A</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (MarkupString match in matchOrder) {
+											<tr>
+												<td data-match="@match">@match</td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td></td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</section>
+						</div>
+
+						<div class="signature-section">
+							<span>Signed:</span>
+							<div class="signatures">
+								<div class="signature-line">
+									<span class="dots"></span>
+									<span>Home Team Captain</span>
+								</div>
+								<div class="signature-line">
+									<span class="dots"></span>
+									<span>Away Team Captain</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@if (int.IsOddInteger(i)) {
+					<div class="mid-break"></div>
+				}
+			}
+		</div>
+
+		<div class="page-break"></div>
+	}
+</article>
+
+@code {
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Bordered { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Shaded { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public int? NoOfPages { get; set; }
+
+	private bool isBordered;
+	private bool isShaded;
+
+	private (string HomeOrAway, string[] Letters)[] playerLetters = [
+		("Home", ["A", "B", "C"]),
+		("Away", ["X", "Y", "Z"])
+	];
+
+	// Order of matches as per Maidenhead League rules
+	private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "C v Y", "B v Z", "C v X", "A v Y", "Doubles"];
+
+	protected override void OnParametersSet()
+	{
+		NoOfPages ??= 1;
+		isBordered = Bordered ?? true;
+		isShaded = Shaded ?? false;
+	}
+
+	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
+	private void PrintCards() => JS.InvokeVoidAsync("window.print");
+}
