@@ -40,6 +40,7 @@
 
 	@media print {
 		width: 100vw;
+		height: 100vh;
 	}
 }
 
@@ -47,7 +48,7 @@
 	font-size: var(--ttinfo-base-font-size);
 	font-weight: bold;
 	max-width: 190mm;
-	margin: 0 auto;
+	margin: auto auto;
 	padding: 4mm;
 	background-color: var(--ttinfo-shading-colour);
 	color: var(--ttinfo-text-colour);
@@ -64,7 +65,7 @@
 
 header {
 	text-align: center;
-	margin-bottom: 3mm;
+	margin-bottom: 2mm;
 
 	h1 {
 		font-size: var(--ttinfo-h1-font-size);
@@ -98,29 +99,47 @@ header {
 
 .top-info {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	overflow-x: clip;
-	gap: 6mm;
-	margin-bottom: 4mm;
+	margin-bottom: 2mm;
+	padding: 0 3mm;
 
 	div > span {
 		margin-right: 2mm;
 	}
 
-	div:nth-child(1) > span.dots {
-		padding-right: 3cm;
+	span.dots {
+		padding-right: 98%;
 	}
 
-	div:nth-child(2) > span.dots {
-		padding-right: 3cm;
+	.score-box {
+		aspect-ratio: 1/1;
+		height: 13mm;
+		background-color: var(--ttinfo-edit-colour);
+		border: 0.5mm solid var(--ttinfo-text-colour);
 	}
 
-	div:nth-child(3) > span.dots {
-		padding-right: 1.5cm;
+	.fixture-info {
+		display: flex;
+		flex-direction: column;
+		align-self: flex-end;
+		width: 100%;
+		margin: 2mm;
+
+		div:first-child {
+			display: flex;
+
+			span {
+				margin-right: auto;
+				margin-bottom: 2mm;
+			}
+		}
 	}
 }
 
 .teams-header {
+	width: 100%;
 	margin-bottom: 2.5mm;
 
 	.team-line {
@@ -128,19 +147,22 @@ header {
 		margin-bottom: 1.5mm;
 		display: flex;
 		justify-content: space-between;
-		font-weight: normal;
+		align-items: baseline;
+
+		span:first-child {
+			text-align: left;
+			width: 4rem;
+		}
+
+		span:last-child {
+			text-align: right;
+			width: 4rem;
+		}
 	}
 
 	.vs {
+		align-self: flex-end;
 		margin: 0 2.5mm;
-	}
-
-	.team-labels {
-		display: flex;
-		justify-content: space-between;
-		padding: 0 3mm;
-		font-weight: normal;
-		font-size: x-small;
 	}
 }
 
@@ -159,8 +181,8 @@ header {
 			}
 
 			span.dots {
-				margin-left: 5mm;
-				padding-right: 55mm;
+				margin-left: 2mm;
+				padding-right: 45mm;
 			}
 		}
 	}
@@ -189,8 +211,8 @@ table {
 }
 
 .matches-table {
-	width: 100%;
-	border-collapse: separate;
+	width: 98%;
+	border-collapse: collapse;
 	border-spacing: 0;
 
 	th,
