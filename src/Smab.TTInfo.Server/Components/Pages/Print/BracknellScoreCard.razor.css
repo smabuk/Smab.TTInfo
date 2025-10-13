@@ -1,9 +1,4 @@
-﻿@page {
-	size: A4 portrait;
-	margin: 1cm;
-}
-
-article {
+﻿article {
 	--ttinfo-base-font-size: 9pt;
 	--ttinfo-h1-font-size: 11pt;
 	--ttinfo-h2-font-size: 10pt;
