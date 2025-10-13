@@ -5,6 +5,13 @@
 
 <PageTitle>Print Maidenhead Score Cards</PageTitle>
 
+@* Can't put this in the css file as the at-rule page affects other razor pages *@
+<style>
+	@@page {
+		size: A4 landscape;
+		margin: 1cm;
+	}
+</style>
 
 <article>
 	<div class="control-panel">
@@ -13,7 +20,6 @@
 		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
 		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
 	</div>
-	<div class="page-break"></div>
 
 	@if (isShaded is false) {
 		<style>
@@ -34,16 +40,16 @@
 					</header>
 
 					<div class="main-content">
-						<div class="left-panel">
+						<div class="main-panel">
 							<section>
 								<h3 class="visually-hidden">Fixture Information</h3>
 								<div class="top-info">
 									<div>
-										<span>Division</span>
+										<span>Date:</span>
 										<span class="dots"></span>
 									</div>
 									<div>
-										<span>Date</span>
+										<span>Division:</span>
 										<span class="dots"></span>
 									</div>
 									<div>
@@ -65,50 +71,29 @@
 								</div>
 
 							</section>
-							<section>
+							<section class="players-section">
 								<h3 class="visually-hidden">Players</h3>
-								<table class="players-table">
-									<thead>
-										<tr>
-											<th></th>
-											<th></th>
-											<th>First Name</th>
-											<th>Surname</th>
-											<th>Won</th>
-											<th class="won-cell">Won</th>
-										</tr>
-									</thead>
-									<tbody>
-										@foreach ((string homeOrAway, string[] letters) in playerLetters) {
-											bool homeOrAwayChanged = true;
-											foreach (string playerLetter in letters) {
-												<tr>
-													@if (homeOrAwayChanged) {
-														<td rowspan="3">@homeOrAway</td>
-														homeOrAwayChanged = false;
-													}
-													<td>@playerLetter</td>
-													<td></td>
-													<td></td>
-													@if (playerLetter[0] < 'L') {
-														<td></td>
-														<td class="filled"></td>
-													} else {
-														<td class="filled"></td>
-														<td></td>
-													}
-												</tr>
-											}
-										}
-									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan="3">(½ each for the doubles)</td>
-											<td>Result</td>
-											<td colspan="2">-</td>
-										</tr>
-									</tfoot>
-								</table>
+								<div class="players">
+									<div class="player-list">
+										<div><span>A</span><span class="dots"></span></div>
+										<div><span>B</span><span class="dots"></span></div>
+										<div><span>C</span><span class="dots"></span></div>
+									</div>
+									<div class="player-list">
+										<div><span>X</span><span class="dots"></span></div>
+										<div><span>Y</span><span class="dots"></span></div>
+										<div><span>Z</span><span class="dots"></span></div>
+									</div>
+								</div>
+								<div>
+									<div class="doubles">
+										<span class="dots"></span>
+										<span>Doubles</span>
+										<span class="dots"></span>
+									</div>
+								</div>
+
+
 							</section>
 							<section>
 								<h3 class="visually-hidden">Match Results</h3>
@@ -141,18 +126,16 @@
 									</tbody>
 								</table>
 							</section>
-						</div>
 
-						<div class="signature-section">
-							<span>Signed:</span>
-							<div class="signatures">
-								<div class="signature-line">
-									<span class="dots"></span>
-									<span>Home Team Captain</span>
+							<div class="signature-section">
+								<div class="signature-labels">
+									<span>(Home)</span>
+									<span>Captain's Signatures</span>
+									<span>(Away)</span>
 								</div>
 								<div class="signature-line">
 									<span class="dots"></span>
-									<span>Away Team Captain</span>
+									<span class="dots"></span>
 								</div>
 							</div>
 						</div>
@@ -165,7 +148,9 @@
 			}
 		</div>
 
-		<div class="page-break"></div>
+		@if (page < NoOfPages - 1) {
+			<div class="page-break"></div>
+		}
 	}
 </article>
 

@@ -1,31 +1,31 @@
-﻿@page {
-	size: A4 landscape;
-	margin: 1cm;
-}
-
-article {
-	--ttinfo-base-font-size: 9pt;
+﻿article {
+	--ttinfo-base-font-size: 12pt;
 	--ttinfo-h1-font-size: 11pt;
 	--ttinfo-h2-font-size: 10pt;
 	--ttinfo-shading-colour: var(--ttinfo-override-shading-colour, #f5f5f5);
 	--ttinfo-edit-colour: var(--ttinfo-override-edit-colour, #fff);
 	--ttinfo-text-colour: var(--ttinfo-override-text-colour, #000);
 	--ttinfo-thin-border: 0.1mm solid var(--ttinfo-text-colour);
-	--ttinfo-double-border: 0.4mm double var(--ttinfo-text-colour);
-
+	--ttinfo-very-thin-border: 0.05mm solid var(--ttinfo-text-colour);
+	--ttinfo-double-border: 0.8mm double var(--ttinfo-text-colour);
 	font-family: 'Times New Roman', serif;
-
 }
 
 ::deep .control-panel {
 	color: var(--ttinfo-text-colour);
+	margin: 10px 0;
+	border-bottom: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 80%, white);
 
-	input[type="number"] {
-		width: 3rem;
+	input {
+		margin-left: 5px;
 	}
 
+		input[type="number"] {
+			width: 3rem;
+		}
+
 	label {
-		margin-left: 10px;
+		margin-left: 15px;
 	}
 
 	@media print {
@@ -45,12 +45,13 @@ article {
 
 .score-sheet {
 	font-size: var(--ttinfo-base-font-size);
+	font-weight: bold;
 	max-width: 190mm;
 	margin: 0 auto;
 	padding: 4mm;
 	background-color: var(--ttinfo-shading-colour);
 	color: var(--ttinfo-text-colour);
-	line-height: 0.6;
+	line-height: 1;
 
 	&.bordered {
 		border: var(--ttinfo-thin-border);
@@ -91,7 +92,7 @@ header {
 	gap: 5mm;
 }
 
-.left-panel {
+.main-panel {
 	flex: 1;
 }
 
@@ -141,7 +142,41 @@ header {
 		font-weight: normal;
 		font-size: x-small;
 	}
+}
 
+.players-section {
+	.players {
+		display: flex;
+
+		.player-list {
+			margin-right: auto;
+			margin-bottom: 3mm;
+			display: flex;
+			flex-direction: column;
+
+			> div {
+				margin-top: 5mm;
+			}
+
+			span.dots {
+				margin-left: 5mm;
+				padding-right: 55mm;
+			}
+		}
+	}
+
+	.doubles {
+		text-align: center;
+		margin-top:	3mm;
+		margin-bottom: 5mm;
+		display: flex;
+		justify-content: space-between;
+
+		span.dots {
+			margin-left: 5mm;
+			margin-right: 5mm;
+		}
+	}
 }
 
 table {
@@ -153,93 +188,6 @@ table {
 	}
 }
 
-.players-table {
-	width: 100%;
-	margin-bottom: 2mm;
-
-	th,
-	td {
-		border: var(--ttinfo-thin-border);
-		padding: 1.3mm 0;
-	}
-
-	thead th {
-		font-weight: normal;
-		text-align: center;
-
-		&:nth-child(1) {
-			width: 13mm;
-		}
-
-		&:nth-child(2) {
-			width: 8mm;
-		}
-
-		&:nth-child(1),
-		&:nth-child(3) {
-			padding: 0 1rem;
-			text-align: left;
-			border-right-style: none;
-		}
-
-		&:nth-child(2),
-		&:nth-child(4) {
-			text-align: left;
-			border-left-style: none;
-		}
-
-		&:nth-last-child(-n+2) {
-			width: 8mm;
-		}
-	}
-
-	tbody {
-		tr:nth-child(3n+1) {
-			td:nth-child(3),
-			td:nth-child(4) {
-				background-color: var(--ttinfo-edit-colour);
-				border-left-style: none;
-				border-right-style: none;
-			}
-		}
-
-		tr:nth-child(3n+2),
-		tr:nth-child(3n+3) {
-			td:nth-child(2),
-			td:nth-child(3) {
-				background-color: var(--ttinfo-edit-colour);
-				border-left-style: none;
-				border-right-style: none;
-			}
-		}
-
-		td:nth-last-child(-n+2) {
-			background-color: var(--ttinfo-edit-colour);
-
-			&.filled {
-				background-color: var(--ttinfo-text-colour);
-			}
-		}
-	}
-
-	tfoot td {
-		&:first-child {
-			border-style: none;
-			text-align: right;
-		}
-
-		&:nth-child(2) {
-			text-align: right;
-			border-style: none;
-			padding: 0 0.5rem;
-		}
-
-		&:last-child {
-			background-color: var(--ttinfo-edit-colour);
-		}
-	}
-}
-
 .matches-table {
 	width: 100%;
 	border-collapse: separate;
@@ -247,7 +195,7 @@ table {
 
 	th,
 	td {
-		border: var(--ttinfo-thin-border);
+		border: var(--ttinfo-very-thin-border);
 		padding: 1.3mm 0;
 		text-align: center;
 		box-sizing: border-box;
@@ -279,42 +227,24 @@ table {
 	}
 }
 
-/*.right-panel {
-	width: 50mm;
-	display: flex;
-	flex-direction: column;
-	gap: 6mm;
-
-	&>div:nth-child(2) > span.dots {
-		margin-left: 2mm;
-		padding-right: 2cm;
-	}
-}
-*/
 .signature-section {
-	margin-top: auto;
 	display: flex;
 	flex-direction: column;
-	display: none;
 
-	.signatures {
+	.signature-line {
+		text-align: center;
 		display: flex;
-		flex-direction: row;
 		justify-content: space-between;
+		font-weight: normal;
+		gap: 20mm;
+		margin-top: 8mm;
+	}
 
-		.signature-line {
-			font-size: xx-small;
-			display: flex;
-			flex-direction: column;
-			gap: 1mm;
-			margin: 0;
-			margin-top: 12mm;
-
-			span {
-				text-align: left;
-				padding-right: 3mm;
-			}
-		}
+	.signature-labels {
+		display: flex;
+		justify-content: space-between;
+		padding: 2mm 2mm;
+		font-weight: bold;
 	}
 }
 
@@ -329,8 +259,7 @@ table {
 }
 
 .page-break {
-	page-break-after: auto;
-
+	page-break-after: always;
 	margin: 7mm 0;
 	border-top: 2px dotted color-mix(in srgb, var(--ttinfo-text-colour) 80%, white);
 
