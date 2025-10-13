@@ -1,0 +1,197 @@
+﻿@page "/print/scorecard/reading"
+@layout PrintLayout
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Print Reading Score Cards</PageTitle>
+
+@* Can't put this in the css file as the at-rule page affects other razor pages *@
+<style>
+	@@page {
+		size: A4 portrait;
+		margin: 1cm;
+	}
+</style>
+
+<article>
+	<div class="control-panel">
+		<button class="btn btn-primary m-3" @onclick="PrintCards">Print All Scorecards</button>
+		<label for="no-of-pages">No of pages:</label><InputNumber id="no-of-pages" @bind-Value="NoOfPages" inputmode="number" min="1" max="99" step="1" />
+		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
+		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
+	</div>
+	<div class="page-break"></div>
+
+	@if (isShaded is false) {
+		<style>
+			:root {
+				--ttinfo-override-shading-colour: #fff;
+				--ttinfo-override-edit-colour: #fff;
+			}
+		</style>
+	}
+
+
+	@for (int page = 0; page < NoOfPages; page++) {
+		<div class="page">
+			@foreach (int i in (int[])[1, 2]) {
+				<div class="score-sheet@(isBordered is true ? " bordered" : null)">
+					<header>
+						<h1>Reading and District Table Tennis Association</h1>
+					</header>
+
+					<div class="main-content">
+						<div class="main-panel">
+							<section>
+								<h3 class="visually-hidden">Fixture Information</h3>
+								<div class="teams-header">
+									<div class="team-line">
+										<h2>Home Team</h2>
+										<span class="dots"></span>
+										<span class="vs">v</span>
+										<span class="dots"></span>
+										<h2>Away Team</h2>
+									</div>
+								</div>
+								<div class="top-info">
+									<div class="fixture-info">
+										<div>
+											<h2>Division</h2>
+											<span class="dots"></span>
+											<h2>Date</h2>
+											<span class="dots"></span>
+										</div>
+									</div>
+								</div>
+
+
+							</section>
+							<section>
+								<h3 class="visually-hidden">Match Results</h3>
+								<table class="matches-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th colspan="8">SCORE OF EACH GAME (Home Player's Score Marked First)</th>
+											<th></th>
+											<th></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th colspan="8">AWAY TEAM</th>
+											<th colspan="2">SCORE OF SETS</th>
+										</tr>
+										<tr>
+											<th></th>
+											<th colspan="2">Singles</th>
+											<th colspan="2">Singles</th>
+											<th colspan="2">Singles</th>
+											<th colspan="2">Doubles</th>
+											<th>Home</th>
+											<th>Away</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ((string matchType, string[] matches) in matchOrder) {
+											bool rowChanged = true;
+											@foreach (int row in (int[])[1, 2, 3, 4, 5, 6]) {
+												<tr>
+													@if (rowChanged) {
+														<td rowspan="6">@matchType</td>
+														rowChanged = false;
+													}
+													@foreach (string matchNo in matches) {
+														@if (matchNo is "x") {
+															@if (row is 1) {
+																<td colspan="2" rowspan="6">xxxxxxx</td>
+															}
+														} else {
+															@if (row is 1 or 3 or 5) {
+																<td rowspan="2">-</td>
+															}
+															@if (row is 1) {
+																<td rowspan="3"></td>
+															}
+															@if (row is 4) {
+																<td rowspan="3" data-match="@matchNo">@matchNo</td>
+															}
+														}
+													}
+													@if (row is 1) {
+														<td rowspan="6"></td>
+														<td rowspan="6"></td>
+													}
+													<td></td>
+												</tr>
+											}
+										}
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="7">Post this card tonight</td>
+											<td colspan="2">Match Total</td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tfoot>
+								</table>
+							</section>
+
+							<div class="signature-section">
+								<div class="signature-labels">
+									<span>(Home)</span>
+									<span>Captain's Signatures</span>
+									<span>(Away)</span>
+								</div>
+								<div class="signature-line">
+									<span class="dots"></span>
+									<span class="dots"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@if (int.IsOddInteger(i)) {
+					<div class="mid-break"></div>
+				}
+			}
+		</div>
+
+		<div class="page-break"></div>
+	}
+</article>
+
+@code {
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Bordered { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Shaded { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public int? NoOfPages { get; set; }
+
+	private bool isBordered;
+	private bool isShaded;
+
+	// Order of matches as per Reading League rules
+	private (string HomeTeamMatchType, string[] MatchNo)[] matchOrder = [
+		("Singles", ["1", "10", "5", "x"]),
+		("Singles", ["4", "2", "8", "x"]),
+		("Singles", ["9", "6", "3", "x"]),
+		("Doubles", ["x", "x", "x", "7"]),
+	];
+
+	// private string[] matchOrder = ["A v X", "B v Y", "C v Z", "B v X", "A v Z", "v", "C v Y", "B v Z", "C v X", "A v Y"];
+
+	protected override void OnParametersSet()
+	{
+		NoOfPages ??= 1;
+		isBordered = Bordered ?? true;
+		isShaded = Shaded ?? false;
+	}
+
+	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
+	private void PrintCards() => JS.InvokeVoidAsync("window.print");
+}
