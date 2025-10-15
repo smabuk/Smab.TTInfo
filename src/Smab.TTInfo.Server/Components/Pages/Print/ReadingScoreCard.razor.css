@@ -250,7 +250,8 @@ table {
 			vertical-align: middle;
 		}
 
-		td[data-match] > div:last-child {
+		span[data-match] {
+			display: block;
 			position: relative;
 			top: 2.4mm;
 			right: 0.5mm;
@@ -258,16 +259,6 @@ table {
 			font-weight: bold;
 			text-align: right;
 		}
-
-		/*td[data-match] > span:last-child {*/
-			/*			content: attr(data-match);*/
-			/*text-align: right;
-			vertical-align: bottom;
-			font-weight: bold;
-			padding-left: 4mm;
-			padding-right: 0.5mm;*/
-			/*			background-color: red;*/
-		/*}*/
 	}
 
 	tfoot {

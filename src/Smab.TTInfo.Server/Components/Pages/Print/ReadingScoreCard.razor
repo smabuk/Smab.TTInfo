@@ -19,6 +19,7 @@
 		<label for="no-of-pages">No of pages:</label><InputNumber id="no-of-pages" @bind-Value="NoOfPages" inputmode="number" min="1" max="99" step="1" />
 		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
 		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
+		<label for="bordered">With game numbers:</label><InputCheckbox id="with-game-numbers" @bind-Value="withGameNumbers"></InputCheckbox>
 	</div>
 	<div class="page-break"></div>
 
@@ -112,13 +113,16 @@
 															}
 														} else {
 															@if (row is 1 or 3 or 5) {
-																<td rowspan="2" class="game-score"><span data-game="@((row + 1) / 2)">@((row + 1) / 2)</span></td>
+																<td rowspan="2" class="game-score"><span data-game="@((row + 1) / 2)">@GameNo((row + 1) / 2)</span></td>
 															}
 															@if (row is 1) {
-																<td rowspan="3" class="game-score" data-game="4"><span data-game="4">4</span></td>
+																<td rowspan="3" class="game-score" data-game="4"><span data-game="4">@GameNo(4)</span></td>
 															}
 															@if (row is 4) {
-																<td rowspan="3" class="game-score" data-game="5" data-match="@matchNo"><span data-game="5">5</span><div>@matchNo</div></td>
+																<td rowspan="3" class="game-score" data-game="5" data-match="@matchNo">
+																	<span data-game="5">@GameNo(5)</span>
+																	<span data-match="@matchNo">@matchNo</span>
+																</td>
 															}
 														}
 													}
@@ -173,10 +177,14 @@
 	public bool? Shaded { get; set; }
 
 	[Parameter, SupplyParameterFromQuery]
+	public bool? WithGameNumbers { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
 	public int? NoOfPages { get; set; }
 
 	private bool isBordered;
 	private bool isShaded;
+	private bool withGameNumbers;
 
 	// Order of matches as per Reading League rules
 	private (string HomeTeamMatchType, string[] MatchNo)[] matchOrder = [
@@ -193,8 +201,10 @@
 		NoOfPages ??= 1;
 		isBordered = Bordered ?? true;
 		isShaded = Shaded ?? false;
+		withGameNumbers = WithGameNumbers ?? false;
 	}
 
 	private MarkupString Spaces(int count) => (MarkupString)(string.Join("", Enumerable.Repeat("&nbsp;", count)));
 	private void PrintCards() => JS.InvokeVoidAsync("window.print");
+	private MarkupString GameNo(int gameNo) => (MarkupString)(withGameNumbers ? $"{gameNo}" : "&nbsp;");
 }
