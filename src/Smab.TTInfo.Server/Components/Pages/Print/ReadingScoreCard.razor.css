@@ -37,7 +37,7 @@
 
 .score-sheet {
 	font-size: var(--ttinfo-base-font-size);
-	width: 210mm;
+	width: 185mm;
 	margin: 0 auto;
 	padding: 4mm;
 	background-color: var(--ttinfo-shading-colour);
@@ -49,7 +49,7 @@
 	}
 
 	@media print {
-		max-width: 210mm;
+		max-width: 185mm;
 	}
 }
 
@@ -169,7 +169,7 @@ table {
 	th,
 	td {
 		border: var(--ttinfo-thin-border);
-		padding: 1.3mm 0;
+		padding: 1mm 0;
 		text-align: center;
 	}
 
@@ -254,9 +254,9 @@ table {
 		span[data-match] {
 			display: block;
 			position: relative;
-			top: 2.4mm;
+			top: 1mm;
 			right: 0.5mm;
-			font-size: xx-small;
+			font-size: x-small;
 			font-weight: bold;
 			text-align: right;
 			color: var(--ttinfo-text-colour);
