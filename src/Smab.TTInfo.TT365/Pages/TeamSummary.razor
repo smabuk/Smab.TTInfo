@@ -154,6 +154,9 @@
 			<div>Caption: <span>@team.Caption</span></div>
 		</div>
 		<div id="players">
+			@{
+				bool hasLeagueRankings = team.Players!.Any(p => p.LeagueRanking is not 0);
+			}
 			<h3>Players</h3>
 			<table class="table table-bordered table-sm">
 				<thead>
@@ -161,7 +164,9 @@
 						<th>Name</th>
 						<th>Played</th>
 						<th>Win %</th>
-						<th>Ranking</th>
+						@if	(hasLeagueRankings) {
+							<th>Ranking</th>
+						}
 						<th class="">PoM</th>
 						<th>Form</th>
 					</tr>
@@ -173,7 +178,9 @@
 							<td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
-							<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
+							@if (hasLeagueRankings) {
+								<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
+							}
 							<td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
 							<td>@player.Form</td>
 						</tr>

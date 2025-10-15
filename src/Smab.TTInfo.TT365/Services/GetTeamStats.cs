@@ -58,18 +58,18 @@ public sealed partial class TT365Reader
 		if (playertableNode is not null) {
 			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
 				HtmlNode[] cells = [.. playerRow.Descendants("td")];
-				bool hasPoM = cells.Length > 5;
+				bool hasPoM = cells.Length > 4;
 				Player player = new()
 				{
 					Name = FixPlayerName(cells[0].InnerText.Trim()),
 					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
 					Played = int.Parse(cells[1].InnerText),
 					WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
-					LeagueRanking = int.Parse(cells[3].InnerText),
-					PoMAwards = hasPoM ? cells[4].InnerText : "",
+					LeagueRanking = 0, // no longer being tracked apparently (appears to be broken)
+					PoMAwards = hasPoM ? cells[3].InnerText : "",
 				};
-				List<string>? form = [.. 
-					from f in cells[hasPoM ? 5 : 4].Descendants("a")
+				List<string>? form = [..
+					from f in cells[hasPoM ? 4 : 3].Descendants("a")
 					select f.InnerText];
 				player.Form = string.Join(",", form);
 				List<string> rankings = (from r in cells[3].Descendants("a")
@@ -191,7 +191,7 @@ public sealed partial class TT365Reader
 
 		int startIndex = mailtoIndex + SEARCH_TERM.Length;
 		int endIndex = scriptContent.IndexOf(SINGLE_QUOTE, startIndex);
-		
+
 		return endIndex switch
 		{
 			-1 => "",
