@@ -95,6 +95,34 @@ header {
 	flex: 1;
 }
 
+.teams-header {
+	width: 100%;
+	margin-bottom: 2.5mm;
+
+	.team-line {
+		text-align: center;
+		margin-bottom: 1.5mm;
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+
+		h2:first-child {
+			text-align: left;
+			margin-right: 2mm;
+		}
+
+		h2:last-child {
+			text-align: right;
+			margin-left: 2mm;
+		}
+	}
+
+	.vs {
+		align-self: flex-end;
+		margin: 0 2.5mm;
+	}
+}
+
 .top-info {
 	display: flex;
 	flex-direction: row;
@@ -113,41 +141,15 @@ header {
 	}
 
 	span.dots {
-		padding-right: 25mm;
+		padding-right: 30mm;
 	}
 
 	.fixture-info {
 		display: flex;
 		flex-direction: column;
 		align-self: flex-end;
-		width: 60%;
-		margin: 0 auto;
-	}
-}
-
-.teams-header {
-	width: 100%;
-	margin-bottom: 2.5mm;
-
-	.team-line {
-		text-align: center;
-		margin-bottom: 1.5mm;
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-
-		h2:first-child {
-			text-align: left;
-		}
-
-		h2:last-child {
-			text-align: right;
-		}
-	}
-
-	.vs {
-		align-self: flex-end;
-		margin: 0 2.5mm;
+		width: 80%;
+		margin: 0 10mm 0 50mm;
 	}
 }
 
@@ -218,11 +220,7 @@ table {
 	}
 
 	tbody {
-		td.game-score {
-			width: 21mm;
-		}
-
-		td:first-child {
+		td[rowspan='6'] {
 			text-align: left;
 			vertical-align: top;
 			padding-left: 1mm;
@@ -238,14 +236,38 @@ table {
 			border: none;
 		}
 
-		td[data-match] {
-			/*			content: attr(data-match);*/
+		td.game-score {
+			width: 21mm;
+			text-align: left;
+			vertical-align: top;
+			padding-top: 0.5mm;
+			padding-left: 0.5mm;
+			font-size: xx-small;
+		}
+
+		td[data-match='x'] {
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		td[data-match] > div:last-child {
+			position: relative;
+			top: 2.4mm;
+			right: 0.5mm;
+			font-size: xx-small;
+			font-weight: bold;
 			text-align: right;
+		}
+
+		/*td[data-match] > span:last-child {*/
+			/*			content: attr(data-match);*/
+			/*text-align: right;
 			vertical-align: bottom;
 			font-weight: bold;
-			padding: 0;
-			padding-right: 0.5mm;
-		}
+			padding-left: 4mm;
+			padding-right: 0.5mm;*/
+			/*			background-color: red;*/
+		/*}*/
 	}
 
 	tfoot {
