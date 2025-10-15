@@ -243,6 +243,7 @@ table {
 			padding-top: 0.5mm;
 			padding-left: 0.5mm;
 			font-size: xx-small;
+			color: color-mix(in srgb, var(--ttinfo-text-colour) 70%, white);
 		}
 
 		td[data-match='x'] {
@@ -258,6 +259,7 @@ table {
 			font-size: xx-small;
 			font-weight: bold;
 			text-align: right;
+			color: var(--ttinfo-text-colour);
 		}
 	}
 
