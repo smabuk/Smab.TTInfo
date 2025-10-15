@@ -279,6 +279,10 @@ table {
 			text-align: right;
 			padding-right: 3mm;
 		}
+
+		td:nth-last-child(-n+2) {
+			background-color: var(--ttinfo-edit-colour);
+		}
 	}
 }
 
