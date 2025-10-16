@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TT365.Services;
+﻿using System.Text.RegularExpressions;
+
+namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
@@ -42,6 +44,11 @@ public sealed partial class TT365Reader
 				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
 			}
 
+			if (fixture.Venue.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase)) // 7:15pm start time
+			{
+				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-15);
+			}
+
 			if (!string.IsNullOrEmpty(TeamName)) // If looking at a particular team add BUSY and 1hr REMINDER
 			{
 				fixtureEvent.Transparency = VEvent.TransparencyType.OPAQUE;
@@ -53,6 +60,18 @@ public sealed partial class TT365Reader
 							Description = "Reminder"
 						}
 					];
+			}
+
+			if (fixture is PostponedFixture postponedFixture) {
+				fixtureEvent.Summary = $"🏓 POSTPONED: {postponedFixture.HomeTeam} vs {postponedFixture.AwayTeam}";
+				fixtureEvent.Transparency = VEvent.TransparencyType.TRANSPARENT;
+				fixtureEvent.Alarms = [];
+				fixtureEvent.Description += $"\n{postponedFixture.Reason}\n";
+			}
+
+			if (fixture is RearrangedFixture rearrangedFixture) {
+				fixtureEvent.Summary += $" (rearranged from {rearrangedFixture.OriginalDate:yyyy-MM-dd})";
+				fixtureEvent.Description += $"\n{rearrangedFixture.Reason}\n";
 			}
 
 			if (fixture is CompletedFixture completedFixture) {

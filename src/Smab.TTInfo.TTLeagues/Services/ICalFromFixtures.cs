@@ -61,6 +61,15 @@ public sealed partial class TTLeaguesReader
 				];
 			}
 
+
+			// If the match date is null, it means the match is postponed or to be arranged
+			if (match.Date is null) {
+				fixtureEvent.Summary = $"🏓 POSTPONED: {homeTeam} vs {awayTeam}";
+				fixtureEvent.Transparency = VEvent.TransparencyType.TRANSPARENT;
+				fixtureEvent.Alarms = [];
+				fixtureEvent.Description = "This match has been postponed or is to be arranged.\n";
+			}
+
 			if (match.HasResults)
 			{
 				int homeScore = match.HomeScores?.Sum(x => x.Score) ?? 0;
