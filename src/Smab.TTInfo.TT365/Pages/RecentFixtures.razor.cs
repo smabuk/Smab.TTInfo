@@ -2,7 +2,7 @@
 public partial class RecentFixtures
 {
 	[Parameter]
-	public int? NoOfDays { get; set; }
+	public int? NoOfFixtures { get; set; }
 
 	[EditorRequired]
 	[Parameter]
@@ -14,17 +14,18 @@ public partial class RecentFixtures
 
 	protected override async Task OnParametersSetAsync()
 	{
-		NoOfDays ??= 6;
+		NoOfFixtures ??= 15;
 		fixtures = null;
 		StateHasChanged();
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		DateOnly today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
 
 		fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.GetCurrentSeasonId()) ?? [])
-						.Where(f => f.Date <= today && f.Date >= today.AddDays(-(int)NoOfDays))
+						.Where(f => f.Date <= today)
 						.Where(f => f is CompletedFixture or PostponedFixture)
 						.OrderByDescending(f => f.Date)
-						.ThenBy(f => f.Division)];
+						.ThenBy(f => f.Division)
+						.Take((int)NoOfFixtures)];
 		foreach (Fixture fixture in fixtures) {
 			if (fixture is CompletedFixture completedFixture) {
 				bool homeWin = (completedFixture.ForHome > completedFixture.ForAway);

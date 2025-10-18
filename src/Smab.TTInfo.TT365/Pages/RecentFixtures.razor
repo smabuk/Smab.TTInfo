@@ -1,16 +1,16 @@
-﻿@page "/Recent/{LeagueId}/{NoOfDays:int?}"
+﻿@page "/Recent/{LeagueId}/{NoOfFixtures:int?}"
 @inject ITT365Reader _tt365
 @inject TimeProvider timeProvider
 @attribute [StreamRendering]
 
-<PageTitle>Last @NoOfDays Days - @LeagueId</PageTitle>
+<PageTitle>Last @NoOfFixtures Fixtures - @LeagueId</PageTitle>
 
 <h1>Recent Results for @league?.Name @league?.GetCurrentSeason().Name</h1>
 
 @if (fixtures is null) {
-	<h2>Loading ... Results for the last @NoOfDays days ...</h2>
+	<h2>Loading ... Results for the last @NoOfFixtures fixtures ...</h2>
 } else if (fixtures.Count == 0) {
-	<p>No fixtures in the last @NoOfDays days.</p>
+	<p>No fixtures.</p>
 } else {
 	<div id="fixtures">
 		@foreach (Fixture fixture in fixtures) {
