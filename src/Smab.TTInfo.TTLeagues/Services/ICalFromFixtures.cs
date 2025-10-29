@@ -23,11 +23,14 @@ public sealed partial class TTLeaguesReader
 			DateTimeOffset? actualDateTime = match.ActualDateTime;
 
 			DateTime dateStart = (actualDateTime is not null
-				? TimeZoneInfo.ConvertTimeToUtc(actualDateTime.Value.Date + new TimeSpan(19, 30, 0), timeZone)
+				? TimeZoneInfo.ConvertTimeToUtc(actualDateTime.Value.DateTime, timeZone)
 				: TimeZoneInfo.ConvertTimeToUtc((match.Date?.Date ?? DateTimeOffset.Now.Date) + new TimeSpan(19, 30, 0), timeZone));
-			DateTime dateEnd = (actualDateTime is not null
-				? TimeZoneInfo.ConvertTimeToUtc(actualDateTime.Value.Date + new TimeSpan(22, 30, 0), timeZone)
-				: TimeZoneInfo.ConvertTimeToUtc((match.Date?.Date ?? DateTimeOffset.Now.Date) + new TimeSpan(22, 30, 0), timeZone));
+			
+			if (dateStart.Hour == 0) {
+				dateStart += new TimeSpan(19, 30, 0);
+			}
+
+			DateTime dateEnd = dateStart.AddHours(3);
 
 			VEvent fixtureEvent = new()
 			{
