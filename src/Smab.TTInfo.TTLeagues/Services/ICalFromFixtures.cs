@@ -24,10 +24,10 @@ public sealed partial class TTLeaguesReader
 
 			DateTime dateStart = (actualDateTime is not null
 				? TimeZoneInfo.ConvertTimeToUtc(actualDateTime.Value.DateTime, timeZone)
-				: TimeZoneInfo.ConvertTimeToUtc((match.Date?.Date ?? DateTimeOffset.Now.Date) + new TimeSpan(19, 30, 0), timeZone));
+				: TimeZoneInfo.ConvertTimeToUtc((match.Date?.Date ?? DateTimeOffset.Now.Date) + DEFAULT_START_TIME.ToTimeSpan(), timeZone));
 			
 			if (dateStart.Hour == 0) {
-				dateStart += new TimeSpan(19, 30, 0);
+				dateStart += DEFAULT_START_TIME.ToTimeSpan();
 			}
 
 			DateTime dateEnd = dateStart.AddHours(3);

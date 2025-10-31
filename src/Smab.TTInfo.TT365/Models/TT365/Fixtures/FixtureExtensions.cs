@@ -75,5 +75,25 @@ public static partial class FixtureExtensions
 			reason
 		);
 	}
+
+	public static TimeOnly Time(this Fixture fixture)
+	{
+		TimeOnly defaultTime = TT365Reader.DEFAULT_START_TIME; // 7:30pm
+
+		if (fixture.Venue.Contains("CURZON", StringComparison.OrdinalIgnoreCase)
+			|| fixture.Venue.Contains("RBL", StringComparison.OrdinalIgnoreCase)) // 7pm start time
+		{
+			return defaultTime.AddMinutes(-30);
+		}
+
+		if (fixture.Venue.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase)) // 7:15pm start time
+		{
+			return defaultTime.AddMinutes(-15);
+		}
+
+		return defaultTime;
+	}
+
+	public static bool HasDefaultTime(this Fixture fixture) => fixture.Time() == TT365Reader.DEFAULT_START_TIME;
 }
 

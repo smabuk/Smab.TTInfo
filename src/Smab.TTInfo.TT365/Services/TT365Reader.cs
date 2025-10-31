@@ -16,6 +16,7 @@ public sealed partial class TT365Reader(IOptions<TT365Options> options, HttpClie
 	private static readonly string                CACHEFILE_PREFIX      = "tt365_";
 	private static readonly CultureInfo           GB_CULTURE            = new("en-GB");
 	private static readonly string                TT365_COM             = "https://www.tabletennis365.com";
+	public  static readonly TimeOnly              DEFAULT_START_TIME    = new(19, 30);
 	private static readonly JsonSerializerOptions JSON_SER_OPTIONS      = new()
 	{
 		ReadCommentHandling         = JsonCommentHandling.Skip,

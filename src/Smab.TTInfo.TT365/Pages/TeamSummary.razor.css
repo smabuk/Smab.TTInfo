@@ -4,6 +4,10 @@
 
 time {
 	font-weight: bold;
+
+	span.start-time-not-default {
+		color: var(--bs-warning);
+	}
 }
 
 .card {

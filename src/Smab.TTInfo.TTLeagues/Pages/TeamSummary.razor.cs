@@ -172,4 +172,6 @@ public partial class TeamSummary
 			0 => "draw",
 		};
 	}
+
+	bool MatchHasDefaultStartTime(Match match) => match.Time?.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
 }

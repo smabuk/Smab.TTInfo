@@ -8,6 +8,7 @@ namespace Smab.TTInfo.TTLeagues.Services;
 /// </summary>
 public sealed partial class TTLeaguesReader : ITTLeaguesReader
 {
+	public static readonly TimeOnly DEFAULT_START_TIME = new(19, 30);
 	/// <summary>
 	/// Prefix for cache files.
 	/// </summary>

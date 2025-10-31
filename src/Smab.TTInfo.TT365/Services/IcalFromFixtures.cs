@@ -30,24 +30,13 @@ public sealed partial class TT365Reader
 				UID          = $"TT365 {fixture.Date:yyyyMMdd} {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Summary      = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Location     = fixture.Venue,
-				DateStart    = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(19, 30)), timeZone), // All matches by default start at 7:30pm
-				DateEnd      = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(new(22, 30)), timeZone),
+				DateStart    = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(fixture.Time()), timeZone), // All matches by default start at 7:30pm
+				DateEnd      = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(fixture.Time().AddHours(3)), timeZone),
 				Priority     = VEvent.PriorityLevel.Normal,
 				Transparency = VEvent.TransparencyType.TRANSPARENT,
 				Categories   = "Table tennis,OLOP Table Tennis Club",
 				Description  = $"\n"
 			};
-
-			if (fixture.Venue.Contains("CURZON", StringComparison.OrdinalIgnoreCase)
-			|| fixture.Venue.Contains("RBL", StringComparison.OrdinalIgnoreCase)) // 7pm start time
-			{
-				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
-			}
-
-			if (fixture.Venue.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase)) // 7:15pm start time
-			{
-				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-15);
-			}
 
 			if (!string.IsNullOrEmpty(TeamName)) // If looking at a particular team add BUSY and 1hr REMINDER
 			{
