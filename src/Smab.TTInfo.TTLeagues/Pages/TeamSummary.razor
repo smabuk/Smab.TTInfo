@@ -24,7 +24,7 @@
 						}
 						<time datetime="@match.ActualDateTime.ToUtcString()">
 							@match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM")
-							@if (!match.HasResults) {
+							@if (!match.HasResults && !MatchHasDefaultStartTime(match)) {
 								<span class="@(MatchHasDefaultStartTime(match) ? null : "start-time-not-default")">@match.ActualDateTime?.ToUKTime().ToString(" HH mm")</span>
 							}
 						</time>

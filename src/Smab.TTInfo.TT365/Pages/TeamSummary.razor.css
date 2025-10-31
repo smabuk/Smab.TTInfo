@@ -2,6 +2,10 @@
 	font-size: calc(1.3rem + .6vw);
 }
 
+h1, h2 {
+	padding-top: 0.5rem;
+}
+
 time {
 	font-weight: bold;
 
