@@ -10,13 +10,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-	.AddInteractiveServerComponents()
-/*	.AddJsonOptions(options => options.JsonSerializerOptions.AddDateOnlyAndTimeOnlyConverters())*/
-;
+	.AddInteractiveServerComponents(options =>
+	{
+		options.DetailedErrors = builder.Environment.IsDevelopment();
+		options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(3);
+		options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(1);
+		options.MaxBufferedUnacknowledgedRenderBatches = 10;
+	});
 
 builder.Services.AddLocalization();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpClient();
+
+// Add output caching for improved performance
+builder.Services.AddOutputCache();
+
+// Add response compression for static assets
+builder.Services.AddResponseCompression(options =>
+{
+	options.EnableForHttps = true;
+});
 
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 
@@ -28,18 +41,34 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
+	app.UseDeveloperExceptionPage();
 	//app.UseWebAssemblyDebugging();
-} else {
+}
+else
+{
 	_ = app.UseExceptionHandler("/Error", createScopeForErrors: true);
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	_ = app.UseHsts();
 }
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 
 app.MapStaticAssets();
+
+// Request localization should come before UseAntiforgery
+app.UseRequestLocalization(
+	new RequestLocalizationOptions()
+		.SetDefaultCulture("en-GB")
+		.AddSupportedCultures("en-GB")
+		.AddSupportedUICultures(cultures)
+);
+
 app.UseAntiforgery();
+
+app.UseOutputCache();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
@@ -48,13 +77,6 @@ app.MapRazorComponents<App>()
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.LeagueSummary).Assembly);
 
 app.MapHealthChecks("/healthz");
-
-app.UseRequestLocalization(
-	new RequestLocalizationOptions()
-		.SetDefaultCulture("en-GB")
-		.AddSupportedCultures("en-GB")
-		.AddSupportedUICultures(cultures)
-	);
 
 app.MapCalendarEndPoints();
 app.MapGroup("/tt")
