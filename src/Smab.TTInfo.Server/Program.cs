@@ -51,6 +51,7 @@ else
 }
 
 app.UseResponseCompression();
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
 app.MapStaticAssets();
