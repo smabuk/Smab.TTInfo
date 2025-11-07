@@ -11,7 +11,7 @@
 [Description("TTInfo cli utility for reading Table Tennis 365.")]
 internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 {
-	public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
+	public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken)
 	{
 		int year = settings.Year ?? DateTime.Today.AddMonths(-8).Year;
 		return settings.Year switch
