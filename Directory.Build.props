@@ -1,18 +1,17 @@
 <Project>
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<Authors>Simon Brookes</Authors>
-		<Company>Simon Brookes</Company>
-		<Copyright>Copyright © Simon Brookes</Copyright>
-		<Description>Provides access to the information on tabletennis365.com and ttleagues.com</Description>
-		<VersionPrefix>1.2.88</VersionPrefix>
-		<VersionSuffix Condition=" '$(ComputerName)' != '' ">$(ComputerName)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
-		<VersionSuffix Condition=" '$(Name)' != '' And '$(ComputerName)' == '' ">$(Name)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
-		<VersionSuffix Condition=" '$(Name)' == '' And '$(ComputerName)' == '' ">$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Simon Brookes</Authors>
+    <Company>Simon Brookes</Company>
+    <Copyright>Copyright © Simon Brookes</Copyright>
+    <Description>Provides access to the information on tabletennis365.com and ttleagues.com</Description>
+    <VersionPrefix>1.2.88</VersionPrefix>
+    <VersionSuffix Condition=" '$(ComputerName)' != '' ">$(ComputerName)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
+    <VersionSuffix Condition=" '$(Name)' != '' And '$(ComputerName)' == '' ">$(Name)-$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
+    <VersionSuffix Condition=" '$(Name)' == '' And '$(ComputerName)' == '' ">$([System.DateTime]::get_Now().get_Year())$([System.DateTime]::get_Now().get_Month().ToString("D2"))$([System.DateTime]::get_Now().get_Day().ToString("D2"))-$([System.DateTime]::get_Now().get_Hour().ToString("D2"))$([System.DateTime]::get_Now().get_Minute().ToString("D2"))</VersionSuffix>
+  </PropertyGroup>
 </Project>
