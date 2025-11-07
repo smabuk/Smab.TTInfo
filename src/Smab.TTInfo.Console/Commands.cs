@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Cli;
+﻿namespace Smab.TTInfo.Console;
 
 /// <summary>
 /// Represents a command-line utility for interacting with Table Tennis 365 (TT365) data.

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace Smab.TTInfo.Cli;
+namespace Smab.TTInfo.Console;
 
 /// <summary>
 /// Provides methods for interacting with TT365 league data, including retrieving league information, player statistics,

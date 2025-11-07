@@ -11,7 +11,7 @@ public class LeagueRouter
 
 	public static LeagueType GetLeagueType(string ttinfoId)
 	{
-		return _leagueMap.TryGetValue(ttinfoId, out var leagueType)
+		return _leagueMap.TryGetValue(ttinfoId, out LeagueType leagueType)
 			? leagueType
 			: LeagueType.TTLeagues;
 	}

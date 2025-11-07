@@ -6,7 +6,7 @@ using Smab.TTInfo.TT365;
 using Smab.TTInfo.TTLeagues;
 using Smab.TTInfo.TTClubs.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -26,10 +26,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddOutputCache();
 
 // Add response compression for static assets
-builder.Services.AddResponseCompression(options =>
-{
-	options.EnableForHttps = true;
-});
+builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 
@@ -38,12 +35,12 @@ builder.Services
 	.AddTTLeaguesService()
 	.AddTTClubsService();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseDeveloperExceptionPage();
+	_ = app.UseDeveloperExceptionPage();
 	//app.UseWebAssemblyDebugging();
 }
 else
@@ -72,9 +69,9 @@ app.UseOutputCache();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
-	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365.Pages.LeagueSummary).Assembly)
-	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs.Pages.MembershipDetails).Assembly)
-	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues.Pages.LeagueSummary).Assembly);
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365._Imports).Assembly)
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs._Imports).Assembly)
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues._Imports).Assembly);
 
 app.MapHealthChecks("/healthz");
 
