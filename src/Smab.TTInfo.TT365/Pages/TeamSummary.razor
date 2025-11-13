@@ -168,6 +168,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Played</th>
+						<th>Won</th>
 						<th>Win %</th>
 						@if	(hasLeagueRankings) {
 							<th>Ranking</th>
@@ -182,6 +183,7 @@
 							@* <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td> *@
 							<td><a href="PlayerSummary/@LeagueId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
+							<td><span>@(new string('0', 3 - Math.Round(player.Played * player.WinPercentage * 0.01).ToString().Length))</span>@(Math.Round(player.Played * player.WinPercentage * 0.01))</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>
 							@if (hasLeagueRankings) {
 								<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
