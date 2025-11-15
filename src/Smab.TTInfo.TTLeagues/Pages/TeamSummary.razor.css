@@ -57,6 +57,7 @@ caption {
 		background-color: rgb(var(--result-color-rgb));
 		margin-right: 0.5rem;
 		text-decoration: none;
+		width: 3rem;
 	}
 
 	a {

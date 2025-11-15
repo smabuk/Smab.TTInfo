@@ -20,6 +20,13 @@
 			if (fixture is PostponedFixture) {
 				fixtureStatus = "postponed";
 			}
+			fixtureStatus = fr switch
+			{
+				{ HomeWin: true } => "home-win",
+				{ AwayWin: true } => "away-win",
+				_ when fixtureStatus is null => "draw",
+				_ => fixtureStatus
+			};
 			<details class="card" data-result='@(fixtureStatus)'>
 				<summary class="row">
 					<div class="col-8 col-md-2 col-lg-2">
