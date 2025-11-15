@@ -1,5 +1,5 @@
 ﻿article {
-	--ttinfo-base-font-size: 12pt;
+	--ttinfo-base-font-size: 10pt;
 	--ttinfo-h1-font-size: 20pt;
 	--ttinfo-h2-font-size: 14pt;
 	--ttinfo-h3-font-size: 18pt;
@@ -102,6 +102,12 @@ header {
 
 .main-panel {
 	flex: 1;
+
+	& > p {
+		font-weight: normal;
+		padding: 0.5rem 2mm;
+		margin: 0;
+	}
 }
 
 .top-info {
@@ -145,73 +151,11 @@ header {
 	}
 }
 
-.teams-header {
-	width: 100%;
-	margin-bottom: 2.5mm;
-
-	.team-line {
-		text-align: center;
-		margin-bottom: 1.5mm;
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-
-		span:first-child {
-			text-align: left;
-			width: 4rem;
-		}
-
-		span:last-child {
-			text-align: right;
-			width: 4rem;
-		}
-	}
-
-	.vs {
-		align-self: flex-end;
-		margin: 0 2.5mm;
-	}
-}
-
-.players-section {
-	.players {
-		display: flex;
-
-		.player-list {
-			margin-right: auto;
-			margin-bottom: 3mm;
-			display: flex;
-			flex-direction: column;
-
-			> div {
-				margin-top: 5mm;
-			}
-
-			span.dots {
-				margin-left: 2mm;
-				padding-right: 45mm;
-			}
-		}
-	}
-
-	.doubles {
-		text-align: center;
-		margin-top:	3mm;
-		margin-bottom: 5mm;
-		display: flex;
-		justify-content: space-between;
-
-		span.dots {
-			margin-left: 5mm;
-			margin-right: 5mm;
-		}
-	}
-}
-
 table {
 	width: 98%;
 	vertical-align: middle;
 	border-collapse: collapse;
+	border-spacing: 0;
 
 	td {
 		text-align: center;
@@ -219,10 +163,6 @@ table {
 }
 
 .fixture-info-table {
-	width: 98%;
-	border-collapse: collapse;
-	border-spacing: 0;
-
 	th,
 	td {
 		border: var(--ttinfo-very-thin-border);
@@ -235,13 +175,13 @@ table {
 			width: 21mm;
 		}
 	}
+
+	td {
+		background-color: var(--ttinfo-edit-colour);
+	}
 }
 
 .players-table {
-	width: 98%;
-	border-collapse: collapse;
-	border-spacing: 0;
-
 	th,
 	td {
 		border: var(--ttinfo-very-thin-border);
@@ -257,32 +197,23 @@ table {
 		&:nth-child(3),
 		&:nth-child(4),
 		&:last-child {
-			width: 12mm;
+			width: 8mm;
 		}
 	}
 
 	tbody {
-		td:nth-child(n+2):nth-child(-n+6),
-		td:nth-last-child(-n+2),
-		td[data-match='v'] {
+		td:nth-child(n+2):nth-child(-n+3),
+		td:nth-child(n+5):nth-child(-n+6) {
 			background-color: var(--ttinfo-edit-colour);
-		}
-
-		td:nth-last-child(-n+2) {
-/*			border: var(--ttinfo-double-border);*/
 		}
 	}
 }
 
 .matches-table {
-	width: 98%;
-	border-collapse: collapse;
-	border-spacing: 0;
-
 	th,
 	td {
 		border: var(--ttinfo-very-thin-border);
-		padding: 1.3mm 0;
+		padding: 1mm 0;
 		text-align: center;
 		box-sizing: border-box;
 	}
@@ -291,24 +222,38 @@ table {
 		font-weight: normal;
 		width: 21mm;
 
-		&:first-child {
-			width: 41mm;
-		}
-
-		&:nth-last-child(-n+2) {
-			width: 21mm;
+		tr:last-child > & {
+			width: 6mm;
 		}
 	}
 
 	tbody {
-		td:nth-child(n+2):nth-child(-n+6),
-		td:nth-last-child(-n+2),
+		td:nth-child(n+2):nth-child(-n+10),
 		td[data-match='v'] {
 			background-color: var(--ttinfo-edit-colour);
 		}
 
-		td:nth-last-child(-n+2) {
-/*			border: var(--ttinfo-double-border);*/
+		tr:nth-child(3n+1) {
+			border-top: solid var(--ttinfo-text-colour);
+		}
+	}
+
+	tfoot td {
+		font-weight: bold;
+		width: 21mm;
+		border-top: solid var(--ttinfo-text-colour);
+
+		&:first-child {
+			text-align: right;
+			padding-right: 3mm;
+			border-left: none;
+			border-bottom: none;
+		}
+
+		&:nth-last-child(-n+2) {
+			background-color: var(--ttinfo-edit-colour);
+			border: solid var(--ttinfo-text-colour);
+			width: 6mm;
 		}
 	}
 }
@@ -323,7 +268,7 @@ table {
 		justify-content: space-between;
 		font-weight: normal;
 		gap: 20mm;
-		margin-top: 8mm;
+		margin-top: 3mm;
 	}
 
 	.signature-labels {

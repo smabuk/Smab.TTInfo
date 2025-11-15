@@ -37,9 +37,12 @@
 				<div class="score-sheet@(isBordered is true ? " bordered" : null)">
 					<header>
 						<h1>JOHN HOWARD SHIELD & PLATE</h1>
-						<h2 class="visually-hidden">Score Sheet</h2>
+						<h2>Score Sheet</h2>
 						<h3>Maximum of 33 points</h3>
-						<h2>2025/2026 Season</h2>
+						@{
+							int seasonYear = DateTime.UtcNow.AddMonths(-6).Year;
+						}
+						<h2>@seasonYear/@(seasonYear + 1) Season</h2>
 					</header>
 
 					<div class="main-content">
@@ -49,15 +52,15 @@
 								<table class="fixture-info-table">
 									<tbody>
 										<tr>
-											<td>Round:</td>
+											<th>Round:</th>
 											<td></td>
-											<td>Date:</td>
+											<th>Date:</th>
 											<td></td>
 										</tr>
 										<tr>
-											<td>Home:</td>
+											<th>Home:</th>
 											<td></td>
-											<td>Away:</td>
+											<th>Away:</th>
 											<td></td>
 										</tr>
 									</tbody>
@@ -69,36 +72,36 @@
 								<table class="players-table">
 									<thead>
 										<tr>
-											<th>Player</th>
+											<th></th>
 											<th>Name</th>
-											<th>Handicap</th>
-											<th>Player</th>
+											<th>Hc</th>
+											<th></th>
 											<th>Name</th>
-											<th>Handicap</th>
+											<th>Hc</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td>A:</td>
+											<td>A</td>
 											<td></td>
 											<td></td>
-											<td>X:</td>
-											<td></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td>B:</td>
-											<td></td>
-											<td></td>
-											<td>Y:</td>
+											<td>X</td>
 											<td></td>
 											<td></td>
 										</tr>
 										<tr>
-											<td>C:</td>
+											<td>B</td>
 											<td></td>
 											<td></td>
-											<td>Z:</td>
+											<td>Y</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>C</td>
+											<td></td>
+											<td></td>
+											<td>Z</td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -111,18 +114,18 @@
 									<thead>
 										<tr>
 											<th rowspan="2">Match</th>
-											<th rowspan="2">Handicap</th>
+											<th rowspan="2">Hc</th>
 											<th rowspan="2">1</th>
 											<th rowspan="2">2</th>
 											<th rowspan="2">3</th>
 											<th rowspan="2">4</th>
 											<th rowspan="2">Totals</th>
-											<th rowspan="2">Totals inc Hcap.</th>
+											<th rowspan="2">Totals<br/>inc Hc</th>
 											<th colspan="2">Winner</th>
 										</tr>
 										<tr>
-											<th>Home</th>
-											<th>Away</th>
+											<th>H</th>
+											<th>A</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -143,13 +146,15 @@
 									</tbody>
 									<tfoot>
 										<tr>
-											<th colspan="8">Totals</th>
-											<th></th>
-											<th></th>
+											<td colspan="8">Totals</td>
+											<td></td>
+											<td></td>
 										</tr>
 									</tfoot>
 								</table>
 							</section>
+
+							<p>Home team to send the scoresheet to: mick.mitcham@btinternet.com</p>
 
 							<div class="signature-section">
 								<div class="signature-labels">
