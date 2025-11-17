@@ -48,17 +48,11 @@ time {
 		}
 
 		[data-result='draw'] & {
-			--result-home-color-rgb: var(--result-color-rgb);
-			--result-away-color-rgb: var(--result-color-rgb);
+			--result-home-color-rgb: var(--bs-primary-rgb, 13,110,253);
+			--result-away-color-rgb: var(--bs-primary-rgb, 13,110,253);
 		}
 
-		background: linear-gradient(
-			90deg,
-			rgb(var(--result-home-color-rgb)) 0%,
-			rgb(var(--result-home-color-rgb)) 50%,
-			rgb(var(--result-away-color-rgb)) 50%,
-			rgb(var(--result-away-color-rgb)) 100%
-		);
+		background: linear-gradient( 90deg, rgb(var(--result-home-color-rgb)) 0%, rgb(var(--result-home-color-rgb)) 50%, rgb(var(--result-away-color-rgb)) 50%, rgb(var(--result-away-color-rgb)) 100% );
 	}
 
 	a {
