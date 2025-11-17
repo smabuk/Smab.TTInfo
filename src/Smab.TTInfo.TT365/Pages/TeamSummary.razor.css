@@ -106,6 +106,12 @@ caption {
 		color: black;
 		cursor: help;
 	}
+
+	.venue {
+		display: inline-block;
+		float: right;
+		text-align: right;
+	}
 }
 
 #players {
