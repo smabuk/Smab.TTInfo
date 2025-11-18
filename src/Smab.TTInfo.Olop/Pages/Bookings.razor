@@ -1,0 +1,63 @@
+@page "/olop/bookings"
+@using Ical.Net
+@using Ical.Net.CalendarComponents
+@using Ical.Net.DataTypes
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration _configuration
+@inject HttpClient _httpClient
+@rendermode InteractiveServer
+
+<PageTitle>OLOP Bookings</PageTitle>
+
+<h1>OLOP Bookings from now</h1>
+
+<QuickGrid @ref="grid" Items="Occurences?.OrderBy(e => e.Start).ThenBy(e => e.Summary).AsQueryable()">
+	<PropertyColumn Title="Date" Property="@(o => o.Start)" Format="dd MMM yyyy" />
+	<PropertyColumn Title="Day" Property="@(o => o.Start)" Format="ddd" />
+	<PropertyColumn Title="Start" Property="@(o => o.IsAllDay ? "" : o.Start.ToShortTimeString())" />
+	<PropertyColumn Title="End" Property="@(o => o.IsAllDay ? "" : o.End.ToShortTimeString())" />
+	<PropertyColumn Title="Summary" Property="@(o => o.Summary)" />
+</QuickGrid>
+
+@code {
+	public record OccurrenceInfo(string Summary, DateTime Start, DateTime End, bool IsAllDay = false);
+
+	const string calendarUrlBookings = "https://calendar.google.com/calendar/ical/hblq8dq4j9rs2kk0rbbegdo1l0%40group.calendar.google.com/public/basic.ics";
+	const string calendarUrlPractice = "https://calendar.google.com/calendar/ical/olop.tt.club%40gmail.com/public/basic.ics";
+
+	[PersistentState]
+	public List<OccurrenceInfo>? Occurences { get; set; }
+
+	QuickGrid<OccurrenceInfo>? grid;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Occurences is null) {
+			string icsContentBookings = await _httpClient.GetStringAsync(calendarUrlBookings);
+			string icsContentPractice = await _httpClient.GetStringAsync(calendarUrlPractice);
+
+			// Parse the iCalendar data
+			Calendar calendarBookings = Calendar.Load(icsContentBookings) ?? new();
+			Calendar calendarPractice = Calendar.Load(icsContentPractice) ?? new();
+
+			DateTime startDate = DateTime.Now;
+			DateTime endDate = DateTime.Now.AddYears(1); // Show occurrences for the next year
+
+			List<CalendarEvent> practiceEvents = [.. calendarPractice.Events.Where(e => e.RecurrenceRules.Any())];
+
+			List<Occurrence> practiceOccurrences = [
+				.. practiceEvents
+			.SelectMany(
+					e => e.GetOccurrences(new CalDateTime(startDate.ToUniversalTime()))
+					.TakeWhileBefore(new CalDateTime(endDate.ToUniversalTime()))
+					.Where(o => o is not null)
+			)];
+
+			Occurences = [
+				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
+				.. calendarPractice.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
+				.. practiceOccurrences.Select(e => new OccurrenceInfo(((CalendarEvent)e!.Source).Summary!, e.Period.StartTime.Value, e.Period.EffectiveEndTime!.Value, ((CalendarEvent)e!.Source).IsAllDay))
+				];
+		}
+	}
+}

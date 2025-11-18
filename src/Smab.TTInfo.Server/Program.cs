@@ -72,7 +72,8 @@ app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365._Imports).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs._Imports).Assembly)
-	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues._Imports).Assembly);
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues._Imports).Assembly)
+	.AddAdditionalAssemblies(typeof(Smab.TTInfo.Olop._Imports).Assembly);
 
 app.MapHealthChecks("/healthz");
 

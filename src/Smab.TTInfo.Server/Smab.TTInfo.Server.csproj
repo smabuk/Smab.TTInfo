@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Smab.TTInfo.Olop\Smab.TTInfo.Olop.csproj" />
 		<ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
 		<ProjectReference Include="..\Smab.TTInfo.TT365\Smab.TTInfo.TT365.csproj" />
 		<ProjectReference Include="..\Smab.TTInfo.TTClubs\Smab.TTInfo.TTClubs.csproj" />

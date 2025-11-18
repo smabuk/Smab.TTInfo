@@ -1,0 +1,17 @@
+h1 {
+	text-align: center;
+}
+
+::deep .col-title {
+	color: var(--text-color);
+}
+
+::deep table {
+	min-width: 100%;
+}
+
+::deep tbody td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

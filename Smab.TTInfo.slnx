@@ -21,6 +21,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Smab.TTInfo.Console/Smab.TTInfo.Console.csproj" />
+    <Project Path="src/Smab.TTInfo.Olop/Smab.TTInfo.Olop.csproj" />
     <Project Path="src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj" />
     <Project Path="src/Smab.TTInfo.Shared/Smab.TTInfo.Shared.csproj" />
     <Project Path="src/Smab.TTInfo.TT365/Smab.TTInfo.TT365.csproj" />
