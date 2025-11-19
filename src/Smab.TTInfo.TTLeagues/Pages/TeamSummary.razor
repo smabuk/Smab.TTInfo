@@ -37,7 +37,7 @@
 							<strong>@(match.Home.Name.Equals(@TeamName) ? match.Away.Name : match.Home.Name)</strong>
 						</a>
 						@if (string.IsNullOrEmpty(match.Venue) is false) {
-							<span class="venue"> @@ @match.Venue</span>
+							<span class="venue">@DisplayHomeOrAwayIfSameClub(match) @@ @match.Venue</span>
 						}
 					</div>
 				</summary>

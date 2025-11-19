@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TTLeagues.Pages;
+﻿using Smab.TTInfo.TTLeagues.Models.TTLeagues;
+
+namespace Smab.TTInfo.TTLeagues.Pages;
 public partial class TeamSummary
 {
 	[EditorRequired]
@@ -173,5 +175,19 @@ public partial class TeamSummary
 		};
 	}
 
-	bool MatchHasDefaultStartTime(Match match) => match.Time?.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
+
+	private string DisplayHomeOrAwayIfSameClub(Match match)
+	{
+		if (team is null) {
+			return "";
+		}
+
+		if (match.Home.Name.Contains(' ') && match.Away.Name.Contains(' ') && match.Home.Name[..(match.Home.Name.LastIndexOf(' '))] == match.Away.Name[..(match.Away.Name.LastIndexOf(' '))]) {
+			return match.Home.Name.Equals(team.Name) ? "home" : "away";
+		} else {
+			return "";
+		}
+	}
+
+	static bool MatchHasDefaultStartTime(Match match) => match.Time?.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
 }

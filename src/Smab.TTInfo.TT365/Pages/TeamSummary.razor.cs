@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TT365.Pages;
+﻿using Smab.TTInfo.TT365.Models.TT365;
+
+namespace Smab.TTInfo.TT365.Pages;
 public partial class TeamSummary
 {
 	[EditorRequired]
@@ -62,6 +64,19 @@ public partial class TeamSummary
 			await foreach (Task task in Task.WhenEach(tasks)) {
 				StateHasChanged();
 			}
+		}
+	}
+
+	private string DisplayHomeOrAwayIfSameClub(Fixture fixture)
+	{
+		if (team is null) {
+			return "";
+		}
+
+		if (fixture.HomeTeam[..^2] == fixture.AwayTeam[..^2]) {
+			return fixture.HomeTeam.Equals(team.Name) ? "home" : "away";
+		} else {
+			return "";
 		}
 	}
 

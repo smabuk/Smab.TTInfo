@@ -45,7 +45,7 @@
 						<a href="TeamSummary/@LeagueId/@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)">
 							<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
 						</a>
-						<span class="venue"> @@ @fixture.Venue</span>
+						<span class="venue">@DisplayHomeOrAwayIfSameClub(fixture) @@ @fixture.Venue</span>
 					</div>
 				</summary>
 				@if (fixture is PostponedFixture postponed) {
