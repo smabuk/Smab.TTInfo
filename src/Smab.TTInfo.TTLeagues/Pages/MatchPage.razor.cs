@@ -31,4 +31,18 @@ public partial class MatchPage
 			? "Away"
 			: "Draw";
 	}
+
+	private static string DisplayName(MatchPlayer player)
+	{
+		if (player.Forfeit is not null) {
+			return "Forfeit";
+		}
+
+		if (player.Scratch is not null) {
+			return $"{player.PrintoutName} (scratched)";
+		}
+
+		return player.PrintoutName;
+	}
+
 }

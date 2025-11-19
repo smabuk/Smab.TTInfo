@@ -69,19 +69,19 @@ else
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (MatchSet set in matchCard.Sets)
+				@foreach (MatchSet set in matchCard.Sets.OrderBy(s => s.Ordering))
 				{
 					<tr>
 						<td class="players-cell">
 							<span
 								data-win="@(set.HomeScore > set.AwayScore)"
 								data-loss="@(set.HomeScore < set.AwayScore)"
-							>@string.Join(" & ", set.HomePlayers.Select(p => p.Name))</span>
+							>@string.Join(" & ", set.HomePlayers.Select(p => DisplayName(p)))</span>
 							@((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v "))
 							<span
 								data-win="@(set.AwayScore > set.HomeScore)"
 								data-loss="@(set.AwayScore < set.HomeScore)"
-							>@string.Join(" & ", set.AwayPlayers.Select(p => p.Name))</span>
+							>@string.Join(" & ", set.AwayPlayers.Select(p => DisplayName(p)))</span>
 						</td>
 						@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
 						{
