@@ -189,7 +189,7 @@
 								<td><span>@(new string('0', 3 - player.LeagueRanking.ToString().Length))</span>@player.LeagueRanking</td>
 							}
 							<td><span>@(new string('0', 2 - player.PoMAwards.ToString().Length))</span>@player.PoMAwards</td>
-							<td>@player.Form</td>
+							<td>@CalculateForm(player.Form)</td>
 						</tr>
 					}
 				</tbody>

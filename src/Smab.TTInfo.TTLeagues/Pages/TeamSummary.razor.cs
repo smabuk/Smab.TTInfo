@@ -95,7 +95,7 @@ public partial class TeamSummary
 		}
 
 		await foreach (Task task in Task.WhenEach(tasks)) {
-			StateHasChanged();
+			//StateHasChanged();
 		}
 
 	}
@@ -131,8 +131,29 @@ public partial class TeamSummary
 		}
 	}
 
-	static string CalculateForm(IEnumerable<TeamStatsMatch> matches)
-		=> String.Join(",", matches.Take(6).Select(m => $"{m.Form}"));
+	/// <summary>
+	/// Generates a formatted string representing the recent form of a team based on a list of match statistics.
+	/// </summary>
+	/// <remarks>The output format varies depending on the number of matches in the input list. For up to six
+	/// matches, the most recent form is separated from earlier forms by a hyphen. For more than six matches, only the five
+	/// most recent forms and the sixth are included in the summary. This method does not validate the contents of the
+	/// <paramref name="matches"/> list; callers should ensure that each <see cref="TeamStatsMatch"/> contains valid form
+	/// data.</remarks>
+	/// <param name="matches">A list of <see cref="TeamStatsMatch"/> objects representing the team's recent matches. The order of matches should
+	/// reflect chronological order, with the most recent match first.</param>
+	/// <returns>A string summarizing the team's form, formatted according to the number of matches provided. Returns an empty
+	/// string if the list is empty.</returns>
+	static string CalculateForm(List<TeamStatsMatch> matches)
+	{
+		const string sep = " - ";
+		return matches switch
+		{
+			[] => "",
+			[var one] => $"{one.Form}",
+			[var one, .. var two] when matches.Count <= 6 => $"{one.Form}{sep}{String.Join(",", two.Select(m => $"{m.Form}"))}",
+			_ => $"{String.Join(",", matches.Take(5).Select(m => $"{m.Form}"))}{sep}{matches.Skip(5).Take(1).Single().Form}"
+		};
+	}
 
 	static string? CalculateDoublesWinners(MatchCard matchCard)
 	{

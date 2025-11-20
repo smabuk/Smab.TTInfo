@@ -95,6 +95,30 @@ public partial class TeamSummary
 		}
 	}
 
+	/// <summary>
+	/// Formats a football form string by reversing the order of results and producing a summary suitable for display.
+	/// </summary>
+	/// <remarks>The method reverses the order of results so that the most recent match appears first. For up to six
+	/// results, the first result is separated from the rest by " - ". For more than six results, only the first five and
+	/// the sixth are included, separated by " - ".</remarks>
+	/// <param name="formString">A comma-separated string representing match results, with each result as a single number (for example,
+	/// "3,2,1,2,2").</param>
+	/// <returns>A formatted string summarizing the reversed match results. If the input is empty, returns an empty string.</returns>
+	static string CalculateForm(string formString)
+	{
+		const string sep = " - ";
+
+		List<string> form = [.. formString.Split(',', StringSplitOptions.TrimEntries).Reverse()];
+
+		return form switch
+		{
+			[] => "",
+			[var one] => $"{one}",
+			[var one, .. var two] when form.Count <= 6 => $"{one}{sep}{String.Join(",", two)}",
+			_ => $"{String.Join(",", form.Take(5))}{sep}{form.Skip(5).Take(1).Single()}"
+		};
+	}
+
 	private static string PlayersAverages(IEnumerable<Player> players)
 	{
 		IEnumerable<string> playersList = players

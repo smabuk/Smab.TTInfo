@@ -143,7 +143,7 @@
 							<td><span>@(new string('0', 3 - Math.Round(player.Average, 0).ToString("##0").Length))</span>@($"{Math.Round(player.Average, 0):##0}")%</td>
 							<td><span>@(new string('0', 4 - rankingPosition.Length))</span>@rankingPosition</td>
 							<td><span>@(new string('0', 2 - (player.Potm).ToString().Length))</span>@(player.Potm)</td>
-							<td>@CalculateForm(player.Matches)</td>
+							<td>@CalculateForm([.. player.Matches])</td>
 						</tr>
 					}
 					@foreach (TeamMember teamMember in teamMembers) {
@@ -155,6 +155,7 @@
 								<td><span>@(new string('0', 3 - "n/a".Length))</span>n/a</td>
 								<td><span>@(new string('0', 3 - rankingPosition.Length))</span>@rankingPosition</td>
 								<td><span>@(new string('0', 2 - "0".Length))</span>0</td>
+								<td></td>
 								<td></td>
 							</tr>
 						}
