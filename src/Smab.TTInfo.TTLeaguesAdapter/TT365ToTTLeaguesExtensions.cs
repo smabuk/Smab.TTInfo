@@ -1,23 +1,23 @@
 ﻿using System.Collections.Immutable;
 
+using TT365Division            = Smab.TTInfo.TT365.Models.TT365.Division;
+using TT365Fixture             = Smab.TTInfo.TT365.Models.TT365.Fixture;
+using TT365League              = Smab.TTInfo.TT365.Models.TT365.League;
+using TT365Team                = Smab.TTInfo.TT365.Models.TT365.Team;
+using TTLeaguesDivision        = Smab.TTInfo.TTLeagues.Models.TTLeagues.Division;
 using TTLeaguesIntKeyValue     = Smab.TTInfo.TTLeagues.Models.TTLeagues.IntKeyValue;
+using TTLeaguesLeague          = Smab.TTInfo.TTLeagues.Models.League;
+using TTLeaguesMatch           = Smab.TTInfo.TTLeagues.Models.TTLeagues.Match;
 using TTLeaguesMatchPlayer     = Smab.TTInfo.TTLeagues.Models.TTLeagues.MatchPlayer;
+using TTLeaguesMatchTeamInfo   = Smab.TTInfo.TTLeagues.Models.TTLeagues.MatchTeamInfo;
 using TTLeaguesPlayerAverage   = Smab.TTInfo.TTLeagues.Models.TTLeagues.PlayerAverage;
 using TTLeaguesPlayerGame      = Smab.TTInfo.TTLeagues.Models.TTLeagues.PlayerGame;
 using TTLeaguesPlayerRanking   = Smab.TTInfo.TTLeagues.Models.TTLeagues.PlayerRanking;
 using TTLeaguesPlayerResult    = Smab.TTInfo.TTLeagues.Models.TTLeagues.PlayerResult;
 using TTLeaguesPlayerStats     = Smab.TTInfo.TTLeagues.Models.TTLeagues.PlayerStats;
 using TTLeaguesStringKeyValue  = Smab.TTInfo.TTLeagues.Models.TTLeagues.StringKeyValue;
-using TTLeaguesTeamStatsPlayer = Smab.TTInfo.TTLeagues.Models.TTLeagues.TeamStatsPlayer;
-using TTLeaguesDivision        = Smab.TTInfo.TTLeagues.Models.TTLeagues.Division;
 using TTLeaguesTeam            = Smab.TTInfo.TTLeagues.Models.TTLeagues.Team;
-using TTLeaguesMatch           = Smab.TTInfo.TTLeagues.Models.TTLeagues.Match;
-using TTLeaguesMatchTeamInfo   = Smab.TTInfo.TTLeagues.Models.TTLeagues.MatchTeamInfo;
-using TTLeaguesLeague          = Smab.TTInfo.TTLeagues.Models.League;
-using TT365League              = Smab.TTInfo.TT365.Models.TT365.League;
-using TT365Division            = Smab.TTInfo.TT365.Models.TT365.Division;
-using TT365Team                = Smab.TTInfo.TT365.Models.TT365.Team;
-using TT365Fixture             = Smab.TTInfo.TT365.Models.TT365.Fixture;
+using TTLeaguesTeamStatsPlayer = Smab.TTInfo.TTLeagues.Models.TTLeagues.TeamStatsPlayer;
 
 namespace Smab.TTInfo.TTLeaguesAdapter;
 

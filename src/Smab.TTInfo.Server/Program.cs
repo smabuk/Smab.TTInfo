@@ -3,8 +3,8 @@
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
 using Smab.TTInfo.TT365;
-using Smab.TTInfo.TTLeagues;
 using Smab.TTInfo.TTClubs.Services;
+using Smab.TTInfo.TTLeagues;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

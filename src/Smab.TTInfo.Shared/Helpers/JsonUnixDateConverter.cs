@@ -62,7 +62,7 @@ internal static class DoubleExtensions
 	{
 		return unixDate switch
 		{
-			> 99999999999 => Unix.Epoch.AddSeconds(unixDate / 1000 ?? 0.0), // UNIX Epoch milliseconds
+			> 99999999999 => Unix.Epoch.AddSeconds((unixDate / 1000) ?? 0.0), // UNIX Epoch milliseconds
 			_             => Unix.Epoch.AddSeconds(unixDate ?? 0.0),        // UNIX Epoch seconds
 		};
 	}
