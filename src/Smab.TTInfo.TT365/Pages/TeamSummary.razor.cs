@@ -1,6 +1,5 @@
-﻿using Smab.TTInfo.TT365.Models.TT365;
+﻿namespace Smab.TTInfo.TT365.Pages;
 
-namespace Smab.TTInfo.TT365.Pages;
 public partial class TeamSummary
 {
 	[EditorRequired]

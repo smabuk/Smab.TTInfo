@@ -34,7 +34,7 @@ internal class TTInfoCli
 	/// retrieved.</description></item> </list></returns>
 	public static async Task<int> Run(string ttinfoId, int year, string cacheFolder, string? showTeamPlayers = null, string? playerSearchName = null, string? opponentSearchName = null)
 	{
-		List<Division>     allDivisions    = [];
+		List<Division> allDivisions = [];
 		List<LookupTables> allLookupTables = [];
 
 		TT365Options ttInfoOptions = new()
@@ -45,7 +45,7 @@ internal class TTInfoCli
 
 		AnsiConsole.MarkupLine($"Cache Folder: [green]{ttInfoOptions.CacheFolder}[/]");
 		AnsiConsole.MarkupLine("");
-		
+
 		TT365Reader tt365 = new(Options.Create(ttInfoOptions), new HttpClient(), TimeProvider.System);
 
 		League? league = await AnsiConsole.Status()
@@ -99,7 +99,8 @@ internal class TTInfoCli
 					bool showTeamDetails = showTeamPlayers is not null && newTeam.Name.Contains(showTeamPlayers, StringComparison.OrdinalIgnoreCase);
 					if (showTeamDetails || showPlayerMatchDetails) {
 						AnsiConsole.MarkupLine($"         {TT365Reader.FixPlayerName(player.Name),-25} {player.Played,6} {(int)player.WinPercentage,3}%");
-					};
+					}
+
 					if (showPlayerMatchDetails) {
 						Player p2 = await AnsiConsole.Status()
 							.Spinner(Spinner.Known.Circle)
@@ -242,7 +243,7 @@ internal class TTInfoCli
 		return resultColours.TryGetValue(playerResult.Result, out string? colour) switch
 		{
 			true => colour,
-			   _ => AnsiConsole.Foreground.ToString(),
+			_ => AnsiConsole.Foreground.ToString(),
 		};
 	}
 

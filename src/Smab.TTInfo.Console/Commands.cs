@@ -16,7 +16,7 @@ internal sealed class TTInfoCliCommand : Command<TTInfoCliCommand.Settings>
 		int year = settings.Year ?? DateTime.Today.AddMonths(-8).Year;
 		return settings.Year switch
 		{
-			null when settings.SearchPlayers is not null && settings.SearchOpponents is not null 
+			null when settings.SearchPlayers is not null && settings.SearchOpponents is not null
 			  => TTInfoCli.PlayerVsPlayer(
 					settings.TTInfoId,
 					year,
