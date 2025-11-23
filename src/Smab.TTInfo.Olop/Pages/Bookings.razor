@@ -1,4 +1,4 @@
-@page "/olop/bookings"
+﻿@page "/olop/bookings"
 @using Ical.Net
 @using Ical.Net.CalendarComponents
 @using Ical.Net.DataTypes
@@ -11,13 +11,66 @@
 
 <h1>OLOP Bookings from now</h1>
 
-<QuickGrid @ref="grid" Items="Occurences?.OrderBy(e => e.Start).ThenBy(e => e.Summary).AsQueryable()">
-	<PropertyColumn Title="Date" Property="@(o => o.Start)" Format="dd MMM yyyy" />
-	<PropertyColumn Title="Day" Property="@(o => o.Start)" Format="ddd" />
-	<PropertyColumn Title="Start" Property="@(o => o.IsAllDay ? "" : o.Start.ToShortTimeString())" />
-	<PropertyColumn Title="End" Property="@(o => o.IsAllDay ? "" : o.End.ToShortTimeString())" />
-	<PropertyColumn Title="Summary" Property="@(o => o.Summary)" />
-</QuickGrid>
+<div class="table-responsive">
+	<table class="table table-striped table-hover">
+		<thead class="table-dark">
+			<tr>
+				<th scope="col">
+					<button class="btn" @onclick="() => SortBy(nameof(SortableField.Date))">
+						Date @SortIndicator(SortableField.Date)
+					</button>
+				</th>
+				<th scope="col">
+					<div class="filter-header">
+						<select class="form-select form-select-sm" @onchange="OnDayFilterChanged">
+							<option value="">All</option>
+							@foreach (DayOfWeek day in AvailableDays)
+							{
+								<option value="@day" selected="@(_selectedDay == day)">@day</option>
+							}
+						</select>
+						Day
+					</div>
+				</th>
+				<th scope="col">
+					Start
+				</th>
+				<th scope="col">
+					End
+				</th>
+				<th scope="col">
+					<div class="filter-header">
+						<select class="form-select form-select-sm" @onchange="OnSummaryFilterChanged">
+							<option value="">All</option>
+							@foreach (string summary in AvailableSummaries)
+							{
+								<option value="@summary" selected="@(_selectedSummary == summary)">@summary</option>
+							}
+						</select>
+						<button class="btn" @onclick="() => SortBy(nameof(SortableField.Summary))">
+							Summary @SortIndicator(SortableField.Summary)
+						</button>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (SortedOccurrences is not null)
+			{
+				@foreach (OccurrenceInfo occurrence in SortedOccurrences)
+				{
+					<tr>
+						<td>@occurrence.Start.ToString("dd MMM yyyy")</td>
+						<td>@occurrence.Start.ToString("ddd")</td>
+						<td>@(occurrence.IsAllDay ? "" : occurrence.Start.ToShortTimeString())</td>
+						<td>@(occurrence.IsAllDay ? "" : occurrence.End.ToShortTimeString())</td>
+						<td>@occurrence.Summary</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+</div>
 
 @code {
 	public record OccurrenceInfo(string Summary, DateTime Start, DateTime End, bool IsAllDay = false);
@@ -28,7 +81,85 @@
 	[PersistentState]
 	public List<OccurrenceInfo>? Occurences { get; set; }
 
-	QuickGrid<OccurrenceInfo>? grid;
+	private string _currentSortField = nameof(SortableField.Date);
+	private bool _sortAscending = true;
+	private DayOfWeek? _selectedDay = null;
+	private string? _selectedSummary = null;
+
+	private IEnumerable<DayOfWeek> AvailableDays
+	{
+		get
+		{
+			if (Occurences is null)
+			{
+				return [];
+			}
+
+			return Occurences.Select(o => o.Start.DayOfWeek).Distinct().OrderBy(d => d);
+		}
+	}
+
+	private IEnumerable<string> AvailableSummaries
+	{
+		get
+		{
+			if (Occurences is null)
+			{
+				return [];
+			}
+
+			return Occurences.Select(o => o.Summary).Distinct().OrderBy(s => s);
+		}
+	}
+
+	private IEnumerable<OccurrenceInfo> FilteredOccurrences
+	{
+		get
+		{
+			if (Occurences is null)
+			{
+				return [];
+			}
+
+			IEnumerable<OccurrenceInfo> filtered = Occurences;
+
+			if (_selectedDay is not null)
+			{
+				filtered = filtered.Where(o => o.Start.DayOfWeek == _selectedDay);
+			}
+
+			if (string.IsNullOrWhiteSpace(_selectedSummary) is false)
+			{
+				filtered = filtered.Where(o => o.Summary == _selectedSummary);
+			}
+
+			return filtered;
+		}
+	}
+
+	private IEnumerable<OccurrenceInfo> SortedOccurrences
+	{
+		get
+		{
+			IEnumerable<OccurrenceInfo> filtered = FilteredOccurrences;
+
+			if (filtered.Any() is false)
+			{
+				return [];
+			}
+
+			return _currentSortField switch
+			{
+				nameof(SortableField.Date) => _sortAscending
+					? filtered.OrderBy(o => o.Start)
+					: filtered.OrderByDescending(o => o.Start),
+				nameof(SortableField.Summary) => _sortAscending
+					? filtered.OrderBy(o => o.Summary).ThenBy(o => o.Start)
+					: filtered.OrderByDescending(o => o.Summary).ThenBy(o => o.Start),
+				_ => filtered.OrderBy(o => o.Start)
+			};
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -47,8 +178,7 @@
 
 			List<Occurrence> practiceOccurrences = [
 				.. practiceEvents
-			.SelectMany(
-					e => e.GetOccurrences(new CalDateTime(startDate.ToUniversalTime()))
+					.SelectMany(e => e.GetOccurrences(new CalDateTime(startDate.ToUniversalTime()))
 					.TakeWhileBefore(new CalDateTime(endDate.ToUniversalTime()))
 					.Where(o => o is not null)
 			)];
@@ -59,5 +189,42 @@
 				.. practiceOccurrences.Select(e => new OccurrenceInfo(((CalendarEvent)e!.Source).Summary!, e.Period.StartTime.Value, e.Period.EffectiveEndTime!.Value, ((CalendarEvent)e!.Source).IsAllDay))
 				];
 		}
+	}
+
+	private void SortBy(string field)
+	{
+		if (_currentSortField == field) {
+			_sortAscending = !_sortAscending;
+		} else {
+			_currentSortField = field;
+			_sortAscending = true;
+		}
+	}
+
+	private void OnDayFilterChanged(ChangeEventArgs e)
+	{
+		string value = e.Value?.ToString() ?? "";
+		_selectedDay = string.IsNullOrWhiteSpace(value) ? null : Enum.Parse<DayOfWeek>(value);
+	}
+
+	private void OnSummaryFilterChanged(ChangeEventArgs e)
+	{
+		string value = e.Value?.ToString() ?? "";
+		_selectedSummary = string.IsNullOrWhiteSpace(value) ? null : value;
+	}
+
+	private RenderFragment SortIndicator(SortableField sortableField) => builder =>
+	{
+		if (_currentSortField == sortableField.ToString()) {
+			builder.OpenElement(0, "span");
+			builder.AddAttribute(1, "data-sort-indicator", _sortAscending ? "asc" : "desc");
+			builder.CloseElement();
+		}
+	};
+
+	private enum SortableField
+	{
+		Date,
+		Summary
 	}
 }

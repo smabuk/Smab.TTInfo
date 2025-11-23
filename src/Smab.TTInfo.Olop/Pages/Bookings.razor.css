@@ -1,5 +1,41 @@
-h1 {
+﻿h1 {
 	text-align: center;
+}
+
+button {
+	color: var(--bs-btn-hover-color);
+	font-weight: bold;
+	text-decoration: none;
+	padding: 0;
+
+	/* All buttons on this page are sort buttons */
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+::deep [data-sort-indicator] {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	vertical-align: middle;
+}
+
+::deep [data-sort-indicator="asc"] {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 6px solid currentColor;
+}
+
+::deep [data-sort-indicator="desc"] {
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 6px solid currentColor;
+}
+
+.table th button {
+	white-space: nowrap;
 }
 
 ::deep .col-title {
@@ -14,4 +50,32 @@ h1 {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.filter-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	align-items: stretch;
+}
+
+.filter-header button {
+	width: 100%;
+	justify-content: center;
+}
+
+.filter-header select {
+	font-size: 0.875rem;
+	padding: 0.25rem 0.5rem;
+	background-color: var(--bs-dark);
+	color: var(--bs-light);
+	border: 1px solid var(--bs-gray-600);
+	min-width: 100px;
+}
+
+.filter-header select:focus {
+	background-color: var(--bs-dark);
+	color: var(--bs-light);
+	border-color: var(--bs-primary);
+	box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
