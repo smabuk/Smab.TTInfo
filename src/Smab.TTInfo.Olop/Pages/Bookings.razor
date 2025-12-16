@@ -24,8 +24,7 @@
 					<div class="filter-header">
 						<select class="form-select form-select-sm" @onchange="OnDayFilterChanged">
 							<option value="">All</option>
-							@foreach (DayOfWeek day in AvailableDays)
-							{
+							@foreach (DayOfWeek day in AvailableDays) {
 								<option value="@day" selected="@(_selectedDay == day)">@day</option>
 							}
 						</select>
@@ -42,8 +41,7 @@
 					<div class="filter-header">
 						<select class="form-select form-select-sm" @onchange="OnSummaryFilterChanged">
 							<option value="">All</option>
-							@foreach (string summary in AvailableSummaries)
-							{
+							@foreach (string summary in AvailableSummaries) {
 								<option value="@summary" selected="@(_selectedSummary == summary)">@summary</option>
 							}
 						</select>
@@ -55,10 +53,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			@if (SortedOccurrences is not null)
-			{
-				@foreach (OccurrenceInfo occurrence in SortedOccurrences)
-				{
+			@if (SortedOccurrences is not null) {
+				@foreach (OccurrenceInfo occurrence in SortedOccurrences) {
 					<tr>
 						<td>@occurrence.Start.ToString("dd MMM yyyy")</td>
 						<td>@occurrence.Start.ToString("ddd")</td>
@@ -90,8 +86,7 @@
 	{
 		get
 		{
-			if (Occurences is null)
-			{
+			if (Occurences is null) {
 				return [];
 			}
 
@@ -103,8 +98,7 @@
 	{
 		get
 		{
-			if (Occurences is null)
-			{
+			if (Occurences is null) {
 				return [];
 			}
 
@@ -116,20 +110,17 @@
 	{
 		get
 		{
-			if (Occurences is null)
-			{
+			if (Occurences is null) {
 				return [];
 			}
 
 			IEnumerable<OccurrenceInfo> filtered = Occurences;
 
-			if (_selectedDay is not null)
-			{
+			if (_selectedDay is not null) {
 				filtered = filtered.Where(o => o.Start.DayOfWeek == _selectedDay);
 			}
 
-			if (string.IsNullOrWhiteSpace(_selectedSummary) is false)
-			{
+			if (string.IsNullOrWhiteSpace(_selectedSummary) is false) {
 				filtered = filtered.Where(o => o.Summary == _selectedSummary);
 			}
 
@@ -143,8 +134,7 @@
 		{
 			IEnumerable<OccurrenceInfo> filtered = FilteredOccurrences;
 
-			if (filtered.Any() is false)
-			{
+			if (filtered.Any() is false) {
 				return [];
 			}
 
@@ -171,7 +161,7 @@
 			Calendar calendarBookings = Calendar.Load(icsContentBookings) ?? new();
 			Calendar calendarPractice = Calendar.Load(icsContentPractice) ?? new();
 
-			DateTime startDate = DateTime.Now;
+			DateTime startDate = DateTime.Now.AddHours(-5);
 			DateTime endDate = DateTime.Now.AddYears(1); // Show occurrences for the next year
 
 			List<CalendarEvent> practiceEvents = [.. calendarPractice.Events.Where(e => e.RecurrenceRules.Any())];
