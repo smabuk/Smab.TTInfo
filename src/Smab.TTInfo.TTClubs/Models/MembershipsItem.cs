@@ -5,7 +5,7 @@ public sealed record MembershipsItem
 	int Id,
 	string Name,
 	DateTime StartDate,
-	DateTime EndDate,
+	DateTime? EndDate,
 	int Usage,
 	int? UsageType,
 	int Payment,

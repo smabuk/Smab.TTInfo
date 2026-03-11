@@ -11,7 +11,7 @@ public sealed record MembershipItem
 	object Parent,
 	DateTime Joined,
 	DateTime Start,
-	DateTime End,
+	DateTime? End,
 	DateTime? Confirmed,
 	int Usage,
 	int Status,
