@@ -78,7 +78,7 @@ public static partial class TTEndPoints
 	private static async Task<Ok<List<Fixture>>> GetFixtures(ITT365Reader tt365, string leagueId, int? year, string? seasonId, string? teamName)
 	{
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
-		List<Fixture> list = await tt365.GetAllFixtures((TT365LeagueId)leagueId, (TT365SeasonId?)seasonId) ?? [];
+		List<Fixture> list = await tt365.GetAllFixtures((TT365LeagueId)leagueId, (TT365SeasonId?)seasonId!) ?? [];
 		if (teamName is not null) {
 			teamName = teamName.Replace("_", " ");
 			list = [.. list.Where(f => string.Equals(f.HomeTeam,teamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, teamName, StringComparison.CurrentCultureIgnoreCase))];
@@ -102,15 +102,15 @@ public static partial class TTEndPoints
 	/// <returns>A <see cref="Results{T1, T2}"/> object containing either: <list type="bullet"> <item><description>An <see
 	/// cref="Ok{T}"/> result with the team's statistics if found.</description></item> <item><description>A <see
 	/// cref="NotFound"/> result if the team or season data could not be retrieved.</description></item> </list></returns>
-	private static async Task<Results<Ok<Team>, NotFound>> GetTeam(ITT365Reader tt365, string leagueId, string teamName, int? year, string seasonId = "")
+	private static async Task<Results<Ok<Team>, NotFound>> GetTeam(ITT365Reader tt365, string leagueId, string teamName, int? year, string? seasonId = "")
 	{
 		teamName = teamName.Replace("_", " ");
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId!);
 		}
-		catch { 
+		catch {
 			team = null;
 		}
 
@@ -134,15 +134,15 @@ public static partial class TTEndPoints
 	/// <see cref="Ok{T}"/>: A list of player names with their win percentages in the format "Name (WinPercentage%)".
 	/// </description> </item> <item> <description> <see cref="NotFound"/>: Indicates that the specified team could not be
 	/// found. </description> </item> </list></returns>
-	private static async Task<Results<Ok<List<string>>, NotFound>> GetTeamPlayers(ITT365Reader tt365, string leagueId, string teamName, int? year, string seasonId = "")
+	private static async Task<Results<Ok<List<string>>, NotFound>> GetTeamPlayers(ITT365Reader tt365, string leagueId, string teamName, int? year, string? seasonId = "")
 	{
 		teamName = teamName.Replace("_", " ");
 		seasonId = await GetSeasonId(tt365, leagueId, year, seasonId);
 		Team? team;
 		try {
-			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId);
+			team = await tt365.GetTeamStats((TT365LeagueId)leagueId, teamName, (TT365SeasonId)seasonId!);
 		}
-		catch { 
+		catch {
 			team = null;
 		}
 
