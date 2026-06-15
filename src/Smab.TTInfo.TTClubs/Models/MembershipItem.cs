@@ -13,7 +13,7 @@ public sealed record MembershipItem
 	DateTime Start,
 	DateTime? End,
 	DateTime? Confirmed,
-	int Usage,
+	int? Usage,
 	int Status,
 	float Cost,
 	float SetupFee,

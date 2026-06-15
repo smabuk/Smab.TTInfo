@@ -6,7 +6,7 @@ public sealed record MembershipsItem
 	string Name,
 	DateTime StartDate,
 	DateTime? EndDate,
-	int Usage,
+	int? Usage,
 	int? UsageType,
 	int Payment,
 	object Interval,
