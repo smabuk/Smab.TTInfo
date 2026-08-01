@@ -1,0 +1,32 @@
+﻿div {
+	font-size: 2rem;
+	height: 60px;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 1rem;
+	margin-bottom: 1rem;
+	padding-left: 0;
+	padding-right: 0;
+	/*
+	color: red;
+	background-color: black;
+	*/
+
+	& span {
+		display: flex;
+		justify-content: center;
+/*		text-transform: uppercase;*/
+	}
+
+	& img:nth-child(1) {
+		display: inline-block;
+		margin-right: auto;
+		height: 100%;
+	}
+
+	& img:nth-child(3) {
+		display: inline-block;
+		margin-left: auto;
+		height: 100%;
+	}
+}

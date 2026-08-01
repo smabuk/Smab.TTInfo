@@ -1,0 +1,114 @@
+﻿<div class="match-card text-black">
+	<MatchCardTitle Title="@Title" Logo="@Logo" />
+	<div class="match-header">
+		@if (string.IsNullOrWhiteSpace(HeaderLeft) && string.IsNullOrWhiteSpace(HeaderRight)) {
+			<span class="round-title">&nbsp;</span>
+			<span class="">&nbsp;</span>
+		} else {
+			<span class="round-title">@HeaderLeft</span>
+			<span class="">@HeaderRight</span>
+		}
+	</div>
+	<table class="match-table full-width">
+		<colgroup>
+			@if (IsHandicap) {
+				<col class="handicap-start-col" />
+			}
+			<col class="player-col" />
+			@if (IsHandicap) {
+				<col class="set-col-3" />
+				<col class="set-col-3" />
+				<col class="set-col-3" />
+			} else {
+				<col class="set-col-5" />
+				<col class="set-col-5" />
+				<col class="set-col-5" />
+				<col class="set-col-5" />
+				<col class="set-col-5" />
+			}
+			<col class="winner" />
+		</colgroup>
+		<thead>
+			<tr>
+				@if (IsHandicap) {
+					<th></th>
+				}
+				<th>Player</th>
+				<th>1</th>
+				<th>2</th>
+				<th>3</th>
+				@if (IsNotHandicap) {
+					<th>4</th>
+					<th>5</th>
+				}
+				<th>Winner</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				@if (IsHandicap) {
+					<td class="handicap-start">@PlayerAStart</td>
+				}
+				@if (PlayerAName is not null) {
+					<td>@PlayerAName</td>
+				} else {
+					<td>&nbsp;</td>
+				}
+				<td></td>
+				<td></td>
+				<td></td>
+				@if (IsNotHandicap) {
+					<td></td>
+					<td></td>
+				}
+				<td rowspan="2"></td>
+			</tr>
+			<tr>
+				@if (IsHandicap) {
+					<td class="handicap-start">@PlayerBStart</td>
+				}
+				@if (PlayerBName is not null) {
+					<td>@PlayerBName</td>
+				} else {
+					<td>&nbsp;</td>
+				}
+				<td></td>
+				<td></td>
+				<td></td>
+				@if (IsNotHandicap) {
+					<td></td>
+					<td></td>
+				}
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="match-footer">
+		@if (Umpire is not null) {
+			<div>UMPIRE: @Umpire</div>
+		} else {
+			<div>UMPIRE .........................................................................................................................................</div>
+		}
+	</div>
+
+</div>
+
+@code {
+	[Parameter] public string Title { get; set; } = "";
+
+	[Parameter] public string? HeaderLeft { get; set; }
+	[Parameter] public string? HeaderRight { get; set; }
+
+	[Parameter] public string? Logo { get; set; }
+
+	[Parameter] public string? PlayerAName { get; set; }
+	[Parameter] public string? PlayerBName { get; set; }
+
+	[Parameter] public bool IsHandicap { get; set; } = false;
+	[Parameter] public int? PlayerAStart { get; set; }
+	[Parameter] public int? PlayerBStart { get; set; }
+
+	[Parameter] public string? Umpire { get; set; }
+
+	public bool IsNotHandicap => !IsHandicap;
+}

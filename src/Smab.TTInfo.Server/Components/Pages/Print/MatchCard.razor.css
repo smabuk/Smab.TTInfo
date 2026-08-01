@@ -1,0 +1,80 @@
+﻿.match-card {
+	border: 2px solid #333;
+	margin-top: 0;
+	margin-bottom: 3rem;
+	padding: 1rem;
+	background: #fff;
+}
+
+.match-header {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 2px solid #333;
+	padding-bottom: 0.5rem;
+}
+
+.tournament-title {
+	font-size: 1.2rem;
+}
+
+.round-title {
+	font-size: 1.2rem;
+}
+
+.match-info {
+	font-size: 1rem;
+}
+
+.match-table.full-width {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+	margin-bottom: 0.5rem;
+}
+
+.match-table th,
+.match-table td {
+	border: 1px solid #333;
+	text-align: left;
+	padding: 0.3rem 0.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.match-table .handicap-start {
+	text-align: end;
+}
+
+.match-table .handicap-start-col {
+	width: 4%;
+}
+
+.match-table .player-col {
+	width: 30%;
+}
+
+.match-table .set-col-3 {
+	width: 8%;
+}
+
+.match-table .set-col-5 {
+	width: 5%;
+}
+
+.match-table .winner {
+	width: 18%;
+}
+
+.match-footer {
+	margin-top: 1rem;
+	font-size: 1rem;
+}
+
+@media print {
+	.match-card {
+		page-break-inside: avoid;
+	}
+}

@@ -1,0 +1,9 @@
+﻿<div>@if (showLogo) { <img src="@LogoPath"> }<span>@Title</span>@if (showLogo) { <img src="@LogoPath"> }</div>
+
+@code {
+	[Parameter] public string Title { get; set; } = string.Empty;
+	[Parameter] public string? Logo { get; set; }
+
+	public string? LogoPath => Logo is null || Logo.StartsWith("data:") ? Logo : $"images/{Logo}";
+	bool showLogo => !string.IsNullOrWhiteSpace(Logo);
+}
