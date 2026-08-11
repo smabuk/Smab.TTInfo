@@ -21,9 +21,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.Console/Smab.TTInfo.Console.csproj" />
-    <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.Olop/Smab.TTInfo.Olop.csproj" Id="26a11cce-f93f-dced-4afe-de838eb42bb9">
-      <Build Solution="Debug|*" Project="false" />
-    </Project>
+    <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.Olop/Smab.TTInfo.Olop.csproj" Id="26a11cce-f93f-dced-4afe-de838eb42bb9" />
     <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.Server/Smab.TTInfo.Server.csproj" />
     <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.Shared/Smab.TTInfo.Shared.csproj" />
     <Project Path="D:/smabr/source/repos/smabuk/Smab.TTInfo/src/Smab.TTInfo.TT365/Smab.TTInfo.TT365.csproj" />

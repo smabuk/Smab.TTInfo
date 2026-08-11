@@ -1,22 +1,24 @@
 ﻿@page "/olop/premier/summary"
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using OfficeOpenXml;
+
 @using System.Text;
 @inject HttpClient httpClient
 @inject OlopJsInterop jsInterop
 @inject IOptions<OlopOptions> options
 @rendermode InteractiveServer
 
-<h3>OLOP Premier Summary</h3>
+<PageTitle>OLOP Premier Summary</PageTitle>
+<h1>OLOP Premier Summary</h1>
 
 
 @if (isLinked is false) {
 	<p>OLOP Premier Excel link is not configured.</p>
-} else  if (summaryTable is null or []) {
+} else if (summaryTable is null or []) {
 	<p>Loading ...</p>
 } else {
 	<QuickGrid @ref="summaryGrid" Items="@summaryTable.AsQueryable()">
-		<PropertyColumn Property="@(s => s.Rank)" Title="Rank" Sortable="false" Align="Align.Right" />
+		<PropertyColumn Property="@(s => s.Rank)" Title="Rank" Align="Align.Right" Sortable="false" IsDefaultSortColumn="true" />
 		<PropertyColumn Property="@(s => s.Player)" Title="Player" Sortable="false" />
 		<PropertyColumn Property="@(s => s.WeeksPlayed)" Title="Weeks" Align="Align.Center" />
 		<PropertyColumn Property="@(s => $"{s.PercentageGamesWon:F0}%")" Title="Percentage" Align="Align.Right" />
@@ -37,22 +39,20 @@
 	private ElementReference _summaryHtml;
 
 	[PersistentState]
-	public List<SummaryTable>? summaryTable { get; set; } = [];
+	public List<SummaryTable>? summaryTable { get; set; }
 	[PersistentState]
-	public List<WeekDates>? weekDates { get; set; } = [];
+	public List<WeekDates>? weekDates { get; set; }
 	[PersistentState]
-	public string? summaryHtml { get; set; } = "";
+	public string? summaryHtml { get; set; }
 	[PersistentState]
 	public bool? isLinked { get; set; } = null;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if (summaryTable is null or [])
-		{
+		if (summaryTable is null or []) {
 			string url = options.Value.OlopPremierExcelLink;
 
-			if (string.IsNullOrWhiteSpace(url))
-			{
+			if (string.IsNullOrWhiteSpace(url)) {
 				summaryHtml = "<p>OLOP Premier Excel link is not configured.</p>";
 				isLinked = false;
 				return;
@@ -117,7 +117,7 @@
 					<td style="text-align: right;">{Points:F1}</td>
 					</tr>
 					""";
-				_ = sb.AppendLine(tr);
+			_ = sb.AppendLine(tr);
 		}
 
 		_ = sb.AppendLine("</tbody>");

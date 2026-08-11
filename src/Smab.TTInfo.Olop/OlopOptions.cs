@@ -2,5 +2,5 @@
 
 public class OlopOptions : TTInfoOptions
 {
-	public string OlopPremierExcelLink { get; set; }
+	public string OlopPremierExcelLink { get; set; } = "";
 }
