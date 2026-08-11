@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 
+using Smab.TTInfo.Olop;
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
 using Smab.TTInfo.TT365;
@@ -33,7 +34,8 @@ builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services
 	.AddTT365Service()
 	.AddTTLeaguesService()
-	.AddTTClubsService();
+	.AddTTClubsService()
+	.AddOlopService();
 
 WebApplication app = builder.Build();
 

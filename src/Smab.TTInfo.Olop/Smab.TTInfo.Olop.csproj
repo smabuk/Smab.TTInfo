@@ -13,15 +13,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="EPPlus" />
 		<PackageReference Include="Ical.Net" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Smab.TTInfo.Shared\Smab.TTInfo.Shared.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
 </Project>

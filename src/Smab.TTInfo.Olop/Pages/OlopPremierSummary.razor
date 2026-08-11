@@ -1,0 +1,137 @@
+﻿@page "/olop/premier/summary"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OfficeOpenXml;
+@using System.Text;
+@inject HttpClient httpClient
+@inject OlopJsInterop jsInterop
+@inject IOptions<OlopOptions> options
+@rendermode InteractiveServer
+
+<h3>OLOP Premier Summary</h3>
+
+
+@if (isLinked is false) {
+	<p>OLOP Premier Excel link is not configured.</p>
+} else  if (summaryTable is null or []) {
+	<p>Loading ...</p>
+} else {
+	<QuickGrid @ref="summaryGrid" Items="@summaryTable.AsQueryable()">
+		<PropertyColumn Property="@(s => s.Rank)" Title="Rank" Sortable="false" Align="Align.Right" />
+		<PropertyColumn Property="@(s => s.Player)" Title="Player" Sortable="false" />
+		<PropertyColumn Property="@(s => s.WeeksPlayed)" Title="Weeks" Align="Align.Center" />
+		<PropertyColumn Property="@(s => $"{s.PercentageGamesWon:F0}%")" Title="Percentage" Align="Align.Right" />
+		<PropertyColumn Property="@(s => $"{s.Points:F1}")" Title="Points" Align="Align.Right" />
+	</QuickGrid>
+
+	<div>
+		<br>
+		<br>
+		<button type="button" class="btn btn-primary" title="Copy to clipboard" @onclick="CopyToClipboard">Copy</button>
+		<pre style="display:none;"><code @ref="_summaryHtml">@summaryHtml</code>
+		</pre>
+	</div>
+}
+
+@code {
+	QuickGrid<SummaryTable>? summaryGrid;
+	private ElementReference _summaryHtml;
+
+	[PersistentState]
+	public List<SummaryTable>? summaryTable { get; set; } = [];
+	[PersistentState]
+	public List<WeekDates>? weekDates { get; set; } = [];
+	[PersistentState]
+	public string? summaryHtml { get; set; } = "";
+	[PersistentState]
+	public bool? isLinked { get; set; } = null;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (summaryTable is null or [])
+		{
+			string url = options.Value.OlopPremierExcelLink;
+
+			if (string.IsNullOrWhiteSpace(url))
+			{
+				summaryHtml = "<p>OLOP Premier Excel link is not configured.</p>";
+				isLinked = false;
+				return;
+			}
+
+			isLinked = true;
+			using ExcelPackage package = await url.OpenExcelPackage(httpClient);
+			summaryTable = [.. package.GetSummaryData()];
+			weekDates = [.. package.GetWeekDates()];
+			summaryHtml = SummaryHtml(package, summaryTable, weekDates);
+		}
+	}
+
+	private string SummaryHtml(ExcelPackage package, List<SummaryTable> summaryTable, List<WeekDates> weekDates)
+	{
+		StringBuilder sb = new();
+
+		_ = sb.AppendLine("<p>This tournament is open to all members and takes place across the four Thursday nights throughout August.</p>");
+
+		foreach ((int weekNo, DateOnly weekDate) in weekDates) {
+			ExcelWorksheet weekSheet = package.Workbook.Worksheets[$"Week{weekNo}"];
+
+			object[,] mainValues = (object[,])weekSheet.Names["MainResultsF"].Value;
+			string mainWinner = $"{mainValues[0, 0]}";
+			string mainRunnerUp = $"{mainValues[2, 0]}";
+
+			object[,] consolationValues = (object[,])weekSheet.Names["ConsolationResultsF"].Value;
+			string consolationWinner = $"{consolationValues[0, 0]}";
+			string consolationRunnerUp = $"{consolationValues[2, 0]}";
+
+			if (!string.IsNullOrWhiteSpace(weekSheet.Cells[12, 49].Value?.ToString())) {
+				_ = sb.AppendLine($"<p>The winner of week {weekNo} was <strong>{mainWinner}</strong> beating {mainRunnerUp} in the final, with {consolationWinner} taking the consolation final over {consolationRunnerUp}.</p>");
+			}
+		}
+
+		_ = sb.AppendLine($"""<h3 style="text-align: center;"><span style="color: rgb(224, 62, 45);">Standings after week {weekDates[^1].WeekNo}&nbsp;({weekDates[^1].WeekDate:dd MMMM})</span></h3>""");
+		_ = sb.AppendLine($"""<div style="width: 100%; overflow-x:auto;">""");
+		_ = sb.AppendLine($"""<table style="width: 100%; border-collapse: collapse; border-width: 1px; outline: rgb(0, 0, 0) solid 1px; border-style: solid; margin-left: auto; margin-right: auto;" border="1">""");
+
+		string thead = """
+			<thead>
+			<tr style="height: 45px;">
+			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Rank">#</span></th>
+			<th style="background-color: rgb(35, 111, 161); text-align: left;"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Name">Name</span></th>
+			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Weeks Played">Pl</span></th>
+			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Percentage of games won">%</span></th>
+			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Points">Pts</span></th>
+			</tr>
+			</thead>
+			""";
+		_ = sb.AppendLine(thead);
+
+		_ = sb.AppendLine("<tbody>");
+
+		foreach ((int Rank, string Name, int WeeksPlayed, double Percentage, double Points) in summaryTable.OrderBy(x => x.Rank).ThenByDescending(x => x.PercentageGamesWon)) {
+			string tr = $"""
+					<tr>
+					<td style="text-align: right;">{Rank}</td>
+					<td style="">{Name}</td>
+					<td style="text-align: center;">{WeeksPlayed}</td>
+					<td style="text-align: right;">{Percentage:F0}%</td>
+					<td style="text-align: right;">{Points:F1}</td>
+					</tr>
+					""";
+				_ = sb.AppendLine(tr);
+		}
+
+		_ = sb.AppendLine("</tbody>");
+		_ = sb.AppendLine("</table>");
+		_ = sb.AppendLine("</div>");
+
+
+		return sb.ToString();
+	}
+
+	private async Task CopyToClipboard()
+	{
+		if (!string.IsNullOrWhiteSpace(summaryHtml)) {
+			await jsInterop.CopyToClipboard(_summaryHtml);
+		}
+	}
+}
