@@ -1,12 +1,15 @@
-﻿using OfficeOpenXml;
-using OfficeOpenXml.Table;
-
-namespace Smab.TTInfo.Olop.Helpers;
+﻿namespace Smab.TTInfo.Olop.Helpers;
 
 public static class ExcelPackageHelpers
 {
+	public static string SUMMARY_SHEET_NAME = "Summary";
+	public static string SUMMARY_TABLE_NAME = "Summary";
+	public static string WEEK_DATES_TABLE_NAME = "WeekDates";
+
+
 	extension(string oneDriveExcelLink)
 	{
+
 		public async Task<ExcelPackage> OpenExcelPackage(HttpClient httpClient)
 		{
 			using HttpResponseMessage response = await httpClient.GetAsync($"{oneDriveExcelLink}&download=1");
@@ -31,12 +34,15 @@ public static class ExcelPackageHelpers
 		/// <returns>An enumerable of tuples containing the week number and the corresponding week date.</returns>
 		public IEnumerable<WeekDates> GetWeekDates()
 		{
-			ExcelTable weekDatesTable = package.Workbook.Worksheets["Summary"].Tables["WeekDates"];
+			const int col_WeekNo = 0;
+			const int col_WeekDate = 1;
+
+			ExcelTable weekDatesTable = package.Workbook.Worksheets[SUMMARY_SHEET_NAME].Tables[WEEK_DATES_TABLE_NAME];
 
 			foreach (ExcelTableRow dataRow in weekDatesTable.DataRows) {
 				ExcelRangeBase[] values = [.. dataRow.RowRange];
-				int weekNo = Convert.ToInt32(values[0].Value);
-				DateOnly date = string.IsNullOrWhiteSpace(values[1].Text) ? DateOnly.MaxValue : DateOnly.Parse(values[1].Text);
+				int weekNo = Convert.ToInt32(values[col_WeekNo].Value);
+				DateOnly date = string.IsNullOrWhiteSpace(values[col_WeekDate].Text) ? DateOnly.MaxValue : DateOnly.Parse(values[col_WeekDate].Text);
 				if (date <= DateOnly.FromDateTime(DateTime.Now)) {
 					yield return new WeekDates(weekNo, date);
 				}
@@ -46,21 +52,173 @@ public static class ExcelPackageHelpers
 		/// <summary>
 		/// Gets the summary data from the "Summary" table in the "Summary" worksheet of the Excel package.
 		/// </summary>
-		/// <returns>An enumerable of tuples containing the rank, name, weeks played, percentage of games won, and points.</returns>
+		/// <returns>
+		/// An enumerable of tuples containing the rank, name, weeks played, percentage of games won, and points.
+		/// </returns>
 		public IEnumerable<SummaryTable> GetSummaryData()
 		{
-			ExcelTable summaryTable = package.Workbook.Worksheets["Summary"].Tables["Summary"];
+			const int colRank = 0;
+			const int colName = 1;
+			const int colWeeksPlayed = 2;
+			const int colPercentage = 3;
+			const int colPoints = 4;
+
+			ExcelTable summaryTable = package.Workbook.Worksheets[SUMMARY_SHEET_NAME].Tables[SUMMARY_TABLE_NAME];
+
 			foreach (ExcelTableRow dataRow in summaryTable.DataRows) {
 				ExcelRangeBase[] values = [.. dataRow.RowRange];
-				string name = values[1].Text;
+				string name = values[colName].Text;
 				if (!string.IsNullOrWhiteSpace(name)) {
-					int rank = Convert.ToInt32(values[0].Value);
-					int weeksPlayed = Convert.ToInt32(values[2].Value);
-					double percentage = Convert.ToDouble(values[3].Value) * 100;
-					double points = Convert.ToDouble(values[4].Value);
+					int rank = Convert.ToInt32(values[colRank].Value);
+					int weeksPlayed = Convert.ToInt32(values[colWeeksPlayed].Value);
+					double percentage = Convert.ToDouble(values[colPercentage].Value) * 100;
+					double points = Convert.ToDouble(values[colPoints].Value);
 					yield return new SummaryTable(rank, name, weeksPlayed, percentage, points);
 				}
 			}
+		}
+
+		public IEnumerable<Round> GetRoundsForWeek(int weekNo)
+		{
+			const int ROUND_COLS_OFFSET = 6; // Starting column for rounds
+			const int MAIN_ROW = 3; // Starting row for main rounds
+			const int CONSOLATION_ROW = 23; // Starting row for consolation rounds
+
+			int[] startColumnsRounds = [6, 16, 26, 36, 46];
+			int[] startColumnsRows = [MAIN_ROW, CONSOLATION_ROW];
+			//List<string> roundNames = ["32s", "16s", "QUARTER FINAL", "SEMI FINAL", "FINAL"];
+
+			ExcelWorksheet weekSheet = package.Workbook.Worksheets[$"Week{weekNo}"] ?? throw new Exception($"Worksheet for week {weekNo} not found.");
+
+			foreach (int startRow in startColumnsRows) {
+				foreach (int roundIndex in startColumnsRounds) {
+					int noOfMatches = roundIndex switch
+					{
+						6 => 16,
+						16 => 8,
+						26 => 4,
+						36 => 2,
+						46 => 1,
+						_ => throw new Exception($"Unexpected main round column: {roundIndex}")
+					};
+
+					if (startRow == CONSOLATION_ROW && roundIndex is 6) {
+						continue; // Skip the first round in the consolation bracket as it doesn't exist
+					}
+
+					string roundName = weekSheet.Cells[startRow - 2, roundIndex].Text;
+
+					if (roundIndex == startColumnsRounds[^1]) { // FINAL is formatted differently
+						List<Match> matches = [];
+						for (int matchNo = 0; matchNo < noOfMatches; matchNo++) {
+							Player player1 = weekSheet.Cells[startRow, 46].Text.ToPlayer();
+							Player player2 = weekSheet.Cells[startRow, 49].Text.ToPlayer();
+							if (player1 is NoPlayer && player2 is NoPlayer) {
+								continue; // Skip if both player names are empty
+							}
+
+							List<Game> games = [];
+							if (player1 is NamedPlayer && player2 is NamedPlayer) {
+								for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
+									int colOffset = roundIndex + 1 + gameIndex;
+									string score1Text = weekSheet.Cells[startRow, 47].Text;
+									string score2Text = weekSheet.Cells[startRow, 48].Text;
+									if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
+										int score1 = Convert.ToInt32(score1Text);
+										int score2 = Convert.ToInt32(score2Text);
+										games = [.. games, new(score1, score2)];
+									}
+								}
+							}
+
+							_ = double.TryParse(weekSheet.Cells[startRow + 9, 52].Text, out double points1);
+							_ = double.TryParse(weekSheet.Cells[startRow + 11, 52].Text, out double points2);
+							Match match = new(player1, player2, games, points1, points2);
+							matches = [.. matches, match];
+						}
+
+						if (matches is not []) {
+							Round round = startRow switch
+							{
+								3 => new MainRound(roundName, matches),
+								_ => new ConsolationRound(roundName, matches)
+							};
+							yield return round;
+						}
+					} else {
+						List<Match> matches = [];
+						for (int matchNo = 0; matchNo < noOfMatches; matchNo++) {
+							Player player1 = weekSheet.Cells[startRow + (matchNo * 2), roundIndex].Text.ToPlayer();
+							Player player2 = weekSheet.Cells[startRow + (matchNo * 2) + 1, roundIndex].Text.ToPlayer();
+							if (player1 is NoPlayer && player2 is NoPlayer) {
+								continue; // Skip if both player names are empty
+							}
+
+							List<Game> games = [];
+							if (player1 is NamedPlayer && player2 is NamedPlayer) {
+								for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
+									int colOffset = roundIndex + 1 + gameIndex;
+									string score1Text = weekSheet.Cells[startRow + (matchNo * 2), colOffset].Text;
+									string score2Text = weekSheet.Cells[startRow + (matchNo * 2) + 1, colOffset].Text;
+									if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
+										int score1 = Convert.ToInt32(score1Text);
+										int score2 = Convert.ToInt32(score2Text);
+										games = [.. games, new(score1, score2)];
+									}
+								}
+							}
+
+							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2), roundIndex + 8].Text, out double points1);
+							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2) + 1, roundIndex + 8].Text, out double points2);
+							Match match = new(player1, player2, games, points1, points2);
+							matches = [.. matches, match];
+						}
+
+						if (matches is not []) {
+							Round round = startRow switch
+							{
+								3 => new MainRound(roundName, matches),
+								_ => new ConsolationRound(roundName, matches)
+							};
+							yield return round;
+						}
+					}
+
+
+				}
+
+			}
+
+
+
+			//yield return new MainRound("Main Round", []); // Placeholder return statement
+
+			//int row = 2; // Assuming the first row is headers
+			//while (true) {
+			//	string player1Name = worksheet.Cells[row, 1].Text;
+			//	string player2Name = worksheet.Cells[row, 2].Text;
+			//	if (string.IsNullOrWhiteSpace(player1Name) && string.IsNullOrWhiteSpace(player2Name)) {
+			//		break; // Exit if both player names are empty
+			//	}
+			//	List<Game> games = new List<Game>();
+			//	for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
+			//		int colOffset = 3 + gameIndex * 2;
+			//		string score1Text = worksheet.Cells[row, colOffset].Text;
+			//		string score2Text = worksheet.Cells[row, colOffset + 1].Text;
+			//		if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
+			//			int score1 = Convert.ToInt32(score1Text);
+			//			int score2 = Convert.ToInt32(score2Text);
+			//			games.Add(new Game(score1, score2));
+			//		}
+			//	}
+			//	int premierPoints1 = Convert.ToInt32(worksheet.Cells[row, 13].Value);
+			//	int premierPoints2 = Convert.ToInt32(worksheet.Cells[row, 14].Value);
+			//	Player player1 = string.IsNullOrWhiteSpace(player1Name) ? new Bye() : new NamedPlayer(player1Name);
+			//	Player player2 = string.IsNullOrWhiteSpace(player2Name) ? new Bye() : new NamedPlayer(player2Name);
+			//	yield return new Match(player1, player2, games, premierPoints1, premierPoints2);
+			//	row++;
+			//}
+
 		}
 	}
 }

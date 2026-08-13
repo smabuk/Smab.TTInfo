@@ -1,0 +1,68 @@
+﻿@page "/olop/premier/week/{WeekNo:int}"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using OfficeOpenXml;
+
+@inject HttpClient httpClient
+@inject IOptions<OlopOptions> options
+@rendermode InteractiveServer
+
+<PageTitle>OLOP Premier Week @WeekNo</PageTitle>
+<h1>OLOP Premier Week @WeekNo</h1>
+
+
+@if (isLinked is false) {
+	<p>OLOP Premier Excel link is not configured.</p>
+} else if (Rounds is null or []) {
+	<p>Loading ...</p>
+} else {
+	@foreach(Round round in Rounds) {
+		<h2>@round.Name</h2>
+
+		@* <ul>
+			<li></li>
+		</ul> *@
+		<QuickGrid @ref="gridMatches" Items="@round.Matches.AsQueryable()">
+			@* <PropertyColumn Property="@(s => s.Player1.Name)" Title="Player 1" Sortable="false" /> *@
+			@* <PropertyColumn Property="@(s => s.Player2.Name)" Title="Player 2" Sortable="false" /> *@
+			<PropertyColumn Property="@(s => s)" Title="Matches" Sortable="false" />
+			@* <PropertyColumn Property="@(s => s.PremierPoints1)" Title="Points 1" Sortable="false" Format="F1" /> *@
+			@* <PropertyColumn Property="@(s => s.PremierPoints2)" Title="Points 2" Sortable="false" Format="F1" /> *@
+		</QuickGrid>
+		<br />
+	}
+}
+
+@code {
+	QuickGrid<Match>? gridMatches;
+
+	[Parameter]
+	public int? WeekNo { get; set; }
+
+	[PersistentState]
+	public List<SummaryTable>? summaryTable { get; set; }
+	[PersistentState]
+	public List<WeekDates>? weekDates { get; set; }
+	[PersistentState]
+	public List<Round>? Rounds { get; set; }
+	[PersistentState]
+	public bool? isLinked { get; set; } = null;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (summaryTable is null or []) {
+			string url = options.Value.OlopPremierExcelLink;
+
+			if (string.IsNullOrWhiteSpace(url)) {
+				isLinked = false;
+				return;
+			}
+
+			isLinked = true;
+			using ExcelPackage package = await url.OpenExcelPackage(httpClient);
+			//summaryTable = [.. package.GetSummaryData()];
+			weekDates = [.. package.GetWeekDates()];
+			Rounds = [.. package.GetRoundsForWeek(WeekNo ?? 1)];
+
+		}
+	}
+}
