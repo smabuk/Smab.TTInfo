@@ -8,48 +8,69 @@
 <PageTitle>Print Match Cards</PageTitle>
 
 @PrintHelpers.PaperInfo("A4", "portrait", 1)
+<article>
 
-<div class="d-print-none">
-	@* @if (eventInfo is not null) {
-		<h2 class="m-3">@eventInfo.Name</h2>
-	} *@
-	<button class="btn btn-primary m-3" @onclick="PrintPage">Print All Match Cards</button>
-</div>
+	<div class="control-panel">
+		<button class="btn btn-primary m-3" @onclick="PrintCards">Print All Scorecards</button>
+		<label for="no-of-pages">No of pages:</label><InputNumber id="no-of-pages" @bind-Value="NoOfPages" inputmode="number" min="1" max="99" step="1" />
+		<label for="shaded">Shaded:</label><InputCheckbox id="shaded" @bind-Value="isShaded"></InputCheckbox>
+		<label for="bordered">Bordered:</label><InputCheckbox id="bordered" @bind-Value="isBordered"></InputCheckbox>
+		@* <label for="bordered">With game numbers:</label><InputCheckbox id="with-game-numbers" @bind-Value="withGameNumbers"></InputCheckbox> *@
+	</div>
+	<div class="page-break"></div>
 
-<div class="print-page">
 	@{
 		// int noOfMatchCards = 0;
 	}
-	@* @foreach (EliminationInfo elimination in eliminations) {
-		@foreach (MatchInfo match in elimination.Matches.OrderBy(m => m.MatchNr))
-		{
-			bool skip = match.PlayerADisplay == "TBD" || match.PlayerBDisplay == "TBD";
-			@if (!skip)
-			{
-				noOfMatchCards++;
-				string playerA = match.PlayerADisplay.StartsWith("Winner") ? "\u200B" : match.PlayerADisplay;
-				string playerB = match.PlayerBDisplay.StartsWith("Winner") ? "\u200B" : match.PlayerBDisplay;
-				playerA = match.PlayerADisplay.StartsWith("Group") ? playerA.Replace("Group ", "") : playerA;
-				playerB = match.PlayerBDisplay.StartsWith("Group") ? playerB.Replace("Group ", "") : playerB;
-				<MatchCard
-						   Title="@tournamentService.Name"
-						   HeaderLeft="@($"{eventInfo?.Name} {match.Round}")"
-						   HeaderRight="@($"#{match.MatchNr}")"
-						   PlayerAName="@playerA"
-						   PlayerBName="@playerB"
-						   IsHandicap="@elimination.IsHandicap" />
-			}
-		}
-		@for (int match = (noOfMatchCards % 6) + 8; match >= 0; match--) {
-			<MatchCard Title="@tournamentService.Name" IsHandicap="@elimination.IsHandicap" />
-		} *@
+	@for (int page = 0; page < NoOfPages; page++) {
+		<div class="page">
+			@*	@foreach (EliminationInfo elimination in eliminations) {
+					@foreach (MatchInfo match in elimination.Matches.OrderBy(m => m.MatchNr))
+					{
+						bool skip = match.PlayerADisplay == "TBD" || match.PlayerBDisplay == "TBD";
+						@if (!skip)
+						{
+							noOfMatchCards++;
+							string playerA = match.PlayerADisplay.StartsWith("Winner") ? "\u200B" : match.PlayerADisplay;
+							string playerB = match.PlayerBDisplay.StartsWith("Winner") ? "\u200B" : match.PlayerBDisplay;
+							playerA = match.PlayerADisplay.StartsWith("Group") ? playerA.Replace("Group ", "") : playerA;
+							playerB = match.PlayerBDisplay.StartsWith("Group") ? playerB.Replace("Group ", "") : playerB;
+							<MatchCard
+										Title="@tournamentService.Name"
+										HeaderLeft="@($"{eventInfo?.Name} {match.Round}")"
+										HeaderRight="@($"#{match.MatchNr}")"
+										PlayerAName="@playerA"
+										PlayerBName="@playerB"
+										IsHandicap="@elimination.IsHandicap" />
+						}
+					}
+					@for (int match = (noOfMatchCards % 6) + 8; match >= 0; match--) {
+						<MatchCard Title="@tournamentService.Name" IsHandicap="@elimination.IsHandicap" />
+					}
+				} *@
+		</div>
 	}
 
-</div>
+</article>
 
 @code {
-	[Parameter] public int NoOfRounds { get; set; } = 3;
+	[Parameter] public int NoOfRounds { get; set; } = 4;
 	// [Parameter] public int? EventId { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Bordered { get; set; } = true;
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? Shaded { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public bool? WithGameNumbers { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public int? NoOfPages { get; set; } = 1;
+
+	private bool isBordered;
+	private bool isShaded;
 
 	// private EventInfo? eventInfo;
 	// private List<EliminationInfo> eliminations = [];
@@ -67,7 +88,7 @@
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 		=> await JS.InvokeVoidAsync("document.documentElement.setAttribute", "data-bs-theme", "light");
 
-	private void PrintPage() => JS.InvokeVoidAsync("window.print");
+	private void PrintCards() => JS.InvokeVoidAsync("window.print");
 
 	private readonly string[] rounds = ["Final", "Semi Final", "Quarter Final", "Round of 16", "Round of 32", "Round of 64"];
 }
