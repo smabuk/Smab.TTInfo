@@ -133,6 +133,11 @@ public static class ExcelPackageHelpers
 
 							_ = double.TryParse(weekSheet.Cells[startRow + 9, 52].Text, out double points1);
 							_ = double.TryParse(weekSheet.Cells[startRow + 11, 52].Text, out double points2);
+
+							if (player2.Name == weekSheet.Cells[startRow + 9, 49].Text) {
+								(points1, points2) = (points2, points1); // Swap points if player2 is in the WINNERS row
+							}
+
 							Match match = new(player1, player2, games, points1, points2);
 							matches = [.. matches, match];
 						}
@@ -170,6 +175,7 @@ public static class ExcelPackageHelpers
 
 							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2), roundIndex + 8].Text, out double points1);
 							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2) + 1, roundIndex + 8].Text, out double points2);
+
 							Match match = new(player1, player2, games, points1, points2);
 							matches = [.. matches, match];
 						}
@@ -188,37 +194,6 @@ public static class ExcelPackageHelpers
 				}
 
 			}
-
-
-
-			//yield return new MainRound("Main Round", []); // Placeholder return statement
-
-			//int row = 2; // Assuming the first row is headers
-			//while (true) {
-			//	string player1Name = worksheet.Cells[row, 1].Text;
-			//	string player2Name = worksheet.Cells[row, 2].Text;
-			//	if (string.IsNullOrWhiteSpace(player1Name) && string.IsNullOrWhiteSpace(player2Name)) {
-			//		break; // Exit if both player names are empty
-			//	}
-			//	List<Game> games = new List<Game>();
-			//	for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
-			//		int colOffset = 3 + gameIndex * 2;
-			//		string score1Text = worksheet.Cells[row, colOffset].Text;
-			//		string score2Text = worksheet.Cells[row, colOffset + 1].Text;
-			//		if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
-			//			int score1 = Convert.ToInt32(score1Text);
-			//			int score2 = Convert.ToInt32(score2Text);
-			//			games.Add(new Game(score1, score2));
-			//		}
-			//	}
-			//	int premierPoints1 = Convert.ToInt32(worksheet.Cells[row, 13].Value);
-			//	int premierPoints2 = Convert.ToInt32(worksheet.Cells[row, 14].Value);
-			//	Player player1 = string.IsNullOrWhiteSpace(player1Name) ? new Bye() : new NamedPlayer(player1Name);
-			//	Player player2 = string.IsNullOrWhiteSpace(player2Name) ? new Bye() : new NamedPlayer(player2Name);
-			//	yield return new Match(player1, player2, games, premierPoints1, premierPoints2);
-			//	row++;
-			//}
-
 		}
 	}
 }
