@@ -15,20 +15,30 @@
 } else if (Rounds is null or []) {
 	<p>Loading ...</p>
 } else {
-	@foreach(Round round in Rounds) {
-		<h2>@round.Name</h2>
+	<h2>To be played</h2>
 
-		@* <ul>
-			<li></li>
-		</ul> *@
-		<QuickGrid @ref="gridMatches" Items="@round.Matches.AsQueryable()">
-			@* <PropertyColumn Property="@(s => s.Player1.Name)" Title="Player 1" Sortable="false" /> *@
-			@* <PropertyColumn Property="@(s => s.Player2.Name)" Title="Player 2" Sortable="false" /> *@
-			<PropertyColumn Property="@(s => s)" Title="Matches" Sortable="false" />
-			@* <PropertyColumn Property="@(s => s.PremierPoints1)" Title="Points 1" Sortable="false" Format="F1" /> *@
-			@* <PropertyColumn Property="@(s => s.PremierPoints2)" Title="Points 2" Sortable="false" Format="F1" /> *@
-		</QuickGrid>
-		<br />
+	@foreach (Round round in Rounds) {
+		List<Match> matches = [.. round.Matches.Where(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is []) || (m.Player1 is NoPlayer || m.Player2 is NoPlayer))];
+		@if (matches is not []) {
+			<h3>@round.Name</h3>
+			@foreach (Match match in matches) {
+				<p>@match</p>
+			}
+			<br />
+		}
+	}
+
+	<h2>Completed</h2>
+	@foreach (Round round in Rounds) {
+		List<Match> matches = [.. round.Matches.Where(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is not []) || (m.Player1 is Bye || m.Player2 is Bye))];
+
+		@if (matches is not []) {
+			<h3>@round.Name</h3>
+			@foreach (Match match in matches) {
+				<p>@match</p>
+			}
+			<br />
+		}
 	}
 }
 

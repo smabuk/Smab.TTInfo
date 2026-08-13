@@ -3,10 +3,13 @@
 	color: red;
 }
 
-::deep .col-title-text {
-	color: var(--text-color);
+h2 {
+	margin-top: 2rem;
+	text-align: left;
+	color: green;
 }
 
-::deep table {
-	min-width: 100%;
+p {
+	margin: 0 0;
+	padding: 0 0;
 }
