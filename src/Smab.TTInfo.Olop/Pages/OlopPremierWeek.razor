@@ -29,7 +29,8 @@
 	}
 
 	<h2>Completed</h2>
-	@foreach (Round round in Rounds) {
+	@* @foreach (Round round in (List<Round>)[.. Rounds.OfType<MainRound>().OrderByDescending(r => r.RoundNo), .. Rounds.OfType<ConsolationRound>().OrderByDescending(r => r.RoundNo)]) { *@
+	@foreach (Round round in Rounds.OrderByDescending(r => r.RoundNo)) {
 		List<Match> matches = [.. round.Matches.Where(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is not []) || (m.Player1 is Bye || m.Player2 is Bye))];
 
 		@if (matches is not []) {
