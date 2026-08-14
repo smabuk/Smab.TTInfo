@@ -3,10 +3,9 @@
 
 @inject HttpClient httpClient
 @inject IOptions<OlopOptions> options
-@rendermode InteractiveServer
 
 <PageTitle>OLOP Premier Week @WeekNo</PageTitle>
-<h1>OLOP Premier Week @WeekNo</h1>
+<h1>OLOP Premier Week @WeekNo @((WeekDate is null ? "" : $"({WeekDate:dd MMM yyyy})"))</h1>
 
 
 @if (isLinked is false) {
@@ -48,28 +47,25 @@
 
 @code {
 	[Parameter]
-	public int? WeekNo { get; set; }
+	public int WeekNo { get; set; }
 
-	[PersistentState]
-	public List<WeekDates>? weekDates { get; set; }
-	[PersistentState]
-	public List<Round>? Rounds { get; set; }
-	[PersistentState]
-	public bool? isLinked { get; set; } = null;
+	[PersistentState] public List<Round>? Rounds { get; set; }
+	[PersistentState] public DateOnly? WeekDate { get; set; }
+	[PersistentState] public bool? isLinked { get; set; } = null;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if (weekDates is null) {
-			if (string.IsNullOrWhiteSpace(options.Value.OlopPremierExcelLink)) {
-				isLinked = false;
-				return;
-			}
+		if (string.IsNullOrWhiteSpace(options.Value.OlopPremierExcelLink)) {
+			isLinked = false;
+			return;
+		}
 
+		if (Rounds is null) {
 			isLinked = true;
 			using ExcelPackage package = await options.Value.OlopPremierExcelLink.OpenExcelPackage(httpClient);
 
-			weekDates = [.. package.GetWeekDates()];
-			Rounds = [.. package.GetRoundsForWeek(WeekNo ?? 1)];
+			Rounds = [.. package.GetRoundsForWeek(WeekNo)];
+			WeekDate = package.GetWeekDate(WeekNo);
 		}
 	}
 

@@ -5,15 +5,9 @@ public static partial class ExcelPackageHelpers
 	extension(ExcelPackage package)
 	{
 		/// <summary>
-		/// Gets the week dates from the "WeekDates" table in the "Summary" worksheet of the Excel package.
-		/// </summary>
-		/// <returns>An enumerable of tuples containing the week number and the corresponding week date.</returns>
-		/// <summary>
 		/// Gets the summary data from the "Summary" table in the "Summary" worksheet of the Excel package.
 		/// </summary>
-		/// <returns>
-		/// An enumerable of tuples containing the rank, name, weeks played, percentage of games won, and points.
-		/// </returns>
+		/// <returns>An enumerable of <see cref="SummaryTable"/> objects containing the summary data.</returns>
 		public IEnumerable<SummaryTable> GetSummaryData()
 		{
 			const int colRank = 0;
