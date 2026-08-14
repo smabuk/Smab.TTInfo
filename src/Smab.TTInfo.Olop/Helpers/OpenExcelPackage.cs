@@ -12,16 +12,26 @@ public static partial class ExcelPackageHelpers
 		/// <exception cref="Exception">Thrown if the Excel file cannot be downloaded.</exception>
 		public async Task<ExcelPackage> OpenExcelPackage(HttpClient httpClient)
 		{
-			using HttpResponseMessage response = await httpClient.GetAsync($"{oneDriveExcelLink}&download=1");
+			ExcelPackage.License.SetNonCommercialPersonal("Simon Brookes");
 
-			if (response.IsSuccessStatusCode is false) {
-				throw new Exception($"Failed to download Excel file from {oneDriveExcelLink}. Status code: {response.StatusCode}");
+			if (oneDriveExcelLink.StartsWith("http")) {
+				using HttpResponseMessage response = await httpClient.GetAsync($"{oneDriveExcelLink}&download=1");
+
+				if (response.IsSuccessStatusCode is false) {
+					throw new Exception($"Failed to download Excel file from {oneDriveExcelLink}. Status code: {response.StatusCode}");
+				}
+
+				Stream stream = await response.Content.ReadAsStreamAsync();
+
+				return new ExcelPackage(stream);
 			}
 
-			Stream stream = await response.Content.ReadAsStreamAsync();
+			// If the link is not an HTTP link, treat it as a local file path
+			if (!File.Exists(oneDriveExcelLink)) {
+				throw new FileNotFoundException($"Local Excel file not found at {oneDriveExcelLink}");
+			}
 
-			ExcelPackage.License.SetNonCommercialPersonal("Simon Brookes");
-			return new ExcelPackage(stream);
+			return new ExcelPackage(new FileInfo(oneDriveExcelLink));
 		}
 	}
 }
