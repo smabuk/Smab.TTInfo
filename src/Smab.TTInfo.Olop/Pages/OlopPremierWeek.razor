@@ -5,7 +5,7 @@
 @inject IOptions<OlopOptions> options
 
 <PageTitle>OLOP Premier Week @WeekNo</PageTitle>
-<h1>OLOP Premier Week @WeekNo @((WeekDate is null ? "" : $"({WeekDate:dd MMM yyyy})"))</h1>
+<h1>OLOP Premier Week @WeekNo <span>@((WeekDate is null ? "" : $"({WeekDate:dd MMM yyyy})"))</span></h1>
 
 
 @if (isLinked is false) {
@@ -82,7 +82,7 @@
 			(NamedPlayer player1, Bye) => $"<span class='player' data-result='winner'>{player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) has a bye",
 			(Bye, NamedPlayer player2) => $"<span class='player' data-result='winner'>{player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>) has a bye",
 			(Bye, Bye) => "Bye",
-			_ => $"<span class='player' data-result='{(match.Player1IsWinner ? "winner" : match.Player2IsWinner ? "loser" : null)}'>{match.Player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) vs <span class='player' data-result='{(match.Player2IsWinner ? "winner" : match.Player1IsWinner ? "loser" : null)}'>{match.Player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>): {string.Join(", ", match.Games.Select(g => $"{g}"))}"
+			_ => $"""<span class='player' data-result='{(match.Player1IsWinner ? "winner" : match.Player2IsWinner ? "loser" : null)}'>{match.Player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) vs <span class='player' data-result='{(match.Player2IsWinner ? "winner" : match.Player1IsWinner ? "loser" : null)}'>{match.Player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>) <span class='scores'>{string.Join(", ", match.Games.Select(g => $"{g}"))}</span>"""
 		};
 
 		return $"<span>{htmlString}</span>";

@@ -1,6 +1,10 @@
 ﻿h1 {
 	text-align: center;
 	color: red;
+
+	& span {
+		white-space: nowrap;
+	}
 }
 
 h2 {
@@ -16,6 +20,10 @@ h2 {
 p {
 	margin: 0 0;
 	padding: 0 0;
+}
+
+::deep .scores {
+	white-space: nowrap;
 }
 
 ::deep .player {
