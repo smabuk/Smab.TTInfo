@@ -12,7 +12,7 @@ public static partial class ExcelPackageHelpers
 		{
 			const int colRank = 0;
 			const int colName = 1;
-			const int colWeeksPlayed = 2;
+			//const int colWeeksPlayed = 2;
 			const int colPercentage = 3;
 			const int colPoints = 4;
 

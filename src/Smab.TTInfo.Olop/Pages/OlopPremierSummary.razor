@@ -67,7 +67,7 @@
 			}
 		}
 
-		_ = sb.AppendLine($"""<h3 style="text-align: center;"><span style="color: rgb(224, 62, 45);">Standings after week {weekDates[^1].WeekNo}&nbsp;({weekDates[^1].WeekDate:dd MMMM})</span></h3>""");
+		_ = sb.AppendLine($"""<h3 style="text-align: center;"><span style="color: rgb(224, 62, 45);">Standings after week {weekDates[^1].WeekNo}&nbsp;({weekDates[^1].WeekDate.ToOrdinalString()})</span></h3>""");
 		_ = sb.AppendLine($"""<div style="width: 100%; overflow-x:auto;">""");
 		_ = sb.AppendLine($"""<table style="width: 100%; border-collapse: collapse; border-width: 1px; outline: rgb(0, 0, 0) solid 1px; border-style: solid; margin-left: auto; margin-right: auto;" border="1">""");
 

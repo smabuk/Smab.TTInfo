@@ -5,7 +5,7 @@
 @inject IOptions<OlopOptions> options
 
 <PageTitle>OLOP Premier Week @WeekNo</PageTitle>
-<h1>OLOP Premier Week @WeekNo <span>@((Week?.Date is null ? "" : $"({Week.Date:dd MMM yyyy})"))</span></h1>
+<h1>OLOP Premier Week @WeekNo <span>@((Week?.Date is null ? "" : $"({Week.Date.ToOrdinalString()})"))</span></h1>
 
 @if (isLinked is false) {
 	<p>OLOP Premier Excel link is not configured.</p>
