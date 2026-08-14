@@ -7,8 +7,8 @@ public static partial class ExcelPackageHelpers
 		/// <summary>
 		/// Gets the summary data from the "Summary" table in the "Summary" worksheet of the Excel package.
 		/// </summary>
-		/// <returns>An enumerable of <see cref="SummaryTable"/> objects containing the summary data.</returns>
-		public IEnumerable<SummaryTable> GetSummaryData()
+		/// <returns>An enumerable of <see cref="SummaryTableItem"/> objects containing the summary data.</returns>
+		public IEnumerable<SummaryTableItem> GetSummaryData()
 		{
 			const int colRank = 0;
 			const int colName = 1;
@@ -26,7 +26,7 @@ public static partial class ExcelPackageHelpers
 					int weeksPlayed = Convert.ToInt32(values[colWeeksPlayed].Value);
 					double percentage = Convert.ToDouble(values[colPercentage].Value) * 100;
 					double points = Convert.ToDouble(values[colPoints].Value);
-					yield return new SummaryTable(rank, name, weeksPlayed, percentage, points);
+					yield return new SummaryTableItem(rank, new NamedPlayer(name), weeksPlayed, percentage, points);
 				}
 			}
 		}

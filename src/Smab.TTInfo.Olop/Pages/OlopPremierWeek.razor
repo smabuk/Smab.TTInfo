@@ -5,20 +5,32 @@
 @inject IOptions<OlopOptions> options
 
 <PageTitle>OLOP Premier Week @WeekNo</PageTitle>
-<h1>OLOP Premier Week @WeekNo <span>@((WeekDate is null ? "" : $"({WeekDate:dd MMM yyyy})"))</span></h1>
+<h1>OLOP Premier Week @WeekNo <span>@((Week.Date is null ? "" : $"({Week.Date:dd MMM yyyy})"))</span></h1>
 
 
 @if (isLinked is false) {
 	<p>OLOP Premier Excel link is not configured.</p>
-} else if (Rounds is null) {
+} else if (Week is null) {
 	<p>Loading ...</p>
-} else if (Rounds is []) {
-	<p>No draw yet.</p>
+} else if (Week.Rounds is []) {
+	<p>No draw yet.
+	@if (Week.Date is not null) {
+		<text> Draw will be published on @($"{Week.Date:dd MMM yyyy}").</text>
+	}
+	</p>
+	@if (Week.PlayerDetails is not [])
+	{
+		<h2>@Week.PlayerDetails.Count Players signed up</h2>
+		@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderBy(pd => pd.Player.Name))
+		{
+			<p>@playerDetails.Player.Name</p>
+		}
+	}
 } else {
-	@if (AnyMatchesToBePlayed(Rounds)) {
+	@if (AnyMatchesToBePlayed(Week.Rounds)) {
 		<h2>To be played</h2>
 
-		@foreach (Round round in Rounds) {
+		@foreach (Round round in Week.Rounds) {
 			List<Match> matches = [.. round.Matches.Where(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is []) || (m.Player1 is NoPlayer || m.Player2 is NoPlayer))];
 			@if (matches is not []) {
 				<h3>@round.Name</h3>
@@ -32,7 +44,7 @@
 
 	<h2>Completed</h2>
 	@* @foreach (Round round in (List<Round>)[.. Rounds.OfType<MainRound>().OrderByDescending(r => r.RoundNo), .. Rounds.OfType<ConsolationRound>().OrderByDescending(r => r.RoundNo)]) { *@
-	@foreach (Round round in Rounds.OrderByDescending(r => r.RoundNo)) {
+	@foreach (Round round in Week.Rounds.OrderByDescending(r => r.RoundNo)) {
 		List<Match> matches = [.. round.Matches.Where(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is not []) || (m.Player1 is Bye || m.Player2 is Bye))];
 
 		@if (matches is not []) {
@@ -49,8 +61,7 @@
 	[Parameter]
 	public int WeekNo { get; set; }
 
-	[PersistentState] public List<Round>? Rounds { get; set; }
-	[PersistentState] public DateOnly? WeekDate { get; set; }
+	[PersistentState] public Week? Week { get; set; }
 	[PersistentState] public bool? isLinked { get; set; } = null;
 
 	protected override async Task OnParametersSetAsync()
@@ -60,12 +71,11 @@
 			return;
 		}
 
-		if (Rounds is null) {
-			isLinked = true;
-			using ExcelPackage package = await options.Value.OlopPremierExcelLink.OpenExcelPackage(httpClient);
+		isLinked = true;
 
-			Rounds = [.. package.GetRoundsForWeek(WeekNo)];
-			WeekDate = package.GetWeekDate(WeekNo);
+		if (Week is null) {
+			using ExcelPackage package = await options.Value.OlopPremierExcelLink.OpenExcelPackage(httpClient);
+			Week = package.GetWeek(WeekNo);
 		}
 	}
 
