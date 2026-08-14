@@ -11,8 +11,10 @@
 
 @if (isLinked is false) {
 	<p>OLOP Premier Excel link is not configured.</p>
-} else if (Rounds is null or []) {
+} else if (Rounds is null) {
 	<p>Loading ...</p>
+} else if (Rounds is []) {
+	<p>No draw yet.</p>
 } else {
 	@if (AnyMatchesToBePlayed(Rounds)) {
 		<h2>To be played</h2>
@@ -49,8 +51,6 @@
 	public int? WeekNo { get; set; }
 
 	[PersistentState]
-	public List<SummaryTable>? summaryTable { get; set; }
-	[PersistentState]
 	public List<WeekDates>? weekDates { get; set; }
 	[PersistentState]
 	public List<Round>? Rounds { get; set; }
@@ -59,20 +59,17 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if (summaryTable is null or []) {
-			string url = options.Value.OlopPremierExcelLink;
-
-			if (string.IsNullOrWhiteSpace(url)) {
+		if (weekDates is null) {
+			if (string.IsNullOrWhiteSpace(options.Value.OlopPremierExcelLink)) {
 				isLinked = false;
 				return;
 			}
 
 			isLinked = true;
-			using ExcelPackage package = await url.OpenExcelPackage(httpClient);
-			//summaryTable = [.. package.GetSummaryData()];
+			using ExcelPackage package = await options.Value.OlopPremierExcelLink.OpenExcelPackage(httpClient);
+
 			weekDates = [.. package.GetWeekDates()];
 			Rounds = [.. package.GetRoundsForWeek(WeekNo ?? 1)];
-
 		}
 	}
 
@@ -96,8 +93,6 @@
 	}
 
 	private static bool AnyMatchesToBePlayed(IEnumerable<Round> rounds)
-	{
-		return rounds.Any(round => round.Matches.Any(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is []) || (m.Player1 is NoPlayer || m.Player2 is NoPlayer)));
-	}
+		=> rounds.Any(round => round.Matches.Any(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is []) || (m.Player1 is NoPlayer || m.Player2 is NoPlayer)));
 
 }

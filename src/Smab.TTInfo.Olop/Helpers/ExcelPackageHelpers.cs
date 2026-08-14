@@ -1,28 +1,32 @@
 ﻿namespace Smab.TTInfo.Olop.Helpers;
 
-public static class ExcelPackageHelpers
+public static partial class ExcelPackageHelpers
 {
-	public static string SUMMARY_SHEET_NAME = "Summary";
-	public static string SUMMARY_TABLE_NAME = "Summary";
-	public static string WEEK_DATES_TABLE_NAME = "WeekDates";
+	const string SUMMARY_SHEET_NAME = "Summary";
+	const string SUMMARY_TABLE_NAME = "Summary";
+	const string WEEK_DATES_TABLE_NAME = "WeekDates";
 
 
 	extension(string oneDriveExcelLink)
 	{
-
+		/// <summary>
+		/// Opens an Excel package from a OneDrive link using the provided HttpClient.
+		/// </summary>
+		/// <param name="httpClient">The HttpClient to use for downloading the Excel file.</param>
+		/// <returns>An ExcelPackage representing the downloaded Excel file.</returns>
+		/// <exception cref="Exception">Thrown if the Excel file cannot be downloaded.</exception>
 		public async Task<ExcelPackage> OpenExcelPackage(HttpClient httpClient)
 		{
 			using HttpResponseMessage response = await httpClient.GetAsync($"{oneDriveExcelLink}&download=1");
 
-			if (response.IsSuccessStatusCode) {
-				Stream stream = await response.Content.ReadAsStreamAsync();
-
-				ExcelPackage.License.SetNonCommercialPersonal("Simon Brookes");
-				return new ExcelPackage(stream);
-			} else {
+			if (response.IsSuccessStatusCode is false) {
 				throw new Exception($"Failed to download Excel file from {oneDriveExcelLink}. Status code: {response.StatusCode}");
 			}
 
+			Stream stream = await response.Content.ReadAsStreamAsync();
+
+			ExcelPackage.License.SetNonCommercialPersonal("Simon Brookes");
+			return new ExcelPackage(stream);
 		}
 	}
 
@@ -78,15 +82,19 @@ public static class ExcelPackageHelpers
 			}
 		}
 
+		/// <summary>
+		/// Gets the rounds for a specific week from the Excel package.
+		/// </summary>
+		/// <param name="weekNo">The week number for which to retrieve the rounds.</param>
+		/// <returns>An enumerable of Round objects representing the rounds for the specified week.</returns>
+		/// <exception cref="Exception">Thrown if the worksheet for the specified week is not found.</exception>
 		public IEnumerable<Round> GetRoundsForWeek(int weekNo)
 		{
-			const int ROUND_COLS_OFFSET = 6; // Starting column for rounds
 			const int MAIN_ROW = 3; // Starting row for main rounds
 			const int CONSOLATION_ROW = 23; // Starting row for consolation rounds
 
 			int[] startColumnsRounds = [6, 16, 26, 36, 46];
 			int[] startColumnsRows = [MAIN_ROW, CONSOLATION_ROW];
-			//List<string> roundNames = ["32s", "16s", "QUARTER FINAL", "SEMI FINAL", "FINAL"];
 
 			ExcelWorksheet weekSheet = package.Workbook.Worksheets[$"Week{weekNo}"] ?? throw new Exception($"Worksheet for week {weekNo} not found.");
 
