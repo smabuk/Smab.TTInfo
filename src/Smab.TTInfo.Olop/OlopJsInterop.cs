@@ -19,7 +19,13 @@ public class OlopJsInterop(IJSRuntime jsRuntime) : IAsyncDisposable {
 	public async ValueTask DisposeAsync() {
 		if (moduleTask.IsValueCreated) {
 			var module = await moduleTask.Value;
-			await module.DisposeAsync();
+			try {
+				await module.DisposeAsync();
+
+			}
+			catch (Exception) {
+			}
+
 			GC.SuppressFinalize(this);
 		}
 	}

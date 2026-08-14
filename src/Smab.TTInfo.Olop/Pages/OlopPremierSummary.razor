@@ -12,62 +12,43 @@
 <h1>OLOP Premier Summary</h1>
 
 
-@if (isLinked is false) {
-	<p>OLOP Premier Excel link is not configured.</p>
-} else if (summaryTable is null or []) {
+@if (summaryHtml is null) {
 	<p>Loading ...</p>
 } else {
-	<QuickGrid @ref="summaryGrid" Items="@summaryTable.AsQueryable()">
-		<PropertyColumn Property="@(s => s.Rank)" Title="Rank" Align="Align.Right" Sortable="false" IsDefaultSortColumn="true" />
-		<PropertyColumn Property="@(s => s.Player)" Title="Player" Sortable="false" />
-		<PropertyColumn Property="@(s => s.WeeksPlayed)" Title="Weeks" Align="Align.Center" />
-		<PropertyColumn Property="@(s => $"{s.PercentageGamesWon:F0}%")" Title="Percentage" Align="Align.Right" />
-		<PropertyColumn Property="@(s => $"{s.Points:F1}")" Title="Points" Align="Align.Right" />
-	</QuickGrid>
-
 	<div>
-		<br>
-		<br>
 		<button type="button" class="btn btn-primary" title="Copy to clipboard" @onclick="CopyToClipboard">Copy</button>
-		<pre style="display:none;"><code @ref="_summaryHtml">@summaryHtml</code>
-		</pre>
+		<pre style="display:none;"><code @ref="_summaryHtml">@summaryHtml</code></pre>
 	</div>
+
+	<br />
+
+	<div>@((MarkupString)(summaryHtml ?? ""))</div>
 }
 
 @code {
-	QuickGrid<SummaryTable>? summaryGrid;
 	private ElementReference _summaryHtml;
 
-	[PersistentState]
-	public List<SummaryTable>? summaryTable { get; set; }
-	[PersistentState]
-	public List<WeekDates>? weekDates { get; set; }
-	[PersistentState]
-	public string? summaryHtml { get; set; }
-	[PersistentState]
-	public bool? isLinked { get; set; } = null;
+	[PersistentState] public string? summaryHtml { get; set; }
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if (summaryTable is null or []) {
-			string url = options.Value.OlopPremierExcelLink;
-
-			if (string.IsNullOrWhiteSpace(url)) {
-				summaryHtml = "<p>OLOP Premier Excel link is not configured.</p>";
-				isLinked = false;
-				return;
-			}
-
-			isLinked = true;
-			using ExcelPackage package = await url.OpenExcelPackage(httpClient);
-			summaryTable = [.. package.GetSummaryData()];
-			weekDates = [.. package.GetWeekDates()];
-			summaryHtml = SummaryHtml(package, summaryTable, weekDates);
-		}
+		summaryHtml ??= await GenerateSummaryHtml();
 	}
 
-	private string SummaryHtml(ExcelPackage package, List<SummaryTable> summaryTable, List<WeekDates> weekDates)
+	private async Task<string> GenerateSummaryHtml()
 	{
+		string url = options.Value.OlopPremierExcelLink;
+
+		if (string.IsNullOrWhiteSpace(url)) {
+			summaryHtml = "<p>OLOP Premier Excel link is not configured.</p>";
+			return summaryHtml;
+		}
+
+		using ExcelPackage package = await url.OpenExcelPackage(httpClient);
+
+		List<SummaryTable> summaryTable = [.. package.GetSummaryData()];
+		List<WeekDates> weekDates = [.. package.GetWeekDates()];
+
 		StringBuilder sb = new();
 
 		_ = sb.AppendLine("<p>This tournament is open to all members and takes place across the four Thursday nights throughout August.</p>");
@@ -95,11 +76,11 @@
 		string thead = """
 			<thead>
 			<tr style="height: 45px;">
-			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Rank">#</span></th>
-			<th style="background-color: rgb(35, 111, 161); text-align: left;"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Name">Name</span></th>
-			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Weeks Played">Pl</span></th>
-			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Percentage of games won">%</span></th>
-			<th style="background-color: rgb(35, 111, 161);"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Points">Pts</span></th>
+			<th style="background-color: rgb(35, 111, 161); text-align: right;">                                          <span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Rank">#</span></th>
+			<th style="background-color: rgb(35, 111, 161); border-left: 2px solid rgb(65, 144, 197); text-align: left;"> <span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Name">Name</span></th>
+			<th style="background-color: rgb(35, 111, 161); border-left: 2px solid rgb(65, 144, 197);">                   <span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Weeks Played">Pl</span></th>
+			<th style="background-color: rgb(35, 111, 161); border-left: 2px solid rgb(65, 144, 197); text-align: right;"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Percentage of games won">%</span></th>
+			<th style="background-color: rgb(35, 111, 161); border-left: 2px solid rgb(65, 144, 197); text-align: right;"><span style="color: rgb(236, 240, 241); background-color: rgb(35, 111, 161);" title="Points">Pts</span></th>
 			</tr>
 			</thead>
 			""";
