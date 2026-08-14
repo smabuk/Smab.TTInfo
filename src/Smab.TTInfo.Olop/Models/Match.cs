@@ -17,3 +17,15 @@ public record Match(Player Player1, Player Player2, List<Game> Games, double Pre
 
 		}
 };
+
+public static class MatchExtensions
+{
+	const int NO_OF_GAMES_TO_WIN = 3;
+	extension(Match match)
+	{
+		public bool IsBye => match.Player1 is Bye || match.Player2 is Bye;
+		public bool IsNoMatch => match.Player1 is NoPlayer && match.Player2 is NoPlayer;
+		public bool Player1IsWinner => match.Games.Count(g => g.Points1 > g.Points2) == NO_OF_GAMES_TO_WIN;
+		public bool Player2IsWinner => match.Games.Count(g => g.Points2 > g.Points1) == NO_OF_GAMES_TO_WIN;
+	}
+}

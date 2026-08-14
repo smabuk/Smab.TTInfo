@@ -6,10 +6,39 @@
 h2 {
 	margin-top: 2rem;
 	text-align: left;
-	color: green;
+	color: blue;
+
+	@media (prefers-color-scheme: dark) {
+		color: dodgerblue;
+	}
 }
 
 p {
 	margin: 0 0;
 	padding: 0 0;
+}
+
+::deep .player {
+	font-weight: 700;
+}
+
+::deep [data-result='winner'] {
+	color: green;
+	@media (prefers-color-scheme: dark) {
+		color: limegreen;
+	}
+}
+
+::deep [data-result='loser'] {
+	color: indianred;
+	@media (prefers-color-scheme: dark) {
+		color: indianred;
+	}
+}
+
+::deep .premier-points {
+	color: darkcyan;
+	@media (prefers-color-scheme: dark) {
+		color: gold;
+	}
 }

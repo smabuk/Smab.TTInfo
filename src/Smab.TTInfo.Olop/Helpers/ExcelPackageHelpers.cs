@@ -109,10 +109,11 @@ public static class ExcelPackageHelpers
 					string roundName = weekSheet.Cells[startRow - 2, startColumnsRounds[roundIndex]].Text;
 
 					if (roundIndex == startColumnsRounds.Length - 1) { // FINAL is formatted differently
+						int startCol = startColumnsRounds[roundIndex];
 						List<Match> matches = [];
 						for (int matchNo = 0; matchNo < noOfMatches; matchNo++) {
-							Player player1 = weekSheet.Cells[startRow, 46].Text.ToPlayer();
-							Player player2 = weekSheet.Cells[startRow, 49].Text.ToPlayer();
+							Player player1 = weekSheet.Cells[startRow, startCol].Text.ToPlayer();
+							Player player2 = weekSheet.Cells[startRow, startCol + 3].Text.ToPlayer();
 							if (player1 is NoPlayer && player2 is NoPlayer) {
 								continue; // Skip if both player names are empty
 							}
@@ -120,9 +121,8 @@ public static class ExcelPackageHelpers
 							List<Game> games = [];
 							if (player1 is NamedPlayer && player2 is NamedPlayer) {
 								for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
-									int colOffset = startColumnsRounds[roundIndex] + 1 + gameIndex;
-									string score1Text = weekSheet.Cells[startRow, 47].Text;
-									string score2Text = weekSheet.Cells[startRow, 48].Text;
+									string score1Text = weekSheet.Cells[startRow + gameIndex, startCol + 1].Text;
+									string score2Text = weekSheet.Cells[startRow + gameIndex, startCol + 2].Text;
 									if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
 										int score1 = Convert.ToInt32(score1Text);
 										int score2 = Convert.ToInt32(score2Text);
@@ -131,10 +131,10 @@ public static class ExcelPackageHelpers
 								}
 							}
 
-							_ = double.TryParse(weekSheet.Cells[startRow + 9, 52].Text, out double points1);
-							_ = double.TryParse(weekSheet.Cells[startRow + 11, 52].Text, out double points2);
+							_ = double.TryParse(weekSheet.Cells[startRow + 9, startCol + 6].Text, out double points1);
+							_ = double.TryParse(weekSheet.Cells[startRow + 11, startCol + 6].Text, out double points2);
 
-							if (player2.Name == weekSheet.Cells[startRow + 9, 49].Text) {
+							if (player2.Name == weekSheet.Cells[startRow + 9, startCol + 3].Text) {
 								(points1, points2) = (points2, points1); // Swap points if player2 is in the WINNERS row
 							}
 
