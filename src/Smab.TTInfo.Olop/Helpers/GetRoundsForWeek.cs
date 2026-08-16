@@ -21,25 +21,17 @@ public static partial class ExcelPackageHelpers
 			ExcelWorksheet weekSheet = package.Workbook.Worksheets[$"Week{weekNo}"] ?? throw new Exception($"Worksheet for week {weekNo} not found.");
 
 			foreach (int startRow in startColumnsRows) {
-				for (int roundIndex = 0; roundIndex < startColumnsRounds.Length; roundIndex++) {
-					int noOfMatches = startColumnsRounds[roundIndex] switch
-					{
-						6 => 16,
-						16 => 8,
-						26 => 4,
-						36 => 2,
-						46 => 1,
-						_ => throw new Exception($"Unexpected main round column: {roundIndex}")
-					};
+				foreach (RoundType roundType in Enum.GetValues<RoundType>()) {
+					int noOfMatches = roundType.ToMatchCount();
 
-					if (startRow == CONSOLATION_ROW && roundIndex is 0) {
+					if (startRow == CONSOLATION_ROW && roundType is RoundType.Roundof32) {
 						continue; // Skip the first round in the consolation bracket as it doesn't exist
 					}
 
-					string roundName = weekSheet.Cells[startRow - 2, startColumnsRounds[roundIndex]].Text;
+					string roundName = weekSheet.Cells[startRow - 2, startColumnsRounds[roundType.ToRoundNo() - 1]].Text;
 
-					if (roundIndex == startColumnsRounds.Length - 1) { // FINAL is formatted differently
-						int startCol = startColumnsRounds[roundIndex];
+					if (roundType is RoundType.Final) { // FINAL is formatted differently
+						int startCol = startColumnsRounds[roundType.ToRoundNo() - 1];
 						List<Match> matches = [];
 						for (int matchNo = 0; matchNo < noOfMatches; matchNo++) {
 							Player player1 = weekSheet.Cells[startRow, startCol].Text.ToPlayer();
@@ -75,16 +67,16 @@ public static partial class ExcelPackageHelpers
 						if (matches is not []) {
 							Round round = startRow switch
 							{
-								3 => new MainRound(roundIndex + 1, roundName, matches),
-								_ => new ConsolationRound(roundIndex + 1, roundName, matches)
+								3 => new MainRound(roundType, roundName, matches),
+								_ => new ConsolationRound(roundType, roundName, matches)
 							};
 							yield return round;
 						}
 					} else {
 						List<Match> matches = [];
 						for (int matchNo = 0; matchNo < noOfMatches; matchNo++) {
-							Player player1 = weekSheet.Cells[startRow + (matchNo * 2), startColumnsRounds[roundIndex]].Text.ToPlayer();
-							Player player2 = weekSheet.Cells[startRow + (matchNo * 2) + 1, startColumnsRounds[roundIndex]].Text.ToPlayer();
+							Player player1 = weekSheet.Cells[startRow + (matchNo * 2), startColumnsRounds[roundType.ToRoundNo() - 1]].Text.ToPlayer();
+							Player player2 = weekSheet.Cells[startRow + (matchNo * 2) + 1, startColumnsRounds[roundType.ToRoundNo() - 1]].Text.ToPlayer();
 							if (player1 is NoPlayer && player2 is NoPlayer) {
 								continue; // Skip if both player names are empty
 							}
@@ -92,7 +84,7 @@ public static partial class ExcelPackageHelpers
 							List<Game> games = [];
 							if (player1 is NamedPlayer && player2 is NamedPlayer) {
 								for (int gameIndex = 0; gameIndex < 5; gameIndex++) {
-									int colOffset = startColumnsRounds[roundIndex] + 1 + gameIndex;
+									int colOffset = startColumnsRounds[roundType.ToRoundNo() - 1] + 1 + gameIndex;
 									string score1Text = weekSheet.Cells[startRow + (matchNo * 2), colOffset].Text;
 									string score2Text = weekSheet.Cells[startRow + (matchNo * 2) + 1, colOffset].Text;
 									if (!string.IsNullOrWhiteSpace(score1Text) && !string.IsNullOrWhiteSpace(score2Text)) {
@@ -103,8 +95,8 @@ public static partial class ExcelPackageHelpers
 								}
 							}
 
-							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2), startColumnsRounds[roundIndex] + 8].Text, out double points1);
-							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2) + 1, startColumnsRounds[roundIndex] + 8].Text, out double points2);
+							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2), startColumnsRounds[roundType.ToRoundNo() - 1] + 8].Text, out double points1);
+							_ = double.TryParse(weekSheet.Cells[startRow + (matchNo * 2) + 1, startColumnsRounds[roundType.ToRoundNo() - 1] + 8].Text, out double points2);
 
 							Match match = new(player1, player2, games, points1, points2);
 							matches = [.. matches, match];
@@ -113,8 +105,8 @@ public static partial class ExcelPackageHelpers
 						if (matches is not []) {
 							Round round = startRow switch
 							{
-								3 => new MainRound(roundIndex + 1, roundName, matches),
-								_ => new ConsolationRound(roundIndex + 1, roundName, matches)
+								3 => new MainRound(roundType, roundName, matches),
+								_ => new ConsolationRound(roundType, roundName, matches)
 							};
 							yield return round;
 						}
