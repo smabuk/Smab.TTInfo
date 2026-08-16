@@ -16,7 +16,7 @@ public static partial class ExcelPackageHelpers
 					double points = Convert.ToDouble(values[1].Value);
 					int gamesWon = Convert.ToInt32(values[2].Value);
 					int gamesLost = Convert.ToInt32(values[3].Value);
-					yield return new WeekPlayerDetails(player, points, gamesWon, gamesLost);
+					yield return new(player, points, gamesWon, gamesLost);
 				}
 			}
 

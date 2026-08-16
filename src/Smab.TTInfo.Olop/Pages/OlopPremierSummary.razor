@@ -44,7 +44,8 @@
 
 		using ExcelPackage package = await url.OpenExcelPackage(httpClient);
 
-		List<SummaryTableItem> summaryTable = [.. package.GetSummaryData()];
+		SummaryData summaryData = package.GetSummaryData();
+		List<SummaryPlayerDetails> summaryTable = [.. summaryData.PlayerDetails.Values];
 		List<WeekDates> weekDates = [.. package.GetWeekDates()];
 
 		StringBuilder sb = new();
@@ -86,7 +87,7 @@
 
 		_ = sb.AppendLine("<tbody>");
 
-		foreach ((int Rank, NamedPlayer Player, int WeeksPlayed, double Percentage, double Points) in summaryTable.OrderBy(x => x.Rank).ThenByDescending(x => x.PercentageGamesWon)) {
+		foreach ((int Rank, NamedPlayer Player, int WeeksPlayed, double Percentage, double Points, Dictionary<int, SummaryWeekDetails> Weeks) in summaryTable.OrderBy(x => x.Rank).ThenByDescending(x => x.PercentageGamesWon)) {
 			string tr = $"""
 					<tr>
 					<td style="text-align: right;">{Rank}</td>
