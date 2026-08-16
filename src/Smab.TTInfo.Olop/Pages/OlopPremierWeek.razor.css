@@ -17,6 +17,10 @@ h2 {
 	}
 }
 
+h3 {
+	margin-top: 1rem;
+}
+
 p {
 	margin: 0 0;
 	padding: 0 0;
@@ -49,4 +53,8 @@ p {
 	@media (prefers-color-scheme: dark) {
 		color: gold;
 	}
+}
+
+table tr td:last-child {
+	text-align: right;
 }

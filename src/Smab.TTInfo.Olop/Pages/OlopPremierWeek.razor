@@ -36,7 +36,6 @@
 				@foreach (Match match in matches) {
 					<p>@((MarkupString)MatchToHtmlString(match))</p>
 				}
-				<br />
 			}
 		}
 	}
@@ -51,9 +50,26 @@
 			@foreach (Match match in matches) {
 				<p>@((MarkupString)MatchToHtmlString(match))</p>
 			}
-			<br />
 		}
 	}
+
+	<h2>Points</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Points</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints)) {
+				<tr>
+					<td>@playerDetails.Player.Name</td>
+					<td>@playerDetails.PremierPoints.ToString("F1")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 
 @code {
