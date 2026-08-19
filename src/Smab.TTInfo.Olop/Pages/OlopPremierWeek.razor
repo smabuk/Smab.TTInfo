@@ -3,6 +3,7 @@
 
 @inject HttpClient httpClient
 @inject IOptions<OlopOptions> options
+@rendermode InteractiveServer
 
 <PageTitle>OLOP Premier Week @WeekNo</PageTitle>
 <h1>OLOP Premier Week @WeekNo <span>@((Week?.Date is null ? "" : $"({Week.Date.ToOrdinalString("ddd d MMMM yyyy")})"))</span></h1>
@@ -12,16 +13,15 @@
 } else if (Week is null) {
 	<p>Loading ...</p>
 } else if (Week.Rounds is []) {
-	<p>No draw yet.
-	@if (Week.Date is not null) {
-		<text> Draw will be published on @($"{Week.Date:dd MMM yyyy}").</text>
-	}
+	<p>
+		No draw yet.
+		@if (Week.Date is not null) {
+			<text> Draw will be published on @($"{Week.Date:dd MMM yyyy}").</text>
+		}
 	</p>
-	@if (Week.PlayerDetails is not [])
-	{
+	@if (Week.PlayerDetails is not []) {
 		<h2>@Week.PlayerDetails.Count Players signed up</h2>
-		@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderBy(pd => pd.Player.Name))
-		{
+		@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderBy(pd => pd.Player.Name)) {
 			<p>@playerDetails.Player.Name</p>
 		}
 	}
@@ -34,7 +34,7 @@
 			@if (matches is not []) {
 				<h3>@round.Name</h3>
 				@foreach (Match match in matches) {
-					<p>@((MarkupString)MatchToHtmlString(match))</p>
+					<p class="@((match.Player1 == HighlightPlayer || match.Player2 == HighlightPlayer) ? "highlight-player" : "")">@((MarkupString)MatchToHtmlString(match))</p>
 				}
 			}
 		}
@@ -48,7 +48,7 @@
 		@if (matches is not []) {
 			<h3>@round.Name</h3>
 			@foreach (Match match in matches) {
-				<p>@((MarkupString)MatchToHtmlString(match))</p>
+				<p class="@((match.Player1 == HighlightPlayer || match.Player2 == HighlightPlayer) ? "highlight-player" : "")">@((MarkupString)MatchToHtmlString(match))</p>
 			}
 		}
 	}
@@ -57,7 +57,7 @@
 	<table>
 		<thead>
 			<tr>
-				@* <th></th> *@
+				<th></th>
 				<th>Name</th>
 				<th>Points</th>
 			</tr>
@@ -65,13 +65,22 @@
 		<tbody>
 			@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints)) {
 				<tr>
-					@* <td><span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-							<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-							<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-							</svg>
+					<td>
+						<span>
+							@if (playerDetails.Player == HighlightPlayer) {
+								<svg @onclick="() => SetHighlightPlayer(null)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="limegreen" class="bi bi-eye-fill" viewBox="0 0 16 16">
+									<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+									<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+								</svg>
+
+							} else {
+								<svg @onclick="() => SetHighlightPlayer(playerDetails.Player)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+									<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+									<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+								</svg>
+							}
 						</span>
-					</td> *@
+					</td>
 					<td>@playerDetails.Player.Name</td>
 					<td>@playerDetails.PremierPoints.ToString("F1")</td>
 				</tr>
@@ -87,6 +96,8 @@
 	[PersistentState] public Week? Week { get; set; }
 	[PersistentState] public bool? isLinked { get; set; } = null;
 
+	public NamedPlayer? HighlightPlayer { get; set; } = default;
+
 	protected override async Task OnParametersSetAsync()
 	{
 		isLinked = !string.IsNullOrWhiteSpace(options.Value.OlopPremierExcelLink);
@@ -97,6 +108,10 @@
 		}
 	}
 
+	private void SetHighlightPlayer(NamedPlayer? player)
+	{
+		HighlightPlayer = player;
+	}
 
 	private static string MatchToHtmlString(Match match)
 	{

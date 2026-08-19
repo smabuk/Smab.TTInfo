@@ -26,6 +26,20 @@ p {
 	padding: 0 0;
 }
 
+svg {
+	cursor: pointer;
+}
+
+.highlight-player {
+	background-color: powderblue;
+	padding: 0 5px;
+	border-radius: 15px;
+
+	@media (prefers-color-scheme: dark) {
+		background-color: darkblue;
+	}
+}
+
 ::deep .scores {
 	white-space: nowrap;
 }
