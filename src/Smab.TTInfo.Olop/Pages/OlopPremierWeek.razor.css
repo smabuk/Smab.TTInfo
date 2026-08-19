@@ -55,6 +55,10 @@ p {
 	}
 }
 
+table tr td span {
+	padding-right: 5px;
+}
+
 table tr td:last-child {
 	text-align: right;
 }
