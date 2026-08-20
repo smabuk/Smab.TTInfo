@@ -9,7 +9,7 @@ public abstract record Player(string Name);
 public record NamedPlayer(string Name) : Player(Name);
 
 public record NoPlayer() : Player("");
-public record Bye(int? ByeNo = null) : Player(ByeNo is null ? "BYE" :$"BYE {ByeNo}");
+public record Bye(string? ByeInfo = null) : Player(ByeInfo is null ? "BYE" :$"BYE {ByeInfo}");
 
 public static class PlayerExtensions
 {
@@ -20,7 +20,7 @@ public static class PlayerExtensions
 			null => new NoPlayer(),
 			"" => new NoPlayer(),
 			"BYE" => new Bye(),
-			_ when name.StartsWith("BYE ") => new Bye(int.Parse(name[4..])),
+			_ when name.StartsWith("BYE ") => new Bye(name[4..]),
 			_ => new NamedPlayer(name)
 		};
 	}
