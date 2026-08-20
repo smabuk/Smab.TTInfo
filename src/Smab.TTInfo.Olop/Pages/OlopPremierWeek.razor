@@ -146,7 +146,7 @@
 			(NoPlayer, NamedPlayer player2) => $"unknown vs <span class='player'>{player2.Name}</span>",
 			(NamedPlayer player1, Bye) => $"<span class='player' data-result='winner'>{player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) has a bye",
 			(Bye, NamedPlayer player2) => $"<span class='player' data-result='winner'>{player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>) has a bye",
-			(Bye, Bye) => "Bye",
+			(Bye bye1, Bye bye2) => $"""Bye {(string.IsNullOrWhiteSpace(bye1.ByeInfo) ? "" : $" - {bye1.ByeInfo} withdrew")}""",
 			_ when match.Player1IsWinner => $"""<span class='player' data-result='winner'>{match.Player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) vs <span class='player' data-result='loser'>{match.Player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>) <span class='scores'>{string.Join(", ", match.Games.Select(g => $"{g}"))}</span>""",
 			_ when match.Player2IsWinner => $"""<span class='player' data-result='loser'>{match.Player1.Name}</span> (<span class='premier-points'>{match.PremierPoints1:F1}</span>) vs <span class='player' data-result='winner'>{match.Player2.Name}</span> (<span class='premier-points'>{match.PremierPoints2:F1}</span>) <span class='scores'>{string.Join(", ", match.Games.Select(g => $"{g}"))}</span>""",
 			_ => $"""<span class='player'>{match.Player1.Name}</span> vs <span class='player'>{match.Player2.Name}</span> <span class='scores'>{string.Join(", ", match.Games.Select(g => $"{g}"))}</span>""",
