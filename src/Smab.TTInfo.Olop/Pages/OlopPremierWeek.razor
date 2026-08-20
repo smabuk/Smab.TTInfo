@@ -53,35 +53,46 @@
 		}
 	}
 
+
 	<h2>Points</h2>
 	<table>
 		<thead>
 			<tr>
-				<th></th>
-				<th>Name</th>
-				<th>Points</th>
+				<th scope="col">
+					<button class="btn" @onclick="() => SortPointsTableBy(SortableField.Name)">
+						Name @SortIndicator(SortableField.Name)
+					</button>
+				</th>
+				<th scope="col">
+					<button class="btn" @onclick="() => SortPointsTableBy(SortableField.Points)">
+						Points @SortIndicator(SortableField.Points)
+					</button>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (WeekPlayerDetails playerDetails in Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints)) {
-				<tr>
+			@{
+				List<WeekPlayerDetails> sortedPlayers = _currentSortField switch
+				{
+					SortableField.Name => [.. Week.PlayerDetails.OrderBy(pd => pd.Player.Name)],
+					SortableField.Points => [.. Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints).ThenBy(pd => pd.Player.Name)],
+					_ => [.. Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints).ThenBy(pd => pd.Player.Name)]
+				};
+			}
+
+			@foreach (WeekPlayerDetails playerDetails in sortedPlayers) {
+				<tr class="@(HighlightPlayer == playerDetails.Player ? "highlight-player" : "")" @onclick="() => SetHighlightPlayer(playerDetails.Player)">
 					<td>
+						@playerDetails.Player.Name
 						<span>
 							@if (playerDetails.Player == HighlightPlayer) {
-								<svg @onclick="() => SetHighlightPlayer(null)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="limegreen" class="bi bi-eye-fill" viewBox="0 0 16 16">
-									<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-									<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-								</svg>
-
-							} else {
-								<svg @onclick="() => SetHighlightPlayer(playerDetails.Player)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="limegreen" class="bi bi-eye-fill" viewBox="0 0 16 16">
 									<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
 									<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
 								</svg>
 							}
 						</span>
 					</td>
-					<td>@playerDetails.Player.Name</td>
 					<td>@playerDetails.PremierPoints.ToString("F1")</td>
 				</tr>
 			}
@@ -96,7 +107,9 @@
 	[PersistentState] public Week? Week { get; set; }
 	[PersistentState] public bool? isLinked { get; set; } = null;
 
-	public NamedPlayer? HighlightPlayer { get; set; } = default;
+	private SortableField _currentSortField = SortableField.Points;
+	private bool _sortAscending = false;
+	private NamedPlayer? HighlightPlayer { get; set; } = default;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -110,7 +123,11 @@
 
 	private void SetHighlightPlayer(NamedPlayer? player)
 	{
-		HighlightPlayer = player;
+		if (HighlightPlayer == player) {
+			HighlightPlayer = null;
+		} else {
+			HighlightPlayer = player;
+		}
 	}
 
 	private static string MatchToHtmlString(Match match)
@@ -133,5 +150,34 @@
 
 	private static bool AnyMatchesToBePlayed(IEnumerable<Round> rounds)
 		=> rounds.Any(round => round.Matches.Any(m => (m.Player1 is NamedPlayer && m.Player2 is NamedPlayer && m.Games is []) || (m.Player1 is NoPlayer || m.Player2 is NoPlayer)));
+
+
+	private void SortPointsTableBy(SortableField field)
+	{
+		_currentSortField = field;
+		_sortAscending = field switch
+		{
+			SortableField.Points => false,
+			SortableField.Name => true,
+			_ => !_sortAscending
+
+		};
+	}
+
+	private RenderFragment SortIndicator(SortableField sortableField) => builder =>
+	{
+		if (_currentSortField == sortableField) {
+			builder.OpenElement(0, "span");
+			builder.AddAttribute(1, "data-sort-indicator", _sortAscending ? "asc" : "desc");
+			builder.CloseElement();
+		}
+	};
+
+	private enum SortableField
+	{
+		Name,
+		Points
+	}
+
 
 }
