@@ -64,6 +64,11 @@
 					</button>
 				</th>
 				<th scope="col">
+					<button class="btn" @onclick="() => SortPointsTableBy(SortableField.Rank)">
+						Rank @SortIndicator(SortableField.Rank)
+					</button>
+				</th>
+				<th scope="col">
 					<button class="btn" @onclick="() => SortPointsTableBy(SortableField.Points)">
 						Points @SortIndicator(SortableField.Points)
 					</button>
@@ -74,6 +79,7 @@
 			@{
 				List<WeekPlayerDetails> sortedPlayers = _currentSortField switch
 				{
+					SortableField.Rank => [.. Week.PlayerDetails.OrderBy(pd => pd.Rank).ThenBy(pd => pd.Player.Name)],
 					SortableField.Name => [.. Week.PlayerDetails.OrderBy(pd => pd.Player.Name)],
 					SortableField.Points => [.. Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints).ThenBy(pd => pd.Player.Name)],
 					_ => [.. Week.PlayerDetails.OrderByDescending(pd => pd.PremierPoints).ThenBy(pd => pd.Player.Name)]
@@ -93,6 +99,7 @@
 							}
 						</span>
 					</td>
+					<td>@playerDetails.Rank</td>
 					<td>@playerDetails.PremierPoints.ToString("F1")</td>
 				</tr>
 			}
@@ -157,8 +164,9 @@
 		_currentSortField = field;
 		_sortAscending = field switch
 		{
-			SortableField.Points => false,
 			SortableField.Name => true,
+			SortableField.Points => false,
+			SortableField.Rank => true,
 			_ => !_sortAscending
 
 		};
@@ -176,7 +184,8 @@
 	private enum SortableField
 	{
 		Name,
-		Points
+		Points,
+		Rank,
 	}
 
 

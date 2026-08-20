@@ -4,7 +4,8 @@ public record WeekPlayerDetails(
 	NamedPlayer Player,
 	double PremierPoints,
 	int GamesWon,
-	int GamesLost
+	int GamesLost,
+	int? Rank = null
 );
 
 public static partial class WeekPlayerDetailsExtensions
