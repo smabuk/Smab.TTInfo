@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 [JsonDerivedType(typeof(NamedPlayer), typeDiscriminator: "NamedPlayer")]
 [JsonDerivedType(typeof(NoPlayer), typeDiscriminator: "NoPlayer")]

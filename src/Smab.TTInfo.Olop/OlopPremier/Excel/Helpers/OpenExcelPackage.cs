@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Helpers;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Excel.Helpers;
 
 public static partial class ExcelPackageHelpers
 {
@@ -12,7 +12,7 @@ public static partial class ExcelPackageHelpers
 		/// <exception cref="Exception">Thrown if the Excel file cannot be downloaded.</exception>
 		public async Task<ExcelPackage> OpenExcelPackage(HttpClient httpClient)
 		{
-			ExcelPackage.License.SetNonCommercialPersonal("Simon Brookes");
+			ExcelPackage.License.SetNonCommercialOrganization("OLOP Table Tennis Club");
 
 			if (oneDriveExcelLink.StartsWith("http")) {
 				using HttpResponseMessage response = await httpClient.GetAsync($"{oneDriveExcelLink}&download=1");

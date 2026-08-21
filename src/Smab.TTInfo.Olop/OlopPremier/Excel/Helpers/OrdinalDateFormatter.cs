@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Smab.TTInfo.Olop.Helpers;
+namespace Smab.TTInfo.Olop.OlopPremier.Excel.Helpers;
 
 public static partial class OrdinalDateFormatterExtensions
 {

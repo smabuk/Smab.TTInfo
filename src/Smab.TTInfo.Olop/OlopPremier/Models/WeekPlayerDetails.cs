@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 public record WeekPlayerDetails(
 	NamedPlayer Player,

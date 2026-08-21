@@ -1,6 +1,6 @@
-﻿using static Smab.TTInfo.Olop.Models.RoundType;
+﻿using static Smab.TTInfo.Olop.OlopPremier.Models.RoundType;
 
-namespace Smab.TTInfo.Olop.Models;
+namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 public enum RoundType
 {

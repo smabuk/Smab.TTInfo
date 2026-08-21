@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 [JsonDerivedType(typeof(MainRound), typeDiscriminator: "Main")]
 [JsonDerivedType(typeof(ConsolationRound), typeDiscriminator: "Consolation")]

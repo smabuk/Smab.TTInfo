@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace Smab.TTInfo.Olop;
 // The associated JavaScript module is loaded on demand when first needed.

@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 public record Week(int WeekNo, DateOnly? Date, List<WeekPlayerDetails> PlayerDetails, List<Round> Rounds);
 

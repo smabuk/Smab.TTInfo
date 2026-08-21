@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 public record Match(Player Player1, Player Player2, List<Game> Games, double PremierPoints1, double PremierPoints2)
 {

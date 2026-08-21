@@ -1,9 +1,7 @@
-﻿namespace Smab.TTInfo.Olop.Helpers;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Excel.Helpers;
 
 public static partial class ExcelPackageHelpers
 {
-	const string WEEK_DATES_TABLE_NAME = "WeekDates";
-
 	extension(ExcelPackage package)
 	{
 		/// <summary>

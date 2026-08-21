@@ -1,6 +1,9 @@
 ﻿namespace Smab.TTInfo.Olop;
 
-public class OlopOptions : TTInfoOptions
+/// <summary>
+/// Options for the Olop application. Each vertical slice adds properties into this partial class, so that all options
+/// are available in one place.
+/// </summary>
+public partial class OlopOptions : TTInfoOptions
 {
-	public string OlopPremierExcelLink { get; set; } = "";
 }

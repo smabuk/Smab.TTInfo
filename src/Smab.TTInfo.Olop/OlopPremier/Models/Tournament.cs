@@ -1,4 +1,4 @@
-﻿namespace Smab.TTInfo.Olop.Models;
+﻿namespace Smab.TTInfo.Olop.OlopPremier.Models;
 
 [JsonDerivedType(typeof(MainTournament), typeDiscriminator: "Main")]
 [JsonDerivedType(typeof(ConsolationTournament), typeDiscriminator: "Consolation")]
