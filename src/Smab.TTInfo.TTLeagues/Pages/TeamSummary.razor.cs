@@ -206,12 +206,11 @@ public partial class TeamSummary
 			return "";
 		}
 
-		if (match.Home.Name.Contains(' ') && match.Away.Name.Contains(' ') && match.Home.Name[..(match.Home.Name.LastIndexOf(' '))] == match.Away.Name[..(match.Away.Name.LastIndexOf(' '))]) {
-			return match.Home.Name.Equals(TeamName) ? "home" : "away";
-		} else {
-			return "";
-		}
+		return match.Home.Name.Contains(' ') && match.Away.Name.Contains(' ') && match.Home.Name[..(match.Home.Name.LastIndexOf(' '))] == match.Away.Name[..(match.Away.Name.LastIndexOf(' '))]
+			? match.Home.Name.Equals(TeamName) ? "home" : "away"
+			: "";
 	}
 
-	static bool MatchHasDefaultStartTime(Match match) => match.Time?.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
+	static bool MatchHasDefaultStartTime(Match match)
+		=> match.ActualDateTime.ToUKTime() is DateTime uk && uk.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
 }

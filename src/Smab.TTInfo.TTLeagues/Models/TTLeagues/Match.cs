@@ -125,5 +125,25 @@ public sealed record Match(
 	/// <summary>
 	/// Gets the combined date and time value based on the <see cref="Date"/> and <see cref="Time"/> properties.
 	/// </summary>
-	public DateTimeOffset? ActualDateTime => Date?.Date.AddHours(Time?.Hour ?? 0).AddMinutes(Time?.Minute ?? 0);
+	public DateTimeOffset? ActualDateTime
+	{
+		get
+		{
+			if (Date is null || Time is null) {
+				return null;
+			}
+
+			TimeSpan offset = Time?.Offset ?? Date?.Offset ?? TimeSpan.Zero;
+
+			return new DateTimeOffset(
+				Date!.Value.Year,
+				Date.Value.Month,
+				Date.Value.Day,
+				Time!.Value.Hour,
+				Time.Value.Minute,
+				0,
+				offset
+			);
+		}
+	}
 };
