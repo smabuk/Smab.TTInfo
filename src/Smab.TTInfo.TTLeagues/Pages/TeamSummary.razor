@@ -7,7 +7,7 @@
 
 @if (failedToLoad) {
 	<h1>Failed to load @TeamName</h1>
-} else if (team is null || fixtures.Count == 0) {
+} else if (teamMembers is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
 } else {
 	<h1>@teamStats?.Competition.Value</h1>
@@ -155,8 +155,8 @@
 								<td>@teamMember.Name</td>
 								<td><span>@(new string('0', 2 - "0".Length))</span>0</td>
 								<td><span>@(new string('0', 3 - "n/a".Length))</span>n/a</td>
+								<td><span>@(new string('0', 3 - "n/a".Length))</span>n/a</td>
 								<td><span>@(new string('0', 3 - rankingPosition.Length))</span>@rankingPosition</td>
-								<td><span>@(new string('0', 2 - "0".Length))</span>0</td>
 								<td></td>
 								<td></td>
 							</tr>

@@ -13,7 +13,7 @@ public partial class TeamSummary
 	public int TeamId { get; set; }
 
 	public bool internalLinks = true;
-	private bool failedToLoad = false;
+	private bool failedToLoad;
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
@@ -40,13 +40,16 @@ public partial class TeamSummary
 			TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, TTInfoId, competitionId) ?? int.MinValue;
 		}
 
-		team = await _ttleagues.GetTeam(TeamId, TTInfoId);
-		if (team is null) {
-			failedToLoad = true;
-			return;
-		}
+		//They added authentication to this API
+		// ToDo: Get Captain Name another way, as this API call is now returning 401 Unauthorized
+		//team = await _ttleagues.GetTeam(TeamId, TTInfoId);
+		//if (team is null) {
+		//	failedToLoad = true;
+		//	return;
+		//}
 
-		competitionId = team.CompetitionId ?? int.MinValue;
+		//competitionId = team.CompetitionId ?? int.MinValue;
+
 		teamStats = await _ttleagues.GetTeamStats(TeamId, TTInfoId, competitionId);
 		teamMembers = await _ttleagues.GetTeamMembers(TeamId, TTInfoId);
 		rankings = (await _ttleagues.GetRankings(TTInfoId)).ToDictionary(r => r.UserId);
@@ -199,12 +202,12 @@ public partial class TeamSummary
 
 	private string DisplayHomeOrAwayIfSameClub(Match match)
 	{
-		if (team is null) {
+		if (TeamName is null) {
 			return "";
 		}
 
 		if (match.Home.Name.Contains(' ') && match.Away.Name.Contains(' ') && match.Home.Name[..(match.Home.Name.LastIndexOf(' '))] == match.Away.Name[..(match.Away.Name.LastIndexOf(' '))]) {
-			return match.Home.Name.Equals(team.Name) ? "home" : "away";
+			return match.Home.Name.Equals(TeamName) ? "home" : "away";
 		} else {
 			return "";
 		}
