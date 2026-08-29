@@ -60,6 +60,7 @@ public partial class TeamSummary
 		fixtures = allFixtures?.Matches
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
+			.Where(f => !(string.Equals(f.Home.Name, "Bye", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Bye", StringComparison.CurrentCultureIgnoreCase)))
 			.OrderBy(m => m.ActualDateTime)
 			.ToList() ?? [];
 
