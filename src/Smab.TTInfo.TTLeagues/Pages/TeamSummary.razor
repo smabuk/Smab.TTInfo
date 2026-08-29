@@ -5,7 +5,9 @@
 
 <PageTitle>@TeamName - @TTInfoId</PageTitle>
 
-@if (fixtures is null || fixtures.Count == 0) {
+@if (failedToLoad) {
+	<h1>Failed to load @TeamName</h1>
+} else if (team is null || fixtures.Count == 0) {
 	<h1>Loading ... @TeamName ...</h1>
 } else {
 	<h1>@teamStats?.Competition.Value</h1>

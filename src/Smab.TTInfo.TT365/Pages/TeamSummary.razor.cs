@@ -18,6 +18,7 @@ public partial class TeamSummary
 	private readonly Dictionary<string, List<Player>> teamPlayersList = [];
 	private Dictionary<int, FixtureResult> fixtureResults = [];
 	private League? league;
+	private bool failedToLoad = false;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -28,6 +29,11 @@ public partial class TeamSummary
 		StateHasChanged();
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		team = await _tt365.GetTeamStats((TT365LeagueId)LeagueId, TeamName);
+		if (team is null) {
+			failedToLoad = true;
+			return;
+		}
+
 		if (team is not null) {
 
 			fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.GetCurrentSeasonId()) ?? []).Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))];

@@ -1,6 +1,4 @@
-﻿using Smab.TTInfo.TTLeagues.Models.TTLeagues;
-
-namespace Smab.TTInfo.TTLeagues.Pages;
+﻿namespace Smab.TTInfo.TTLeagues.Pages;
 public partial class TeamSummary
 {
 	[EditorRequired]
@@ -15,6 +13,7 @@ public partial class TeamSummary
 	public int TeamId { get; set; }
 
 	public bool internalLinks = true;
+	private bool failedToLoad = false;
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
@@ -43,6 +42,7 @@ public partial class TeamSummary
 
 		team = await _ttleagues.GetTeam(TeamId, TTInfoId);
 		if (team is null) {
+			failedToLoad = true;
 			return;
 		}
 

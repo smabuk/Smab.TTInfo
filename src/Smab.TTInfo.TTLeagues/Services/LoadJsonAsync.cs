@@ -42,8 +42,13 @@ public sealed partial class TTLeaguesReader
 			if (response.IsSuccessStatusCode) {
 				jsonString = await response.Content.ReadAsStringAsync();
 				_ = SaveFileToCache(jsonString, fileName);
-			//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
-			//	jsonString = LoadFile(fileName);
+				//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
+				//	jsonString = LoadFile(fileName);
+			} else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
+				jsonString = LoadFileFromCache(fileName);
+				if (string.IsNullOrWhiteSpace(jsonString)) {
+					//throw new UnauthorizedAccessException($"Unauthorized access to {url}. No cached file available.");
+				}
 			} else {
 				jsonString = LoadFileFromCache(fileName);
 			}
