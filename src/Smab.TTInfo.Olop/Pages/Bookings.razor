@@ -16,7 +16,7 @@
 		<thead class="table-dark">
 			<tr>
 				<th scope="col">
-					<button class="btn" @onclick="() => SortBy(nameof(SortableField.Date))">
+					<button class="btn" @onclick="() => SortBy(SortableField.Date)">
 						Date @SortIndicator(SortableField.Date)
 					</button>
 				</th>
@@ -45,7 +45,7 @@
 								<option value="@summary" selected="@(_selectedSummary == summary)">@summary</option>
 							}
 						</select>
-						<button class="btn" @onclick="() => SortBy(nameof(SortableField.Summary))">
+						<button class="btn" @onclick="() => SortBy(SortableField.Summary)">
 							Summary @SortIndicator(SortableField.Summary)
 						</button>
 					</div>
@@ -74,10 +74,11 @@
 	const string calendarUrlBookings = "https://calendar.google.com/calendar/ical/hblq8dq4j9rs2kk0rbbegdo1l0%40group.calendar.google.com/public/basic.ics";
 	const string calendarUrlPractice = "https://calendar.google.com/calendar/ical/olop.tt.club%40gmail.com/public/basic.ics";
 
-	[PersistentState]
-	public List<OccurrenceInfo>? Occurences { get; set; }
+	// ToDo: Make this persistent state so that it is not reloaded every time the page is visited (breaks Blazor circuit currently in 10.x)
+	// [PersistentState]
+	public List<OccurrenceInfo>? Occurrences { get; set; }
 
-	private string _currentSortField = nameof(SortableField.Date);
+	private SortableField _currentSortField = SortableField.Date;
 	private bool _sortAscending = true;
 	private DayOfWeek? _selectedDay = null;
 	private string? _selectedSummary = null;
@@ -86,11 +87,11 @@
 	{
 		get
 		{
-			if (Occurences is null) {
+			if (Occurrences is null) {
 				return [];
 			}
 
-			return Occurences.Select(o => o.Start.DayOfWeek).Distinct().OrderBy(d => d);
+			return Occurrences.Select(o => o.Start.DayOfWeek).Distinct().OrderBy(d => d);
 		}
 	}
 
@@ -98,11 +99,14 @@
 	{
 		get
 		{
-			if (Occurences is null) {
+			if (Occurrences is null) {
 				return [];
 			}
 
-			return Occurences.Select(o => o.Summary).Distinct().OrderBy(s => s);
+			return Occurrences.SelectMany(o => o.Summary.Split(["-", "vs"], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				.Distinct()
+				.Where(s => s.StartsWith("Table") || s.StartsWith("OLOP") || s.StartsWith("Club") || s.StartsWith("FREE"))
+				.OrderBy(s => s);
 		}
 	}
 
@@ -110,18 +114,18 @@
 	{
 		get
 		{
-			if (Occurences is null) {
+			if (Occurrences is null) {
 				return [];
 			}
 
-			IEnumerable<OccurrenceInfo> filtered = Occurences;
+			IEnumerable<OccurrenceInfo> filtered = Occurrences;
 
 			if (_selectedDay is not null) {
 				filtered = filtered.Where(o => o.Start.DayOfWeek == _selectedDay);
 			}
 
 			if (string.IsNullOrWhiteSpace(_selectedSummary) is false) {
-				filtered = filtered.Where(o => o.Summary == _selectedSummary);
+				filtered = filtered.Where(o => o.Summary.Contains(_selectedSummary));
 			}
 
 			return filtered;
@@ -140,10 +144,10 @@
 
 			return _currentSortField switch
 			{
-				nameof(SortableField.Date) => _sortAscending
+				SortableField.Date => _sortAscending
 					? filtered.OrderBy(o => o.Start)
 					: filtered.OrderByDescending(o => o.Start),
-				nameof(SortableField.Summary) => _sortAscending
+				SortableField.Summary => _sortAscending
 					? filtered.OrderBy(o => o.Summary).ThenBy(o => o.Start)
 					: filtered.OrderByDescending(o => o.Summary).ThenBy(o => o.Start),
 				_ => filtered.OrderBy(o => o.Start)
@@ -153,7 +157,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (Occurences is null) {
+		if (Occurrences is null) {
 			string icsContentBookings = await _httpClient.GetStringAsync(calendarUrlBookings);
 			string icsContentPractice = await _httpClient.GetStringAsync(calendarUrlPractice);
 
@@ -164,7 +168,7 @@
 			DateTime startDate = DateTime.Now.AddHours(-5);
 			DateTime endDate = DateTime.Now.AddYears(1); // Show occurrences for the next year
 
-			List<CalendarEvent> practiceEvents = [.. calendarPractice.Events.Where(e => e.RecurrenceRules.Any())];
+			List<CalendarEvent> practiceEvents = [.. calendarPractice.Events.Where(e => e.RecurrenceRule is not null)];
 
 			List<Occurrence> practiceOccurrences = [
 				.. practiceEvents
@@ -173,7 +177,7 @@
 					.Where(o => o is not null)
 			)];
 
-			Occurences = [
+			Occurrences = [
 				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
 				.. calendarPractice.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
 				.. practiceOccurrences.Select(e => new OccurrenceInfo(((CalendarEvent)e!.Source).Summary!, e.Period.StartTime.Value, e.Period.EffectiveEndTime!.Value, ((CalendarEvent)e!.Source).IsAllDay))
@@ -181,7 +185,7 @@
 		}
 	}
 
-	private void SortBy(string field)
+	private void SortBy(SortableField field)
 	{
 		if (_currentSortField == field) {
 			_sortAscending = !_sortAscending;
@@ -205,7 +209,7 @@
 
 	private RenderFragment SortIndicator(SortableField sortableField) => builder =>
 	{
-		if (_currentSortField == sortableField.ToString()) {
+		if (_currentSortField == sortableField) {
 			builder.OpenElement(0, "span");
 			builder.AddAttribute(1, "data-sort-indicator", _sortAscending ? "asc" : "desc");
 			builder.CloseElement();
