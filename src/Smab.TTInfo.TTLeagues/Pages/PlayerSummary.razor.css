@@ -148,6 +148,7 @@ dl {
 	grid-template-columns: max-content auto;
 	grid-column-gap: 2em;
 	grid-row-gap: 0;
+	line-height: 1.1rem;
 }
 
 dt {

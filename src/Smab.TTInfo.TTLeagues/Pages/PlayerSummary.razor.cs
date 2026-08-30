@@ -46,6 +46,15 @@ public partial class PlayerSummary(TTLeaguesReader _ttleagues)
 					playerStatsList.Add(playerStats);
 				}
 			}
+
+			if (CompetitionId is null) {
+				foreach (int competitionId in league.ArchivedCompetitions.Select(c => c.Id).Where(id => id is > 0)) {
+					PlayerStats? playerStats = await _ttleagues.GetPlayerStats(PlayerId, TTInfoId, competitionId);
+					if (playerStats is not null) {
+						playerStatsList.Add(playerStats);
+					}
+				}
+			}
 		}
 
 		StateHasChanged();
