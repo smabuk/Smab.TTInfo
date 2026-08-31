@@ -14,6 +14,7 @@
 		@foreach (PlayerStats ps in playerStatsList.Where(p => p.Results.Any()).OrderByDescending(p => p.Competition.Key)) {
 			<h2>@ps.Competition.Value</h2>
 			@foreach (PlayerResult psr in ps.Results) {
+				string divName = CalculateDivisionName(ps.Division.Value, psr.Results.First().DivisionId);
 				<h3>@psr.Team.Value</h3>
 				<table class="table table-bordered table-sm">
 					<thead>
@@ -94,9 +95,10 @@
 				<tbody>
 					@foreach (PlayerStats ps in playerStatsList.Where(p => p.Results.Any()).OrderByDescending(p => p.Competition.Key)) {
 						int psResultsCount = ps.Results.Count();
+						string divName = CalculateDivisionName(ps.Division.Value, ps.Results.First().DivisionId);
 						<tr>
 							<td>@ps.Competition.Value</td>
-							<td>@(psResultsCount == 1 ? @CalculateDivisionName(ps.Division.Value, ps.Results.First().DivisionId) : "All")</td>
+							<td>@(psResultsCount == 1 ? divName : "All")</td>
 							<td>@(psResultsCount == 1 ? ps.Team.Value : "All")</td>
 							<td>@ps.Average.Played</td>
 							<td>@ps.Average.Won</td>
@@ -107,12 +109,13 @@
 						</tr>
 						@if (psResultsCount > 1) {
 							@foreach (PlayerResult psr in ps.Results) {
+								divName = CalculateDivisionName(ps.Division.Value, psr.Results.First().DivisionId);
 								int psrResultsCount = psr.Results.Count();
 								int psrWon = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win").Count();
 								int psrLost = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss").Count();
 								<tr>
 									<td>@ps.Competition.Value</td>
-									<td>@CalculateDivisionName(ps.Division.Value, psr.Results.First().DivisionId)</td>
+									<td>@divName</td>
 									<td>&nbsp;&nbsp;@psr.Team.Value</td>
 									<td>@psrResultsCount</td>
 									<td>@psrWon</td>
