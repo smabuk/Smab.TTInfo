@@ -11,9 +11,9 @@
 	@* <h1>@league?.CurrentCompetitions.First().Name</h1> *@
 	<h1>Player Stats for @PlayerName</h1>
 	<div id="results">
-		@foreach (PlayerStats ps in playerStatsList.OrderByDescending(p => p.Competition.Key)) {
+		@foreach (PlayerStats ps in playerStatsList.Where(p => p.Results.Any()).OrderByDescending(p => p.Competition.Key)) {
+			<h2>@ps.Competition.Value</h2>
 			@foreach (PlayerResult psr in ps.Results) {
-				<h3>@ps.Competition.Value</h3>
 				<h3>@psr.Team.Value</h3>
 				<table class="table table-bordered table-sm">
 					<thead>
@@ -42,7 +42,7 @@
 					</tbody>
 				</table>
 				<div id="stats">
-					<h3>Stats</h3>
+					@* <h3>Stats</h3>
 					<dl>
 						<dt>Wins:</dt>
 						<dd>@($"{(ps.Average.Won * 100 / ps.Average.Played)}% - {ps.Average.Won} out of {ps.Average.Played}")</dd>
@@ -66,9 +66,69 @@
 						<dd>@($"{ps.LocalRanking.Score}")</dd>
 						<dt>Ranking pts gained:</dt>
 						<dd>@($"{psr.Results.Sum(res => res.Score)}")</dd>
-					</dl>
+					</dl> *@
 				</div>
 			}
 		}
+	</div>
+	<div id="summary">
+		<h2>Summary</h2>
+		@{
+			PlayerStats currentStats = playerStatsList.First();
+		}
+		<table class="table table-bordered table-sm">
+			<thead>
+				<tr>
+					<th>Season</th>
+					<th>Team</th>
+					<th>Played</th>
+					<th>Won</th>
+					<th>Lost</th>
+					<th>Win %</th>
+					<th>Rank Pts</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (PlayerStats ps in playerStatsList.Where(p => p.Results.Any()).OrderByDescending(p => p.Competition.Key)) {
+					int psResultsCount = ps.Results.Count();
+					<tr>
+						<td>@ps.Competition.Value</td>
+						<td>@(psResultsCount == 1 ? ps.Team.Value : "All")</td>
+						<td>@ps.Average.Played</td>
+						<td>@ps.Average.Won</td>
+						<td>@(ps.Average.Played - ps.Average.Won)</td>
+						<td>@($"{(ps.Average.Won * 100 / ps.Average.Played)}%")</td>
+						<td>@($"{ps.Results.SelectMany(psr => psr.Results).Sum(res => res.Score):+##0;-##0;0}")</td>
+						@* <td>@($"{(100 - (ps.Average.Won * 100 / ps.Average.Played))}% - {ps.Average.Played - ps.Average.Won}")</td> *@
+					</tr>
+					@if (psResultsCount > 1) {
+						@foreach (PlayerResult psr in ps.Results) {
+							int psrResultsCount = psr.Results.Count();
+							int psrWon = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win").Count();
+							int psrLost = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss").Count();
+							<tr>
+								<td>@ps.Competition.Value</td>
+								<td>&nbsp;&nbsp;@psr.Team.Value</td>
+								<td>@psrResultsCount</td>
+								<td>@psrWon</td>
+								<td>@psrLost</td>
+								<td>@($"{(psrWon * 100 / psrResultsCount)}%")</td>
+								<td>@($"{psr.Results.Sum(res => res.Score):+##0;-##0;0}")</td>
+							</tr>
+						}
+					}
+				}
+			</tbody>
+			<tfoot>
+			</tfoot>
+		</table>
+		<p>
+			<dl>
+				<dt>Ranking Position:</dt>
+				<dd>@($"{currentStats.LocalRanking.Position}")</dd>
+				<dt>Ranking Points:</dt>
+				<dd>@($"{currentStats.LocalRanking.Score}")</dd>
+			</dl>
+		</p>
 	</div>
 }
