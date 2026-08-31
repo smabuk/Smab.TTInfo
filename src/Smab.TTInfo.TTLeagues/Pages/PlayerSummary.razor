@@ -110,9 +110,10 @@
 						@if (psResultsCount > 1) {
 							@foreach (PlayerResult psr in ps.Results) {
 								divName = CalculateDivisionName(ps.Division.Value, psr.Results.First().DivisionId);
-								int psrResultsCount = psr.Results.Count();
-								int psrWon = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "win").Count();
-								int psrLost = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss").Count();
+								List<PlayerResult> psrResults = [.. psr.Results.Where(res => res.Opponent.Key is not null)];
+								int psrResultsCount = psrResults.Count;
+								int psrWon = psrResults.Where(res => CalculateResult(res.For, res.Against) == "win").Count();
+								int psrLost = psrResults.Where(res => CalculateResult(res.For, res.Against) == "loss").Count();
 								<tr>
 									<td>@ps.Competition.Value</td>
 									<td>@divName</td>
