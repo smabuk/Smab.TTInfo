@@ -60,19 +60,12 @@ public partial class PlayerSummary(TTLeaguesReader _ttleagues)
 		StateHasChanged();
 	}
 
-	string CalculateDivisionName(string name, int id)
+	string CalculateDivisionName(string name, int divisionId)
 	{
-		if (String.IsNullOrWhiteSpace(name) || String.Equals(name, "no division", StringComparison.InvariantCultureIgnoreCase)) {
-			if (divisionNames.TryGetValue(id, out string? value)) {
-				name = value;
-			} else {
-				name = lookup
-					.Where(l => l.Type == LookupType.Division && l.Id == id)
-					.Select(l => l.Name)
-					.First();
-				divisionNames.Add(id, name);
-			}
-		}
+		name = lookup
+			.Where(l => l.Type == LookupType.Division && l.Id == divisionId)
+			.Select(l => l.Name)
+			.FirstOrDefault() ?? name;
 
 		return name.Replace("division", "", StringComparison.InvariantCultureIgnoreCase).Trim();
 	}

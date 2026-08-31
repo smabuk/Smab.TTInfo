@@ -22,7 +22,7 @@ public sealed partial class TTLeaguesReader
 		if (lookup is null) {
 			lookup = [];
 			League? league = await GetLeague(ttinfoId);
-			foreach (Competition competition in league?.CurrentCompetitions ?? []) {
+			foreach (Competition competition in league?.CurrentCompetitions.Union(league.ArchivedCompetitions) ?? []) {
 				lookup.Add(new(LookupType.Competition, competition.Id, competition.Name));
 				List<Division> divisions = await GetDivisions(ttinfoId, competition.Id);
 				foreach (Division division in divisions) {

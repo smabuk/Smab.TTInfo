@@ -80,6 +80,7 @@
 			<thead>
 				<tr>
 					<th>Season</th>
+					<th>Div</th>
 					<th>Team</th>
 					<th>Played</th>
 					<th>Won</th>
@@ -93,6 +94,7 @@
 					int psResultsCount = ps.Results.Count();
 					<tr>
 						<td>@ps.Competition.Value</td>
+						<td>@(psResultsCount == 1 ? @CalculateDivisionName(ps.Division.Value, ps.Results.First().DivisionId) : "All")</td>
 						<td>@(psResultsCount == 1 ? ps.Team.Value : "All")</td>
 						<td>@ps.Average.Played</td>
 						<td>@ps.Average.Won</td>
@@ -108,6 +110,7 @@
 							int psrLost = psr.Results.Where(res => CalculateResult(res.For, res.Against) == "loss").Count();
 							<tr>
 								<td>@ps.Competition.Value</td>
+								<td>@CalculateDivisionName(ps.Division.Value, psr.Results.First().DivisionId)</td>
 								<td>&nbsp;&nbsp;@psr.Team.Value</td>
 								<td>@psrResultsCount</td>
 								<td>@psrWon</td>
