@@ -130,14 +130,16 @@
 				<tfoot>
 				</tfoot>
 			</table>
-			<p>
-				<dl>
-					<dt>Ranking Position:</dt>
-					<dd>@($"{currentStats.LocalRanking.Position}")</dd>
-					<dt>Ranking Points:</dt>
-					<dd>@($"{currentStats.LocalRanking.Score}")</dd>
-				</dl>
-			</p>
+			@if (currentStats?.LocalRanking is not null) {
+				<p>
+					<dl>
+						<dt>Ranking Position:</dt>
+						<dd>@($"{currentStats.LocalRanking.Position}")</dd>
+						<dt>Ranking Points:</dt>
+						<dd>@($"{currentStats.LocalRanking.Score}")</dd>
+					</dl>
+				</p>
+			}
 		</div>
 	} else {
 		<p>No results available</p>
