@@ -145,12 +145,12 @@
 			return _currentSortField switch
 			{
 				SortableField.Date => _sortAscending
-					? filtered.OrderBy(o => o.Start)
-					: filtered.OrderByDescending(o => o.Start),
+					? filtered.OrderBy(o => o.Start).ThenBy(o => o.Summary)
+					: filtered.OrderByDescending(o => o.Start).ThenBy(o => o.Summary),
 				SortableField.Summary => _sortAscending
 					? filtered.OrderBy(o => o.Summary).ThenBy(o => o.Start)
 					: filtered.OrderByDescending(o => o.Summary).ThenBy(o => o.Start),
-				_ => filtered.OrderBy(o => o.Start)
+				_ => filtered.OrderBy(o => o.Start).ThenBy(o => o.Summary)
 			};
 		}
 	}
