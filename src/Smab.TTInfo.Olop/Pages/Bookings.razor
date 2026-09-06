@@ -178,8 +178,8 @@
 			)];
 
 			Occurrences = [
-				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
-				.. calendarPractice.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value, e.End!.Value, e.IsAllDay)),
+				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value.ToLocalTime(), e.End!.Value.ToLocalTime(), e.IsAllDay)),
+				.. calendarPractice.Events.Where(e => e.RecurrenceRule is null).Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value.ToLocalTime(), e.End!.Value.ToLocalTime(), e.IsAllDay)),
 				.. practiceOccurrences.Select(e => new OccurrenceInfo(((CalendarEvent)e!.Source).Summary!, e.Period.StartTime.Value, e.Period.EffectiveEndTime!.Value, ((CalendarEvent)e!.Source).IsAllDay))
 				];
 		}
