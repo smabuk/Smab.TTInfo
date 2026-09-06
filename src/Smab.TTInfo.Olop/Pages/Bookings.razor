@@ -79,6 +79,7 @@
 
 	const string calendarUrlBookings = "https://calendar.google.com/calendar/ical/hblq8dq4j9rs2kk0rbbegdo1l0%40group.calendar.google.com/public/basic.ics";
 	const string calendarUrlPractice = "https://calendar.google.com/calendar/ical/olop.tt.club%40gmail.com/public/basic.ics";
+	const string GMT_STANDARD_TIME = "GMT Standard Time";
 
 	// ToDo: Make this persistent state so that it is not reloaded every time the page is visited (breaks Blazor circuit currently in 10.x)
 	// [PersistentState]
@@ -184,8 +185,8 @@
 			)];
 
 			Occurrences = [
-				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value.ToLocalTime(), e.End!.Value.ToLocalTime(), e.IsAllDay)),
-				.. calendarPractice.Events.Where(e => e.RecurrenceRule is null).Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.Value.ToLocalTime(), e.End!.Value.ToLocalTime(), e.IsAllDay)),
+				.. calendarBookings.Events.Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.ToTimeZone(GMT_STANDARD_TIME).Value, e.End!.ToTimeZone(GMT_STANDARD_TIME).Value, e.IsAllDay)),
+				.. calendarPractice.Events.Where(e => e.RecurrenceRule is null).Where(e => e.Start?.Value > startDate).Select(e => new OccurrenceInfo(e.Summary!, e.Start!.ToTimeZone(GMT_STANDARD_TIME).Value, e.End!.ToTimeZone(GMT_STANDARD_TIME).Value, e.IsAllDay)),
 				.. practiceOccurrences.Select(e => new OccurrenceInfo(((CalendarEvent)e!.Source).Summary!, e.Period.StartTime.Value, e.Period.EffectiveEndTime!.Value, ((CalendarEvent)e!.Source).IsAllDay))
 				];
 		}
@@ -227,4 +228,6 @@
 		Date,
 		Summary
 	}
+
+
 }
