@@ -21,7 +21,7 @@ public sealed partial class TTLeaguesReader
 			string awayTeam = match.Away.DisplayName;
 			string venue = match.Venue;
 
-			DateTime dateStart = match.ActualDateTime!.Value.DateTime;
+			DateTime dateStart = DateTime.SpecifyKind(match.ActualDateTime!.Value.DateTime, DateTimeKind.Utc);
 
 			if (dateStart.Hour == 0) {
 				dateStart += DEFAULT_START_TIME.ToTimeSpan();
