@@ -5,7 +5,7 @@
 /// </summary>
 /// <remarks>This record encapsulates all relevant data for a match, including team details, scheduling
 /// information, competition and league identifiers, and various statuses such as submission, approval, and forfeit
-/// details. The <see cref="ActualDateTime"/> property combines the <see cref="Date"/> and <see cref="Time"/> properties
+/// details. The <see cref="ActualDateTimeUtc"/> property combines the <see cref="Date"/> and <see cref="Time"/> properties
 /// to provide the full date and time of the match.</remarks>
 /// <param name="Id"></param>
 /// <param name="Home"></param>
@@ -67,8 +67,8 @@ public sealed record Match(
 	int Id,
 	MatchTeamInfo Home,
 	MatchTeamInfo Away,
-	DateTimeOffset? Date,
-	DateTimeOffset? Time,
+	DateTime? Date,
+	DateTime? Time,
 	int? Week,
 	string Name,
 	string Venue,
@@ -76,28 +76,28 @@ public sealed record Match(
 	int CompetitionId,
 	int DivisionId,
 	long? PreviousLinkId,
-	DateTimeOffset? Submitted,
-	DateTimeOffset? Approved,
-	DateTimeOffset? Rejected,
-	DateTimeOffset? Overridden,
+	DateTime? Submitted,
+	DateTime? Approved,
+	DateTime? Rejected,
+	DateTime? Overridden,
 	Person? SubmittedBy,
 	Person? ApprovedBy,
 	Person? RejectedBy,
 	Person? OverriddenBy,
 	int? VenueId,
-	DateTimeOffset? Forfeit,
+	DateTime? Forfeit,
 	string ForfeitReason,
 	int? ForfeitId,
 	string AbandonedReason,
-	DateTimeOffset? Abandoned,
+	DateTime? Abandoned,
 	int LeagueId,
 	int? ClubId,
 	int? CountyId,
 	string Competition,
-	DateTimeOffset Updated,
+	DateTime Updated,
 	bool Manual,
-	DateTimeOffset? Published,
-	DateTimeOffset? Archived,
+	DateTime? Published,
+	DateTime? Archived,
 	Person? Potm,
 	int? PotmType,
 	int Entry,
@@ -125,25 +125,16 @@ public sealed record Match(
 	/// <summary>
 	/// Gets the combined date and time value based on the <see cref="Date"/> and <see cref="Time"/> properties.
 	/// </summary>
-	public DateTimeOffset? ActualDateTime
-	{
-		get
-		{
-			if (Date is null || Time is null) {
-				return null;
-			}
-
-			TimeSpan offset = Time?.Offset ?? Date?.Offset ?? TimeSpan.Zero;
-
-			return new DateTimeOffset(
-				Date!.Value.Year,
-				Date.Value.Month,
-				Date.Value.Day,
-				Time!.Value.Hour,
-				Time.Value.Minute,
-				0,
-				offset
-			);
-		}
-	}
+	public DateTime? ActualDateTimeUtc
+		=> Date is null || Time is null
+			? null
+			: new DateTime(
+					Date!.Value.Year,
+					Date.Value.Month,
+					Date.Value.Day,
+					Time!.Value.Hour,
+					Time.Value.Minute,
+					0,
+					DateTimeKind.Utc
+				);
 };

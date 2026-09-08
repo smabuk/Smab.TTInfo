@@ -10,7 +10,7 @@
 }
 else
 {
-	<PageTitle>@matchCard?.Match.ActualDateTime?.ToUKTime().ToString("yyyy-MM-dd") - @matchCard?.Match.Home.Name v @matchCard?.Match.Away.Name - @TTInfoId</PageTitle>
+	<PageTitle>@matchCard?.Match.ActualDateTimeUtc?.ToUKTime().ToString("yyyy-MM-dd") - @matchCard?.Match.Home.Name v @matchCard?.Match.Away.Name - @TTInfoId</PageTitle>
 	<h1>@division?.Competition.Name</h1>
 	<div class="card match-card">
 		<h1>
@@ -32,7 +32,7 @@ else
 			</span>
 		</h1>
 		<div class="match-meta">
-			<span>@matchCard.Match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM yyyy")</span>
+			<span>@matchCard.Match.ActualDateTimeUtc?.ToUKTime().ToString("ddd dd MMM yyyy")</span>
 			<span>@division?.Name</span>
 			<span>@matchCard.Match.Venue</span>
 		</div>

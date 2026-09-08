@@ -6,31 +6,43 @@
 public static class DateTimeExtensions
 {
 	internal static readonly string DD_MMMM_YYYY = "dd MMMM, yyyy";
+	internal static readonly string GMT = "GMT Standard Time";
 
-	/// <summary>
-	/// Converts a <see cref="DateTime"/> to a string in the format "dd MMMM, yyyy".
-	/// </summary>
-	public static string ToDateLongMonthYearString(this DateTime dateTime) => dateTime.ToString(DD_MMMM_YYYY);
+	extension(DateTime dateTime)
+	{
+		public DateTime ToUKTime()
+			=> TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dateTime, GMT);
 
-	/// <summary>
-	/// Converts a nullable <see cref="DateTime"/> to a string in the format "dd MMMM, yyyy" or an empty string if null.
-	/// </summary>
-	public static string ToDateLongMonthYearString(this DateTime? dateTime) => dateTime?.ToString(DD_MMMM_YYYY) ?? "";
+		public string ToUtcString() => dateTime.ToString("u").Replace(" ", "T");
 
-	/// <summary>
-	/// Converts a <see cref="DateTime"/> to a UTC string representation.
-	/// </summary>
-	public static string ToUtcString(this DateTime dateTime)
-		=> dateTime.ToUniversalTime().ToString("u").Replace(" ", "T");
+		/// <summary>
+		/// Converts a <see cref="DateTime"/> to a string in the format "dd MMMM, yyyy".
+		/// </summary>
+		public string ToDateLongMonthYearString() => dateTime.ToString(DD_MMMM_YYYY);
+	}
 
-	/// <summary>
-	/// Converts a nullable <see cref="DateTime"/> to a UTC string representation, or null if null.
-	/// </summary>
-	public static string? ToUtcString(this DateTime? dateTime)
-		=> dateTime switch
-		{
-			not null => ((DateTime)dateTime).ToUtcString(),
-			null => null
-		};
+	extension(DateTime? dateTime)
+	{
+		public DateTime? ToUKTime() => dateTime?.ToUKTime();
+
+		public string? ToUtcString() => dateTime?.ToString("u").Replace(" ", "T");
+
+		/// </summary>
+		/// Converts a <see cref="DateTime?"/> to a UTC string representation.
+		/// <summary>
+		/// </summary>
+		/// Converts a UTC <see cref="DateTime?"/> to UK local time.
+		/// <summary>
+		/// </summary>
+		/// Converts a <see cref="DateTime"/> to a UTC string representation.
+		/// <summary>
+		/// </summary>
+		/// Converts a UTC <see cref="DateTime"/> to UK local time.
+		/// <summary>
+		/// <summary>
+		/// Converts a nullable <see cref="DateTime"/> to a string in the format "dd MMMM, yyyy" or an empty string if null.
+		/// </summary>
+		public string ToDateLongMonthYearString() => dateTime?.ToString(DD_MMMM_YYYY) ?? "";
+	}
 
 }

@@ -3,10 +3,10 @@
 namespace Smab.TTInfo.TTLeagues.Services;
 public sealed partial class TTLeaguesReader
 {
-	public string IcalStringFromFixtures(string ttinfoId, string TeamName, ICollection<Match> Fixtures, TimeZoneInfo timeZone)
+	public static string IcalStringFromFixtures(string ttinfoId, string TeamName, ICollection<Match> Fixtures, TimeZoneInfo timeZone)
 		=> IcalFromFixtures(ttinfoId, TeamName, Fixtures, timeZone).ToString();
 
-	public IcalCalendar IcalFromFixtures(string ttinfoId, string TeamName, ICollection<Match> Fixtures, TimeZoneInfo timeZone)
+	public static IcalCalendar IcalFromFixtures(string ttinfoId, string TeamName, ICollection<Match> Fixtures, TimeZoneInfo timeZone)
 	{
 		IcalCalendar ical = new()
 		{
@@ -21,31 +21,28 @@ public sealed partial class TTLeaguesReader
 			string awayTeam = match.Away.DisplayName;
 			string venue = match.Venue;
 
-			DateTime dateStart = DateTime.SpecifyKind(match.ActualDateTime!.Value.DateTime, DateTimeKind.Utc);
+			DateTime dateStartUtc = (match.ActualDateTimeUtc is not null
+				? match.ActualDateTimeUtc.Value
+				: DateTime.SpecifyKind((match.Date?.Date ?? DateTimeOffset.Now.Date) + DEFAULT_START_TIME.ToTimeSpan(), DateTimeKind.Utc));
 
-			if (dateStart.Hour == 0) {
-				dateStart += DEFAULT_START_TIME.ToTimeSpan();
+			if (dateStartUtc.Hour == 0) {
+				dateStartUtc += DEFAULT_START_TIME.ToTimeSpan();
 			}
 
-			DateTime dateEnd = dateStart.AddHours(3);
+			DateTime dateEnd = dateStartUtc.AddHours(3);
 
 			VEvent fixtureEvent = new()
 			{
-				UID = $"{ttinfoId}  {dateStart:yyyyMMdd} {homeTeam} vs {awayTeam}",
+				UID = $"TTLeagues {ttinfoId} {dateStartUtc:yyyyMMdd} {homeTeam} vs {awayTeam}",
 				Summary = $"🏓 {homeTeam} vs {awayTeam}",
 				Location = venue,
-				DateStart = dateStart,
+				DateStart = dateStartUtc,
 				DateEnd = dateEnd,
 				Priority = VEvent.PriorityLevel.Normal,
 				Transparency = VEvent.TransparencyType.TRANSPARENT,
-				Categories = "Table tennis,OLOP Table Tennis Club",
+				Categories = $"Table tennis,{TeamName}",
 				Description = "\n"
 			};
-
-			if (venue is not null && (venue.Contains("CURZON", StringComparison.OrdinalIgnoreCase) || venue.Contains("RBL", StringComparison.OrdinalIgnoreCase)))
-			{
-				fixtureEvent.DateStart = fixtureEvent.DateStart.AddMinutes(-30);
-			}
 
 			if (!string.IsNullOrEmpty(TeamName))
 			{
@@ -54,13 +51,12 @@ public sealed partial class TTLeaguesReader
 				[
 					new VAlarm
 					{
-						Trigger = new System.TimeSpan(0, 0, 60, 0),
+						Trigger = new TimeSpan(0, 0, 60, 0),
 						Action = VAlarm.ActionType.DISPLAY,
 						Description = "Reminder"
 					}
 				];
 			}
-
 
 			// If the match date is null, it means the match is postponed or to be arranged
 			if (match.Date is null) {

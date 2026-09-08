@@ -61,7 +61,7 @@ public partial class TeamSummary
 			.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 			.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
 			.Where(f => !(string.Equals(f.Home.Name, "Bye", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Bye", StringComparison.CurrentCultureIgnoreCase)))
-			.OrderBy(m => m.ActualDateTime)
+			.OrderBy(m => m.ActualDateTimeUtc)
 			.ToList() ?? [];
 
 		foreach (Match match in fixtures) {
@@ -213,5 +213,5 @@ public partial class TeamSummary
 	}
 
 	static bool MatchHasDefaultStartTime(Match match)
-		=> match.ActualDateTime.ToUKTime() is DateTime uk && uk.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
+		=> match.ActualDateTimeUtc.ToUKTime() is DateTime uk && uk.TimeOfDay == TTLeaguesReader.DEFAULT_START_TIME.ToTimeSpan();
 }

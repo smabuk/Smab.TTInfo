@@ -24,10 +24,10 @@
 						@if (match.Date is null) {
 							<span class="badge postponed" title="Postponed">P</span>
 						}
-						<time datetime="@match.ActualDateTime.ToUtcString()">
-							@match.ActualDateTime?.ToUKTime().ToString("ddd dd MMM")
+						<time datetime="@match.ActualDateTimeUtc.ToUtcString()">
+							@match.ActualDateTimeUtc?.ToUKTime().ToString("ddd dd MMM")
 							@if (!match.HasResults && !MatchHasDefaultStartTime(match)) {
-								<span class="@(MatchHasDefaultStartTime(match) ? null : "start-time-not-default")">@match.ActualDateTime?.ToUKTime().ToString(" HH:mm")</span>
+								<span class="@(MatchHasDefaultStartTime(match) ? null : "start-time-not-default")">@match.ActualDateTimeUtc?.ToUKTime().ToString(" HH:mm")</span>
 							}
 						</time>
 					</div>

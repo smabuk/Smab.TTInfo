@@ -138,7 +138,7 @@ public static class TT365ToTTLeaguesExtensions
 			ClubId: null,
 			CountyId: null,
 			Competition: string.Empty,
-			Updated: DateTimeOffset.MinValue,
+			Updated: DateTime.MinValue,
 			Manual: false,
 			Published: null,
 			Archived: null,

@@ -27,14 +27,14 @@ public sealed partial class TT365Reader
 		foreach (Fixture fixture in Fixtures) {
 			VEvent fixtureEvent = new()
 			{
-				UID          = $"TT365 {fixture.Date:yyyyMMdd} {fixture.HomeTeam} vs {fixture.AwayTeam}",
+				UID          = $"TT365 {leagueId} {fixture.Date:yyyyMMdd} {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Summary      = $"🏓 {fixture.HomeTeam} vs {fixture.AwayTeam}",
 				Location     = fixture.Venue,
 				DateStart    = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(fixture.Time()), timeZone), // All matches by default start at 7:30pm
 				DateEnd      = TimeZoneInfo.ConvertTimeToUtc(fixture.Date.ToDateTime(fixture.Time().AddHours(3)), timeZone),
 				Priority     = VEvent.PriorityLevel.Normal,
 				Transparency = VEvent.TransparencyType.TRANSPARENT,
-				Categories   = "Table tennis,OLOP Table Tennis Club",
+				Categories   = $"Table tennis,{TeamName}",
 				Description  = $"\n"
 			};
 

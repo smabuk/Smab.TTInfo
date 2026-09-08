@@ -73,18 +73,18 @@ public static partial class CalendarEndPoints
 			Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(ttinfoId);
 
 			List<Match> fixtures = allFixtures?.Matches
-				.Where(f => f.ActualDateTime is not null)
+				.Where(f => f.ActualDateTimeUtc is not null)
 				.Where(f => string.Equals(f.Home.Name, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, TeamName, StringComparison.CurrentCultureIgnoreCase))
 				.Where(f => !(string.Equals(f.Home.Name, "Free", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Free", StringComparison.CurrentCultureIgnoreCase)))
 				.Where(f => !(string.Equals(f.Home.Name, "Bye", StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.Away.Name, "Bye", StringComparison.CurrentCultureIgnoreCase)))
-				.OrderBy(m => m.ActualDateTime)
+				.OrderBy(m => m.ActualDateTimeUtc)
 				.ToList() ?? [];
 
 			if (fixtures is []) {
 				return TypedResults.NotFound();
 			}
 
-			ical = _ttleagues.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
+			ical = TTLeaguesReader.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
 		}
 
 
