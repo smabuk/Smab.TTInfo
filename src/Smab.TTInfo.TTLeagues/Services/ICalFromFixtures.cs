@@ -20,12 +20,9 @@ public sealed partial class TTLeaguesReader
 			string homeTeam = match.Home.DisplayName;
 			string awayTeam = match.Away.DisplayName;
 			string venue = match.Venue;
-			DateTimeOffset? actualDateTime = match.ActualDateTime;
 
-			DateTime dateStart = (actualDateTime is not null
-				? TimeZoneInfo.ConvertTimeToUtc(actualDateTime.Value.DateTime, timeZone)
-				: TimeZoneInfo.ConvertTimeToUtc((match.Date?.Date ?? DateTimeOffset.Now.Date) + DEFAULT_START_TIME.ToTimeSpan(), timeZone));
-			
+			DateTime dateStart = match.ActualDateTime!.Value.DateTime;
+
 			if (dateStart.Hour == 0) {
 				dateStart += DEFAULT_START_TIME.ToTimeSpan();
 			}
