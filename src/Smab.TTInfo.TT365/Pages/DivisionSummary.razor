@@ -1,4 +1,4 @@
-@page "/DivisionSummary/{LeagueId}/{SeasonId}/{DivisionName}"
+﻿@page "/DivisionSummary/{LeagueId}/{SeasonId}/{DivisionName}"
 @attribute [StreamRendering]
 
 @if (isLoading)
@@ -36,7 +36,7 @@ else if (Division is not null)
 				{
 					<tr>
 						<td>@team.LeaguePosition</td>
-						<td><a href="/TeamSummary/@LeagueId/@team.Name">@team.Name</a></td>
+						<td><a href="/TeamSummary/@LeagueId/@SeasonId/@team.Name">@team.Name</a></td>
 						<td>@team.Played</td>
 						<td>@team.Won</td>
 						<td>@team.Drawn</td>

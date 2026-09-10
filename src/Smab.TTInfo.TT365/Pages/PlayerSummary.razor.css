@@ -1,5 +1,29 @@
 ﻿h1 {
 	font-size: calc(1.3rem + .6vw);
+
+	.badge {
+		background-color: royalblue;
+		padding-left: 0.5rem;
+		margin-left: 1rem;
+		margin-right: 0.5rem;
+		text-decoration: none;
+		color: white;
+	}
+
+	a {
+		color: white;
+		text-decoration: none;
+
+		&:hover {
+			color: white;
+			text-decoration: underline;
+		}
+	}
+}
+
+h2 {
+	text-align: left;
+	margin-top: 1.5em;
 }
 
 time {

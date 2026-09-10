@@ -2,17 +2,15 @@
 
 public partial class TeamSummary
 {
-	[EditorRequired]
-	[Parameter]
-	public string TeamId { get; set; } = "";
-
-	[EditorRequired]
-	[Parameter]
-	public string LeagueId { get; set; } = "";
+	[EditorRequired] [Parameter] public string TeamId { get; set; } = "";
+	[EditorRequired] [Parameter] public string LeagueName { get; set; } = "";
+	[EditorRequired] [Parameter] public string SeasonName { get; set; } = "";
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
 	public string TeamName { get; set; } = "";
+	private TT365LeagueId LeagueId { get; set; }
+	private TT365SeasonId SeasonId { get; set; }
 	private Team? team;
 	private List<Fixture> fixtures = [];
 	private readonly Dictionary<string, List<Player>> teamPlayersList = [];
@@ -23,12 +21,19 @@ public partial class TeamSummary
 	protected override async Task OnParametersSetAsync()
 	{
 		TeamName = TeamId.Replace("_", " ");
+		LeagueId = (TT365LeagueId)LeagueName;
+		SeasonId = (TT365SeasonId)SeasonName;
 		team = null;
 		fixtures = [];
 		fixtureResults = [];
-		StateHasChanged();
-		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
-		team = await _tt365.GetTeamStats((TT365LeagueId)LeagueId, TeamName);
+
+		league = await _tt365.GetLeague(LeagueId);
+		if (league is not null && string.IsNullOrWhiteSpace(SeasonName)) {
+			SeasonId = league.GetCurrentSeasonId();
+			SeasonName = SeasonId.ToString();
+		}
+
+		team = await _tt365.GetTeamStats(LeagueId, TeamName, SeasonId);
 		if (team is null) {
 			failedToLoad = true;
 			return;
@@ -36,7 +41,7 @@ public partial class TeamSummary
 
 		if (team is not null) {
 
-			fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.GetCurrentSeasonId()) ?? []).Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))];
+			fixtures = [.. (await _tt365.GetAllFixtures(LeagueId, SeasonId) ?? []).Where(f => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase))];
 			foreach (Fixture fixture in fixtures) {
 				if (fixture is CompletedFixture completedFixture) {
 					string result;
@@ -90,7 +95,7 @@ public partial class TeamSummary
 		if (teamPlayersList.TryGetValue(teamName, out List<Player>? value)) {
 			return value;
 		} else {
-			ICollection<Player>? players = (await _tt365.GetTeamStats((TT365LeagueId)LeagueId, teamName))?.Players;
+			ICollection<Player>? players = (await _tt365.GetTeamStats(LeagueId, teamName, SeasonId))?.Players;
 			if (players is null) {
 				return [];
 			}

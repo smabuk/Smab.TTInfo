@@ -1,22 +1,29 @@
 ﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}"
 @page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
+@page "/PlayerSummary/{LeagueId}/{SeasonName}/{PlayerName}/{PlayerId:int}"
 @inject ITT365Reader _tt365
 @attribute [StreamRendering]
 
 @{string playerName = PlayerName.Replace("_", " ");}
+<h1>
+	Player Stats for @playerName
+	@if (PlayerId is not null)
+	{
+		<a class="badge" href="PlayerSummary/@LeagueId/@PlayerName">Historical results</a>
+	}
+</h1>
 
 @if (isLoading) {
 	<PageTitle>@playerName - @LeagueId</PageTitle>
-	<h1>Loading ... @playerName ...</h1>
+	<h2>Loading ... @playerName ...</h2>
 }
 
-@if (playerResults.Count == 0) {
+@if (playerResults.Count == 0 && !isLoading) {
 	<PageTitle>@playerName - @league?.Name</PageTitle>
-	<h1>@league?.Name</h1>
-	<h1>No results found for @playerName</h1>
+	<h2>@league?.Name @SeasonName.Replace("_", " ")</h2>
+	<p>No results found.</p>
 } else {
 	<PageTitle>@playerName - @league?.Name</PageTitle>
-	<h1>Player Stats for @playerName</h1>
 	@foreach (string seasonName in playerResults.Keys.OrderDescending())
 	{
 		List<PlayerResult> seasonPlayerResults = playerResults[seasonName];
@@ -49,9 +56,9 @@
 					<tbody>
 						@foreach (PlayerResult result in results) {
 							<tr data-result='@result.Result.ToLower()'>
-								<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
+								<td><a href="PlayerSummary/@LeagueId/@seasonName/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
 								<td>@result.Division.Replace("Division_", "")</td>
-								<td>@result.OpponentTeam</td>
+								<td><a href="TeamSummary/@LeagueId/@seasonName/@result.OpponentTeam">@result.OpponentTeam</a></td>
 								<td>@result.Date.ToString("dd MMM yyyy")</td>
 								<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
 								<td>@result.Scores.Replace(",",", ")</td>

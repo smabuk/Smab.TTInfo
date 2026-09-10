@@ -4,6 +4,7 @@ public partial class PlayerSummary
 {
 	[EditorRequired][Parameter] public int? PlayerId { get; set; } = null;
 	[EditorRequired][Parameter] public string PlayerName { get; set; } = "";
+	[EditorRequired][Parameter] public string SeasonName { get; set; } = "";
 	[EditorRequired][Parameter] public string LeagueId { get; set; } = "";
 
 	private bool isLoading = false;
@@ -22,7 +23,8 @@ public partial class PlayerSummary
 		}
 
 		if (PlayerId is not null) {
-			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
+			TT365SeasonId seasonId = string.IsNullOrWhiteSpace(SeasonName) ? league.Seasons[0].Id : (TT365SeasonId)SeasonName;
+			await UpdatePlayerStatsFromPreviousSeasonAsync(seasonId);
 		} else {
 			foreach (Season season in league.Seasons) {
 				await UpdatePlayerStatsFromPreviousSeasonAsync(season.Id);
