@@ -95,8 +95,15 @@
 					int teamsCount = playerResults[seasonName].GroupBy(p => p.PlayerTeamName).Count();
 					<tr data-row="summary">
 						<td>@seasonName.Replace("_", " ")</td>
-						<td>@(teamsCount == 1 ? seasonPlayerResults.First().Division.Replace("Division_", "") : "All")</td>
-						<td>@(playerTeams.Count == 1 ? seasonPlayerResults.First().PlayerTeamName : "All")</td>
+						@if (teamsCount == 1)
+						{
+							string teamName = seasonPlayerResults.First().PlayerTeamName;
+							<td>@seasonPlayerResults.First().Division.Replace("Division_", "")</td>
+							<td><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
+						} else {
+							<td>All</td>
+							<td>All</td>
+						}
 						<td>@seasonPlayerResults.Count</td>
 						<td>@seasonPlayerResults.Where(r => r.Result == "Win").Count()</td>
 						<td>@(seasonPlayerResults.Count - seasonPlayerResults.Where(r => r.Result == "Win").Count())</td>
@@ -106,10 +113,9 @@
 						@foreach (string teamName in playerTeams) {
 							List<PlayerResult> teamPlayerResults = [.. seasonPlayerResults.Where(s => s.PlayerTeamName == teamName)];
 							<tr>
-								@* <td>@seasonName.Replace("_", " ")</td> *@
 								<td>&nbsp;</td>
 								<td>&nbsp;&nbsp;@teamPlayerResults.First().Division.Replace("Division_", "")</td>
-								<td>&nbsp;&nbsp;@teamPlayerResults.First().PlayerTeamName</td>
+								<td>&nbsp;&nbsp;<a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
 								<td>@teamPlayerResults.Count</td>
 								<td>@teamPlayerResults.Where(r => r.Result == "Win").Count()</td>
 								<td>@(teamPlayerResults.Count - teamPlayerResults.Where(r => r.Result == "Win").Count())</td>
