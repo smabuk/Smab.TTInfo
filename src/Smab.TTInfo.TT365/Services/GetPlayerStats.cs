@@ -21,11 +21,14 @@ public sealed partial class TT365Reader
 		League? league = await GetLeague(leagueId);
 		if (league is null) { return null; }
 
-		seasonId ??= league.GetCurrentSeasonId();
+		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
-		Player newPlayer = await LoadAsync<Player>(leagueId, null, filename) ?? null!;
+		Player newPlayer = seasonId == currentSeasonId
+			? await LoadAsync<Player>(leagueId, null, filename) ?? null!
+			: await LoadAsync<Player>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
 
 		if (newPlayer is not null) { return newPlayer; }
 

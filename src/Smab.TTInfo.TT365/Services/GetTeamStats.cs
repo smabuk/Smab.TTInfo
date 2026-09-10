@@ -19,7 +19,8 @@ public sealed partial class TT365Reader
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
 	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
-		seasonId ??= (await GetLeague(leagueId))?.GetCurrentSeasonId();
+		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 
 		List<Division> divisions = await GetDivisions(leagueId, seasonId ?? new());
@@ -28,7 +29,9 @@ public sealed partial class TT365Reader
 		}
 
 		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamName}.json";
-		Team team = await LoadAsync<Team>(leagueId, null, filename) ?? null!;
+		Team team = seasonId == currentSeasonId
+			? await LoadAsync<Team>(leagueId, null, filename) ?? null!
+			: await LoadAsync<Team>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
 
 		if (team is not null) { return team; }
 

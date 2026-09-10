@@ -8,7 +8,7 @@ public sealed partial class TT365Reader
 	/// Retrieves all fixtures for a specified league and optionally for a specific season.
 	/// If the season isn't specified the current season of the league is used.
 	/// </summary>
-	/// <remarks>If the <paramref name="seasonId"/> is not provided and the league does not have a current season, 
+	/// <remarks>If the <paramref name="seasonId"/> is not provided and the league does not have a current season,
 	/// an empty list is returned. The method attempts to load cached fixture data first; if unavailable,  it fetches the
 	/// data from an external source.</remarks>
 	/// <param name="leagueId">The unique identifier of the league for which to retrieve fixtures.</param>
@@ -19,7 +19,8 @@ public sealed partial class TT365Reader
 	/// returned.</returns>
 	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? seasonId = null)
 	{
-		seasonId ??= (await GetLeague(leagueId))?.GetCurrentSeasonId();
+		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		seasonId ??= currentSeasonId;
 		if (seasonId is null) {
 			// TODO: Log this error
 			return [];
@@ -27,7 +28,11 @@ public sealed partial class TT365Reader
 
 		string filename = $@"{leagueId}_{seasonId}_fixtures_all.json";
 
-		List<Fixture> fixtures = await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? [];
+		// Attempt to load fixtures from cache
+		// If the requested season is the current season, use the default cache expiration; otherwise, use a long expiration for historical data
+		List<Fixture> fixtures = currentSeasonId == seasonId
+			? await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? []
+			: await LoadAsync<List<Fixture>?>(leagueId, null, filename, cacheHours: 10_000_000) ?? [];
 
 		if (fixtures is not []) { return fixtures; }
 
