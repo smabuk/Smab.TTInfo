@@ -13,8 +13,8 @@ public partial class PlayerSummary
 	[Parameter]
 	public string LeagueId { get; set; } = "";
 
-	private record FixtureResult(int Id, string Result, string FullScore);
-
+	//private record FixtureResult(int Id, string Result, string FullScore);
+	private bool isLoading = false;
 	private List<PlayerResult> playerResults = [];
 	private List<string> playerTeams = [];
 	private League? league;
@@ -22,6 +22,7 @@ public partial class PlayerSummary
 
 	protected override async Task OnParametersSetAsync()
 	{
+		isLoading = true;
 		PlayerName = PlayerName.Replace("_", " ");
 		playerResults = [];
 		StateHasChanged();
@@ -43,10 +44,13 @@ public partial class PlayerSummary
 			.GroupBy(p => p.PlayerTeamName)
 			.OrderByDescending(g => g.Count())
 			.Select(g => g.Key)];
-			StateHasChanged();
-			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
+			foreach (Season season in league.Seasons.Where(s => s.Id != league.GetCurrentSeason().Id)) {
+				await UpdatePlayerStatsFromPreviousSeasonAsync(season.Id);
+				StateHasChanged();
+			}
 		}
 
+		isLoading = false;
 	}
 
 	private async Task UpdatePlayerStatsFromPreviousSeasonAsync(TT365SeasonId seasonId)
@@ -56,14 +60,9 @@ public partial class PlayerSummary
 		}
 
 		PlayerName = PlayerName.Replace("_", " ");
-		// look up player id
-		Player player = new()
-		{
-			Name = PlayerName,
-			PlayerId = PlayerId,
-		};
-		Player playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player, seasonId) ?? new();
-		if (playerStats is not null) {
+
+		Player playerStats = await _tt365.GetPlayerStatsByName((TT365LeagueId)LeagueId, PlayerName, seasonId) ?? new();
+		if (playerStats is not null && playerStats.Id is not 0) {
 			previousPlayerResults[seasonId] = [.. playerStats.PlayerResults];
 		}
 	}

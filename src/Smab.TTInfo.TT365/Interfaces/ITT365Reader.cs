@@ -26,6 +26,7 @@ public interface ITT365Reader
 	/// Gets player statistics for a player and season.
 	/// </summary>
 	Task<Player?>         GetPlayerStats(TT365LeagueId leagueId, Player player, TT365SeasonId? SeasonId = null);
+	Task<Player?>         GetPlayerStatsByName(TT365LeagueId leagueId, string playerName, TT365SeasonId? SeasonId = null);
 	/// <summary>
 	/// Gets team statistics for a team and season.
 	/// </summary>
