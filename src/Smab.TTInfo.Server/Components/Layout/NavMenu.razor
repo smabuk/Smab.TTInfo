@@ -20,13 +20,6 @@
 		<NavMenuItem Icon="bi-postcard"   Text="Bracknell John Howard Scorecard"    Path="print/scorecard/bracknelljohnhoward" />
 
 		<hr />
-		<NavMenuItem Icon="bi-trophy-fill"       Text="OLOP Premier Summary"  Path="OLOP/Premier/Summary" />
-		<NavMenuItem Icon="bi-trophy-fill"       Text="OLOP Premier Week 1"   Path="OLOP/Premier/Week/1" />
-		<NavMenuItem Icon="bi-trophy-fill"       Text="OLOP Premier Week 2"   Path="OLOP/Premier/Week/2" />
-		<NavMenuItem Icon="bi-trophy-fill"       Text="OLOP Premier Week 3"   Path="OLOP/Premier/Week/3" />
-		<NavMenuItem Icon="bi-trophy-fill"       Text="OLOP Premier Week 4"   Path="OLOP/Premier/Week/4" />
-
-		<hr />
 		<NavMenuItem Icon="bi-calendar3"         Text="OLOP Bookings"         Path="OLOP/Bookings" />
 
 		@if (env.IsDevelopment()) {
@@ -45,7 +38,14 @@
 			<NavMenuItem Icon="bi-filetype-csv" Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=json" />
 			<NavMenuItem Icon="bi-filetype-csv" Text="Bracknell OLOP A"      Path="Calendar/BracknellAndWokingham/Olop A?command=csv" />
 
+
+			<hr />
 			<NavMenuItem Icon="bi-postcard"     Text="OLOP Premier"          Path="print/matchcards/4" />
+			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Summary"  Path="OLOP/Premier/Summary" />
+			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 1"   Path="OLOP/Premier/Week/1" />
+			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 2"   Path="OLOP/Premier/Week/2" />
+			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 3"   Path="OLOP/Premier/Week/3" />
+			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 4"   Path="OLOP/Premier/Week/4" />
 
 			<NavMenuItem Icon="bi-person-lines-fill" Text="OLOP Members"          Path="Club/OLOP/Membership" />
 			@* <NavMenuItem Icon="bi-table"  Text="SBL 2023/24"       Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" /> *@
