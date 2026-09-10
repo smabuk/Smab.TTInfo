@@ -1,50 +1,30 @@
 ﻿namespace Smab.TTInfo.TT365.Pages;
+
 public partial class PlayerSummary
 {
-	[EditorRequired]
-	[Parameter]
-	public int PlayerId { get; set; }
+	[EditorRequired][Parameter] public int? PlayerId { get; set; } = null;
+	[EditorRequired][Parameter] public string PlayerName { get; set; } = "";
+	[EditorRequired][Parameter] public string LeagueId { get; set; } = "";
 
-	[EditorRequired]
-	[Parameter]
-	public string PlayerName { get; set; } = "";
-
-	[EditorRequired]
-	[Parameter]
-	public string LeagueId { get; set; } = "";
-
-	//private record FixtureResult(int Id, string Result, string FullScore);
 	private bool isLoading = false;
-	private List<PlayerResult> playerResults = [];
-	private List<string> playerTeams = [];
 	private League? league;
-	private readonly Dictionary<string, List<PlayerResult>> previousPlayerResults = [];
+	private readonly Dictionary<string, List<PlayerResult>> playerResults = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
 		isLoading = true;
 		PlayerName = PlayerName.Replace("_", " ");
-		playerResults = [];
+
 		StateHasChanged();
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		if (league is null) {
 			return;
 		}
 
-		Player player = new()
-		{
-			Name = PlayerName,
-			PlayerId = PlayerId,
-		};
-
-		Player? playerStats = await _tt365.GetPlayerStats((TT365LeagueId)LeagueId, player) ?? new();
-		if (playerStats is not null) {
-			playerResults = [.. playerStats.PlayerResults];
-			playerTeams = [.. playerResults
-			.GroupBy(p => p.PlayerTeamName)
-			.OrderByDescending(g => g.Count())
-			.Select(g => g.Key)];
-			foreach (Season season in league.Seasons.Where(s => s.Id != league.GetCurrentSeason().Id)) {
+		if (PlayerId is not null) {
+			await UpdatePlayerStatsFromPreviousSeasonAsync(league.Seasons[0].Id);
+		} else {
+			foreach (Season season in league.Seasons) {
 				await UpdatePlayerStatsFromPreviousSeasonAsync(season.Id);
 				StateHasChanged();
 			}
@@ -55,7 +35,7 @@ public partial class PlayerSummary
 
 	private async Task UpdatePlayerStatsFromPreviousSeasonAsync(TT365SeasonId seasonId)
 	{
-		if (previousPlayerResults.ContainsKey(seasonId)) {
+		if (playerResults.ContainsKey(seasonId)) {
 			return;
 		}
 
@@ -63,7 +43,7 @@ public partial class PlayerSummary
 
 		Player playerStats = await _tt365.GetPlayerStatsByName((TT365LeagueId)LeagueId, PlayerName, seasonId) ?? new();
 		if (playerStats is not null && playerStats.Id is not 0) {
-			previousPlayerResults[seasonId] = [.. playerStats.PlayerResults];
+			playerResults[seasonId] = [.. playerStats.PlayerResults];
 		}
 	}
 }

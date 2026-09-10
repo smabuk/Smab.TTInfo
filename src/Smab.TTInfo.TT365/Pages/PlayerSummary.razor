@@ -1,4 +1,5 @@
-﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
+﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}"
+@page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
 @inject ITT365Reader _tt365
 @attribute [StreamRendering]
 
@@ -9,48 +10,59 @@
 	<h1>Loading ... @playerName ...</h1>
 }
 
-@if (playerResults.Count == 0 && previousPlayerResults.Count == 0) {
+@if (playerResults.Count == 0) {
+	<PageTitle>@playerName - @league?.Name</PageTitle>
+	<h1>@league?.Name</h1>
 	<h1>No results found for @playerName</h1>
 } else {
 	<PageTitle>@playerName - @league?.Name</PageTitle>
 	<h1>Player Stats for @playerName</h1>
-	<h1>@league?.Name @league?.GetCurrentSeason().Name</h1>
-	<div id="results">
-		@foreach (string teamName in playerTeams) {
-			List<PlayerResult> results = [.. playerResults
-				.Where(p => p.PlayerTeamName == teamName)
-				.OrderByDescending(p => p.Date)
-				.ThenByDescending(p => p.OriginalSortOrder)
-				];
-			<h3>@teamName</h3>
-			<table class="table table-bordered table-sm">
-				<thead>
-					<tr>
-						<th>Opponent</th>
-						<th>Div</th>
-						<th>Team</th>
-						<th>Date</th>
-						<th>Games</th>
-						<th>Score</th>
-						<th>Ranking</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (PlayerResult result in results) {
-						<tr data-result='@result.Result.ToLower()'>
-							<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
-							<td>@result.Division.Replace("Division_", "")</td>
-							<td>@result.OpponentTeam</td>
-							<td>@result.Date.ToString("dd MMM yyyy")</td>
-							<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
-							<td>@result.Scores.Replace(",",", ")</td>
-							<td>@result.FormattedRankingDiff</td>
+	@foreach (string seasonName in playerResults.Keys.OrderDescending())
+	{
+		List<PlayerResult> seasonPlayerResults = playerResults[seasonName];
+		List<string> playerTeams = [.. seasonPlayerResults
+			.GroupBy(p => p.PlayerTeamName)
+			.OrderByDescending(g => g.Count())
+			.Select(g => g.Key)];
+
+		<div id="results">
+			<h2>@league?.Name @seasonName.Replace("_", " ")</h2>
+			@foreach (string teamName in playerTeams) {
+				List<PlayerResult> results = [.. seasonPlayerResults
+					.Where(p => p.PlayerTeamName == teamName)
+					.OrderByDescending(p => p.Date)
+					.ThenByDescending(p => p.OriginalSortOrder)
+					];
+				<h3>@teamName</h3>
+				<table class="table table-bordered table-sm">
+					<thead>
+						<tr>
+							<th>Opponent</th>
+							<th>Div</th>
+							<th>Team</th>
+							<th>Date</th>
+							<th>Games</th>
+							<th>Score</th>
+							@* <th>Ranking</th> *@
 						</tr>
-					}
-				</tbody>
-			</table>
-		}
-	</div>
+					</thead>
+					<tbody>
+						@foreach (PlayerResult result in results) {
+							<tr data-result='@result.Result.ToLower()'>
+								<td><a href="PlayerSummary/@LeagueId/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
+								<td>@result.Division.Replace("Division_", "")</td>
+								<td>@result.OpponentTeam</td>
+								<td>@result.Date.ToString("dd MMM yyyy")</td>
+								<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
+								<td>@result.Scores.Replace(",",", ")</td>
+								@* <td>@result.FormattedRankingDiff</td> *@
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	}
 }
 
 

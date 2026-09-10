@@ -43,70 +43,14 @@ caption {
 	padding-left: 0;
 }
 
-#fixtures {
-	.card {
-		margin-bottom: 0.25rem;
-		box-shadow: inset 6px -4px 2px 0px rgb(var(--result-color-rgb));
-	}
-
-	.badge {
-		background-color: rgb(var(--result-color-rgb));
-		margin-right: 0.5rem;
-		text-decoration: none;
-	}
-
-	a {
-		color: var(--text-color);
-		text-decoration: none;
-
-		&:hover {
-			color: var(--text-color);
-			text-decoration: underline;
-		}
-	}
-
-	.postponed {
-		background-color: rgb(var(--bs-warning-rgb, 255,193,7));
-		color: black;
-		cursor: help;
-	}
-}
-
-#players {
-	text-align: center;
-	overflow-x: auto;
-
-	h3 {
-		text-align: left;
-		margin-top: 0.3em;
-	}
-
-	th:first-child,
-	th:last-child,
-	td:first-child,
-	td:last-child {
-		text-align: left;
-	}
-
-	td span {
-		visibility: hidden;
-	}
-
-	a {
-		color: var(--text-color);
-		text-decoration: none;
-
-		&:hover,
-		&:active {
-			color: var(--text-color);
-			text-decoration: underline;
-		}
-	}
-}
-
 #results {
 	text-align: left;
 	overflow-x: auto;
+
+	h2 {
+		text-align: left;
+		margin-top: 1.5em;
+	}
 
 	h3 {
 		text-align: left;
@@ -118,11 +62,11 @@ caption {
 		text-align: center;
 	}
 
-	td:last-child {
+/*	td:last-child {
 		padding-right: 1em;
 		text-align: right;
 	}
-
+*/
 	tr td {
 		background-color: rgba(var(--result-color-rgb), .5);
 	}
