@@ -53,7 +53,7 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 		}
 
 		return (await _tt365.GetDivisions((TT365LeagueId)LeagueId, (TT365SeasonId)SeasonId))
-			.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName);
+			.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "));
 	}
 
 	private bool IsPage() => _navManager.IsPage(nameof(DivisionSummary));

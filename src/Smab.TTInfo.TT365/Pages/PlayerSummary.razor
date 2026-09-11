@@ -40,12 +40,11 @@
 					.OrderByDescending(p => p.Date)
 					.ThenByDescending(p => p.OriginalSortOrder)
 					];
-				<h3><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></h3>
+				<h3><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a> - <a href="/DivisionSummary/@LeagueId/@seasonName/@results[0].Division">@results[0].Division.Replace("_", " ")</a></h3>
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>
 							<th>Opponent</th>
-							<th>Div</th>
 							<th>Team</th>
 							<th>Date</th>
 							<th>Games</th>
@@ -57,7 +56,6 @@
 						@foreach (PlayerResult result in results) {
 							<tr data-result='@result.Result.ToLower()'>
 								<td><a href="PlayerSummary/@LeagueId/@seasonName/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
-								<td>@result.Division.Replace("Division_", "")</td>
 								<td><a href="TeamSummary/@LeagueId/@seasonName/@result.OpponentTeam">@result.OpponentTeam</a></td>
 								<td>@result.Date.ToString("dd MMM yyyy")</td>
 								<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
@@ -94,15 +92,14 @@
 						.Select(g => g.Key)];
 					int teamsCount = playerResults[seasonName].GroupBy(p => p.PlayerTeamName).Count();
 					<tr data-row="summary">
-						<td>@seasonName.Replace("_", " ")</td>
 						@if (teamsCount == 1)
 						{
+							<td>@seasonName.Replace("_", " ")</td>
 							string teamName = seasonPlayerResults.First().PlayerTeamName;
 							<td>@seasonPlayerResults.First().Division.Replace("Division_", "")</td>
 							<td><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
 						} else {
-							<td>All</td>
-							<td>All</td>
+							<td colspan="3">@seasonName.Replace("_", " ")</td>
 						}
 						<td>@seasonPlayerResults.Count</td>
 						<td>@seasonPlayerResults.Where(r => r.Result == "Win").Count()</td>
@@ -114,8 +111,8 @@
 							List<PlayerResult> teamPlayerResults = [.. seasonPlayerResults.Where(s => s.PlayerTeamName == teamName)];
 							<tr>
 								<td>&nbsp;</td>
-								<td>&nbsp;&nbsp;@teamPlayerResults.First().Division.Replace("Division_", "")</td>
-								<td>&nbsp;&nbsp;<a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
+								<td>@teamPlayerResults.First().Division.Replace("Division_", "")</td>
+								<td><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
 								<td>@teamPlayerResults.Count</td>
 								<td>@teamPlayerResults.Where(r => r.Result == "Win").Count()</td>
 								<td>@(teamPlayerResults.Count - teamPlayerResults.Where(r => r.Result == "Win").Count())</td>
