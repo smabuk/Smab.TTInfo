@@ -3,20 +3,19 @@
 @inject ITT365Reader _tt365
 @attribute [StreamRendering]
 
-<PageTitle>@LeagueName</PageTitle>
-
-
 @if (isLoading) {
-	<PageTitle>@LeagueName - @SeasonId</PageTitle>
-	<h1>@LeagueName</h1>
+	string leagueName = League?.Name ?? leagueId;
+	<PageTitle>@leagueName - @SeasonId</PageTitle>
+	<h1>@leagueName</h1>
 	<h2>Loading ... @SeasonId ...</h2>
 }
 
-@if (League is not null && divisions.Any()) {
-	<h1>@LeagueName @SeasonId</h1>
+@if (League is not null && Season is not null) {
+	<PageTitle>@League.Name @Season.Name</PageTitle>
+	<h1>@League.Name @Season.Name</h1>
 	<div>
-		@foreach (Division division in divisions) {
-			<DivisionSummary Division="@division" LeagueId="@League.Id" SeasonId="@SeasonId" />
+		@foreach (Division division in Season.Divisions) {
+			<DivisionSummary Division="@division" LeagueId="@League.Id" SeasonId="@Season.Id" />
 		}
 	</div>
 	<br />
@@ -31,8 +30,9 @@
 		<dd>@League.Theme</dd>
 		<dt>Current Season</dt>
 		<dd>
-			<a href="/LeagueSummary/@LeagueId/@@League.CurrentSeason.Name"><span>@League.CurrentSeason.Name</span></a>
-			@* @if (seasons.Any()) {
+			<a href="/LeagueSummary/@LeagueId/@League.CurrentSeason.Id">@League.CurrentSeason.Name</a>
+			@*
+			@if (seasons.Any()) {
 				<select @bind="SeasonId">
 					@foreach (string seasonName in seasons.Select(s => s.Name)) {
 						<option value="@seasonName">@seasonName</option>
@@ -41,12 +41,12 @@
 			} else {
 				<text>No seasons defined yet</text>
 			}
- *@
+			*@
 		</dd>
 		<dt>Previous Seasons</dt>
 		<dd>
-			@foreach ((int index, Season season) in League.Seasons.Where(s => s.Name != League.CurrentSeason.Name).OrderByDescending(s => s.Id).Index()) {
-				<a href="/LeagueSummary/@LeagueId/@season.Name">@(index == 0 ? "" : ", ")@season.Name</a>
+			@foreach ((int index, Season season) in League.Seasons.Where(s => s.Id != League.CurrentSeason.Id).OrderByDescending(s => s.Id).Index()) {
+				<a href="/LeagueSummary/@LeagueId/@season.Id">@(index == 0 ? "" : ", ")@season.Name</a>
 			}
 		</dd>
 	</dl>

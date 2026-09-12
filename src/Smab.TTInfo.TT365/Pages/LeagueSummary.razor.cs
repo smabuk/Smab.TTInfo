@@ -1,14 +1,14 @@
 ﻿namespace Smab.TTInfo.TT365.Pages;
 public partial class LeagueSummary
 {
-	[EditorRequired] [Parameter] public string LeagueId { get; set; } = "";
-	[EditorRequired] [Parameter] public string? SeasonId { get; set; } = null;
+	[EditorRequired] [Parameter] public string LeagueId { get; set; }
+	[EditorRequired] [Parameter] public string? SeasonId { get; set; }
 
-	private string LeagueName { get; set; } = "";
 	private League? League { get; set; }
+	private Season? Season { get; set; }
 
 	private TT365LeagueId leagueId;
-	private List<Division> divisions = [];
+	private TT365SeasonId seasonId;
 	private bool isLoading = false;
 
 	protected override async Task OnParametersSetAsync()
@@ -17,16 +17,14 @@ public partial class LeagueSummary
 
 		if (LeagueId is not null) {
 			leagueId = (TT365LeagueId)LeagueId;
-			LeagueName = LeagueId;
-			League = await _tt365.GetLeague((TT365LeagueId)LeagueId);
+			League = await _tt365.GetLeague(leagueId);
 			if (League is null) { return; }
 
-			LeagueName = League.Name;
-			SeasonId = string.IsNullOrWhiteSpace(SeasonId) ? League.CurrentSeason.Name ?? "" : SeasonId;
-			if (SeasonId != League.CurrentSeason.Name) {
-				divisions = [.. League.Seasons.FirstOrDefault(s => s.Name == SeasonId)?.Divisions ?? []];
+			seasonId = string.IsNullOrWhiteSpace(SeasonId) ? League.CurrentSeason.Id : (TT365SeasonId)SeasonId;
+			if (seasonId != League.CurrentSeason.Id) {
+				Season = League.Seasons.FirstOrDefault(s => s.Id == seasonId);
 			} else {
-				divisions = [.. League.CurrentSeason.Divisions];
+				Season = League.CurrentSeason;
 			}
 		}
 

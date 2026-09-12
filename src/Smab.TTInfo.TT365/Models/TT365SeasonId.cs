@@ -6,7 +6,7 @@
 /// consistency.
 /// </summary>
 [JsonConverter(typeof(TT365SeasonIdConverter))]
-public record struct TT365SeasonId : IComparable<TT365SeasonId>, IEquatable<TT365SeasonId>
+public readonly record struct TT365SeasonId : IComparable<TT365SeasonId>, IEquatable<TT365SeasonId>
 {
 	public TT365SeasonId(string value)
 	{
@@ -29,7 +29,7 @@ public record struct TT365SeasonId : IComparable<TT365SeasonId>, IEquatable<TT36
 
 	public string ToDisplay() => Value.Replace('_', ' ');
 
-	private static string NormalizeWithUnderscore(string? value) => value.Replace(' ', '_') ?? throw new ArgumentNullException(nameof(value), "Season ID value cannot be null.");
+	private static string NormalizeWithUnderscore(string? value) => value?.Replace(' ', '_') ?? throw new ArgumentNullException(nameof(value), "Season ID value cannot be null.");
 }
 
 /// <summary>
