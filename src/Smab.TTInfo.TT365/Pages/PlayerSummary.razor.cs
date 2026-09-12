@@ -4,7 +4,7 @@ public partial class PlayerSummary
 {
 	[EditorRequired][Parameter] public int? PlayerId { get; set; } = null;
 	[EditorRequired][Parameter] public string PlayerName { get; set; } = "";
-	[EditorRequired][Parameter] public string SeasonName { get; set; } = "";
+	[EditorRequired][Parameter] public string SeasonId { get; set; } = "";
 	[EditorRequired][Parameter] public string LeagueId { get; set; } = "";
 
 	private bool isLoading = false;
@@ -23,7 +23,7 @@ public partial class PlayerSummary
 		}
 
 		if (PlayerId is not null) {
-			TT365SeasonId seasonId = string.IsNullOrWhiteSpace(SeasonName) ? league.Seasons[0].Id : (TT365SeasonId)SeasonName;
+			TT365SeasonId seasonId = string.IsNullOrWhiteSpace(SeasonId) ? league.Seasons[0].Id : (TT365SeasonId)SeasonId;
 			await UpdatePlayerStatsFromPreviousSeasonAsync(seasonId);
 		} else {
 			foreach (Season season in league.Seasons) {
@@ -40,8 +40,6 @@ public partial class PlayerSummary
 		if (playerResults.ContainsKey(seasonId)) {
 			return;
 		}
-
-		PlayerName = PlayerName.Replace("_", " ");
 
 		Player playerStats = await _tt365.GetPlayerStatsByName((TT365LeagueId)LeagueId, PlayerName, seasonId) ?? new();
 		if (playerStats is not null && playerStats.Id is not 0) {

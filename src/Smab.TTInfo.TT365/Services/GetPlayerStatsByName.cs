@@ -28,6 +28,8 @@ public sealed partial class TT365Reader
 		seasonId ??= league.GetCurrentSeasonId();
 		if (seasonId is null) { return null; }
 
+		playerName = playerName.Replace("%20", " ").Replace("_", " ");
+
 		List<Fixture>? fixtures = await GetAllFixtures(leagueId, seasonId);
 		int playerId = fixtures.OfType<CompletedFixture>()
 			.SelectMany(f => f.HomePlayers.Concat(f.AwayPlayers))

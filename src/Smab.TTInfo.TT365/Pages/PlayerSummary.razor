@@ -1,6 +1,5 @@
 ﻿@page "/PlayerSummary/{LeagueId}/{PlayerName}"
-@page "/PlayerSummary/{LeagueId}/{PlayerName}/{PlayerId:int}"
-@page "/PlayerSummary/{LeagueId}/{SeasonName}/{PlayerName}/{PlayerId:int}"
+@page "/PlayerSummary/{LeagueId}/{SeasonId}/{PlayerName}/{PlayerId:int}"
 @inject ITT365Reader _tt365
 @attribute [StreamRendering]
 
@@ -20,7 +19,7 @@
 
 @if (playerResults.Count == 0 && !isLoading) {
 	<PageTitle>@playerName - @league?.Name</PageTitle>
-	<h2>@league?.Name @SeasonName?.Replace("_", " ")</h2>
+	<h2>@league?.Name @SeasonId?.Replace("_", " ")</h2>
 	<p>No results found.</p>
 } else {
 	<PageTitle>@playerName - @league?.Name</PageTitle>

@@ -2,13 +2,12 @@
 
 public partial class TeamSummary
 {
-	[EditorRequired] [Parameter] public string TeamId { get; set; } = "";
+	[EditorRequired] [Parameter] public string TeamName { get; set; } = "";
 	[EditorRequired] [Parameter] public string LeagueName { get; set; } = "";
 	[EditorRequired] [Parameter] public string SeasonName { get; set; } = "";
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
-	public string TeamName { get; set; } = "";
 	private TT365LeagueId LeagueId { get; set; }
 	private TT365SeasonId SeasonId { get; set; }
 	private Team? team;
@@ -20,7 +19,7 @@ public partial class TeamSummary
 
 	protected override async Task OnParametersSetAsync()
 	{
-		TeamName = TeamId.Replace("_", " ");
+		TeamName = TeamName.Replace("_", " ");
 		LeagueId = (TT365LeagueId)LeagueName;
 		league = await _tt365.GetLeague(LeagueId);
 		if (league is null) {
@@ -67,7 +66,7 @@ public partial class TeamSummary
 				.Union(fixtures
 						.Select(t => t.HomeTeam))
 						.Distinct()
-						.Where(t => t != TeamId)];
+						.Where(t => t != TeamName)];
 			List<Task<IEnumerable<Player>>> tasks = [];
 			foreach (string team in teamList) {
 				tasks.Add(GetTeamPlayers(team));
