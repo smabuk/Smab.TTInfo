@@ -40,11 +40,11 @@ public sealed partial class TT365Reader
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "")) ?? "";
 			string leagueTheme       = doc.DocumentNode.SelectSingleNode("//body")?.GetAttributeValue("class", "") ?? "";
 			string currentSeasonIdAsString = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("href", "") ?? "";
-			
+
 			TT365SeasonId currentSeasonId = new(currentSeasonIdAsString[(currentSeasonIdAsString.LastIndexOf('/') + 1)..]);
 			string currentSeasonName = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("title", "").Replace(" Tables", "") ?? "";
-			LookupTables seasonLookups = await GetLookupTables(leagueId, currentSeasonId);
-			Season currentSeason = new(currentSeasonId, currentSeasonName, seasonLookups, []);
+			LookupTables currentSeasonLookups = await GetLookupTables(leagueId, currentSeasonId);
+			Season currentSeason = new(currentSeasonId, currentSeasonName, currentSeasonLookups, []);
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				leagueId,
@@ -57,29 +57,42 @@ public sealed partial class TT365Reader
 				string seasonId = item.GetAttributeValue("href", "");
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
 				string seasonName = item.InnerText;
-				seasons.Add(new(new(seasonId), seasonName, new(), []));
+				LookupTables seasonLookups = await GetLookupTables(leagueId, (TT365SeasonId)seasonId);
+				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, []));
 			}
 
 			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeason);
 		} else {
-			league = league with 
+			league = league with
 			{
 				CurrentSeason = league.CurrentSeason with {
-						Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId())
+					Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId())
 				}
 			};
 		}
 
+		Season[] seasonsWithDivisions = await Task.WhenAll(
+			league.Seasons
+				.Select(async s => s with
+				{
+					Divisions = [.. await GetDivisions(leagueId, s.Id, true)]
+				})
+		);
+
 		league = league with {
 			CurrentSeason = league.CurrentSeason with {
 				Divisions = [.. await GetDivisions(leagueId, league.GetCurrentSeasonId())]
-			}
+			},
+			Seasons = [.. seasonsWithDivisions.Where(s => s.Id != league.CurrentSeason.Id)]
 		};
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFileToCache(jsonString, $"{leagueId}.json");
 		_ = SaveFileToCache(jsonString, $"{leagueId}_{league.CurrentSeason.Id}.json");
-		
+
+		jsonString = JsonSerializer.Serialize(league.CurrentSeason);
+		_ = SaveFileToCache(jsonString, $"{leagueId}_{league.CurrentSeason.Id}_season.json");
+
 		return league;
 	}
 }

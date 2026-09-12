@@ -19,11 +19,15 @@ public sealed partial class TT365Reader
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
 	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
-		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		League league = await GetLeague(leagueId) ?? throw new InvalidOperationException($"League with ID {leagueId} could not be found.");
+		TT365SeasonId? currentSeasonId = league.GetCurrentSeasonId();
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 
-		List<Division> divisions = await GetDivisions(leagueId, seasonId ?? new());
+		List<Division> divisions = seasonId == currentSeasonId
+			? [.. league.CurrentSeason.Divisions]
+			: [.. league.Seasons.FirstOrDefault(s => s.Id == seasonId)?.Divisions ?? []];
+
 		if (divisions.Count == 0) {
 			return null;
 		}

@@ -22,16 +22,18 @@ public partial class TeamSummary
 	{
 		TeamName = TeamId.Replace("_", " ");
 		LeagueId = (TT365LeagueId)LeagueName;
-		SeasonId = (TT365SeasonId)SeasonName;
+		league = await _tt365.GetLeague(LeagueId);
+		if (league is null) {
+			failedToLoad = true;
+			return;
+		}
+
+		SeasonId = string.IsNullOrWhiteSpace(SeasonName) ? league.GetCurrentSeasonId() : (TT365SeasonId)SeasonName;
+		SeasonName = SeasonId.ToString();
+
 		team = null;
 		fixtures = [];
 		fixtureResults = [];
-
-		league = await _tt365.GetLeague(LeagueId);
-		if (league is not null && string.IsNullOrWhiteSpace(SeasonName)) {
-			SeasonId = league.GetCurrentSeasonId();
-			SeasonName = SeasonId.ToString();
-		}
 
 		team = await _tt365.GetTeamStats(LeagueId, TeamName, SeasonId);
 		if (team is null) {

@@ -7,7 +7,6 @@ public partial class LeagueSummary
 	private string LeagueName { get; set; } = "";
 	private League? League { get; set; }
 
-	// private string CurrentSeasonName = "";
 	private TT365LeagueId leagueId;
 	private List<Division> divisions = [];
 	private bool isLoading = false;
@@ -25,7 +24,7 @@ public partial class LeagueSummary
 			LeagueName = League.Name;
 			SeasonId = string.IsNullOrWhiteSpace(SeasonId) ? League.CurrentSeason.Name ?? "" : SeasonId;
 			if (SeasonId != League.CurrentSeason.Name) {
-				divisions = [.. await _tt365.GetDivisions((TT365LeagueId)LeagueId, (TT365SeasonId)SeasonId)];
+				divisions = [.. League.Seasons.FirstOrDefault(s => s.Name == SeasonId)?.Divisions ?? []];
 			} else {
 				divisions = [.. League.CurrentSeason.Divisions];
 			}

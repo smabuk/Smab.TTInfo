@@ -27,6 +27,8 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 	[Parameter]
 	public Division? Division { get; set; } = null;
 
+	public League? League { get; set; }
+
 	private bool isLoading = true;
 	private TT365SeasonId seasonId;
 	private TT365LeagueId leagueId;
@@ -37,7 +39,15 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 
 		leagueId = (TT365LeagueId)LeagueId;
 		seasonId = (TT365SeasonId)SeasonId;
-		Division ??= await LoadDivision();
+		League ??= await _tt365.GetLeague(leagueId);
+		if (League is null) {
+			isLoading = false;
+			return;
+		}
+
+		Division ??= League.CurrentSeason.Id == seasonId
+			? League.CurrentSeason.Divisions.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "))
+			: League.Seasons.FirstOrDefault(s => s.Id == seasonId)?.Divisions.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "));
 
 		isLoading = false;
 	}

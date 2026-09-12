@@ -15,13 +15,15 @@ public sealed partial class TT365Reader
 	/// <param name="seasonId">The identifier for the season. This parameter is required.</param>
 	/// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Division"/>
 	/// objects representing the divisions associated with the specified table tennis information and season.</returns>
-	public async Task<List<Division>> GetDivisions(TT365LeagueId leagueId, TT365SeasonId seasonId)
+	public async Task<List<Division>> GetDivisions(TT365LeagueId leagueId, TT365SeasonId seasonId, bool archivedDivisions = false)
 	{
 		LookupTables lookupTables = await GetLookupTables(leagueId, seasonId);
-		if (lookupTables.DivisionLookup.Count == 0) { return []; }
+		if (lookupTables.DivisionLookup is []) { return []; }
 
 		string filename = $@"{leagueId}_{seasonId}_divisions_all.json";
-		List<Division> divisions = await LoadAsync<List<Division>?>(leagueId, null, filename) ?? [];
+		List<Division> divisions = archivedDivisions
+			? await LoadAsync<List<Division>?>(leagueId, null, filename, cacheHours: 10_000_000) ?? []
+			: await LoadAsync<List<Division>?>(leagueId, null, filename) ?? [];
 		if (divisions is not []) { return divisions; }
 
 		string url = $"Tables/{seasonId}/All_Divisions";

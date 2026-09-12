@@ -17,7 +17,7 @@ public interface ITT365Reader
 	/// <summary>
 	/// Gets all divisions for a league and season.
 	/// </summary>
-	Task<List<Division>>  GetDivisions(TT365LeagueId leagueId, TT365SeasonId SeasonId);
+	Task<List<Division>>  GetDivisions(TT365LeagueId leagueId, TT365SeasonId SeasonId, bool archivedDivisions = false);
 	/// <summary>
 	/// Gets the league details for a given league ID.
 	/// </summary>
