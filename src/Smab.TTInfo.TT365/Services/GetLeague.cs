@@ -58,10 +58,11 @@ public sealed partial class TT365Reader
 				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
 				string seasonName = item.InnerText;
 				LookupTables seasonLookups = await GetLookupTables(leagueId, (TT365SeasonId)seasonId);
-				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, []));
+				List<Division> divisions = [.. await GetDivisions(leagueId, (TT365SeasonId)seasonId, true)];
+				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, [.. divisions]));
 			}
 
-			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeason);
+			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeasonId, currentSeason);
 		} else {
 			league = league with
 			{
@@ -71,19 +72,10 @@ public sealed partial class TT365Reader
 			};
 		}
 
-		Season[] seasonsWithDivisions = await Task.WhenAll(
-			league.Seasons
-				.Select(async s => s with
-				{
-					Divisions = [.. await GetDivisions(leagueId, s.Id, true)]
-				})
-		);
-
 		league = league with {
 			CurrentSeason = league.CurrentSeason with {
 				Divisions = [.. await GetDivisions(leagueId, league.GetCurrentSeasonId())]
-			},
-			Seasons = [.. seasonsWithDivisions.Where(s => s.Id != league.CurrentSeason.Id)]
+			}
 		};
 
 		jsonString = JsonSerializer.Serialize(league);

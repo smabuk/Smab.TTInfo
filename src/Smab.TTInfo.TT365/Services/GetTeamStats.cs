@@ -24,25 +24,30 @@ public sealed partial class TT365Reader
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 
-		List<Division> divisions = seasonId == currentSeasonId
-			? [.. league.CurrentSeason.Divisions]
-			: [.. league.Seasons.FirstOrDefault(s => s.Id == seasonId)?.Divisions ?? []];
+		Season? season = seasonId == currentSeasonId
+			? league.CurrentSeason
+			: league.Seasons.FirstOrDefault(s => s.Id == seasonId);
+
+		List<Division> divisions = [.. season?.Divisions ?? []];
 
 		if (divisions.Count == 0) {
 			return null;
 		}
 
-		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamName}.json";
+		string lookupTeamName = teamName.Replace("_", " ");
+		string? teamId = season.Lookups.TeamLookup.Where(tl => tl.Name.Equals(lookupTeamName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault()?.Id;
+		if (teamId is null) {
+			return null;
+		}
+
+		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamId}.json";
 		Team team = seasonId == currentSeasonId
 			? await LoadAsync<Team>(leagueId, null, filename) ?? null!
 			: await LoadAsync<Team>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
 
 		if (team is not null) { return team; }
 
-		team = new();
-		string lookupTeamName = teamName.Replace("_", " ");
-
-		team = divisions.SelectMany(d => d.Teams).SingleOrDefault(t => t.Name.Equals(teamName, StringComparison.InvariantCultureIgnoreCase)) ?? new();
+		team = divisions.SelectMany(d => d.Teams).Single(t => t.Id == teamId);
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,

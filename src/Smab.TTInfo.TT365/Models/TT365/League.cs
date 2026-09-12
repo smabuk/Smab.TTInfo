@@ -19,6 +19,7 @@ public record League(
 	string URL,
 	string Theme,
 	ImmutableList<Season> Seasons,
+	TT365SeasonId CurrentSeasonId,
 	Season CurrentSeason
 	);
 
@@ -36,5 +37,5 @@ public static class LeagueExtensions
 	/// </summary>
 	/// <param name="league">The league for which the season identifier is being retrieved. Cannot be null.</param>
 	/// <returns>The unique identifier of the current season as a <see cref="TT365SeasonId"/>.</returns>
-	public static TT365SeasonId GetCurrentSeasonId(this League league) => league.CurrentSeason.Id;
+	public static TT365SeasonId GetCurrentSeasonId(this League league) => league.CurrentSeasonId;
 }
