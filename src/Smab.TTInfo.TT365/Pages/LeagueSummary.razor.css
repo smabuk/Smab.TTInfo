@@ -1,6 +1,11 @@
-﻿dd a {
+﻿h1 {
+	font-size: calc(1.6rem + .6vw);
+}
+
+dd a {
 	color: var(--text-color);
 	text-decoration: none;
+/*	padding-right: 1em;*/
 
 	&:hover,
 	&:active {
