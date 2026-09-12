@@ -19,23 +19,25 @@ public record League(
 	string URL,
 	string Theme,
 	ImmutableList<Season> Seasons,
-	TT365SeasonId CurrentSeasonId,
-	Season CurrentSeason
+	TT365SeasonId CurrentSeasonId
 	);
 
 public static class LeagueExtensions
 {
-	/// <summary>
-	/// Gets the current season of the league.
-	/// </summary>
-	/// <param name="league">The league from which to retrieve the current season.</param>
-	/// <returns>The current season of the league.</returns>
-	public static Season GetCurrentSeason(this League league) => league.CurrentSeason;
+	extension(League league)
+	{
+		/// <summary>
+		/// Gets the current season of the league.
+		/// </summary>
+		/// <param name="league">The league from which to retrieve the current season.</param>
+		/// <returns>The current season of the league.</returns>
+		public Season CurrentSeason => league.Seasons.Single(s => s.Id == league.CurrentSeasonId);
 
-	/// <summary>
-	/// Retrieves the unique identifier for the current season of the specified league.
-	/// </summary>
-	/// <param name="league">The league for which the season identifier is being retrieved. Cannot be null.</param>
-	/// <returns>The unique identifier of the current season as a <see cref="TT365SeasonId"/>.</returns>
-	public static TT365SeasonId GetCurrentSeasonId(this League league) => league.CurrentSeasonId;
+		/// <summary>
+		/// Retrieves the unique identifier for the current season of the specified league.
+		/// </summary>
+		/// <param name="league">The league for which the season identifier is being retrieved. Cannot be null.</param>
+		/// <returns>The unique identifier of the current season as a <see cref="TT365SeasonId"/>.</returns>
+		public TT365SeasonId GetCurrentSeasonId() => league.CurrentSeasonId;
+	}
 }

@@ -62,20 +62,14 @@ public sealed partial class TT365Reader
 				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, [.. divisions]));
 			}
 
-			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeasonId, currentSeason);
-		} else {
-			league = league with
-			{
-				CurrentSeason = league.CurrentSeason with {
-					Lookups = await GetLookupTables(leagueId, league.GetCurrentSeasonId())
-				}
-			};
+			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeasonId);
 		}
 
 		league = league with {
-			CurrentSeason = league.CurrentSeason with {
-				Divisions = [.. await GetDivisions(leagueId, league.GetCurrentSeasonId())]
-			}
+			Seasons = [ league.CurrentSeason with {
+				Divisions = [.. await GetDivisions(leagueId, league.CurrentSeasonId)],
+			},
+			.. league.Seasons.Skip(1)]
 		};
 
 		jsonString = JsonSerializer.Serialize(league);
