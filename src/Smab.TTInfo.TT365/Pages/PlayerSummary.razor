@@ -32,7 +32,7 @@
 			.Select(g => g.Key)];
 
 		<div id="results">
-			<h2>@league?.Name @seasonName.Replace("_", " ")</h2>
+			<h2><a href="/LeagueSummary/@LeagueId/@seasonName">@league?.Name <span>@seasonName.Replace("_", " ")</span></a></h2>
 			@foreach (string teamName in playerTeams) {
 				List<PlayerResult> results = [.. seasonPlayerResults
 					.Where(p => p.PlayerTeamName == teamName)
