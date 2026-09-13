@@ -15,7 +15,7 @@ namespace Smab.TTInfo.TT365.Models.TT365;
 /// <param name="PlayerTeamName"></param>
 /// <param name="Opponent"></param>
 /// <param name="OpponentTeam"></param>
-/// <param name="Division"></param>
+/// <param name="DivisionId"></param>
 /// <param name="Scores"></param>
 /// <param name="RankingDiff"></param>
 /// <param name="Result"></param>
@@ -30,7 +30,7 @@ public record PlayerResult(
 	string PlayerTeamName,
 	Player Opponent,
 	string OpponentTeam,
-	string Division,
+	string DivisionId,
 	string Scores,
 	int? RankingDiff,
 	string Result,
@@ -46,9 +46,11 @@ public record PlayerResult(
 	/// <summary>
 	/// Gets the list of games, where each game is represented by a score.
 	/// </summary>
-	public List<Score> Games { get; init; } = [.. Scores
+	public List<Score> Games { get; init; } = Scores.Contains("-")
+		? [.. Scores
 		.Split(",")
-		.Select(score => new Score(int.Parse(score[..score.IndexOf('-')]), int.Parse(score[(score.IndexOf('-') + 1)..])))];
+		.Select(score => new Score(int.Parse(score[..score.IndexOf('-')]), int.Parse(score[(score.IndexOf('-') + 1)..])))]
+		: [];
 
 	/// <summary>
 	/// Gets the current game score, represented as a <see cref="Score"/> object.

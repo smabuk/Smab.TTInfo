@@ -23,6 +23,7 @@ public sealed partial class TT365Reader
 		{
 			TT365WebsiteVersion.Original => await GetTeamStatsOriginal(leagueId, teamName, seasonId),
 			TT365WebsiteVersion.New2026 => await GetTeamStatsNew2026(leagueId, teamName, seasonId),
+			_ => throw new NotSupportedException($"Website version {WebsiteVersion} is not supported ."),
 		};
 	}
 

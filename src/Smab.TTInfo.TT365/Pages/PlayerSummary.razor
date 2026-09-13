@@ -39,7 +39,7 @@
 					.OrderByDescending(p => p.Date)
 					.ThenByDescending(p => p.OriginalSortOrder)
 					];
-				<h3><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a> - <a href="/DivisionSummary/@LeagueId/@seasonName/@results[0].Division">@results[0].Division.Replace("_", " ")</a></h3>
+				<h3><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a> - <a href="/DivisionSummary/@LeagueId/@seasonName/@results[0].DivisionId">@results[0].DivisionId.Replace("_", " ")</a></h3>
 				<table class="table table-bordered table-sm">
 					<thead>
 						<tr>
@@ -95,7 +95,7 @@
 						{
 							<td>@seasonName.Replace("_", " ")</td>
 							string teamName = seasonPlayerResults.First().PlayerTeamName;
-							<td>@seasonPlayerResults.First().Division.Replace("Division_", "")</td>
+							<td>@seasonPlayerResults.First().DivisionId.Replace("Division_", "")</td>
 							<td><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
 						} else {
 							<td colspan="3">@seasonName.Replace("_", " ")</td>
@@ -114,7 +114,7 @@
 							List<PlayerResult> teamPlayerResults = [.. seasonPlayerResults.Where(s => s.PlayerTeamName == teamName)];
 							<tr>
 								<td>&nbsp;</td>
-								<td>@teamPlayerResults.First().Division.Replace("Division_", "")</td>
+								<td>@teamPlayerResults.First().DivisionId.Replace("Division_", "")</td>
 								<td><a href="TeamSummary/@LeagueId/@seasonName/@teamName">@teamName</a></td>
 								<td>@teamPlayerResults.Count</td>
 								<td>@teamPlayerResults.Where(r => r.Result == "Win").Count()</td>

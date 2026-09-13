@@ -7,23 +7,151 @@ public sealed partial class TT365Reader
 	/// <summary>
 	/// Retrieves and updates the statistics for a specified player in a given league and season.
 	/// </summary>
-	/// <remarks>This method fetches player statistics from a remote source, processes the data, and updates the
-	/// player's information. If the player's statistics are already cached, the cached data is used. If the player's URL
-	/// is not set, it is generated based on the league and season information. The method also saves the updated player
-	/// data to a local cache for future use.</remarks>
+	/// <remarks>
+	/// This method fetches player statistics from a remote source, processes the data, and updates the player's
+	/// information. If the player's statistics are already cached, the cached data is used. If the player's URL is not
+	/// set, it is generated based on the league and season information. The method also saves the updated player data to a
+	/// local cache for future use.
+	/// </remarks>
 	/// <param name="leagueId">The unique identifier of the league to retrieve data from.</param>
 	/// <param name="player">The player whose statistics are to be retrieved and updated.</param>
-	/// <param name="seasonId">The unique identifier of the season. If not provided or empty, the current season of the league will be used.</param>
-	/// <returns>A <see cref="Player"/> object containing the updated statistics for the specified player, or <see langword="null"/>
-	/// if the league cannot be found.</returns>
+	/// <param name="seasonId">
+	/// The unique identifier of the season. If not provided or empty, the current season of the league will be used.
+	/// </param>
+	/// <returns>
+	/// A <see cref="Player"/> object containing the updated statistics for the specified player, or <see langword="null"/>
+	/// if the league cannot be found.
+	/// </returns>
 	public async Task<Player?> GetPlayerStats(TT365LeagueId leagueId, Player player, TT365SeasonId? seasonId = null)
+	{
+		return WebsiteVersion switch
+		{
+			TT365WebsiteVersion.Original => await GetPlayerStatsOriginal(leagueId, player, seasonId),
+			TT365WebsiteVersion.New2026 => await GetPlayerStatsNew2026(leagueId, player, seasonId),
+			_ => throw new NotSupportedException($"Website version {WebsiteVersion} is not supported ."),
+		};
+	}
+
+	private async Task<Player?> GetPlayerStatsNew2026(TT365LeagueId leagueId, Player player, TT365SeasonId? seasonId)
 	{
 		League? league = await GetLeague(leagueId);
 		if (league is null) { return null; }
 
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
-		if (seasonId is null) { return null; };
+		if (seasonId is null) { return null; }
+		;
+
+		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
+		Player newPlayer = seasonId == currentSeasonId
+			? await LoadAsync<Player>(leagueId, null, filename) ?? null!
+			: await LoadAsync<Player>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
+
+		// ToDo: replace when ready to publish **********************************
+		//if (newPlayer is not null) { return newPlayer; }
+
+		newPlayer = player;
+		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
+
+		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
+			player.PlayerURL = $"{TT365_COM}/{leagueId}/Results/Player?leagueName={seasonId}&playerName{lookupPlayerName}&id={player.Id}";
+		}
+
+		HtmlDocument doc = await LoadAsync<HtmlDocument>(
+				leagueId,
+				player.PlayerURL,
+				// ToDo: replace when ready to publish **********************************
+				filename.Replace(".json", ".html")
+				)
+			?? new();
+
+		HtmlNode? statsNode = doc.DocumentNode.GetFirstNodeByClass("tt-player-stats-header");
+
+		if (statsNode is null) {
+			return player;
+		}
+
+		string playerTeamName = doc.DocumentNode.SelectSingleNode("//span[text()='Team::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? "";
+		//string playerTeamName = doc.DocumentNode.GetFirstNodeByClass("team")?.SelectSingleNode("span")?.InnerText.Trim() ?? "";
+
+		int index = 1;
+		//foreach (HtmlNode? table in statsNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false)) {
+		//	if (table.SelectSingleNode("caption")?.InnerText.Contains("&gt;") ?? false) {
+		//		playerTeamName = table.SelectSingleNode("caption")?.InnerText.Split("&gt;").Last().Trim() ?? "";
+		//	}
+
+		HtmlNode? playertableNode = doc.DocumentNode.SelectSingleNode("//table[contains(@class,'tt-player-results-table')]");
+		foreach (HtmlNode? resultRow in playertableNode.SelectSingleNode("tbody")?.Descendants("tr") ?? EMPTY_NODE_COLLECTION) {
+			HtmlNode[] cells = [.. resultRow.Descendants("td")];
+			if (string.IsNullOrWhiteSpace(cells[0].InnerText.Replace("-", "").Trim())) {
+				continue;
+			}
+
+			string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
+			string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
+			Player opponent = new()
+			{
+				Name = opponentName,
+				PlayerURL = opponentHref,
+			};
+
+			string resultReason = "";
+			//if (cells[1].Descendants("img").Any()) {
+			//	resultReason = cells[1].SelectNodes("img")?.FirstOrDefault()?.Attributes["title"].Value.Trim() ?? "";
+			//}
+
+			string opponentTeam = cells[1].Descendants("a").First().InnerText.Trim();
+			//string[] divParts = cells[1].Descendants("a").First().Attributes["href"].Value.Split(['&', '=']).ToArray();
+			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"].Value.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? "";
+
+			DateOnly date = DateOnly.Parse(cells[2].InnerText.Trim() ?? "");
+
+			string scores = cells[3].InnerText.Trim().Replace("  ", " ").Replace(" ", ", ");
+
+			string result = cells[4].InnerText.Trim().ToLowerInvariant() switch {
+				"w" => "Win",
+				"l" => "Loss",
+				_ => cells[4].InnerText.Trim().ToLowerInvariant()
+			};
+
+			string matchCardUrl = $"{TT365_COM}{cells[3].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+
+
+			PlayerResult playerResult = new(
+				Id: player.Id,
+				Name: FixPlayerName(player.Name),
+				OriginalSortOrder: index++,
+				Date: date,
+				PlayerTeamName: playerTeamName,
+				Opponent: opponent,
+				OpponentTeam: opponentTeam,
+				DivisionId: divisionId,
+				Scores: scores,
+				RankingDiff: null,
+				Result: result,
+				ResultReason: resultReason,
+				MatchCardURL: matchCardUrl
+			);
+
+			newPlayer.PlayerResults = [.. newPlayer.PlayerResults, playerResult];
+		}
+		//}
+
+		string jsonString = JsonSerializer.Serialize(newPlayer);
+		_ = SaveFileToCache(jsonString, filename);
+
+		return newPlayer;
+	}
+
+	private async Task<Player?> GetPlayerStatsOriginal(TT365LeagueId leagueId, Player player, TT365SeasonId? seasonId)
+	{
+		League? league = await GetLeague(leagueId);
+		if (league is null) { return null; }
+
+		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
+		seasonId ??= currentSeasonId;
+		if (seasonId is null) { return null; }
+		;
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
 		Player newPlayer = seasonId == currentSeasonId
@@ -63,8 +191,9 @@ public sealed partial class TT365Reader
 				if (cells.Length is 6 or 7 && cells[0].Descendants("a").Count() == 1) {
 					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
 					string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
-					Player opponent = new () {
-						Name      = opponentName,
+					Player opponent = new()
+					{
+						Name = opponentName,
 						PlayerURL = opponentHref,
 					};
 
@@ -96,19 +225,19 @@ public sealed partial class TT365Reader
 					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
 
 					PlayerResult playerResult = new(
-						Id:                player.Id,
-						Name:              FixPlayerName(player.Name),
+						Id: player.Id,
+						Name: FixPlayerName(player.Name),
 						OriginalSortOrder: index++,
-						Date:              date,
-						PlayerTeamName:    playerTeamName,
-						Opponent:          opponent,
-						OpponentTeam:      opponentTeam,
-						Division:          division,
-						Scores:            scores,
-						RankingDiff:       rankingDiffSuccessful ? rankingDiff : null,
-						Result:            result,
-						ResultReason:      resultReason,
-						MatchCardURL:      matchCardUrl
+						Date: date,
+						PlayerTeamName: playerTeamName,
+						Opponent: opponent,
+						OpponentTeam: opponentTeam,
+						DivisionId: division,
+						Scores: scores,
+						RankingDiff: rankingDiffSuccessful ? rankingDiff : null,
+						Result: result,
+						ResultReason: resultReason,
+						MatchCardURL: matchCardUrl
 					);
 
 					newPlayer.PlayerResults = [.. newPlayer.PlayerResults, playerResult];
@@ -122,4 +251,3 @@ public sealed partial class TT365Reader
 		return newPlayer;
 	}
 }
-
