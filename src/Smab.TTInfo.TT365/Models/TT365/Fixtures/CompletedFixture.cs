@@ -3,9 +3,10 @@
 /// <summary>
 /// Represents a completed fixture in a match, including the final score, participating players, and other details.
 /// </summary>
-/// <remarks>This record extends the <see cref="Fixture"/> type to include additional information specific to
-/// completed matches,  such as the final score, the player of the match, and details about the players who
-/// participated.</remarks>
+/// <remarks>
+/// This record extends the <see cref="Fixture"/> type to include additional information specific to completed matches,
+/// such as the final score, the player of the match, and details about the players who participated.
+/// </remarks>
 [DebuggerDisplay("CompletedFixture: {Date,nq} - {HomeTeam,nq} ({ForHome,nq}) vs ({ForAway,nq}) {AwayTeam,nq}")]
 public record CompletedFixture(
 	string Division,
@@ -23,8 +24,11 @@ public record CompletedFixture(
 	public List<MatchPlayer> HomePlayers { get; set; } = [];
 	public List<MatchPlayer> AwayPlayers { get; set; } = [];
 	public string? Other { get; set; }
-	public int Id => string.IsNullOrWhiteSpace(CardURL) ? 0 :
-		int.Parse(CardURL.Split('/').LastOrDefault() ?? "");
+	public int Id => string.IsNullOrWhiteSpace(CardURL)
+		? 0
+		: int.TryParse(CardURL.Split(['/', '=']).LastOrDefault() ?? "", out int id)
+				? id
+				: 0;
 	public string DoublesWinner => ForHome - HomePlayers.Sum(p => p.SetsWon) > 0 ? HomeTeam : AwayTeam;
 
 	public string Score => $"{ForHome} - {ForAway}";

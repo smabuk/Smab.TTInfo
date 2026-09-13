@@ -44,14 +44,13 @@ public sealed partial class TT365Reader
 			? await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? []
 			: await LoadAsync<List<Fixture>?>(leagueId, null, filename, cacheHours: 10_000_000) ?? [];
 
-		// ToDo: replace when ready to rollout
+		// ToDo: replace when ready to rollout **********************************
 		//if (fixtures is not []) { return fixtures; }
 		fixtures = [];
 
-
 		Dictionary<string, string> teamToDivision = league.GetSeason((TT365SeasonId)seasonId)?.Divisions
-			.SelectMany(d => d.Teams.Select(t => new { TeamName = t.Name, DivisionName = d.Name }))
-			.ToDictionary(x => x.TeamName, x => x.DivisionName) ?? [];
+			.SelectMany(d => d.Teams.Select(t => new { TeamName = t.Name, DivisionId = d.Id }))
+			.ToDictionary(x => x.TeamName, x => x.DivisionId) ?? [];
 
 		FixturesViewOptions fvo = FixturesViewOptions.Create
 		(
@@ -95,24 +94,24 @@ public sealed partial class TT365Reader
 
 				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']")?.InnerText ?? "");
 
-				HtmlNode? homeNode = fixtureNode.GetSingleNodeByClass("home");
-				HtmlNode? awayNode = fixtureNode.GetSingleNodeByClass("away");
+				HtmlNode? homeNode = fixtureNode.SelectSingleNode("td[2]/a");
+				HtmlNode? awayNode = fixtureNode.SelectSingleNode("td[4]/a");
 
-				string fixtureHomeTeam = fixtureNode.SelectSingleNode("td[2]/a")?.InnerText.Trim() ?? "";
-				string fixtureAwayTeam = fixtureNode.SelectSingleNode("td[4]/a")?.InnerText.Trim() ?? "";
+				string fixtureHomeTeam = homeNode?.InnerText.Trim() ?? "";
+				string fixtureAwayTeam = awayNode?.InnerText.Trim() ?? "";
 
 				string fixtureDivision = teamToDivision.GetValueOrDefault(fixtureHomeTeam, "");
 				Fixture fixture = new(fixtureDivision, fixtureDescription, fixtureDate, fixtureHomeTeam, fixtureAwayTeam, fixtureVenue);
 
-				//FixtureType fixtureType = DetermineFixtureType(fixtureNode, nodeClass);
-				//fixture = fixtureType switch
-				//{
-				//	FixtureType.Completed => ParseToCompletedFixture(fixtureNode, homeNode, awayNode, fixture),
-				//	FixtureType.Postponed => ParseToPostponedFixture(fixtureNode, fixture),
-				//	FixtureType.Rearranged => ParseToRearrangedFixture(fixtureNode, fixture),
-				//	FixtureType.Void => ParseToVoidFixture(fixtureNode, fixture),
-				//	_ => fixture
-				//};
+				FixtureType fixtureType = DetermineFixtureTypeNew2026(fixtureNode, nodeClass);
+				fixture = fixtureType switch
+				{
+					FixtureType.Completed => ParseToCompletedFixtureNew2026(fixtureNode, homeNode, awayNode, fixture),
+					FixtureType.Postponed => ParseToPostponedFixtureNew2026(fixtureNode, fixture),
+					FixtureType.Rearranged => ParseToRearrangedFixtureNew2026(fixtureNode, fixture),
+					FixtureType.Void => ParseToVoidFixtureNew2026(fixtureNode, fixture),
+					_ => fixture
+				};
 
 				fixtures.Add(fixture);
 			}
@@ -132,6 +131,74 @@ public sealed partial class TT365Reader
 				.InnerText
 				) ?? "";
 	}
+
+	private Fixture ParseToCompletedFixtureNew2026(HtmlNode fixtureNode, HtmlNode? homeNode, HtmlNode? awayNode, Fixture fixture)
+	{
+		string[] scores = fixtureNode.SelectSingleNode("//span[contains(@class,'tt-result-score-text')]")?.InnerText.Split('-', StringSplitOptions.TrimEntries) ?? [];
+		if (scores.Count() != 2 || scores.Contains("R")) {
+			int a = 1;
+		}
+
+		int forHome = int.Parse(scores[0]);
+		int forAway = int.Parse(scores[1]);
+		string cardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("td[contains(@class,'tt-fixture-score')]/a")?.Attributes["href"].Value.Trim() ?? ""}";
+		HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//li[contains(@class, 'tt-fixture-scorecard-player')]");
+		string playerOfTheMatchName = "";
+		List<MatchPlayer> homePlayers = [];
+		List<MatchPlayer> awayPlayers = [];
+		if (playerNodes is not null) {
+			foreach (HtmlNode playerNode in playerNodes) {
+				string playerName = playerNode.SelectSingleNode("a")?.InnerText ?? "";
+				playerName = FixPlayerName(playerName);
+				string? playerIdString = playerNode.SelectSingleNode("a")?.GetAttributeValue("href", null!);
+				int playerId = 0;
+				_ = int.TryParse(playerNode.SelectSingleNode("span")?.InnerText, out int setsWon);
+				if (playerIdString is not null) {
+					playerId = string.IsNullOrWhiteSpace(playerIdString) ? 0 : int.Parse(playerIdString.Split('=').LastOrDefault() ?? "");
+				}
+
+				bool playerPoM = playerNode.HasClass("tt-fixture-scorecard-pom");
+				MatchPlayer matchPlayer = new(playerName, playerId, setsWon, playerPoM);
+				if (playerNode.ParentNode.HasClass("tt-fixture-scorecard-home")) {
+					homePlayers.Add(matchPlayer);
+				} else {
+					awayPlayers.Add(matchPlayer);
+				}
+
+				if (playerPoM) {
+					playerOfTheMatchName = FixPlayerName(matchPlayer.Name);
+				}
+			}
+		}
+
+		return fixture.ToCompleted() with
+		{
+			ForHome = forHome,
+			ForAway = forAway,
+			PlayerOfTheMatch = playerOfTheMatchName,
+			CardURL = cardURL,
+			HomePlayers = homePlayers,
+			AwayPlayers = awayPlayers,
+		};
+	}
+
+	private Fixture ParseToPostponedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private Fixture ParseToRearrangedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private Fixture ParseToVoidFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+
+	private static FixtureType DetermineFixtureTypeNew2026(HtmlNode fixtureNode, string nodeClass)
+	{
+		return nodeClass.HasClass("tt-fixture-completed")
+			? fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]") is not null
+				? FixtureType.Void
+				: FixtureType.Completed
+			: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
+				? FixtureType.Postponed
+				: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]") is not null
+					? FixtureType.Rearranged
+					: FixtureType.Fixture;
+	}
+
 
 	private async Task<List<Fixture>> GetAllFixturesOriginal(TT365LeagueId leagueId, TT365SeasonId? seasonId)
 	{

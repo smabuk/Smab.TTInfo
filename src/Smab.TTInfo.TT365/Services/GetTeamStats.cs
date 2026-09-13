@@ -19,13 +19,25 @@ public sealed partial class TT365Reader
 	/// <see langword="null"/> if the team or season cannot be found.</returns>
 	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
+		return WebsiteVersion switch
+		{
+			TT365WebsiteVersion.Original => await GetTeamStatsOriginal(leagueId, teamName, seasonId),
+			TT365WebsiteVersion.New2026 => await GetTeamStatsNew2026(leagueId, teamName, seasonId),
+		};
+	}
+
+	private async Task<Team?> GetTeamStatsNew2026(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId)
+	{
+
 		League league = await GetLeague(leagueId) ?? throw new InvalidOperationException($"League with ID {leagueId} could not be found.");
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
-		if (seasonId is null) { return null; };
+		if (seasonId is null) { return null; }
+		;
 
 		Season? season = league.GetSeason((TT365SeasonId)seasonId);
-		if (season is null) { return null; };
+		if (season is null) { return null; }
+		;
 
 		List<Division> divisions = [.. season?.Divisions ?? []];
 		if (divisions.Count == 0) { return null; }
@@ -44,20 +56,22 @@ public sealed partial class TT365Reader
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				team.URL)
+				team.URL,
+				// ToDo: replace when ready to publish
+				filename.Replace("json", "html"))
 			?? new();
 
-		HtmlNode? teamNode = doc.DocumentNode.GetFirstNodeById("TeamStats");
+		HtmlNode? teamNode = doc.DocumentNode.GetFirstNodeByClass("tt-content");
 
 		if (teamNode is null) { return team; }
 
-		team.Caption = teamNode.GetFirstNodeByClass("caption")?.InnerText.Replace("&gt;", ">") ?? "";
+		team.Caption = teamNode.SelectSingleNode("//p[@class='tt-page-subtitle']")?.InnerText ?? "";
 		team.Players = [];
 		team.Results = [];
 		HtmlNode? captainNode = teamNode.SelectNodes("//div[text()='Captain']")?.FirstOrDefault();
 		team.Captain = captainNode?.NextSibling.NextSibling.InnerText ?? "";
-		team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
-		team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
+		//team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
+		//team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
 
 		HtmlNode? playertableNode = teamNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
 		if (playertableNode is not null) {
@@ -78,7 +92,7 @@ public sealed partial class TT365Reader
 					select f.InnerText];
 				player.Form = string.Join(",", form);
 				List<string> rankings = (from r in cells[3].Descendants("a")
-									select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
+										 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
 				foreach (string? rank in rankings) {
 					if (rank.Contains(':')) {
 						string[]? rTemp = rank.Split(":");
@@ -142,11 +156,166 @@ public sealed partial class TT365Reader
 						out DateOnly resultDate);
 
 				bool hasPoM = cells.Length > 6;
-				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with {
-					ForHome          = int.Parse(score.Split("-")[0]),
-					ForAway          = int.Parse(score.Split("-")[1]),
-					Other            = other,
-					CardURL          = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
+				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with
+				{
+					ForHome = int.Parse(score.Split("-")[0]),
+					ForAway = int.Parse(score.Split("-")[1]),
+					Other = other,
+					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
+					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
+				};
+
+				TeamResult teamResult = new(
+					completedFixture,
+					Opposition: cells[0].InnerText,
+					HomeOrAway: cells[1].InnerText.ToLowerInvariant(),
+					Points: int.Parse(cells[4].InnerText),
+					IsVoid: isVoid);
+
+				team.Results = [.. team.Results, teamResult];
+			}
+		}
+
+		string jsonString = JsonSerializer.Serialize(team);
+		_ = SaveFileToCache(jsonString, filename);
+
+		return team;
+	}
+
+	private async Task<Team?> GetTeamStatsOriginal(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId)
+	{
+
+		League league = await GetLeague(leagueId) ?? throw new InvalidOperationException($"League with ID {leagueId} could not be found.");
+		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
+		seasonId ??= currentSeasonId;
+		if (seasonId is null) { return null; }
+		;
+
+		Season? season = league.GetSeason((TT365SeasonId)seasonId);
+		if (season is null) { return null; }
+		;
+
+		List<Division> divisions = [.. season?.Divisions ?? []];
+		if (divisions.Count == 0) { return null; }
+
+		string? teamId = season?.Lookups.GetTeamByName(teamName)?.Id;
+		if (teamId is null) { return null; }
+
+		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamId}.json";
+		Team team = seasonId == currentSeasonId
+			? await LoadAsync<Team>(leagueId, null, filename) ?? null!
+			: await LoadAsync<Team>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
+
+		if (team is not null) { return team; }
+
+		team = divisions.SelectMany(d => d.Teams).Single(t => t.Id == teamId);
+
+		HtmlDocument doc = await LoadAsync<HtmlDocument>(
+				leagueId,
+				team.URL)
+			?? new();
+
+		HtmlNode? teamNode = doc.DocumentNode.GetFirstNodeById("TeamStats");
+
+		if (teamNode is null) { return team; }
+
+		team.Caption = teamNode.GetFirstNodeByClass("caption")?.InnerText.Replace("&gt;", ">") ?? "";
+		team.Players = [];
+		team.Results = [];
+		HtmlNode? captainNode = teamNode.SelectNodes("//div[text()='Captain']")?.FirstOrDefault();
+		team.Captain = captainNode?.NextSibling.NextSibling.InnerText ?? "";
+		team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
+		team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
+
+		HtmlNode? playertableNode = teamNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Players") ?? false).SingleOrDefault();
+		if (playertableNode is not null) {
+			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
+				HtmlNode[] cells = [.. playerRow.Descendants("td")];
+				bool hasPoM = cells.Length > 4;
+				Player player = new()
+				{
+					Name = FixPlayerName(cells[0].InnerText.Trim()),
+					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
+					Played = int.Parse(cells[1].InnerText),
+					WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
+					LeagueRanking = 0, // no longer being tracked apparently (appears to be broken)
+					PoMAwards = hasPoM ? cells[3].InnerText : "",
+				};
+				List<string>? form = [..
+					from f in cells[hasPoM ? 4 : 3].Descendants("a")
+					select f.InnerText];
+				player.Form = string.Join(",", form);
+				List<string> rankings = (from r in cells[3].Descendants("a")
+										 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
+				foreach (string? rank in rankings) {
+					if (rank.Contains(':')) {
+						string[]? rTemp = rank.Split(":");
+						string rankType = rTemp[0].Trim();
+						if (int.TryParse(rTemp[1].Trim(), out int rankValue)) {
+							switch (rankType) {
+								case "OLOP":
+								case "OLOP TTC": {
+										player.ClubRanking = rankValue;
+										break;
+									}
+								case "Reading": {
+										player.LeagueRanking = rankValue;
+										break;
+									}
+								case "Berkshire": {
+										player.CountyRanking = rankValue;
+										break;
+									}
+								case "TTE > South East Region":
+								case "South East": {
+										player.RegionalRanking = rankValue;
+										break;
+									}
+								case "National": {
+										player.NationalRanking = rankValue;
+										break;
+									}
+								default:
+									break;
+							}
+						}
+					}
+				}
+
+				team.Players = [.. team.Players, player];
+			}
+		}
+
+		HtmlNode? resultstableNode = teamNode.Descendants("table").SingleOrDefault(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false);
+		if (resultstableNode is not null) {
+			foreach (HtmlNode? resultRow in resultstableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
+				HtmlNode[] cells = [.. resultRow.Descendants("td")];
+				string score = cells[3].InnerText;
+				string? other = null;
+				bool isVoid = false;
+				if (score.Equals("void", StringComparison.OrdinalIgnoreCase)) {
+					score = "0 - 0";
+					other = cells[3].Attributes["title"]?.Value;
+					isVoid = true;
+				}
+
+				if (score.EndsWith(" (A)")) {
+					score = score.Replace(" (A)", "");
+					other = cells[3].Attributes["title"]?.Value;
+				}
+
+				_ = DateOnly.TryParse(cells[2].InnerText,
+						GB_CULTURE,
+						System.Globalization.DateTimeStyles.None,
+						out DateOnly resultDate);
+
+				bool hasPoM = cells.Length > 6;
+				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with
+				{
+					ForHome = int.Parse(score.Split("-")[0]),
+					ForAway = int.Parse(score.Split("-")[1]),
+					Other = other,
+					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
 					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
 				};
 
