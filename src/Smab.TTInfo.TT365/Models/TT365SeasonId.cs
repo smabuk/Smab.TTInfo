@@ -27,7 +27,7 @@ public readonly record struct TT365SeasonId : IComparable<TT365SeasonId>, IEquat
 
 	public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Value);
 
-	public string ToDisplay() => Value.Replace('_', ' ');
+	public string ToDisplay() => Value.Replace('_', ' ').Replace("%20", " ");
 
 	private static string NormalizeWithUnderscore(string? value) => value?.Replace(' ', '_') ?? throw new ArgumentNullException(nameof(value), "Season ID value cannot be null.");
 }
