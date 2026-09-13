@@ -46,7 +46,7 @@
 		<dt>Previous Seasons</dt>
 		<dd>
 			@foreach ((int index, Season season) in League.Seasons.Where(s => s.Id != League.CurrentSeason.Id).OrderByDescending(s => s.Id).Index()) {
-				<a href="/LeagueSummary/@LeagueId/@season.Id">@(index == 0 ? "" : ", ")@season.Name</a>
+				@(index == 0 ? "" : ", ")<a href="/LeagueSummary/@LeagueId/@season.Id">@season.Name</a>
 			}
 		</dd>
 	</dl>
