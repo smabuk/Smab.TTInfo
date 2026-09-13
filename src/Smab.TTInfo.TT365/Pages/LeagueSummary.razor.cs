@@ -21,11 +21,7 @@ public partial class LeagueSummary
 			if (League is null) { return; }
 
 			seasonId = string.IsNullOrWhiteSpace(SeasonId) ? League.CurrentSeason.Id : (TT365SeasonId)SeasonId;
-			if (seasonId != League.CurrentSeason.Id) {
-				Season = League.Seasons.FirstOrDefault(s => s.Id == seasonId);
-			} else {
-				Season = League.CurrentSeason;
-			}
+			Season = League.GetSeason(seasonId);
 		}
 
 		isLoading = false;

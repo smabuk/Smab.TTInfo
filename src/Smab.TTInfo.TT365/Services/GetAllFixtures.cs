@@ -19,7 +19,7 @@ public sealed partial class TT365Reader
 	/// returned.</returns>
 	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? seasonId = null)
 	{
-		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.CurrentSeasonId ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) {
 			// TODO: Log this error

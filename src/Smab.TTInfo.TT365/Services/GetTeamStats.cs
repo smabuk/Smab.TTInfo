@@ -20,25 +20,18 @@ public sealed partial class TT365Reader
 	public async Task<Team?> GetTeamStats(TT365LeagueId leagueId, string teamName, TT365SeasonId? seasonId = null)
 	{
 		League league = await GetLeague(leagueId) ?? throw new InvalidOperationException($"League with ID {leagueId} could not be found.");
-		TT365SeasonId? currentSeasonId = league.GetCurrentSeasonId();
+		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 
-		Season? season = seasonId == currentSeasonId
-			? league.CurrentSeason
-			: league.Seasons.FirstOrDefault(s => s.Id == seasonId);
+		Season? season = league.GetSeason((TT365SeasonId)seasonId);
+		if (season is null) { return null; };
 
 		List<Division> divisions = [.. season?.Divisions ?? []];
+		if (divisions.Count == 0) { return null; }
 
-		if (divisions.Count == 0) {
-			return null;
-		}
-
-		string lookupTeamName = teamName.Replace("_", " ");
-		string? teamId = season.Lookups.TeamLookup.Where(tl => tl.Name.Equals(lookupTeamName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault()?.Id;
-		if (teamId is null) {
-			return null;
-		}
+		string? teamId = season?.Lookups.GetTeamByName(teamName)?.Id;
+		if (teamId is null) { return null; }
 
 		string filename = $@"{leagueId}_{seasonId}_team_stats_{teamId}.json";
 		Team team = seasonId == currentSeasonId

@@ -21,7 +21,7 @@ public sealed partial class TT365Reader
 		League? league = await GetLeague(leagueId);
 		if (league is null) { return null; }
 
-		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.GetCurrentSeasonId() ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; };
 

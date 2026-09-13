@@ -20,7 +20,7 @@ public partial class RecentFixtures
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		DateOnly today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
 
-		fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.GetCurrentSeasonId()) ?? [])
+		fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.CurrentSeasonId) ?? [])
 						.Where(f => f.Date <= today)
 						.Where(f => f is CompletedFixture or PostponedFixture)
 						.OrderByDescending(f => f.Date)

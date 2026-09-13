@@ -45,25 +45,9 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 			return;
 		}
 
-		Division ??= League.CurrentSeason.Id == seasonId
-			? League.CurrentSeason.Divisions.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "))
-			: League.Seasons.FirstOrDefault(s => s.Id == seasonId)?.Divisions.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "));
+		Division ??= League.GetDivisionByIdOrName(seasonId, DivisionId, DivisionName);
 
 		isLoading = false;
-	}
-
-	private async Task<Division?> LoadDivision()
-	{
-		if (string.IsNullOrEmpty(LeagueId) || string.IsNullOrEmpty(SeasonId)) {
-			return null;
-		}
-
-		if (string.IsNullOrEmpty(DivisionId) && string.IsNullOrEmpty(DivisionName)) {
-			return null;
-		}
-
-		return (await _tt365.GetDivisions((TT365LeagueId)LeagueId, (TT365SeasonId)SeasonId))
-			.FirstOrDefault(d => d.Id == DivisionId || d.Name == DivisionName || d.Name == DivisionName.Replace("_", " "));
 	}
 
 	private bool IsPage() => _navManager.IsPage(nameof(DivisionSummary));

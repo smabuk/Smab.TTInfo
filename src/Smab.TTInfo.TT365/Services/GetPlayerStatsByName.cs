@@ -25,7 +25,7 @@ public sealed partial class TT365Reader
 		League? league = await GetLeague(leagueId);
 		if (league is null) { return null; }
 
-		seasonId ??= league.GetCurrentSeasonId();
+		seasonId ??= league.CurrentSeasonId;
 		if (seasonId is null) { return null; }
 
 		playerName = playerName.Replace("%20", " ").Replace("_", " ");

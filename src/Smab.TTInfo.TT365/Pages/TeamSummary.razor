@@ -137,7 +137,7 @@
 							@{string opposingTeam = fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam;}
 							@if (teamPlayersList.ContainsKey(opposingTeam)) {
 								@foreach (Player player in teamPlayersList[opposingTeam].OrderByDescending(p => p.WinPercentage)) {
-									<text><a href="PlayerSummary/@league.Name/@seasonId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" ({Math.Round(player.WinPercentage, 0)}%) ")</text>
+									<text><a href="PlayerSummary/@league!.Name/@seasonId/@player.Name.Replace(" ", "_")/@player.Id">@($"{player.Name}")</a> @($" ({Math.Round(player.WinPercentage, 0)}%) ")</text>
 								}
 							} else {
 								<text>Loading ...</text>

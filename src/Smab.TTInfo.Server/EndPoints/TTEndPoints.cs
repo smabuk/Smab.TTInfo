@@ -177,8 +177,8 @@ public static partial class TTEndPoints
 		{
 			null => null,
 			_ => year switch {
-					null => league.GetCurrentSeasonId(),
-					_    => tt365.GetSeasonId(league.GetCurrentSeasonId(), (int)year)
+					null => league.CurrentSeasonId,
+					_    => tt365.GetSeasonId(league.CurrentSeasonId, (int)year)
 				}
 		};
 	}

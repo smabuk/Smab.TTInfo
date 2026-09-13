@@ -13,3 +13,13 @@ public record LookupTables
 	public ImmutableList<IdNamePair> TeamLookup { get; set; } = [];
 	public ImmutableList<IdNamePair> VenueLookup { get; set; } = [];
 }
+
+public static class LookupTableExtensions
+{
+	extension(LookupTables lookupTables)
+	{
+		public IdNamePair? GetTeamByName(string teamName)
+			=> lookupTables.TeamLookup.FirstOrDefault(t => t.Name.Equals(teamName.Replace("%20", " ").Replace("_", " "), StringComparison.OrdinalIgnoreCase));
+	}
+}
+

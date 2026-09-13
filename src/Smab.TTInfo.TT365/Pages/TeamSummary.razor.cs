@@ -27,7 +27,7 @@ public partial class TeamSummary
 			return;
 		}
 
-		seasonId = string.IsNullOrWhiteSpace(SeasonId) ? league.GetCurrentSeasonId() : (TT365SeasonId)SeasonId;
+		seasonId = string.IsNullOrWhiteSpace(SeasonId) ? league.CurrentSeasonId : (TT365SeasonId)SeasonId;
 		SeasonId = seasonId.ToString();
 
 		team = null;
