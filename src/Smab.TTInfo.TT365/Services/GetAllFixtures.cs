@@ -149,7 +149,7 @@ public sealed partial class TT365Reader
 	/// <param name="fixture">The base <see cref="Fixture"/> object to be converted into a <see cref="CompletedFixture"/>.</param>
 	/// <returns>A <see cref="CompletedFixture"/> object populated with the parsed data, including scores, players, and additional
 	/// metadata.</returns>
-	private static CompletedFixture ParseToCompletedFixture(HtmlNode fixtureNode, HtmlNode? homeNode, HtmlNode? awayNode, Fixture fixture)
+	private CompletedFixture ParseToCompletedFixture(HtmlNode fixtureNode, HtmlNode? homeNode, HtmlNode? awayNode, Fixture fixture)
 	{
 		int forHome = int.Parse(homeNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");
 		int forAway = int.Parse(awayNode?.Descendants("div").Where(x => x.Attributes["class"].Value.Trim() == "score").SingleOrDefault()?.InnerText ?? "");

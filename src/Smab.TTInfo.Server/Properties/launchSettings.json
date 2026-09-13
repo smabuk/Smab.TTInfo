@@ -1,12 +1,4 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:42334",
-      "sslPort": 44359
-    }
-  },
   "profiles": {
     "Smab.TTInfo.Server": {
       "commandName": "Project",
@@ -28,27 +20,45 @@
       "applicationUrl": "https://localhost:7436;http://localhost:5354",
       "dotnetRunMessages": true
     },
-	"IIS Express": {
-		"commandName": "IISExpress",
-		"launchBrowser": true,
-		"environmentVariables": {
-			"ASPNETCORE_ENVIRONMENT": "Development",
-			"TTInfo__CacheHours": "1",
-			"TTInfo__UseTestFiles": "false"
-		}
-	},
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "TTInfo__CacheHours": "1",
+        "TTInfo__UseTestFiles": "false"
+      }
+    },
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "TTInfo__UseTestFiles": "true",
         "TTInfo__CacheFolder": "../cache",
         "TZ": "Europe/London"
       },
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "TT365_New_2026": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "TTInfo__WebsiteVersion": "new2026"
+      },
+      "applicationUrl": "https://localhost:7436;http://localhost:5354",
+      "dotnetRunMessages": true
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:42334",
+      "sslPort": 44359
     }
   }
 }

@@ -13,11 +13,11 @@ namespace Smab.TTInfo.TT365.Services;
 /// inherited.</remarks>
 public sealed partial class TT365Reader(IOptions<TT365Options> options, HttpClient httpClient, TimeProvider timeProvider) : ITT365Reader
 {
-	private static readonly string                CACHEFILE_PREFIX      = "tt365_";
-	private static readonly CultureInfo           GB_CULTURE            = new("en-GB");
-	private static readonly string                TT365_COM             = "https://www.tabletennis365.com";
-	public  static readonly TimeOnly              DEFAULT_START_TIME    = new(19, 30);
-	private static readonly JsonSerializerOptions JSON_SER_OPTIONS      = new()
+	private string CACHEFILE_PREFIX      => WebsiteVersion == TT365WebsiteVersion.Original ? "tt365_" : "tt365_beta_";
+	private string TT365_COM             => $"""https://{(WebsiteVersion == TT365WebsiteVersion.Original ? "www" : "beta")}.tabletennis365.com""";
+	private static readonly CultureInfo    GB_CULTURE            = new("en-GB");
+	public static readonly TimeOnly        DEFAULT_START_TIME    = new(19, 30);
+	private readonly JsonSerializerOptions JSON_SER_OPTIONS      = new()
 	{
 		ReadCommentHandling         = JsonCommentHandling.Skip,
 		PropertyNameCaseInsensitive = true,
@@ -28,4 +28,5 @@ public sealed partial class TT365Reader(IOptions<TT365Options> options, HttpClie
 	public string CacheFolder  { get; set; } = options.Value.CacheFolder;
 	public int    CacheHours   { get; set; } = options.Value.CacheHours;
 	public bool   UseTestFiles { get; set; } = options.Value.UseTestFiles;
+	public TT365WebsiteVersion WebsiteVersion => options.Value.GetTT365WebsiteVersion();
 }

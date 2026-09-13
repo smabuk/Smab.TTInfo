@@ -17,7 +17,7 @@ public static class TT365ServiceExtensions
 	public static IServiceCollection AddTT365Service(this IServiceCollection? services, string configSectionName = TTINFO_OPTIONS_NAME)
 	{
 		ArgumentNullException.ThrowIfNull(services, nameof(services));
-		
+
 		if (string.IsNullOrWhiteSpace(configSectionName)) {
 			throw new ArgumentException($"'{nameof(configSectionName)}' cannot be null or whitespace.", nameof(configSectionName));
 		}
