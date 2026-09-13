@@ -19,6 +19,122 @@ public sealed partial class TT365Reader
 	/// returned.</returns>
 	public async Task<List<Fixture>> GetAllFixtures(TT365LeagueId leagueId, TT365SeasonId? seasonId = null)
 	{
+		return WebsiteVersion switch
+		{
+			TT365WebsiteVersion.Original => await GetAllFixturesOriginal(leagueId, seasonId),
+			TT365WebsiteVersion.New2026 => await GetAllFixturesNew2026(leagueId, seasonId),
+		};
+	}
+
+	private async Task<List<Fixture>> GetAllFixturesNew2026(TT365LeagueId leagueId, TT365SeasonId? seasonId)
+	{
+		League? league = await GetLeague(leagueId);
+		TT365SeasonId currentSeasonId = league?.CurrentSeasonId ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
+		seasonId ??= currentSeasonId;
+		if (seasonId is null) {
+			// TODO: Log this error
+			return [];
+		}
+
+		string filename = $@"{leagueId}_{seasonId}_fixtures_all.json";
+
+		// Attempt to load fixtures from cache
+		// If the requested season is the current season, use the default cache expiration; otherwise, use a long expiration for historical data
+		List<Fixture> fixtures = currentSeasonId == seasonId
+			? await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? []
+			: await LoadAsync<List<Fixture>?>(leagueId, null, filename, cacheHours: 10_000_000) ?? [];
+
+		// ToDo: replace when ready to rollout
+		//if (fixtures is not []) { return fixtures; }
+		fixtures = [];
+
+
+		Dictionary<string, string> teamToDivision = league.GetSeason((TT365SeasonId)seasonId)?.Divisions
+			.SelectMany(d => d.Teams.Select(t => new { TeamName = t.Name, DivisionName = d.Name }))
+			.ToDictionary(x => x.TeamName, x => x.DivisionName) ?? [];
+
+		FixturesViewOptions fvo = FixturesViewOptions.Create
+		(
+			season: seasonId,
+			divisionName: "",
+			clubId: "",
+			teamId: "",
+			venueId: "",
+			viewModeType: FixturesViewType.Advanced,
+			hideCompletedFixtures: false,
+			mergeDivisions: true,
+			showByWeekNo: true
+		);
+
+		string url = $"Fixtures?leagueName={seasonId.ToString().Replace("_", "+")}&divisionName={fvo.DivisionName}&vm=1&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
+		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
+			leagueId,
+			url,
+			filename.Replace("json", "html")
+		);
+
+		if (string.IsNullOrWhiteSpace(doc?.Text)) { return fixtures; }
+
+		if (doc.DocumentNode.SelectNodes("//div[contains(@class, 'tt-filters-content')]") is null) { return fixtures; }
+
+		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//table[contains(@class, 'tt-fixture-table')]") ?? EMPTY_NODE_COLLECTION) {
+			foreach (HtmlNode fixtureNode in node.SelectNodes("./tbody//tr") ?? EMPTY_NODE_COLLECTION) {
+				string? nodeClass = fixtureNode.Attributes["class"]?.Value;
+
+				string fixtureDescription = "";
+				//string fixtureDescription = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
+				string partialDate = fixtureNode.SelectSingleNode("td[@class='tt-fixture-date']").InnerText.Trim();
+				string fullerDate = partialDate switch
+				{
+					_ when partialDate.Contains("Sep") || partialDate.Contains("Oct") || partialDate.Contains("Nov") || partialDate.Contains("Dec") => $"{partialDate} {seasonId?.StartYear}",
+					_ => $"{partialDate} {seasonId?.StartYear + 1}",
+				};
+
+				bool dateOK = DateOnly.TryParse(fullerDate, out DateOnly fixtureDate);
+				if (!dateOK) { continue; }
+
+				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']")?.InnerText ?? "");
+
+				HtmlNode? homeNode = fixtureNode.GetSingleNodeByClass("home");
+				HtmlNode? awayNode = fixtureNode.GetSingleNodeByClass("away");
+
+				string fixtureHomeTeam = fixtureNode.SelectSingleNode("td[2]/a")?.InnerText.Trim() ?? "";
+				string fixtureAwayTeam = fixtureNode.SelectSingleNode("td[4]/a")?.InnerText.Trim() ?? "";
+
+				string fixtureDivision = teamToDivision.GetValueOrDefault(fixtureHomeTeam, "");
+				Fixture fixture = new(fixtureDivision, fixtureDescription, fixtureDate, fixtureHomeTeam, fixtureAwayTeam, fixtureVenue);
+
+				//FixtureType fixtureType = DetermineFixtureType(fixtureNode, nodeClass);
+				//fixture = fixtureType switch
+				//{
+				//	FixtureType.Completed => ParseToCompletedFixture(fixtureNode, homeNode, awayNode, fixture),
+				//	FixtureType.Postponed => ParseToPostponedFixture(fixtureNode, fixture),
+				//	FixtureType.Rearranged => ParseToRearrangedFixture(fixtureNode, fixture),
+				//	FixtureType.Void => ParseToVoidFixture(fixtureNode, fixture),
+				//	_ => fixture
+				//};
+
+				fixtures.Add(fixture);
+			}
+		}
+
+		string jsonString = JsonSerializer.Serialize(fixtures);
+		_ = SaveFileToCache(jsonString, filename);
+
+		return fixtures;
+
+		static string GetTeamName(HtmlNode? homeNode)
+			=> HttpUtility.HtmlDecode(
+				homeNode?
+				.Descendants("div")
+				.Where(x => x.HasClass("teamName"))
+				.SingleOrDefault()?
+				.InnerText
+				) ?? "";
+	}
+
+	private async Task<List<Fixture>> GetAllFixturesOriginal(TT365LeagueId leagueId, TT365SeasonId? seasonId)
+	{
 		TT365SeasonId currentSeasonId = (await GetLeague(leagueId))?.CurrentSeasonId ?? throw new InvalidOperationException($"League with ID {leagueId} does not have a current season.");
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) {
@@ -36,8 +152,7 @@ public sealed partial class TT365Reader
 
 		if (fixtures is not []) { return fixtures; }
 
-		FixturesViewOptions fvo = FixturesViewOptionsExtensions
-.Create
+		FixturesViewOptions fvo = FixturesViewOptions.Create
 		(
 			season: seasonId,
 			divisionName: "All Divisions",
@@ -62,8 +177,7 @@ public sealed partial class TT365Reader
 		if (doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") is null) { return fixtures; }
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='Fixtures']") ?? EMPTY_NODE_COLLECTION) {
-			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]") ?? EMPTY_NODE_COLLECTION)
-			{
+			foreach (HtmlNode fixtureNode in node.SelectNodes(".//div[contains(@class, 'fixture')]") ?? EMPTY_NODE_COLLECTION) {
 				string nodeClass = fixtureNode.Attributes["class"].Value;
 
 				if (nodeClass.HasClass("fixture")) {
@@ -83,10 +197,10 @@ public sealed partial class TT365Reader
 					FixtureType fixtureType = DetermineFixtureType(fixtureNode, nodeClass);
 					fixture = fixtureType switch
 					{
-						FixtureType.Completed  => ParseToCompletedFixture(fixtureNode, homeNode, awayNode, fixture),
-						FixtureType.Postponed  => ParseToPostponedFixture(fixtureNode, fixture),
+						FixtureType.Completed => ParseToCompletedFixture(fixtureNode, homeNode, awayNode, fixture),
+						FixtureType.Postponed => ParseToPostponedFixture(fixtureNode, fixture),
 						FixtureType.Rearranged => ParseToRearrangedFixture(fixtureNode, fixture),
-						FixtureType.Void       => ParseToVoidFixture(fixtureNode, fixture),
+						FixtureType.Void => ParseToVoidFixture(fixtureNode, fixture),
 						_ => fixture
 					};
 

@@ -38,12 +38,12 @@ public sealed partial class TT365Reader
 			null,
 			fileName);
 
-		//if (league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id)) {
-		if (true || league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id)) {
+		if (league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id)) {
 			url = "";
 			doc = await LoadAsync<HtmlDocument>(
 				leagueId,
 				url,
+				// ToDo: replace when ready to rollout
 				$"{leagueId}.html");
 
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }

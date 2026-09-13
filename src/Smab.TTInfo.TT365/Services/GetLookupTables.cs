@@ -51,8 +51,7 @@ public sealed partial class TT365Reader
 			string url = $"Fixtures/?leagueName={seasonId}&divisionName={fvo.DivisionName}&vm={fvo.ViewModeType}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
 			HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				url,
-				$"{leagueId}_{seasonId.ToString().Replace("%20", "_").Replace(" ", "_")}_fixtures_all.html"
+				url
 			);
 
 			if (!string.IsNullOrWhiteSpace(doc?.Text)) {
