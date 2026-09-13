@@ -15,5 +15,5 @@ public sealed partial class TT365Reader
 	/// <param name="cacheFolder">The cache folder path (optional).</param>
 	/// <returns>True if the file was saved successfully.</returns>
 	public bool SaveFileToCache(string contents, string fileName, string? cacheFolder = null)
-		=> CacheHelper.SaveFileToCache(contents, $"{CACHEFILE_PREFIX}{fileName}", cacheFolder ?? CacheFolder);
+		=> CacheHelper.SaveFileToCache(contents, $"{CACHEFILE_PREFIX}{fileName}".Replace("%20", "_").Replace(" ", "_"), cacheFolder ?? CacheFolder);
 }

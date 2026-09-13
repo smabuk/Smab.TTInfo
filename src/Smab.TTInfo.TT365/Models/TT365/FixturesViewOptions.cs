@@ -17,28 +17,35 @@ public record FixturesViewOptions(
 	bool ShowByWeekNo
 )
 {
-	public static FixturesViewOptions Create(
-		string season = "",
-		string divisionName = "All Divisions",
-		string clubId = "",
-		string teamId = "",
-		string venueId = "",
-		FixturesViewType viewModeType = FixturesViewType.Advanced,
-		bool hideCompletedFixtures = false,
-		bool mergeDivisions = true,
-		bool showByWeekNo = true
-	)
+}
+
+internal static class FixturesViewOptionsExtensions
+{
+	extension(FixturesViewOptions)
 	{
-		return new FixturesViewOptions(
-			season,
-			divisionName,
-			clubId,
-			teamId,
-			venueId,
-			viewModeType,
-			hideCompletedFixtures,
-			mergeDivisions,
-			showByWeekNo
-		);
+		public static FixturesViewOptions Create(
+			string season = "",
+			string divisionName = "All Divisions",
+			string clubId = "",
+			string teamId = "",
+			string venueId = "",
+			FixturesViewType viewModeType = FixturesViewType.Advanced,
+			bool hideCompletedFixtures = false,
+			bool mergeDivisions = true,
+			bool showByWeekNo = true
+		)
+		{
+			return new FixturesViewOptions(
+				season,
+				divisionName,
+				clubId,
+				teamId,
+				venueId,
+				viewModeType,
+				hideCompletedFixtures,
+				mergeDivisions,
+				showByWeekNo
+			);
+		}
 	}
 }

@@ -14,5 +14,5 @@ public sealed partial class TT365Reader
 	/// <param name="cacheFolder">The cache folder path (optional).</param>
 	/// <returns>The file contents as a string, or null if not found.</returns>
 	public string? LoadFileFromCache(string fileName, string? cacheFolder = null)
-		=> CacheHelper.LoadFileFromCache($"{CACHEFILE_PREFIX}{fileName}", cacheFolder ?? CacheFolder);
+		=> CacheHelper.LoadFileFromCache($"{CACHEFILE_PREFIX}{fileName}".Replace("%20", "_").Replace(" ", "_"), cacheFolder ?? CacheFolder);
 }

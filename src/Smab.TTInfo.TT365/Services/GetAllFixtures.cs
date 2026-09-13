@@ -36,7 +36,8 @@ public sealed partial class TT365Reader
 
 		if (fixtures is not []) { return fixtures; }
 
-		FixturesViewOptions fvo = FixturesViewOptions.Create
+		FixturesViewOptions fvo = FixturesViewOptionsExtensions
+.Create
 		(
 			season: seasonId,
 			divisionName: "All Divisions",

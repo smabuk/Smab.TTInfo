@@ -23,7 +23,6 @@ public sealed partial class TT365Reader
 		{
 			TT365WebsiteVersion.Original => await GetLeagueOriginal(leagueId),
 			TT365WebsiteVersion.New2026 => await GetLeagueNew2026(leagueId),
-			_ => throw new NotImplementedException($"GetLeague is not implemented for {WebsiteVersion}"),
 		};
 	}
 
@@ -39,6 +38,7 @@ public sealed partial class TT365Reader
 			null,
 			fileName);
 
+		//if (league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id)) {
 		if (true || league is null || string.IsNullOrWhiteSpace(league.CurrentSeason.Id)) {
 			url = "";
 			doc = await LoadAsync<HtmlDocument>(
