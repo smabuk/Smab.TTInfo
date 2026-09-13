@@ -134,13 +134,16 @@ public sealed partial class TT365Reader
 
 	private Fixture ParseToCompletedFixtureNew2026(HtmlNode fixtureNode, HtmlNode? homeNode, HtmlNode? awayNode, Fixture fixture)
 	{
-		string[] scores = fixtureNode.SelectSingleNode("//span[contains(@class,'tt-result-score-text')]")?.InnerText.Split('-', StringSplitOptions.TrimEntries) ?? [];
-		if (scores.Count() != 2 || scores.Contains("R")) {
-			int a = 1;
+		string[] scores = fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-result-score-text')]")?.InnerText.Split('-', StringSplitOptions.TrimEntries) ?? [];
+		int forHome = 0;
+		int forAway = 0;
+		// ToDo: this should never happen, but there is a bug on the beta TT365 site where the score is not displayed for some completed fixtures, so we need to handle this gracefully
+		if (scores.Count() == 2) {
+			forHome = int.Parse(scores[0]);
+			forAway = int.Parse(scores[1]);
 		}
 
-		int forHome = int.Parse(scores[0]);
-		int forAway = int.Parse(scores[1]);
+
 		string cardURL = $"{TT365_COM}{fixtureNode.SelectSingleNode("td[contains(@class,'tt-fixture-score')]/a")?.Attributes["href"].Value.Trim() ?? ""}";
 		HtmlNodeCollection? playerNodes = fixtureNode.SelectNodes(".//li[contains(@class, 'tt-fixture-scorecard-player')]");
 		string playerOfTheMatchName = "";
