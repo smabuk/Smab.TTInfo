@@ -103,7 +103,11 @@
 						<td>@seasonPlayerResults.Count</td>
 						<td>@seasonPlayerResults.Where(r => r.Result == "Win").Count()</td>
 						<td>@(seasonPlayerResults.Count - seasonPlayerResults.Where(r => r.Result == "Win").Count())</td>
-						<td>@($"{(seasonPlayerResults.Where(r => r.Result == "Win").Count() * 100 / seasonPlayerResults.Count)}%")</td>
+						@if (seasonPlayerResults.Count > 0) {
+							<td>@($"{(seasonPlayerResults.Where(r => r.Result == "Win").Count() * 100 / seasonPlayerResults.Count)}%")</td>
+						} else {
+							<td></td>
+						}
 					</tr>
 					@if (teamsCount > 1) {
 						@foreach (string teamName in playerTeams) {

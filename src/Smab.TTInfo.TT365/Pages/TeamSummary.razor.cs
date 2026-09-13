@@ -8,8 +8,8 @@ public partial class TeamSummary
 
 	private record FixtureResult(int Id, string Result, string FullScore);
 
-	private TT365LeagueId leagueId { get; set; }
-	private TT365SeasonId seasonId { get; set; }
+	private TT365LeagueId leagueId;
+	private TT365SeasonId seasonId;
 	private Team? team;
 	private List<Fixture> fixtures = [];
 	private readonly Dictionary<string, List<Player>> teamPlayersList = [];

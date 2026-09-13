@@ -23,6 +23,7 @@ public sealed partial class TT365Reader
 		{
 			TT365WebsiteVersion.Original => await GetAllFixturesOriginal(leagueId, seasonId),
 			TT365WebsiteVersion.New2026 => await GetAllFixturesNew2026(leagueId, seasonId),
+			_ => throw new NotSupportedException($"Website version {WebsiteVersion} is not supported ."),
 		};
 	}
 
@@ -63,7 +64,7 @@ public sealed partial class TT365Reader
 			showByWeekNo: true
 		);
 
-		string url = $"Fixtures?leagueName={seasonId.ToString().Replace("_", "+")}&divisionName={fvo.DivisionName}&vm=1&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
+		string url = $"Fixtures?leagueName={seasonId.ToString()?.Replace("_", "+")}&divisionName={fvo.DivisionName}&vm=1&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
 		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 			leagueId,
 			url,
@@ -76,7 +77,7 @@ public sealed partial class TT365Reader
 
 		foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//table[contains(@class, 'tt-fixture-table')]") ?? EMPTY_NODE_COLLECTION) {
 			foreach (HtmlNode fixtureNode in node.SelectNodes("./tbody//tr") ?? EMPTY_NODE_COLLECTION) {
-				string? nodeClass = fixtureNode.Attributes["class"]?.Value;
+				string nodeClass = fixtureNode.Attributes["class"]?.Value ?? "";
 
 				string fixtureDescription = "";
 				//string fixtureDescription = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
@@ -87,8 +88,7 @@ public sealed partial class TT365Reader
 					_ => $"{partialDate} {seasonId?.StartYear + 1}",
 				};
 
-				bool dateOK = DateOnly.TryParse(fullerDate, out DateOnly fixtureDate);
-				if (!dateOK) { continue; }
+				_ = DateOnly.TryParse(fullerDate, out DateOnly fixtureDate);
 
 				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']")?.InnerText ?? "");
 
@@ -104,7 +104,7 @@ public sealed partial class TT365Reader
 				FixtureType fixtureType = DetermineFixtureTypeNew2026(fixtureNode, nodeClass);
 				fixture = fixtureType switch
 				{
-					FixtureType.Completed => ParseToCompletedFixtureNew2026(fixtureNode, homeNode, awayNode, fixture),
+					FixtureType.Completed => ParseToCompletedFixtureNew2026(fixtureNode, fixture),
 					FixtureType.Postponed => ParseToPostponedFixtureNew2026(fixtureNode, fixture),
 					FixtureType.Rearranged => ParseToRearrangedFixtureNew2026(fixtureNode, fixture),
 					FixtureType.Void => ParseToVoidFixtureNew2026(fixtureNode, fixture),
@@ -120,17 +120,9 @@ public sealed partial class TT365Reader
 
 		return fixtures;
 
-		static string GetTeamName(HtmlNode? homeNode)
-			=> HttpUtility.HtmlDecode(
-				homeNode?
-				.Descendants("div")
-				.Where(x => x.HasClass("teamName"))
-				.SingleOrDefault()?
-				.InnerText
-				) ?? "";
 	}
 
-	private Fixture ParseToCompletedFixtureNew2026(HtmlNode fixtureNode, HtmlNode? homeNode, HtmlNode? awayNode, Fixture fixture)
+	private Fixture ParseToCompletedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture)
 	{
 		string[] scores = fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-result-score-text')]")?.InnerText.Split('-', StringSplitOptions.TrimEntries) ?? [];
 		int forHome = 0;

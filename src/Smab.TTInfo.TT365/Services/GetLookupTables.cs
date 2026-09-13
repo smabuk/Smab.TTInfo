@@ -25,6 +25,7 @@ public sealed partial class TT365Reader
 		{
 			TT365WebsiteVersion.Original => await GetLookupTablesOriginal(leagueId, seasonId),
 			TT365WebsiteVersion.New2026 => await GetLookupTablesNew2026(leagueId, seasonId),
+			_ => throw new NotSupportedException($"Website version {WebsiteVersion} is not supported ."),
 		};
 	}
 
