@@ -19,6 +19,7 @@ public sealed partial class TT365Reader
 	/// <returns>The deserialized object or default if not found.</returns>
 	public async Task<T?> LoadAsync<T>(TT365LeagueId leagueId, string? url, string fileName = "", string? cacheFolder = null, int? cacheHours = null)
 	{
+		fileName = fileName.Replace(" ", "_").Replace("%20", "_");
 		bool useCache = !string.IsNullOrWhiteSpace(fileName);
 		string? contentString = null;
 		T? returnValue = default;

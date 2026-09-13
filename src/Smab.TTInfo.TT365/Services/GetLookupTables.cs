@@ -108,8 +108,7 @@ public sealed partial class TT365Reader
 		string? jsonString;
 		jsonString = LoadFileFromCache($"{leagueId}_{seasonId}_lookup_divisions.json");
 		if (jsonString is null) {
-			FixturesViewOptions fvo = FixturesViewOptionsExtensions
-.Create
+			FixturesViewOptions fvo = FixturesViewOptions.Create
 			(
 				season: seasonId,
 				divisionName: "All Divisions",

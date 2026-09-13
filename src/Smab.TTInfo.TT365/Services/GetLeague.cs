@@ -61,14 +61,15 @@ public sealed partial class TT365Reader
 
 			HtmlDocument archives = await LoadAsync<HtmlDocument>(
 				leagueId,
-				$"Results/Archive")
+				$"Results/Archive",
+				$"{leagueId}_results_archive.html")
 				?? new();
 
 			List<Season> seasons = [currentSeason];
-			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//td//a") ?? EMPTY_NODE_COLLECTION) {
+			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//a[contains(@class,'tt-league-picker-card-archived')]") ?? EMPTY_NODE_COLLECTION) {
 				string seasonId = item.GetAttributeValue("href", "");
-				seasonId = seasonId[(seasonId.LastIndexOf('/') + 1)..];
-				string seasonName = item.InnerText;
+				seasonId = seasonId[(seasonId.LastIndexOf('=') + 1)..];
+				string seasonName = item.ChildNodes[^2].InnerText.Trim() ?? "";
 				LookupTables seasonLookups = await GetLookupTables(leagueId, (TT365SeasonId)seasonId);
 				List<Division> divisions = [.. await GetDivisions(leagueId, (TT365SeasonId)seasonId, true)];
 				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, [.. divisions]));

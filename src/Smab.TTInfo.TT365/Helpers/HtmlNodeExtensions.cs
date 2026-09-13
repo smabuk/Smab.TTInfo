@@ -4,35 +4,52 @@ namespace Smab.TTInfo.TT365.Helpers;
 
 internal static class HtmlNodeExtensions
 {
-	public static int GetIntValue(this HtmlNode node, string className)
+	extension(HtmlNode node)
+	{
+		public int GetIntValue(string className)
 		=> int.Parse(node
 			.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
 			.InnerText ?? "0"
 			);
 
-	public static int? GetIntValueOrDefault(this HtmlNode node, string className, int? defaultValue = null)
-		=> int.TryParse(node
+		public int GetIntValue(int columnIndex)
+		=> int.Parse(node
+			.SelectSingleNode(@$"td[{columnIndex}]")?
+			.InnerText ?? "0"
+			);
+
+		public int? GetIntValueOrDefault(string className, int? defaultValue = null)
+			=> int.TryParse(node
+				.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
+				.InnerText ?? "0",
+				out int value)
+			? value
+			: defaultValue;
+
+		public int? GetIntValueOrDefaultInSpan(int columnIndex, int? defaultValue = null)
+			=> int.TryParse(node
+				.SelectSingleNode(@$"td[{columnIndex}]/span")?
+				.InnerText ?? "0",
+				out int value)
+			? value
+			: defaultValue;
+
+		public string GetStringValue(string className)
+			=> node
 			.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
-			.InnerText ?? "0",
-			out int value)
-		? value
-		: defaultValue;
+			.InnerText
+			.Trim() ?? "";
 
-	public static string GetStringValue(this HtmlNode node, string className)
-		=> node
-		.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
-		.InnerText
-		.Trim() ?? "";
+		public HtmlNode? GetSingleNodeByClass(string className)
+			=> node.SelectSingleNode($"div[@class='{className}']");
 
-	public static HtmlNode? GetSingleNodeByClass(this HtmlNode node, string className)
-		=> node.SelectSingleNode($"div[@class='{className}']");
+		public HtmlNode? GetFirstNodeByClass(string className)
+			=> node.SelectSingleNode($"//div[@class='{className}']");
 
-	public static HtmlNode? GetFirstNodeByClass(this HtmlNode node, string className)
-		=> node.SelectSingleNode($"//div[@class='{className}']");
+		public HtmlNode? GetSingleNodeById(string id)
+			=> node.SelectSingleNode($"div[@id='{id}']");
 
-	public static HtmlNode? GetSingleNodeById(this HtmlNode node, string id)
-		=> node.SelectSingleNode($"div[@id='{id}']");
-
-	public static HtmlNode? GetFirstNodeById(this HtmlNode node, string id)
-		=> node.SelectSingleNode($"//div[@id='{id}']");
+		public HtmlNode? GetFirstNodeById(string id)
+			=> node.SelectSingleNode($"//div[@id='{id}']");
+	}
 }
