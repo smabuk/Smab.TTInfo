@@ -18,6 +18,7 @@ public class Player
 	public float WinPercentage { get; set; }
 	public string PoMAwards { get; set; } = "";
 	public string Form { get; set; } = "";
+	public bool IsSubstitute { get; set; } = false;
 	public int ClubRanking { get; set; }
 	public int LeagueRanking { get; set; }
 	public int CountyRanking { get; set; }

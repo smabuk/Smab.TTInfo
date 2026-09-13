@@ -153,7 +153,10 @@
 		<div>
 			<div>
 				Captain: <span>@team.Captain</span>
-				<span> 📞 <a href="tel:@(team.CaptainPhone)">@team.CaptainPhone</a></span>
+				@if (!string.IsNullOrWhiteSpace(@team.CaptainPhone))
+				{
+					<span> 📞 <a href="tel:@(team.CaptainPhone)">@team.CaptainPhone</a></span>
+				}
 				@if (!string.IsNullOrWhiteSpace(@team.CaptainEmailAddress))
 				{
 					<span> ✉️ <a href="mailto:@(team.CaptainEmailAddress)">@team.CaptainEmailAddress</a></span>
@@ -184,7 +187,7 @@
 					@foreach (Player player in team.Players!.OrderByDescending(p => p.WinPercentage).ThenByDescending(p => p.Played)) {
 						<tr>
 							@* <td><a href="@player.PlayerURL" target="_blank" rel="noopener">@player.Name</a></td> *@
-							<td><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name</a></td>
+							<td><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name.Replace(" ", "_")/@player.Id">@player.Name@(player.IsSubstitute ? " (S)" : "")</a></td>
 							<td><span>@(new string('0', 2 - player.Played.ToString().Length))</span>@player.Played</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.Played * player.WinPercentage * 0.01).ToString().Length))</span>@(Math.Round(player.Played * player.WinPercentage * 0.01))</td>
 							<td><span>@(new string('0', 3 - Math.Round(player.WinPercentage, 0).ToString("##0").Length))</span>@($"{Math.Round(player.WinPercentage, 0):##0}")%</td>

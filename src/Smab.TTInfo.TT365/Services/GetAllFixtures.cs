@@ -44,9 +44,7 @@ public sealed partial class TT365Reader
 			? await LoadAsync<List<Fixture>?>(leagueId, null, filename) ?? []
 			: await LoadAsync<List<Fixture>?>(leagueId, null, filename, cacheHours: 10_000_000) ?? [];
 
-		// ToDo: replace when ready to rollout **********************************
-		//if (fixtures is not []) { return fixtures; }
-		fixtures = [];
+		if (fixtures is not []) { return fixtures; }
 
 		Dictionary<string, string> teamToDivision = league.GetSeason((TT365SeasonId)seasonId)?.Divisions
 			.SelectMany(d => d.Teams.Select(t => new { TeamName = t.Name, DivisionId = d.Id }))

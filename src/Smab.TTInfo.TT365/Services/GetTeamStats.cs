@@ -50,15 +50,14 @@ public sealed partial class TT365Reader
 			? await LoadAsync<Team>(leagueId, null, filename) ?? null!
 			: await LoadAsync<Team>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
 
-		// ToDo: replace when ready to publish
-		//if (team is not null) { return team; }
+		if (team is not null) { return team; }
 
 		team = divisions.SelectMany(d => d.Teams).Single(t => t.Id == teamId);
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,
 				team.URL,
-				// ToDo: replace when ready to publish
+				// ToDo: replace when ready to publish **********************************
 				filename.Replace("json", "html"))
 			?? new();
 
@@ -79,9 +78,17 @@ public sealed partial class TT365Reader
 			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
 				HtmlNode[] cells = [.. playerRow.Descendants("td")];
 				bool hasPoM = cells.Length > 4;
+				string playerName = FixPlayerName(cells[0].InnerText.Trim());
+				bool isSubstitute = false;
+				if (playerName.Contains("(S)", StringComparison.OrdinalIgnoreCase)) {
+					isSubstitute = true;
+					playerName = playerName[..playerName.IndexOf(Environment.NewLine)].Trim();
+				}
+
 				Player player = new()
 				{
-					Name = FixPlayerName(cells[0].InnerText.Trim()),
+					Name = playerName,
+					IsSubstitute = isSubstitute,
 					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
 					Played = int.Parse(cells[1].InnerText),
 					Won = int.Parse(cells[2].InnerText),
