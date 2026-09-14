@@ -15,7 +15,7 @@ internal static class HtmlNodeExtensions
 		public int GetIntValue(int columnIndex)
 		=> int.TryParse(node
 			.SelectSingleNode(@$"td[{columnIndex}]")?
-			.InnerText ?? "0",
+			.InnerText,
 			out int value)
 		? value
 		: 0;
@@ -23,7 +23,7 @@ internal static class HtmlNodeExtensions
 		public int? GetIntValueOrDefault(string className, int? defaultValue = null)
 			=> int.TryParse(node
 				.SelectSingleNode(@$"td[contains(@class, '{className}')]")?
-				.InnerText ?? "0",
+				.InnerText,
 				out int value)
 			? value
 			: defaultValue;
@@ -31,7 +31,7 @@ internal static class HtmlNodeExtensions
 		public int? GetIntValueOrDefaultInSpan(int columnIndex, int? defaultValue = null)
 			=> int.TryParse(node
 				.SelectSingleNode(@$"td[{columnIndex}]/span")?
-				.InnerText ?? "0",
+				.InnerText,
 				out int value)
 			? value
 			: defaultValue;
