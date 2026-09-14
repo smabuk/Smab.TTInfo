@@ -13,10 +13,12 @@ internal static class HtmlNodeExtensions
 			);
 
 		public int GetIntValue(int columnIndex)
-		=> int.Parse(node
+		=> int.TryParse(node
 			.SelectSingleNode(@$"td[{columnIndex}]")?
-			.InnerText ?? "0"
-			);
+			.InnerText ?? "0",
+			out int value)
+		? value
+		: 0;
 
 		public int? GetIntValueOrDefault(string className, int? defaultValue = null)
 			=> int.TryParse(node
