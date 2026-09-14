@@ -40,21 +40,19 @@ public sealed partial class TT365Reader
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; }
-		;
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
 		Player newPlayer = seasonId == currentSeasonId
 			? await LoadAsync<Player>(leagueId, null, filename) ?? null!
 			: await LoadAsync<Player>(leagueId, null, filename, cacheHours: 10_000_000) ?? null!;
 
-		// ToDo: replace when ready to publish **********************************
-		//if (newPlayer is not null) { return newPlayer; }
+		if (newPlayer is not null) { return newPlayer; }
 
 		newPlayer = player;
 		string lookupPlayerName = player.Name.Replace("%20", "_").Replace(" ", "_");
 
 		if (string.IsNullOrWhiteSpace(player.PlayerURL)) {
-			player.PlayerURL = $"{TT365_COM}/{leagueId}/Results/Player?leagueName={seasonId}&playerName{lookupPlayerName}&id={player.Id}";
+			player.PlayerURL = $"{TT365_COM}/{leagueId}/Results/Player?leagueName={seasonId.ToString()?.Replace("_","%20")}&playerName{lookupPlayerName}&id={player.Id}";
 		}
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(

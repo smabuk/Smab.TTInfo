@@ -41,7 +41,7 @@ public sealed partial class TT365Reader
 			: await LoadAsync<List<Division>?>(leagueId, null, filename) ?? [];
 		if (divisions is not []) { return divisions; }
 
-		string url = $"Tables?leagueName={seasonId}";
+		string url = $"Tables?leagueName={seasonId.ToDisplay().Replace("_","%20")}";
 		HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 			leagueId,
 			url,

@@ -49,7 +49,7 @@ public sealed partial class TT365Reader
 					showByWeekNo: true
 				);
 
-			string url = $"Fixtures/?leagueName={seasonId}&divisionName={fvo.DivisionName}&vm={fvo.ViewModeType}&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
+			string url = $"Fixtures?leagueName={seasonId.Value.Replace("_","%20")}&divisionName={fvo.DivisionName}&vm=1&vn={fvo.VenueId}&cl={fvo.ClubId}&t={fvo.TeamId}&showCompleted={!fvo.HideCompletedFixtures}&merge={fvo.MergeDivisions}";
 			HtmlDocument? doc = await LoadAsync<HtmlDocument>(
 				leagueId,
 				url
