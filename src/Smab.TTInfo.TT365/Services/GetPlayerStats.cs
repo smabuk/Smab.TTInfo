@@ -79,7 +79,7 @@ public sealed partial class TT365Reader
 		//	}
 
 		HtmlNode? playertableNode = doc.DocumentNode.SelectSingleNode("//table[contains(@class,'tt-player-results-table')]");
-		foreach (HtmlNode? resultRow in playertableNode.SelectSingleNode("tbody")?.Descendants("tr") ?? EMPTY_NODE_COLLECTION) {
+		foreach (HtmlNode? resultRow in playertableNode?.SelectSingleNode("tbody")?.Descendants("tr") ?? EMPTY_NODE_COLLECTION) {
 			HtmlNode[] cells = [.. resultRow.Descendants("td")];
 			if (string.IsNullOrWhiteSpace(cells[0].InnerText.Replace("-", "").Trim())) {
 				continue;
