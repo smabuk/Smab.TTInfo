@@ -209,7 +209,7 @@ internal class TTInfoCli
 					string dateString = playerResult.Date.ToString("dd MMM yy").Replace("Sept", "Sep");
 					dateString = dateString.Length <= 9 ? dateString : dateString[..9];
 					string resultColour = GetResultColour(playerResult);
-					AnsiConsole.MarkupLine($"[{resultColour}]   {dateString,-9}  Div {playerResult.Division[^1]} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
+					AnsiConsole.MarkupLine($"[{resultColour}]   {dateString,-9}  Div {playerResult.DivisionId[^1]} {(playerResult.ResultReason.Length != 0 ? "*" : ""),1}{playerResult.Result.FirstOrDefault(),1}  {playerResult.FormattedRankingDiff,3}  {TT365Reader.FixPlayerName(playerResult.Opponent.Name),-24}   {playerResult.OpponentTeam,-30}  {playerResult.GameScore,3}  {playerResult.Scores}[/]");
 					if (playerResult.ResultReason.Length != 0) {
 						AnsiConsole.MarkupLine($"                     [{resultColour}]{playerResult.ResultReason}[/]");
 					}
