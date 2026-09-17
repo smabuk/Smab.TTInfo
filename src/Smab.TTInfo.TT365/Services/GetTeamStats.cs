@@ -226,7 +226,7 @@ public sealed partial class TT365Reader
 					select f.InnerText];
 				player.Form = string.Join(",", form);
 				List<string> rankings = (from r in cells[3].Descendants("a")
-										 select r.Attributes["data-content"].Value).FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
+										 select r.Attributes["data-content"]?.Value ?? "").FirstOrDefault()?.Replace("<br />", "|").Split("|").ToList() ?? [];
 				foreach (string? rank in rankings) {
 					if (rank.Contains(':')) {
 						string[]? rTemp = rank.Split(":");
