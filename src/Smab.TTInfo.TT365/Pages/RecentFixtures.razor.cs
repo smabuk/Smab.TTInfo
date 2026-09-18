@@ -11,6 +11,8 @@ public partial class RecentFixtures
 	private List<Fixture>? fixtures;
 	private readonly Dictionary<int, FixtureResult> fixtureResults = [];
 	private League? league;
+	private TT365SeasonId seasonId;
+	private TT365LeagueId leagueId;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -19,8 +21,9 @@ public partial class RecentFixtures
 		StateHasChanged();
 		league = await _tt365.GetLeague((TT365LeagueId)LeagueId);
 		DateOnly today = DateOnly.FromDateTime(timeProvider.GetLocalNow().DateTime);
-
-		fixtures = [.. (await _tt365.GetAllFixtures((TT365LeagueId)LeagueId, league?.CurrentSeasonId) ?? [])
+		seasonId = league?.CurrentSeasonId ?? default;
+		leagueId = (TT365LeagueId)LeagueId;
+		fixtures = [.. (await _tt365.GetAllFixtures(leagueId, seasonId) ?? [])
 						.Where(f => f.Date <= today)
 						.Where(f => f is CompletedFixture or PostponedFixture)
 						.OrderByDescending(f => f.Date)
@@ -37,5 +40,8 @@ public partial class RecentFixtures
 	}
 
 	private record FixtureResult(int Id, bool HomeWin, bool AwayWin, string FullScore);
+
+	private static string PlayerToLink(MatchPlayer player, TT365LeagueId leagueId, TT365SeasonId seasonId)
+		=> $"""PlayerSummary/{leagueId}/{seasonId}/{player.Name.Replace(" ", "_")}/{player.Id}""";
 
 }
