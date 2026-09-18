@@ -169,7 +169,17 @@ public sealed partial class TT365Reader
 		};
 	}
 
-	private static Fixture ParseToPostponedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private static PostponedFixture ParseToPostponedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture)
+	{
+		string reason = HttpUtility.HtmlDecode(
+			fixtureNode
+			.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-postponed')]")?
+			.Attributes["title"].Value
+			.Trim()
+			) ?? "";
+		return fixture.ToPostponed(reason);
+	}
+
 	private static RearrangedFixture ParseToRearrangedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture)
 	{
 		string title = HttpUtility.HtmlDecode(
@@ -189,15 +199,24 @@ public sealed partial class TT365Reader
 		}
 	}
 
-	private static Fixture ParseToVoidFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private static VoidFixture ParseToVoidFixtureNew2026(HtmlNode fixtureNode, Fixture fixture)
+	{
+		string reason = HttpUtility.HtmlDecode(
+			fixtureNode
+			.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-voided')]")?
+			.Attributes["title"].Value
+			.Trim()
+			) ?? "";
+		return fixture.ToVoid(reason);
+	}
 
 	private static FixtureType DetermineFixtureTypeNew2026(HtmlNode fixtureNode, string nodeClass)
 	{
 		return nodeClass.HasClass("tt-fixture-completed")
-			? fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'voided')]") is not null
+			? fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-voided')]") is not null
 				? FixtureType.Void
 				: FixtureType.Completed
-			: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
+			: fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-postponed')]") is not null
 				? FixtureType.Postponed
 				: fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-rearranged')]") is not null
 					? FixtureType.Rearranged
