@@ -82,13 +82,7 @@ public sealed partial class TT365Reader
 				string fixtureDescription = "";
 				//string fixtureDescription = fixtureNode.Descendants("meta").Where(x => x.Attributes["itemprop"].Value == "description").Single().Attributes["content"].Value;
 				string partialDate = fixtureNode.SelectSingleNode("td[@class='tt-fixture-date']").InnerText.Trim();
-				string fullerDate = partialDate switch
-				{
-					_ when partialDate.Contains("Sep") || partialDate.Contains("Oct") || partialDate.Contains("Nov") || partialDate.Contains("Dec") => $"{partialDate} {seasonId?.StartYear}",
-					_ => $"{partialDate} {seasonId?.StartYear + 1}",
-				};
-
-				_ = DateOnly.TryParse(fullerDate, out DateOnly fixtureDate);
+				_ = DateHelpers.TryParseWithMissingYear(partialDate, seasonId?.StartYear ?? 0, out DateOnly fixtureDate);
 
 				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']")?.InnerText ?? "");
 
@@ -175,9 +169,27 @@ public sealed partial class TT365Reader
 		};
 	}
 
-	private Fixture ParseToPostponedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
-	private Fixture ParseToRearrangedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
-	private Fixture ParseToVoidFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private static Fixture ParseToPostponedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
+	private static RearrangedFixture ParseToRearrangedFixtureNew2026(HtmlNode fixtureNode, Fixture fixture)
+	{
+		string title = HttpUtility.HtmlDecode(
+			fixtureNode
+			.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-rearranged')]")?
+			.Attributes["title"].Value
+			.Trim()
+			) ?? "";
+		string[] tokens = title.Split([':', '-'], StringSplitOptions.TrimEntries);
+		if (tokens.Length == 2) {
+			string reason = tokens[^1];
+			int startYYear = fixture.Date.Month >= 9 ? fixture.Date.Year : fixture.Date.Year - 1;
+			_ = DateHelpers.TryParseWithMissingYear(tokens[0].Replace("Rearranged from", "").Trim(), startYYear, out DateOnly originalDate);
+			return fixture.ToRearranged(originalDate, reason);
+		} else {
+			return fixture.ToRearranged(default, title);
+		}
+	}
+
+	private static Fixture ParseToVoidFixtureNew2026(HtmlNode fixtureNode, Fixture fixture) => fixture;
 
 	private static FixtureType DetermineFixtureTypeNew2026(HtmlNode fixtureNode, string nodeClass)
 	{
@@ -187,7 +199,7 @@ public sealed partial class TT365Reader
 				: FixtureType.Completed
 			: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'postponed')]") is not null
 				? FixtureType.Postponed
-				: fixtureNode.SelectSingleNode("div[@class='spacer']/div[contains(@class,'rearranged')]") is not null
+				: fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-rearranged')]") is not null
 					? FixtureType.Rearranged
 					: FixtureType.Fixture;
 	}
