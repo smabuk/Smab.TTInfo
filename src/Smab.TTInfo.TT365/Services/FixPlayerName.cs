@@ -16,6 +16,7 @@ public sealed partial class TT365Reader
 
 		playerName = playerName.Replace("OSullivan", "O'Sullivan", StringComparison.OrdinalIgnoreCase);
 		playerName = playerName.Replace("OHalloran", "O'Halloran", StringComparison.OrdinalIgnoreCase);
+		playerName = playerName.Replace("Kashif Subhan", "Kash Subhan", StringComparison.OrdinalIgnoreCase);
 
 		return playerName;
 	}

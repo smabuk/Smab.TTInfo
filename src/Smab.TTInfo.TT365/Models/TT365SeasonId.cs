@@ -31,7 +31,7 @@ public readonly record struct TT365SeasonId : IComparable<TT365SeasonId>, IEquat
 
 	public int StartYear => int.TryParse(Value.Split("-")[0].Split("_")[^1], out int year) ? year : 0;
 
-	private static string NormalizeWithUnderscore(string? value) => value?.Replace("%20", " ").Replace(' ', '_') ?? throw new ArgumentNullException(nameof(value), "Season ID value cannot be null.");
+	private static string NormalizeWithUnderscore(string? value) => value?.TrimEnd('.').Replace("%20", " ").Replace(' ', '_') ?? throw new ArgumentNullException(nameof(value), "Season ID value cannot be null.");
 }
 
 /// <summary>

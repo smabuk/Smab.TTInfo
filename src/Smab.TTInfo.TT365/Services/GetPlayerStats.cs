@@ -73,13 +73,8 @@ public sealed partial class TT365Reader
 
 		string playerTeamName = doc.DocumentNode.SelectSingleNode("//span[text()='Team::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? "";
 		string playerDivisionName = doc.DocumentNode.SelectSingleNode("//span[text()='Div::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? " ";
-		//string playerTeamName = doc.DocumentNode.GetFirstNodeByClass("team")?.SelectSingleNode("span")?.InnerText.Trim() ?? "";
 
 		int index = 1;
-		//foreach (HtmlNode? table in statsNode.Descendants("table").Where(t => t.SelectSingleNode("caption")?.InnerText.Contains("Results") ?? false)) {
-		//	if (table.SelectSingleNode("caption")?.InnerText.Contains("&gt;") ?? false) {
-		//		playerTeamName = table.SelectSingleNode("caption")?.InnerText.Split("&gt;").Last().Trim() ?? "";
-		//	}
 
 		HtmlNode? playertableNode = doc.DocumentNode.SelectSingleNode("//table[contains(@class,'tt-player-results-table')]");
 		foreach (HtmlNode? resultRow in playertableNode?.SelectSingleNode("tbody")?.Descendants("tr") ?? EMPTY_NODE_COLLECTION) {
@@ -102,7 +97,6 @@ public sealed partial class TT365Reader
 			//}
 
 			string opponentTeam = cells[1].Descendants("a").First().InnerText.Trim();
-			//string[] divParts = cells[1].Descendants("a").First().Attributes["href"].Value.Split(['&', '=']).ToArray();
 			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"].Value.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? " ";
 
 			DateOnly date = DateOnly.Parse(cells[2].InnerText.Trim() ?? "");
@@ -117,15 +111,16 @@ public sealed partial class TT365Reader
 
 			string matchCardUrl = $"{TT365_COM}{cells[3].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
 
-			// work out team the player is playing for by finding the fixture with the opponent team and the division and then checking which team is not the opponent team
+			// work out the team the player is playing for by finding the fixture including the playerId and the date of the match
 			CompletedFixture? fixture = fixtures.OfType<CompletedFixture>()
 				.Where(f => f.Date == date)
-				.Where(f => f.HomeTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase) || f.AwayTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase))
+				.Where(f => f.AwayPlayers.Select(p => p.Id).Contains(player.Id) || f.HomePlayers.Select(p => p.Id).Contains(player.Id))
+				.Where(f => f.AwayPlayers.Select(p => p.Name).Contains(opponent.Name) || f.HomePlayers.Select(p => p.Name).Contains(opponent.Name))
 				.FirstOrDefault();
 
 			string teamName = playerTeamName;
 			if (fixture is not null) {
-				teamName = fixture.HomeTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase) ? fixture.AwayTeam : fixture.HomeTeam;
+				teamName = fixture.HomePlayers.Select(p => p.Id).Contains(player.Id) ? fixture.HomeTeam : fixture.AwayTeam;
 				divisionId = fixture.Division;
 			}
 
@@ -148,7 +143,6 @@ public sealed partial class TT365Reader
 
 			newPlayer.PlayerResults = [.. newPlayer.PlayerResults, playerResult];
 		}
-		//}
 
 		string jsonString = JsonSerializer.Serialize(newPlayer);
 		_ = SaveFileToCache(jsonString, filename);
