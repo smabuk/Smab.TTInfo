@@ -10,7 +10,7 @@ namespace Smab.TTInfo.TT365.Models;
 /// functionality.</remarks>
 public class TT365Options : TTInfoOptions
 {
-	public string WebsiteVersion { get; set; } = @"original";
+	public string WebsiteVersion { get; set; } = @"new2026";
 }
 
 public static class TT365OptionsExtensions
