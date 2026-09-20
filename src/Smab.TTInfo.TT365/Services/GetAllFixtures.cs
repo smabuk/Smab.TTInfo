@@ -203,7 +203,7 @@ public sealed partial class TT365Reader
 	{
 		string reason = HttpUtility.HtmlDecode(
 			fixtureNode
-			.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-voided')]")?
+			.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-void')]")?
 			.Attributes["title"].Value
 			.Trim()
 			) ?? "";
@@ -213,7 +213,7 @@ public sealed partial class TT365Reader
 	private static FixtureType DetermineFixtureTypeNew2026(HtmlNode fixtureNode, string nodeClass)
 	{
 		return nodeClass.HasClass("tt-fixture-completed")
-			? fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-voided')]") is not null
+			? fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-void')]") is not null
 				? FixtureType.Void
 				: FixtureType.Completed
 			: fixtureNode.SelectSingleNode(".//span[contains(@class,'tt-fixture-badge-postponed')]") is not null
