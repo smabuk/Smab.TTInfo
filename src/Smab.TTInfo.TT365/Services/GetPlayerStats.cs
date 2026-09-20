@@ -69,7 +69,10 @@ public sealed partial class TT365Reader
 			return player;
 		}
 
+		List<Fixture>? fixtures = await GetAllFixtures(leagueId, seasonId);
+
 		string playerTeamName = doc.DocumentNode.SelectSingleNode("//span[text()='Team::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? "";
+		string playerDivisionName = doc.DocumentNode.SelectSingleNode("//span[text()='Div::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? " ";
 		//string playerTeamName = doc.DocumentNode.GetFirstNodeByClass("team")?.SelectSingleNode("span")?.InnerText.Trim() ?? "";
 
 		int index = 1;
@@ -100,7 +103,7 @@ public sealed partial class TT365Reader
 
 			string opponentTeam = cells[1].Descendants("a").First().InnerText.Trim();
 			//string[] divParts = cells[1].Descendants("a").First().Attributes["href"].Value.Split(['&', '=']).ToArray();
-			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"].Value.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? "";
+			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"].Value.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? " ";
 
 			DateOnly date = DateOnly.Parse(cells[2].InnerText.Trim() ?? "");
 
@@ -114,13 +117,25 @@ public sealed partial class TT365Reader
 
 			string matchCardUrl = $"{TT365_COM}{cells[3].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
 
+			// work out team the player is playing for by finding the fixture with the opponent team and the division and then checking which team is not the opponent team
+			CompletedFixture? fixture = fixtures.OfType<CompletedFixture>()
+				.Where(f => f.Date == date)
+				.Where(f => f.HomeTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase) || f.AwayTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase))
+				.FirstOrDefault();
+
+			string teamName = playerTeamName;
+			if (fixture is not null) {
+				teamName = fixture.HomeTeam.Equals(opponentTeam, StringComparison.OrdinalIgnoreCase) ? fixture.AwayTeam : fixture.HomeTeam;
+				divisionId = fixture.Division;
+			}
+
 
 			PlayerResult playerResult = new(
 				Id: player.Id,
 				Name: FixPlayerName(player.Name),
 				OriginalSortOrder: index++,
 				Date: date,
-				PlayerTeamName: playerTeamName,
+				PlayerTeamName: teamName,
 				Opponent: opponent,
 				OpponentTeam: opponentTeam,
 				DivisionId: divisionId,

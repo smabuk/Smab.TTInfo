@@ -1,4 +1,6 @@
-﻿namespace Smab.TTInfo.TT365.Services;
+﻿using System.Transactions;
+
+namespace Smab.TTInfo.TT365.Services;
 
 public sealed partial class TT365Reader
 {
@@ -30,20 +32,24 @@ public sealed partial class TT365Reader
 
 		playerName = playerName.Replace("%20", " ").Replace("_", " ");
 
+		// ToDo: Implement AKA logic for players known by more than one name in the TT365 system
+		List<List<string>> playerNameToAKA =
+		[
+			["Jon Abbott", "Jonathan Abbott"],
+			["Kash Subhan", "Kashif Subhan", "K Subhan"],
+			["Mike Childs", "Michael Childs"],
+		];
+
+		List<string> akaNames = playerNameToAKA.FirstOrDefault(akaList => akaList.Contains(playerName, StringComparer.OrdinalIgnoreCase)) ?? [playerName];
+
 		List<Fixture>? fixtures = await GetAllFixtures(leagueId, seasonId);
-		int playerId = fixtures.OfType<CompletedFixture>()
+		Player? player = fixtures.OfType<CompletedFixture>()
 			.SelectMany(f => f.HomePlayers.Concat(f.AwayPlayers))
-			.Where(p => p.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-			.Select(p => p.Id)
+			.Where(p => akaNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+			.Select(p => new Player { Name = p.Name, PlayerId = p.Id })
 			.FirstOrDefault();
 
-		if (playerId == 0) { return null; }
-
-		Player player = new()
-		{
-			Name = playerName,
-			PlayerId = playerId,
-		};
+		if (player is null || player.Id == 0) { return null; }
 
 		Player? newPlayer =  await GetPlayerStats(leagueId, player, seasonId);
 		return newPlayer;
