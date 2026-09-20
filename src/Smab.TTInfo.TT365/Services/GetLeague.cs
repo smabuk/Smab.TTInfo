@@ -50,7 +50,7 @@ public sealed partial class TT365Reader
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
 			string leagueURL = $"{TT365_COM}/{leagueId}";
-			string leagueName = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText ?? "");
+			string leagueName = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText.Replace(" - TT365", "") ?? "");
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "").Replace(" &#x2014;", "")) ?? "";
 			string leagueTheme = doc.DocumentNode.SelectSingleNode("//body")?.GetAttributeValue("class", "") ?? "";
 			string currentSeasonIdAsString = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables')]")?.GetAttributeValue("href", "") ?? "";
@@ -118,7 +118,7 @@ public sealed partial class TT365Reader
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 
 			string leagueURL = $"{TT365_COM}/{leagueId}";
-			string leagueName = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText ?? "");
+			string leagueName = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//title")?.InnerText.Replace(" - TT365", "") ?? "");
 			string leagueDescription = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "")) ?? "";
 			string leagueTheme = doc.DocumentNode.SelectSingleNode("//body")?.GetAttributeValue("class", "") ?? "";
 			string currentSeasonIdAsString = doc.DocumentNode.SelectSingleNode($"//a[starts-with(@href,'/{leagueId}/Tables/')]")?.GetAttributeValue("href", "") ?? "";
