@@ -38,4 +38,6 @@ public class Player
 		: default;
 
 	public ImmutableList<PlayerResult> PlayerResults { get; set; } = [];
+
+	public string DisplayName => IsSubstitute ? $"({Name}) (sub)" : Name;
 }

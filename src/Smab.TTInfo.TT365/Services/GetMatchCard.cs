@@ -52,15 +52,82 @@ public sealed partial class TT365Reader
 		HtmlNode? matchCardTypeB = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-b')]");
 
 		if (matchCardTypeA is not null) {
-			//matchCard = ParseMatchCardTypeA(doc, matchCard, leagueId, seasonId);
+			matchCard = ParseMatchCardTypeA(doc, matchCard, leagueId, seasonId);
 		} else if (matchCardTypeB is not null) {
-			//matchCard = ParseMatchCardTypeB(doc, matchCard, leagueId, seasonId);
+			matchCard = ParseMatchCardTypeB(doc, matchCard, leagueId, seasonId);
 		}
+
+		string potm = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-potm')]")?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
+		List<MatchPlayer> homePlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.HomePlayer, set.HomeDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false))).DistinctBy(p => p.Id)];
+		List<MatchPlayer> awayPlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.AwayPlayer, set.AwayDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false))).DistinctBy(p => p.Id)];
+
+		// we also need to count SetsWon now that we have everything fully parsed, as the TT365 site does not provide this information in the matchcard page
+		for (int i = 0; i < homePlayers.Count; i++) {
+			MatchPlayer player = homePlayers[i];
+			double homePlayerSetsWon = matchCard.Sets.Where(set => !set.IsDoubles && set.HomePlayer.Name == player.Name).Sum(s => s.HomeWin ? 1 : 0)
+				+ matchCard.Sets.Where(set => set.IsDoubles && (set.HomePlayer.Name == player.Name || set.HomeDoublesPartner?.Name == player.Name)).Sum(s => s.HomeWin ? 0.5 : 0);
+			homePlayers[i] = player with { SetsWon = homePlayerSetsWon };
+		}
+
+		for (int i = 0; i < awayPlayers.Count; i++) {
+			MatchPlayer player = awayPlayers[i];
+			double awayPlayerSetsWon = matchCard.Sets.Where(set => !set.IsDoubles && set.AwayPlayer.Name == player.Name).Sum(s => s.AwayWin ? 1 : 0)
+				+ matchCard.Sets.Where(set => set.IsDoubles && (set.AwayPlayer.Name == player.Name || set.AwayDoublesPartner?.Name == player.Name)).Sum(s => s.AwayWin ? 0.5 : 0);
+			awayPlayers[i] = player with { SetsWon = awayPlayerSetsWon };
+		}
+
+		matchCard = matchCard with
+		{
+			HomePlayers = homePlayers,
+			AwayPlayers = awayPlayers,
+			PlayerOfTheMatch = potm
+		};
 
 		// ToDo: remember to save the matchcard to cache after parsing it
 
 		return matchCard;
 	}
+
+	private static MatchCard ParseMatchCardTypeA(HtmlDocument doc, MatchCard matchCard, TT365LeagueId leagueId, TT365SeasonId? seasonId)
+	{
+		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody");
+		foreach (HtmlNode row in setsTableBody.SelectNodes("./tr") ?? EMPTY_NODE_COLLECTION) {
+			HtmlNode homePlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][1]");
+			HtmlNode awayPlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][2]");
+			HtmlNode gamesNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-games')]");
+			HtmlNode scoreNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-score')]");
+
+			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
+			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			string? homeDoublesPartnerName = homePlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.InnerText.Trim();
+			int homeDoublesPartnerId = int.Parse(homePlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+
+			string awayPlayerName = awayPlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
+			int awayPlayerId = int.Parse(awayPlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			string? awayDoublesPartnerName = awayPlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.InnerText.Trim();
+			int awayDoublesPartnerId = int.Parse(awayPlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+
+			string games = string.Join(",", gamesNode?.InnerText.Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? []);
+			int homeScore = int.Parse(scoreNode?.SelectSingleNode("./span[1]")?.InnerText.Trim() ?? "0");
+			int awayScore = int.Parse(scoreNode?.SelectSingleNode("./span[2]")?.InnerText.Trim() ?? "0");
+
+			MatchSet set = new(matchCard.Sets.Count + 1, new Player() { Name = homePlayerName, PlayerId = homePlayerId }, new Player() { Name = awayPlayerName, PlayerId = awayPlayerId }, games, $"{homeScore}-{awayScore}", "");
+			if (!string.IsNullOrWhiteSpace(homeDoublesPartnerName) && homeDoublesPartnerId > 0 && !string.IsNullOrWhiteSpace(awayDoublesPartnerName) && awayDoublesPartnerId > 0) {
+				set = set with {
+					HomeDoublesPartner = new Player() { Name = homeDoublesPartnerName, PlayerId = homeDoublesPartnerId },
+					AwayDoublesPartner = new Player() { Name = awayDoublesPartnerName, PlayerId = awayDoublesPartnerId }
+				};
+			}
+
+			matchCard.Sets.Add(set);
+		}
+
+
+
+		return matchCard;
+	}
+
+	private MatchCard ParseMatchCardTypeB(HtmlDocument doc, MatchCard matchCard, TT365LeagueId leagueId, TT365SeasonId? seasonId) => matchCard;
 }
 
 //	private async Task<List<Fixture>> GetAllFixturesNew2026(TT365LeagueId leagueId, TT365SeasonId? seasonId)

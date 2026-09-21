@@ -6,8 +6,8 @@ public record MatchCard(
 	string HomeTeam,
 	string AwayTeam,
 	string DivisionName,
-	int ForHome,
-	int ForAway)
+	double ForHome,
+	double ForAway)
 {
 	public string Description { get; set; } = "";
 	public string Venue { get; set; } = "";
@@ -15,6 +15,7 @@ public record MatchCard(
 	public string CardURL { get; set; } = "";
 	public List<MatchPlayer> HomePlayers { get; set; } = [];
 	public List<MatchPlayer> AwayPlayers { get; set; } = [];
+	public List<MatchSet> Sets { get; set; } = [];
 };
 	//MatchTeamInfo Home,
 	//MatchTeamInfo Away,
