@@ -1,0 +1,115 @@
+﻿@page "/Match/{LeagueId}/{MatchId:int}"
+@page "/Match/{LeagueId}/{SeasonId}/{MatchId:int}"
+@inject ITT365Reader _tt365
+@attribute [StreamRendering]
+
+
+@if (matchCard is null)
+{
+	<PageTitle>Match #@MatchId - @LeagueId</PageTitle>
+	<h1>Loading match #@MatchId ...</h1>
+}
+else
+{
+	<PageTitle>@matchCard?.Date.ToString("yyyy-MM-dd") - @matchCard?.HomeTeam v @matchCard?.AwayTeam - @LeagueId</PageTitle>
+	<div class="card match-card">
+		<h1>
+			<span class="score-row">
+				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.HomeTeam" ">@matchCard.HomeTeam</a>
+				<span
+					data-win="@(matchCard.ForHome > matchCard.ForAway)"
+					data-loss="@(matchCard.ForHome < matchCard.ForAway)"
+					data-draw="@(matchCard.ForHome == matchCard.ForAway)"
+					class="score">@matchCard.ForHome</span>
+			</span>
+			<span class="score-row">
+				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.AwayTeam" ">@matchCard.AwayTeam</a>
+				<span
+					data-win="@(matchCard.ForAway > matchCard.ForHome)"
+					data-loss="@(matchCard.ForAway < matchCard.ForHome)"
+					data-draw="@(matchCard.ForAway == matchCard.ForHome)"
+					class="score">@matchCard.ForAway</span>
+			</span>
+		</h1>
+		<div class="match-meta">
+			<span>@matchCard.Date.ToString("ddd dd MMM yyyy")</span>
+			<span>@division?.Name</span>
+			<span>@matchCard.Venue</span>
+		</div>
+	@*
+		<div class="teams">
+			<div class="team home">
+				<h2>Home</h2>
+				<ul>
+					@foreach (PlayerScore player in matchCard.Results.Home)
+					{
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@player.Name</a> (@player.Score)</li>
+					}
+				</ul>
+			</div>
+			<div class="team away">
+				<h2>Away</h2>
+				<ul>
+					@foreach (PlayerScore player in matchCard.Results.Away)
+					{
+						<li class="@((matchCard.Match.Potm?.Id == player.UserId) ? "pom" : null)"><a href="TTLeagues/PlayerSummary/@TTInfoId/@player.Name/@player.UserId">@player.Name</a> (@player.Score)</li>
+					}
+				</ul>
+			</div>
+		</div>
+		<table class="table table-bordered match-sets">
+			<thead>
+				<tr>
+					<th></th>
+					@for (int i = 1; i <= matchCard.Sets.Max(s => s.Games.Count); i++)
+					{
+						<th>@i</th>
+					}
+					<th>H</th>
+					<th>A</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (MatchSet set in matchCard.Sets.OrderBy(s => s.Ordering))
+				{
+					<tr>
+						<td class="players-cell">
+							<span
+								data-win="@(set.HomeScore > set.AwayScore)"
+								data-loss="@(set.HomeScore < set.AwayScore)"
+							>@string.Join(" & ", set.HomePlayers.Select(p => DisplayName(p)))</span>
+							@((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v "))
+							<span
+								data-win="@(set.AwayScore > set.HomeScore)"
+								data-loss="@(set.AwayScore < set.HomeScore)"
+							>@string.Join(" & ", set.AwayPlayers.Select(p => DisplayName(p)))</span>
+						</td>
+						@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
+						{
+							@if (i < set.Games.Count)
+							{
+								MatchGame game = set.Games[i];
+								<td>@(game.Home.HasValue && game.Away.HasValue ? $"{game.Home}-{game.Away}" : "-")</td>
+							}
+							else
+							{
+								<td>-</td>
+							}
+						}
+						<td
+							data-win="@(set.HomeScore > set.AwayScore)"
+							data-loss="@(set.HomeScore < set.AwayScore)"
+							>@set.HomeScore</td>
+						<td
+							data-win="@(set.AwayScore > set.HomeScore)"
+							data-loss="@(set.AwayScore < set.HomeScore)"
+							>@set.AwayScore</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	*@
+	</div>
+}
+
+

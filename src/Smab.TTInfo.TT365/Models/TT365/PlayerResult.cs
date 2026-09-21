@@ -46,7 +46,7 @@ public record PlayerResult(
 	/// <summary>
 	/// Gets the list of games, where each game is represented by a score.
 	/// </summary>
-	public List<Score> Games { get; init; } = Scores.Contains("-")
+	public List<Score> Games { get; init; } = Scores.Contains('-')
 		? [.. Scores
 		.Split(",")
 		.Select(score => new Score(int.Parse(score[..score.IndexOf('-')]), int.Parse(score[(score.IndexOf('-') + 1)..])))]

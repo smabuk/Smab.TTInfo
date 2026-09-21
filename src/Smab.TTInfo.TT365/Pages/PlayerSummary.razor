@@ -57,7 +57,7 @@
 								<td><a href="PlayerSummary/@LeagueId/@seasonName/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
 								<td><a href="TeamSummary/@LeagueId/@seasonName/@result.OpponentTeam">@result.OpponentTeam</a></td>
 								<td>@result.Date.ToString("dd MMM yyyy")</td>
-								<td><a href="@result.MatchCardURL" target="_blank" rel="noopener">@result.GameScore</a></td>
+								<td><a href="/Match/@LeagueId/@result.Id" rel="noopener">@result.GameScore</a></td>
 								<td>@result.Scores.Replace(",",", ")</td>
 								@* <td>@result.FormattedRankingDiff</td> *@
 							</tr>

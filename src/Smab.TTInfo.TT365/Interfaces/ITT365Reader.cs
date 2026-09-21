@@ -22,6 +22,7 @@ public interface ITT365Reader
 	/// Gets the league details for a given league ID.
 	/// </summary>
 	Task<League?>         GetLeague(TT365LeagueId leagueId);
+	Task<MatchCard?>      GetMatchCard(TT365LeagueId leagueId, int matchCardId, TT365SeasonId? SeasonId = null);
 	/// <summary>
 	/// Gets player statistics for a player and season.
 	/// </summary>

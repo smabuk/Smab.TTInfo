@@ -43,7 +43,7 @@
 							<span class="void badge" title="@vf.Reason">Void</span>
 						}
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
-							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
+							<a class="badge badge-sm" href="/Match/@LeagueId/@completedFixture1.Id" rel="noopener">@fr.FullScore</a>
 						}
 						<a href="TeamSummary/@LeagueId/@SeasonId/@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)">
 							<strong>@(fixture.HomeTeam.Equals(@team.Name) ? fixture.AwayTeam : fixture.HomeTeam)</strong>
@@ -224,7 +224,7 @@
 								<td><a href="TeamSummary/@LeagueId/@SeasonId/@result.Opposition">@result.Opposition</a></td>
 								<td>@result.HomeOrAway</td>
 								<td>@result.Date.ToString("dd MMM yyyy")</td>
-								<td><a href="@result.CardURL" target="_blank" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
+								<td><a href="/Match/@LeagueId/@result.Id" rel="noopener"><span>@(new string('0', 2 - $"{result.ScoreForTeam}".Length))</span>@result.ScoreForTeam-@result.ScoreForOpposition<span>@(new string('0', 2 - $"{result.ScoreForOpposition}".Length))</span></a></td>
 								<td><span>@(new string('0', 2 - result.Points.ToString().Length))</span>@result.Points</td>
 								<td>@result.PlayerOfTheMatch</td>
 							</tr>

@@ -1,0 +1,73 @@
+﻿namespace Smab.TTInfo.TT365.Models.TT365;
+
+public record MatchCard(
+	int Id,
+	DateOnly Date,
+	string HomeTeam,
+	string AwayTeam,
+	string DivisionName,
+	int ForHome,
+	int ForAway)
+{
+	public string Description { get; set; } = "";
+	public string Venue { get; set; } = "";
+	public string PlayerOfTheMatch { get; set; } = "";
+	public string CardURL { get; set; } = "";
+	public List<MatchPlayer> HomePlayers { get; set; } = [];
+	public List<MatchPlayer> AwayPlayers { get; set; } = [];
+};
+	//MatchTeamInfo Home,
+	//MatchTeamInfo Away,
+	//DateTime? Date,
+	//DateTime? Time,
+	//int? Week,
+	//string Name,
+	//string Venue,
+	//int? GroupingId,
+	//int CompetitionId,
+	//int DivisionId,
+	//long? PreviousLinkId,
+	//DateTime? Submitted,
+	//DateTime? Approved,
+	//DateTime? Rejected,
+	//DateTime? Overridden,
+	//Person? SubmittedBy,
+	//Person? ApprovedBy,
+	//Person? RejectedBy,
+	//Person? OverriddenBy,
+	//int? VenueId,
+	//DateTime? Forfeit,
+	//string ForfeitReason,
+	//int? ForfeitId,
+	//string AbandonedReason,
+	//DateTime? Abandoned,
+	//int LeagueId,
+	//int? ClubId,
+	//int? CountyId,
+	//string Competition,
+	//DateTime Updated,
+	//bool Manual,
+	//DateTime? Published,
+	//DateTime? Archived,
+	//Person? Potm,
+	//int? PotmType,
+	//int Entry,
+	//bool HasReport,
+	//bool HasComments,
+	//int ResultDisplay,
+	//bool PlayAll,
+	//bool HasResults,
+	//int ScoreUp,
+	//object? Round,
+	//object? TableNo,
+	//object? DayId,
+	//ImmutableList<PlayerScore> HomeScores,
+	//ImmutableList<PlayerScore> AwayScores,
+	//string HomeName,
+	//string AwayName,
+	//object? Number,
+	//object? Stage,
+	//object? RoundModel,
+	//object? HomeHandicap,
+	//object? AwayHandicap,
+	//bool? Bye

@@ -40,7 +40,8 @@
 							<span class="badge postponed" title="@pf.Reason">P</span>
 						}
 						@if (fixture is CompletedFixture completedFixture1 && fr is not null) {
-							<a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a>
+							<a class="badge badge-sm" href="@($"Match/{LeagueId}/{completedFixture1.Id}")" rel="noopener">@fr.FullScore</a>
+							@* <a class="badge badge-sm" href="@completedFixture1.CardURL" target="_blank" rel="noopener">@fr.FullScore</a> *@
 						}
 						<a href="TeamSummary/@LeagueId/@fixture.HomeTeam">
 							@if (fr is not null && fr.HomeWin) {
