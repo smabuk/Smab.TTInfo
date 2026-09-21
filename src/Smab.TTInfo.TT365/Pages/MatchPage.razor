@@ -15,7 +15,7 @@ else
 	<div class="card match-card">
 		<h1>
 			<span class="score-row">
-				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.HomeTeam" ">@matchCard.HomeTeam</a>
+				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.HomeTeam">@matchCard.HomeTeam</a>
 				<span
 					data-win="@(matchCard.ForHome > matchCard.ForAway)"
 					data-loss="@(matchCard.ForHome < matchCard.ForAway)"
@@ -23,7 +23,7 @@ else
 					class="score">@matchCard.ForHome</span>
 			</span>
 			<span class="score-row">
-				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.AwayTeam" ">@matchCard.AwayTeam</a>
+				<a href="/TeamSummary/@LeagueId/@SeasonId/@matchCard.AwayTeam">@matchCard.AwayTeam</a>
 				<span
 					data-win="@(matchCard.ForAway > matchCard.ForHome)"
 					data-loss="@(matchCard.ForAway < matchCard.ForHome)"
@@ -33,7 +33,7 @@ else
 		</h1>
 		<div class="match-meta">
 			<span>@matchCard.Date.ToString("ddd dd MMM yyyy")</span>
-			<span>@division?.Name</span>
+			<span>@matchCard.DivisionName</span>
 			<span>@matchCard.Venue</span>
 		</div>
 		<div class="teams">
@@ -42,7 +42,7 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.HomePlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
+						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
 					}
 				</ul>
 			</div>
@@ -51,7 +51,7 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.AwayPlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
+						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
 					}
 				</ul>
 			</div>
@@ -60,7 +60,7 @@ else
 			<thead>
 				<tr>
 					<th></th>
-					@for (int i = 1; i <= matchCard.Sets.Max(s => s.Games.Count); i++)
+					@for (int i = 1; i <= (matchCard.Sets is not [] ? matchCard.Sets.Max(s => s.Games.Count) : 5); i++)
 					{
 						<th>@i</th>
 					}
