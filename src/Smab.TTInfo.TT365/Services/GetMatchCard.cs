@@ -162,6 +162,7 @@ public sealed partial class TT365Reader
 			MatchPlayer awayMatchPlayer = matchCard.AwayPlayers[setIndex % matchCard.AwayPlayers.Count];
 			string scores = string.Join(",", cell.SelectNodes(".//span[contains(@class, 'tt-matchcard-matrix-game')]")?.Select(x => x.InnerText.Trim()) ?? []);
 			string result = cell.SelectSingleNode(".//div[contains(@class, 'tt-matchcard-matrix-result')]")?.InnerText.Replace(" ", "").Trim() ?? "";
+			string? resultReason = cell.SelectSingleNode(".//div[contains(@class, 'tt-matchcard-scratched')]")?.InnerText.Trim();
 
 			MatchSet set = new(
 				setNo,
@@ -169,7 +170,7 @@ public sealed partial class TT365Reader
 				new Player() { PlayerId = awayMatchPlayer.Id, Name = awayMatchPlayer.Name },
 				scores,
 				result,
-				"");
+				resultReason);
 
 			setIndex++;
 			matchCard.Sets.Add(set);

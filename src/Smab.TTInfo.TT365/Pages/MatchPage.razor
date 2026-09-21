@@ -83,17 +83,21 @@ else
 								data-loss="@(set.AwayScore < set.HomeScore)"
 							>@string.Join(" & ", set.AwayPlayers.Select(p => p.DisplayName))</span>
 						</td>
-						@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
-						{
-							@if (i < set.Games.Count)
+						@if(string.IsNullOrWhiteSpace(set.ResultReason)) {
+							@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)
 							{
-								@* MatchGame game = set.Games[i]; *@
-								<td>@($"{set.Games[i].Score1}-{set.Games[i].Score2}")</td>
+								@if (i < set.Games.Count)
+								{
+									@* MatchGame game = set.Games[i]; *@
+									<td>@($"{set.Games[i].Score1}-{set.Games[i].Score2}")</td>
+								}
+								else
+								{
+									<td>-</td>
+								}
 							}
-							else
-							{
-								<td>-</td>
-							}
+						} else {
+							<td colspan="@(matchCard.Sets.Max(s => s.Games.Count))">@set.ResultReason</td>
 						}
 						<td
 							data-win="@(set.HomeWin)"

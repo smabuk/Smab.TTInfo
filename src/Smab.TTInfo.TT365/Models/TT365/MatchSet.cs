@@ -7,7 +7,7 @@ public record MatchSet(
 	Player AwayPlayer,
 	string Scores,
 	string Result,
-	string ResultReason
+	string? ResultReason
 	)
 {
 	public Player? HomeDoublesPartner { get; set; }
