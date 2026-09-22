@@ -58,7 +58,7 @@ public sealed partial class TT365Reader
 
 				HtmlNode? divTable = divDiv.SelectSingleNode(@"div//table");
 				List<Team> teams = [];
-				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
+				foreach (HtmlNode? teamRow in divTable?.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
 					string teamName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
 					Team team = new()
 					{
@@ -117,7 +117,7 @@ public sealed partial class TT365Reader
 				string divId = lookupTables.DivisionLookup.Where(d => d.Name == divName).Single().Id;
 
 				List<Team> teams = [];
-				foreach (HtmlNode? teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
+				foreach (HtmlNode teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
 					string teamName = teamRow.ChildNodes[3].FirstChild.InnerText.Trim();
 					Team team = new()
 					{

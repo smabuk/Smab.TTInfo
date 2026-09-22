@@ -2,12 +2,13 @@
 @inject TTLeaguesReader _ttleagues
 @attribute [StreamRendering]
 
-<PageTitle>@LeagueName</PageTitle>
 <h1>@LeagueName</h1>
 
 @if (League is null) {
+	<PageTitle>@LeagueName</PageTitle>
 	<div>Loading... @LeagueName</div>
 } else {
+	<PageTitle>@LeagueName</PageTitle>
 	@foreach (Competition competition in League.CurrentCompetitions.Where(c => CompetitionId is null || c.Id == CompetitionId))
 	{
 		<div>
@@ -48,5 +49,5 @@
 		<dd>@string.Join(", ", League.ArchivedCompetitions.OrderByDescending(s => s.Id).Select(s => s.Name))</dd>
 	</dl>
 }
- 
+
 

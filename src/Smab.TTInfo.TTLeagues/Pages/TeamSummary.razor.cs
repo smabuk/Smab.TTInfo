@@ -18,7 +18,6 @@ public partial class TeamSummary
 	private record FixtureResult(int Id, string Result, string FullScore);
 
 	private League? league;
-	private Team? team;
 	private TeamStats? teamStats;
 	private List<TeamMember> teamMembers = [];
 	private List<Match> fixtures = [];
@@ -38,11 +37,15 @@ public partial class TeamSummary
 		int competitionId = league?.CurrentCompetitions.First().Id ?? int.MinValue;
 		if (TeamId <= 0) {
 			TeamId = await _ttleagues.GetId(TeamName, LookupType.Team, TTInfoId, competitionId) ?? int.MinValue;
+			if (TeamId <= 0) {
+				failedToLoad = true;
+				return;
+			}
 		}
 
 		//They added authentication to this API
 		// ToDo: Get Captain Name another way, as this API call is now returning 401 Unauthorized
-		//team = await _ttleagues.GetTeam(TeamId, TTInfoId);
+		//Team team = await _ttleagues.GetTeam(TeamId, TTInfoId);
 		//if (team is null) {
 		//	failedToLoad = true;
 		//	return;
@@ -99,7 +102,7 @@ public partial class TeamSummary
 		}
 
 		await foreach (Task task in Task.WhenEach(tasks)) {
-			//StateHasChanged();
+			StateHasChanged();
 		}
 
 	}
