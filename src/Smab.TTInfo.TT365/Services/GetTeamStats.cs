@@ -130,10 +130,24 @@ public sealed partial class TT365Reader
 						out DateOnly resultDate);
 
 				bool hasPoM = cells.Length > 6;
+				string homeOrAway = cells[1].InnerText.Trim().ToLowerInvariant() switch
+				{
+					"h" => "home",
+					"a" => "away",
+					string ha => ha,
+					_ => throw new ArgumentOutOfRangeException("Home or Away value is not recognized.")
+				};
+
+				int forHome = int.Parse(score.Split("-")[0]);
+				int forAway = int.Parse(score.Split("-")[1]);
+				if (homeOrAway.Equals("away", StringComparison.OrdinalIgnoreCase)) {
+					(forHome, forAway) = (forAway, forHome);
+				}
+
 				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with
 				{
-					ForHome = int.Parse(score.Split("-")[0]),
-					ForAway = int.Parse(score.Split("-")[1]),
+					ForHome = forHome,
+					ForAway = forAway,
 					Other = other,
 					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
 					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText.Trim()) : "",
@@ -142,13 +156,7 @@ public sealed partial class TT365Reader
 				TeamResult teamResult = new(
 					completedFixture,
 					Opposition: cells[0].InnerText.Trim(),
-					HomeOrAway: cells[1].InnerText.Trim().ToLowerInvariant() switch
-					{
-						"h" => "home",
-						"a" => "away",
-						string homeOrAway => homeOrAway,
-						_ => throw new ArgumentOutOfRangeException("Home or Away value is not recognized.")
-					},
+					HomeOrAway: homeOrAway,
 					Points: int.Parse(cells[4].InnerText),
 					IsVoid: isVoid);
 
