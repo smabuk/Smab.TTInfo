@@ -138,6 +138,8 @@ public sealed partial class TT365Reader
 
 	private static MatchCard ParseMatchCardTypeB(HtmlDocument doc, MatchCard matchCard, TT365LeagueId leagueId, TT365SeasonId? seasonId)
 	{
+		const int GRID_SIZE = 3;
+
 		HtmlNode setsTableHeader = doc.DocumentNode.SelectSingleNode("//table/thead");
 		foreach (HtmlNode headerSpan in setsTableHeader.SelectNodes(".//th/span") ?? EMPTY_NODE_COLLECTION) { // Away players are in the header row
 			string awayPlayerName = headerSpan?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
@@ -154,12 +156,18 @@ public sealed partial class TT365Reader
 			matchCard.HomePlayers.Add(new MatchPlayer(homePlayerName, homePlayerId, 0, false));
 		}
 
+		if (matchCard.HomePlayers.All(x => x.Id == 0) && matchCard.AwayPlayers.All(x => x.Id == 0)) {
+			// Something is very wrong with this matchcard, so we will return it as-is without parsing the sets!
+			return matchCard;
+		}
+
 		int[] setOrder = [1, 10, 5, 4, 2, 8, 9, 6, 3, 7]; // default set order
 		int setIndex = 0;
+
 		foreach (HtmlNode cell in setsTableBody.SelectNodes(".//tr/td[contains(@class, 'tt-matchcard-matrix-cell')]") ?? EMPTY_NODE_COLLECTION) {
 			int setNo = setOrder[setIndex];
-			MatchPlayer homeMatchPlayer = matchCard.HomePlayers[setIndex / matchCard.AwayPlayers.Count];
-			MatchPlayer awayMatchPlayer = matchCard.AwayPlayers[setIndex % matchCard.AwayPlayers.Count];
+			MatchPlayer homeMatchPlayer = matchCard.HomePlayers[setIndex / GRID_SIZE];
+			MatchPlayer awayMatchPlayer = matchCard.AwayPlayers[setIndex % GRID_SIZE];
 			string scores = string.Join(",", cell.SelectNodes(".//span[contains(@class, 'tt-matchcard-matrix-game')]")?.Select(x => x.InnerText.Trim()) ?? []);
 			string result = cell.SelectSingleNode(".//div[contains(@class, 'tt-matchcard-matrix-result')]")?.InnerText.Replace(" ", "").Trim() ?? "";
 			string? resultReason = cell.SelectSingleNode(".//div[contains(@class, 'tt-matchcard-scratched')]")?.InnerText.Trim();
@@ -175,27 +183,6 @@ public sealed partial class TT365Reader
 			setIndex++;
 			matchCard.Sets.Add(set);
 		}
-
-		// The doubles set is in the footer row, and the players are in the doubles label div
-		//                           <tr class="tt-matchcard-doubles-row">
-		//                               <th class="tt-matchcard-matrix-rowheader" colspan="4">
-		//                                   <div class="tt-matchcard-doubles-label">Doubles</div>
-		//                                   <div class="tt-matchcard-doubles-players">
-		//                                       <span>
-		//                                               <span class=""><a href="/Reading/Results/Player?leagueName=Senior%202024-25&amp;playerName=Cris%20Reynolds&amp;id=374563" class="tt-player-link">Cris Reynolds</a></span>
-		//&amp;                                                 <span class=""><a href="/Reading/Results/Player?leagueName=Senior%202024-25&amp;playerName=James%20Miller&amp;id=374562" class="tt-player-link">James Miller</a></span>
-		//                                       </span>
-		//                                       <span class="tt-matchcard-vs">vs</span>
-		//                                       <span>
-		//                                               <span class=""><a href="/Reading/Results/Player?leagueName=Senior%202024-25&amp;playerName=Mark%20Carless&amp;id=376997" class="tt-player-link">Mark Carless</a></span>
-		//&amp;                                                 <span class=""><a href="/Reading/Results/Player?leagueName=Senior%202024-25&amp;playerName=Gopi%20Ponnapalli&amp;id=377035" class="tt-player-link">Gopi Ponnapalli</a></span>
-		//                                       </span>
-		//                                   </div>
-		//                                   <div class="tt-matchcard-doubles-games tt-matchcard-games">8-11  11-6  9-11  11-5  11-3</div>
-		//                               </th>
-		//                               <td class="tt-matchcard-matrix-rowtotal">1 - 0</td>
-		//                           </tr>
-		//		HtmlNode doublesRow = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]");
 
 		Player homePlayer = new()
 		{
