@@ -44,7 +44,7 @@
 					<thead>
 						<tr>
 							<th>Opponent</th>
-							<th>Team</th>
+							<th>Registered Team</th>
 							<th>Date</th>
 							<th>Games</th>
 							<th>Score</th>
@@ -54,7 +54,7 @@
 					<tbody>
 						@foreach (PlayerResult result in results) {
 							<tr data-result='@result.Result.ToLower()'>
-								<td><a href="PlayerSummary/@LeagueId/@seasonName/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.Name</a></td>
+								<td><a href="PlayerSummary/@LeagueId/@seasonName/@result.Opponent.Name.Replace(" ", "_")/@result.Opponent.Id">@result.Opponent.DisplayName</a></td>
 								<td><a href="TeamSummary/@LeagueId/@seasonName/@result.OpponentTeam">@result.OpponentTeam</a></td>
 								<td>@result.Date.ToString("dd MMM yyyy")</td>
 								<td><a href="/Match/@LeagueId/@result.MatchCardURL.Split("matchId=").LastOrDefault()" rel="noopener">@result.GameScore</a></td>

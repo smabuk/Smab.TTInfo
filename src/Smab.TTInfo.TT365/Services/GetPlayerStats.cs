@@ -120,8 +120,13 @@ public sealed partial class TT365Reader
 
 			string teamName = playerTeamName;
 			if (fixture is not null) {
-				teamName = fixture.HomePlayers.Select(p => p.Id).Contains(player.Id) ? fixture.HomeTeam : fixture.AwayTeam;
 				divisionId = fixture.Division;
+				teamName = fixture.HomePlayers.Select(p => p.Id).Contains(player.Id) ? fixture.HomeTeam : fixture.AwayTeam;
+				string opponentTeamName = fixture.HomePlayers.Select(p => p.Id).Contains(opponent.Id) ? fixture.HomeTeam : fixture.AwayTeam;
+				if (opponentTeamName != opponentTeam) {
+					opponent.IsSubstitute = true;
+				}
+
 			}
 
 
