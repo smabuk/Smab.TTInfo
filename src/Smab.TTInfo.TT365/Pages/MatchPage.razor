@@ -42,7 +42,7 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.HomePlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
+						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
 					}
 				</ul>
 			</div>
@@ -51,7 +51,7 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.AwayPlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.Name</a> (@player.SetsWon)</li>
+						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
 					}
 				</ul>
 			</div>
@@ -76,12 +76,12 @@ else
 							<span
 								data-win="@(set.HomeScore > set.AwayScore)"
 								data-loss="@(set.HomeScore < set.AwayScore)"
-							>@string.Join(" & ", set.HomePlayers.Select(p =>  p.DisplayName))</span>
+							>@string.Join(" & ", set.HomePlayers.Select(p =>  p.Name))</span>
 							@((MarkupString)(set.HomePlayers.Count > 1 ? "<br />" : " v "))
 							<span
 								data-win="@(set.AwayScore > set.HomeScore)"
 								data-loss="@(set.AwayScore < set.HomeScore)"
-							>@string.Join(" & ", set.AwayPlayers.Select(p => p.DisplayName))</span>
+							>@string.Join(" & ", set.AwayPlayers.Select(p => p.Name))</span>
 						</td>
 						@if(string.IsNullOrWhiteSpace(set.ResultReason)) {
 							@for (int i = 0; i < matchCard.Sets.Max(s => s.Games.Count); i++)

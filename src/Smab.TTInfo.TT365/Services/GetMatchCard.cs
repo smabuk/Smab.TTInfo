@@ -57,8 +57,8 @@ public sealed partial class TT365Reader
 		}
 
 		if (matchCard.Sets is not []) {
-			List<MatchPlayer> homePlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.HomePlayer, set.HomeDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false))).DistinctBy(p => p.Id)];
-			List<MatchPlayer> awayPlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.AwayPlayer, set.AwayDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false))).DistinctBy(p => p.Id)];
+			List<MatchPlayer> homePlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.HomePlayer, set.HomeDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false, p.IsSubstitute))).DistinctBy(p => p.Id)];
+			List<MatchPlayer> awayPlayers = [.. matchCard.Sets.SelectMany(set => new[] { set.AwayPlayer, set.AwayDoublesPartner }.Where(p => p is not null).Select(p => new MatchPlayer(p!.Name, p.PlayerId, 0, false, p.IsSubstitute))).DistinctBy(p => p.Id)];
 
 			// we also need to count SetsWon now that we have everything fully parsed, as the TT365 site does not provide this information in the matchcard page
 			for (int i = 0; i < homePlayers.Count; i++) {
@@ -107,24 +107,28 @@ public sealed partial class TT365Reader
 
 			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			bool homePlayerIsSubstitute = homePlayerNode?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
 			string? homeDoublesPartnerName = homePlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.InnerText.Trim();
 			int homeDoublesPartnerId = int.Parse(homePlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			bool homeDoublesPartnerIsSubstitute = homePlayerNode?.SelectNodes(".//span[contains(@class, 'tt-matchcard-stepup')]")?.ElementAtOrDefault(1) is not null;
 
 			string awayPlayerName = awayPlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int awayPlayerId = int.Parse(awayPlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			bool awayPlayerIsSubstitute = awayPlayerNode?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
 			string? awayDoublesPartnerName = awayPlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.InnerText.Trim();
 			int awayDoublesPartnerId = int.Parse(awayPlayerNode?.SelectNodes(".//a")?.ElementAtOrDefault(1)?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
+			bool awayDoublesPartnerIsSubstitute = awayPlayerNode?.SelectNodes(".//span[contains(@class, 'tt-matchcard-stepup')]")?.ElementAtOrDefault(1) is not null;
 
 			string games = string.Join(",", gamesNode?.InnerText.Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? []);
 			int homeScore = int.Parse(scoreNode?.SelectSingleNode("./span[1]")?.InnerText.Trim() ?? "0");
 			int awayScore = int.Parse(scoreNode?.SelectSingleNode("./span[2]")?.InnerText.Trim() ?? "0");
 
-			MatchSet set = new(matchCard.Sets.Count + 1, new Player() { Name = homePlayerName, PlayerId = homePlayerId }, new Player() { Name = awayPlayerName, PlayerId = awayPlayerId }, games, $"{homeScore}-{awayScore}", "");
+			MatchSet set = new(matchCard.Sets.Count + 1, new Player() { Name = homePlayerName, PlayerId = homePlayerId, IsSubstitute = homePlayerIsSubstitute }, new Player() { Name = awayPlayerName, PlayerId = awayPlayerId, IsSubstitute = awayPlayerIsSubstitute }, games, $"{homeScore}-{awayScore}", "");
 			if (!string.IsNullOrWhiteSpace(homeDoublesPartnerName) && homeDoublesPartnerId > 0 && !string.IsNullOrWhiteSpace(awayDoublesPartnerName) && awayDoublesPartnerId > 0) {
 				set = set with
 				{
-					HomeDoublesPartner = new Player() { Name = homeDoublesPartnerName, PlayerId = homeDoublesPartnerId },
-					AwayDoublesPartner = new Player() { Name = awayDoublesPartnerName, PlayerId = awayDoublesPartnerId }
+					HomeDoublesPartner = new Player() { Name = homeDoublesPartnerName, PlayerId = homeDoublesPartnerId, IsSubstitute = homeDoublesPartnerIsSubstitute },
+					AwayDoublesPartner = new Player() { Name = awayDoublesPartnerName, PlayerId = awayDoublesPartnerId, IsSubstitute = awayDoublesPartnerIsSubstitute }
 				};
 			}
 
@@ -144,7 +148,8 @@ public sealed partial class TT365Reader
 		foreach (HtmlNode headerSpan in setsTableHeader.SelectNodes(".//th/span") ?? EMPTY_NODE_COLLECTION) { // Away players are in the header row
 			string awayPlayerName = headerSpan?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int awayPlayerId = int.Parse(headerSpan?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
-			matchCard.AwayPlayers.Add(new MatchPlayer(awayPlayerName, awayPlayerId, 0, false));
+			bool isSubstitute = headerSpan?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
+			matchCard.AwayPlayers.Add(new MatchPlayer(awayPlayerName, awayPlayerId, 0, false, isSubstitute));
 		}
 
 		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody");
@@ -153,7 +158,8 @@ public sealed partial class TT365Reader
 			HtmlNode homePlayerNode = row.SelectSingleNode("./th[contains(@class, 'tt-matchcard-matrix-rowheader')]");
 			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
-			matchCard.HomePlayers.Add(new MatchPlayer(homePlayerName, homePlayerId, 0, false));
+			bool isSubstitute = homePlayerNode?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
+			matchCard.HomePlayers.Add(new MatchPlayer(homePlayerName, homePlayerId, 0, false, isSubstitute));
 		}
 
 		if (matchCard.HomePlayers.All(x => x.Id == 0) && matchCard.AwayPlayers.All(x => x.Id == 0)) {
@@ -174,8 +180,8 @@ public sealed partial class TT365Reader
 
 			MatchSet set = new(
 				setNo,
-				new Player() { PlayerId = homeMatchPlayer.Id, Name = homeMatchPlayer.Name },
-				new Player() { PlayerId = awayMatchPlayer.Id, Name = awayMatchPlayer.Name },
+				new Player() { PlayerId = homeMatchPlayer.Id, Name = homeMatchPlayer.Name, IsSubstitute = homeMatchPlayer.IsSubstitute },
+				new Player() { PlayerId = awayMatchPlayer.Id, Name = awayMatchPlayer.Name, IsSubstitute = awayMatchPlayer.IsSubstitute },
 				scores,
 				result,
 				resultReason);
