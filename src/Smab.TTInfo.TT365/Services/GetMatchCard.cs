@@ -33,15 +33,15 @@ public sealed partial class TT365Reader
 
 		if (doc.DocumentNode.SelectNodes("//div[contains(@class, 'tt-matchcard-teams')]") is null) { return matchCard; }
 
-		string homeTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-home')]").InnerText.Trim();
-		string awayTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-away')]").InnerText.Trim();
+		string homeTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-home')]")?.InnerText?.Trim() ?? "";
+		string awayTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-away')]")?.InnerText?.Trim() ?? "";
 
-		HtmlNode meta = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-meta')]");
+		HtmlNode meta = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-meta')]")!;
 		int weekNo = meta.ChildNodes.Where(x => x.Name == "span" && !x.HasClass("tt-matchcard-meta-sep")).Select(x => x.InnerText.Trim()).Where(x => x.StartsWith("Match -")).Select(x => int.Parse(x.Replace("Match -", "").Trim())).FirstOrDefault();
 		DateOnly matchDate = meta.ChildNodes.Where(x => x.Name == "span" && !x.HasClass("tt-matchcard-meta-sep")).Select(x => x.InnerText.Trim()).Where(x => DateOnly.TryParse(x, out _)).Select(x => DateOnly.Parse(x)).FirstOrDefault();
 		string divName = meta.ChildNodes.Where(x => x.Name == "span" && !x.HasClass("tt-matchcard-meta-sep")).Select(x => x.InnerText.Trim()).Where(x => !DateOnly.TryParse(x, out _)).LastOrDefault() ?? "";
-		int forHome = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-score-home')]").InnerText.Trim());
-		int forAway = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-score-away')]").InnerText.Trim());
+		int forHome = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-score-home')]")?.InnerText?.Trim() ?? "0");
+		int forAway = int.Parse(doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-score-away')]")?.InnerText?.Trim() ?? "0");
 		string potm = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-potm')]")?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 
 		matchCard = new(matchCardId, matchDate, homeTeamName, awayTeamName, divName, forHome, forAway);
@@ -51,9 +51,9 @@ public sealed partial class TT365Reader
 		HtmlNode? matchCardTypeB = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'tt-matchcard-b')]");
 
 		if (matchCardTypeA is not null) {
-			matchCard = ParseMatchCardTypeA(doc, matchCard, leagueId, seasonId);
+			matchCard = ParseMatchCardTypeA(doc, matchCard);
 		} else if (matchCardTypeB is not null) {
-			matchCard = ParseMatchCardTypeB(doc, matchCard, leagueId, seasonId);
+			matchCard = ParseMatchCardTypeB(doc, matchCard);
 		}
 
 		if (matchCard.Sets is not []) {
@@ -96,14 +96,14 @@ public sealed partial class TT365Reader
 		return matchCard;
 	}
 
-	private static MatchCard ParseMatchCardTypeA(HtmlDocument doc, MatchCard matchCard, TT365LeagueId leagueId, TT365SeasonId? seasonId)
+	private static MatchCard ParseMatchCardTypeA(HtmlDocument doc, MatchCard matchCard)
 	{
-		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody");
+		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody")!;
 		foreach (HtmlNode row in setsTableBody.SelectNodes("./tr") ?? EMPTY_NODE_COLLECTION) {
-			HtmlNode homePlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][1]");
-			HtmlNode awayPlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][2]");
-			HtmlNode gamesNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-games')]");
-			HtmlNode scoreNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-score')]");
+			HtmlNode homePlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][1]")!;
+			HtmlNode awayPlayerNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-player')][2]")!;
+			HtmlNode gamesNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-games')]")!;
+			HtmlNode scoreNode = row.SelectSingleNode("./td[contains(@class, 'tt-matchcard-col-score')]")!;
 
 			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
@@ -123,12 +123,12 @@ public sealed partial class TT365Reader
 			int homeScore = int.Parse(scoreNode?.SelectSingleNode("./span[1]")?.InnerText.Trim() ?? "0");
 			int awayScore = int.Parse(scoreNode?.SelectSingleNode("./span[2]")?.InnerText.Trim() ?? "0");
 
-			MatchSet set = new(matchCard.Sets.Count + 1, new Player() { Name = homePlayerName, PlayerId = homePlayerId, IsSubstitute = homePlayerIsSubstitute }, new Player() { Name = awayPlayerName, PlayerId = awayPlayerId, IsSubstitute = awayPlayerIsSubstitute }, games, $"{homeScore}-{awayScore}", "");
+			MatchSet set = new(matchCard.Sets.Count + 1, new Player(homePlayerName, homePlayerId, homePlayerIsSubstitute), new Player(awayPlayerName, awayPlayerId, awayPlayerIsSubstitute), games, $"{homeScore}-{awayScore}", "");
 			if (!string.IsNullOrWhiteSpace(homeDoublesPartnerName) && homeDoublesPartnerId > 0 && !string.IsNullOrWhiteSpace(awayDoublesPartnerName) && awayDoublesPartnerId > 0) {
 				set = set with
 				{
-					HomeDoublesPartner = new Player() { Name = homeDoublesPartnerName, PlayerId = homeDoublesPartnerId, IsSubstitute = homeDoublesPartnerIsSubstitute },
-					AwayDoublesPartner = new Player() { Name = awayDoublesPartnerName, PlayerId = awayDoublesPartnerId, IsSubstitute = awayDoublesPartnerIsSubstitute }
+					HomeDoublesPartner = new Player(homeDoublesPartnerName, homeDoublesPartnerId, homeDoublesPartnerIsSubstitute),
+					AwayDoublesPartner = new Player(awayDoublesPartnerName, awayDoublesPartnerId, awayDoublesPartnerIsSubstitute)
 				};
 			}
 
@@ -140,11 +140,11 @@ public sealed partial class TT365Reader
 		return matchCard;
 	}
 
-	private static MatchCard ParseMatchCardTypeB(HtmlDocument doc, MatchCard matchCard, TT365LeagueId leagueId, TT365SeasonId? seasonId)
+	private static MatchCard ParseMatchCardTypeB(HtmlDocument doc, MatchCard matchCard)
 	{
 		const int GRID_SIZE = 3;
 
-		HtmlNode setsTableHeader = doc.DocumentNode.SelectSingleNode("//table/thead");
+		HtmlNode setsTableHeader = doc.DocumentNode.SelectSingleNode("//table/thead")!;
 		foreach (HtmlNode headerSpan in setsTableHeader.SelectNodes(".//th/span") ?? EMPTY_NODE_COLLECTION) { // Away players are in the header row
 			string awayPlayerName = headerSpan?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int awayPlayerId = int.Parse(headerSpan?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
@@ -152,10 +152,10 @@ public sealed partial class TT365Reader
 			matchCard.AwayPlayers.Add(new MatchPlayer(awayPlayerName, awayPlayerId, 0, false, isSubstitute));
 		}
 
-		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody");
+		HtmlNode setsTableBody = doc.DocumentNode.SelectSingleNode("//table/tbody")!;
 		// home players are in the body rows, and each row contains the games played against each away player
 		foreach (HtmlNode row in setsTableBody.SelectNodes("./tr") ?? EMPTY_NODE_COLLECTION) {
-			HtmlNode homePlayerNode = row.SelectSingleNode("./th[contains(@class, 'tt-matchcard-matrix-rowheader')]");
+			HtmlNode homePlayerNode = row.SelectSingleNode("./th[contains(@class, 'tt-matchcard-matrix-rowheader')]")!;
 			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
 			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
 			bool isSubstitute = homePlayerNode?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
@@ -180,8 +180,8 @@ public sealed partial class TT365Reader
 
 			MatchSet set = new(
 				setNo,
-				new Player() { PlayerId = homeMatchPlayer.Id, Name = homeMatchPlayer.Name, IsSubstitute = homeMatchPlayer.IsSubstitute },
-				new Player() { PlayerId = awayMatchPlayer.Id, Name = awayMatchPlayer.Name, IsSubstitute = awayMatchPlayer.IsSubstitute },
+				new Player(homeMatchPlayer.Name, homeMatchPlayer.Id, homeMatchPlayer.IsSubstitute),
+				new Player(awayMatchPlayer.Name, awayMatchPlayer.Id, awayMatchPlayer.IsSubstitute),
 				scores,
 				result,
 				resultReason);
@@ -190,29 +190,29 @@ public sealed partial class TT365Reader
 			matchCard.Sets.Add(set);
 		}
 
-		Player homePlayer = new()
-		{
-			Name = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[1]/a")?.InnerText.Trim() ?? "",
-			PlayerId = int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[1]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0")
-		};
+		Player homePlayer = new(
+			doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[1]/a")?.InnerText.Trim() ?? "",
+			int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[1]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0"),
+			false
+			);
 
-		Player homeDoublesPartner = new()
-		{
-			Name = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[2]/a")?.InnerText.Trim() ?? "",
-			PlayerId = int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[2]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0")
-		};
+		Player homeDoublesPartner = new(
+			doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[2]/a")?.InnerText.Trim() ?? "",
+			int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[1]/span[2]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0"),
+			false
+		);
 
-		Player awayPlayer = new()
-		{
-			Name = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[1]/a")?.InnerText.Trim() ?? "",
-			PlayerId = int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[1]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0")
-		};
+		Player awayPlayer = new(
+			doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[1]/a")?.InnerText.Trim() ?? "",
+			int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[1]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0"),
+			false
+		);
 
-		Player awayDoublesPartner = new()
-		{
-			Name = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[2]/a")?.InnerText.Trim() ?? "",
-			PlayerId = int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[2]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0")
-		};
+		Player awayDoublesPartner = new(
+			doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[2]/a")?.InnerText.Trim() ?? "",
+			int.Parse(doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-players')]/span[3]/span[2]/a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0"),
+			false
+		);
 
 		string doublesGames = string.Join(",", doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//div[contains(@class, 'tt-matchcard-doubles-games')]")?.InnerText.Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? []);
 		string doublesResult = doc.DocumentNode.SelectSingleNode("//tfoot/tr[contains(@class, 'tt-matchcard-doubles-row')]//td[contains(@class, 'tt-matchcard-matrix-rowtotal')]")?.InnerText.Replace(" ", "").Trim() ?? "";

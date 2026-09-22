@@ -46,7 +46,7 @@ public sealed partial class TT365Reader
 		Player? player = fixtures.OfType<CompletedFixture>()
 			.SelectMany(f => f.HomePlayers.Concat(f.AwayPlayers))
 			.Where(p => akaNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
-			.Select(p => new Player { Name = p.Name, PlayerId = p.Id })
+			.Select(p => new Player( p.Name, p.Id, p.IsSubstitute ))
 			.FirstOrDefault();
 
 		if (player is null || player.Id == 0) { return null; }

@@ -34,11 +34,9 @@ public sealed partial class TT365Reader
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; }
-		;
 
 		Season? season = league.GetSeason((TT365SeasonId)seasonId);
 		if (season is null) { return null; }
-		;
 
 		List<Division> divisions = [.. season?.Divisions ?? []];
 		if (divisions.Count == 0) { return null; }
@@ -57,9 +55,7 @@ public sealed partial class TT365Reader
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				team.URL,
-				// ToDo: replace when ready to publish **********************************
-				filename.Replace("json", "html"))
+				team.URL)
 			?? new();
 
 		HtmlNode? teamNode = doc.DocumentNode.GetFirstNodeByClass("tt-content");
@@ -70,7 +66,7 @@ public sealed partial class TT365Reader
 		team.Players = [];
 		team.Results = [];
 		HtmlNode? captainNode = teamNode.SelectNodes("//div[text()='Captain']")?.FirstOrDefault();
-		team.Captain = captainNode?.NextSibling.NextSibling.InnerText ?? "";
+		team.Captain = captainNode?.NextSibling?.NextSibling?.InnerText ?? "";
 		//team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
 		//team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
 
@@ -86,11 +82,9 @@ public sealed partial class TT365Reader
 					playerName = playerName[..playerName.IndexOf(Environment.NewLine)].Trim();
 				}
 
-				Player player = new()
+				Player player = new(playerName, 0, isSubstitute)
 				{
-					Name = playerName,
-					IsSubstitute = isSubstitute,
-					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
+					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"]?.Value}",
 					Played = int.Parse(cells[1].InnerText),
 					Won = int.Parse(cells[2].InnerText),
 					WinPercentage = float.Parse(cells[3].InnerText.Replace("%", "")),
@@ -135,7 +129,7 @@ public sealed partial class TT365Reader
 					"h" => "home",
 					"a" => "away",
 					string ha => ha,
-					_ => throw new ArgumentOutOfRangeException("Home or Away value is not recognized.")
+					_ => throw new ApplicationException("Home or Away value is not recognized.")
 				};
 
 				int forHome = int.Parse(score.Split("-")[0]);
@@ -149,7 +143,7 @@ public sealed partial class TT365Reader
 					ForHome = forHome,
 					ForAway = forAway,
 					Other = other,
-					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
+					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"]?.Value}",
 					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText.Trim()) : "",
 				};
 
@@ -177,11 +171,9 @@ public sealed partial class TT365Reader
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; }
-		;
 
 		Season? season = league.GetSeason((TT365SeasonId)seasonId);
 		if (season is null) { return null; }
-		;
 
 		List<Division> divisions = [.. season?.Divisions ?? []];
 		if (divisions.Count == 0) { return null; }
@@ -211,7 +203,7 @@ public sealed partial class TT365Reader
 		team.Players = [];
 		team.Results = [];
 		HtmlNode? captainNode = teamNode.SelectNodes("//div[text()='Captain']")?.FirstOrDefault();
-		team.Captain = captainNode?.NextSibling.NextSibling.InnerText ?? "";
+		team.Captain = captainNode?.NextSibling?.NextSibling?.InnerText ?? "";
 		team.CaptainPhone = captainNode?.NextSibling?.NextSibling?.NextSibling?.NextSibling?.InnerText ?? "";
 		team.CaptainEmailAddress = ExtractEmailAddress(teamNode.GetFirstNodeByClass("email"));
 
@@ -220,10 +212,9 @@ public sealed partial class TT365Reader
 			foreach (HtmlNode playerRow in playertableNode.SelectSingleNode("tbody")?.SelectNodes("tr") ?? EMPTY_NODE_COLLECTION) {
 				HtmlNode[] cells = [.. playerRow.Descendants("td")];
 				bool hasPoM = cells.Length > 4;
-				Player player = new()
+				Player player = new(FixPlayerName(cells[0].InnerText.Trim()), 0, false)
 				{
-					Name = FixPlayerName(cells[0].InnerText.Trim()),
-					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"].Value}",
+					PlayerURL = $"{TT365_COM}{cells[0].Descendants("a").SingleOrDefault()?.Attributes["href"]?.Value}",
 					Played = int.Parse(cells[1].InnerText),
 					WinPercentage = float.Parse(cells[2].InnerText.Replace("%", "")),
 					LeagueRanking = 0, // no longer being tracked apparently (appears to be broken)
@@ -303,7 +294,7 @@ public sealed partial class TT365Reader
 					ForHome = int.Parse(score.Split("-")[0]),
 					ForAway = int.Parse(score.Split("-")[1]),
 					Other = other,
-					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"].Value}",
+					CardURL = $"{TT365_COM}/{cells[hasPoM ? 6 : 5].Descendants("a").Single().Attributes["href"]?.Value}",
 					PlayerOfTheMatch = hasPoM ? FixPlayerName(cells[5].InnerText) : "",
 				};
 

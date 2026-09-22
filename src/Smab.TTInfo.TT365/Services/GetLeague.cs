@@ -43,9 +43,7 @@ public sealed partial class TT365Reader
 			url = "";
 			doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				url,
-				// ToDo: replace when ready to publish **********************************
-				$"{leagueId}.html");
+				url);
 
 			if (string.IsNullOrWhiteSpace(doc?.Text)) { return null; }
 

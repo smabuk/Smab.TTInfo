@@ -18,7 +18,6 @@ public partial class MatchPage
 	private TT365SeasonId seasonId;
 	private League? league;
 	private MatchCard? matchCard;
-	private Division? division;
 
 	protected override async Task OnParametersSetAsync()
 	{

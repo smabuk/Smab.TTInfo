@@ -41,7 +41,7 @@ public partial class PlayerSummary
 			return;
 		}
 
-		Player playerStats = await _tt365.GetPlayerStatsByName((TT365LeagueId)LeagueId, PlayerName, seasonId) ?? new();
+		Player? playerStats = await _tt365.GetPlayerStatsByName((TT365LeagueId)LeagueId, PlayerName, seasonId);
 		if (playerStats is not null && playerStats.Id is not 0) {
 			playerResults[seasonId] = [.. playerStats.PlayerResults];
 		}

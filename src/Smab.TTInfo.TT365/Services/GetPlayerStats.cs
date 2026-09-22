@@ -57,10 +57,7 @@ public sealed partial class TT365Reader
 
 		HtmlDocument doc = await LoadAsync<HtmlDocument>(
 				leagueId,
-				player.PlayerURL,
-				// ToDo: replace when ready to publish **********************************
-				filename.Replace(".json", ".html")
-				)
+				player.PlayerURL)
 			?? new();
 
 		HtmlNode? statsNode = doc.DocumentNode.GetFirstNodeByClass("tt-player-stats-header");
@@ -71,8 +68,8 @@ public sealed partial class TT365Reader
 
 		List<Fixture>? fixtures = await GetAllFixtures(leagueId, seasonId);
 
-		string playerTeamName = doc.DocumentNode.SelectSingleNode("//span[text()='Team::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? "";
-		string playerDivisionName = doc.DocumentNode.SelectSingleNode("//span[text()='Div::']")?.ParentNode.ChildNodes[3]?.InnerText.Trim() ?? " ";
+		string playerTeamName = doc.DocumentNode.SelectSingleNode("//span[text()='Team::']")?.ParentNode?.ChildNodes[3]?.InnerText.Trim() ?? "";
+		string playerDivisionName = doc.DocumentNode.SelectSingleNode("//span[text()='Div::']")?.ParentNode?.ChildNodes[3]?.InnerText.Trim() ?? " ";
 
 		int index = 1;
 
@@ -84,10 +81,9 @@ public sealed partial class TT365Reader
 			}
 
 			string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
-			string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
-			Player opponent = new()
+			string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"]?.Value}";
+			Player opponent = new(opponentName, 0)
 			{
-				Name = opponentName,
 				PlayerURL = opponentHref,
 			};
 
@@ -97,7 +93,7 @@ public sealed partial class TT365Reader
 			//}
 
 			string opponentTeam = cells[1].Descendants("a").First().InnerText.Trim();
-			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"].Value.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? " ";
+			string divisionId = cells[1].SelectSingleNode("a")?.Attributes["href"]?.Value?.Split(['&', '=']).Skip(3).FirstOrDefault()?.Trim().Replace("%20", " ") ?? " ";
 
 			DateOnly date = DateOnly.Parse(cells[2].InnerText.Trim() ?? "");
 
@@ -109,7 +105,7 @@ public sealed partial class TT365Reader
 				_ => cells[4].InnerText.Trim().ToLowerInvariant()
 			};
 
-			string matchCardUrl = $"{TT365_COM}{cells[3].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+			string matchCardUrl = $"{TT365_COM}{cells[3].SelectSingleNode("a")?.Attributes["href"]?.Value ?? ""}";
 
 			// work out the team the player is playing for by finding the fixture including the playerId and the date of the match
 			CompletedFixture? fixture = fixtures.OfType<CompletedFixture>()
@@ -124,7 +120,7 @@ public sealed partial class TT365Reader
 				teamName = fixture.HomePlayers.Select(p => p.Id).Contains(player.Id) ? fixture.HomeTeam : fixture.AwayTeam;
 				string opponentTeamName = fixture.HomePlayers.Select(p => p.Id).Contains(opponent.Id) ? fixture.HomeTeam : fixture.AwayTeam;
 				if (opponentTeamName != opponentTeam) {
-					opponent.IsSubstitute = true;
+					opponent = opponent with { IsSubstitute = true };
 				}
 
 			}
@@ -163,7 +159,6 @@ public sealed partial class TT365Reader
 		TT365SeasonId currentSeasonId = league.CurrentSeasonId;
 		seasonId ??= currentSeasonId;
 		if (seasonId is null) { return null; }
-		;
 
 		string filename = $@"{leagueId}_{seasonId}_player_stats_{player.Id}.json";
 		Player newPlayer = seasonId == currentSeasonId
@@ -201,22 +196,22 @@ public sealed partial class TT365Reader
 			foreach (HtmlNode? resultRow in table.Descendants("tr")) {
 				HtmlNode[] cells = [.. resultRow.Descendants("td")];
 				if (cells.Length is 6 or 7 && cells[0].Descendants("a").Count() == 1) {
-					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"].Value}";
+					string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"]?.Value}";
 					string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
-					Player opponent = new()
-					{
-						Name = opponentName,
-						PlayerURL = opponentHref,
-					};
+					Player opponent = new(
+						opponentName,
+						int.Parse(cells[0].Descendants("a").Single().Attributes["href"]?.Value?.Split("id=").LastOrDefault() ?? "0"),
+						false
+					);
 
 					string resultReason = "";
 					if (cells[1].Descendants("img").Any()) {
-						resultReason = cells[1].SelectNodes("img")?.FirstOrDefault()?.Attributes["title"].Value.Trim() ?? "";
+						resultReason = cells[1].SelectNodes("img")?.FirstOrDefault()?.Attributes["title"]?.Value?.Trim() ?? "";
 					}
 
 					string opponentTeam = cells[2].Descendants("a").First().InnerText.Trim();
 
-					DateOnly date = DateOnly.Parse(cells[3].SelectSingleNode("time")?.Attributes["datetime"].Value ?? "");
+					DateOnly date = DateOnly.Parse(cells[3].SelectSingleNode("time")?.Attributes["datetime"]?.Value ?? "");
 
 					string scores = string.Join(",", cells[4].Descendants("span").Select(s => s.InnerText.Trim()));
 
@@ -228,10 +223,10 @@ public sealed partial class TT365Reader
 					if (cells.Length is 7) {
 						rankingDiffSuccessful = int.TryParse(cells[5].InnerText, null, out rankingDiff);
 						result = cells[6].InnerText.Trim();
-						matchCardUrl = $"{TT365_COM}{cells[6].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+						matchCardUrl = $"{TT365_COM}{cells[6].SelectSingleNode("a")?.Attributes["href"]?.Value ?? ""}";
 					} else {
 						result = cells[5].InnerText.Trim();
-						matchCardUrl = $"{TT365_COM}{cells[5].SelectSingleNode("a")?.Attributes["href"].Value ?? ""}";
+						matchCardUrl = $"{TT365_COM}{cells[5].SelectSingleNode("a")?.Attributes["href"]?.Value ?? ""}";
 					}
 
 					string division = matchCardUrl.Split("/").Skip(6).FirstOrDefault()?.Trim() ?? "";
