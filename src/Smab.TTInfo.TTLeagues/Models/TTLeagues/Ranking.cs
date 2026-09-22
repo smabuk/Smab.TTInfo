@@ -17,7 +17,7 @@ public sealed record Ranking(
 	 string  UserId,
 	 int     Position,
 	 string  Name,
-	 int     Rank,
-	 int     Start,
-	 int     Change
+	 double  Rank,
+	 double  Start,
+	 double  Change
 );

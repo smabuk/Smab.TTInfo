@@ -13,7 +13,7 @@
 /// <param name="Category">The category in which the player is ranked. This is a non-null string that identifies the context of the ranking,
 /// such as "Sports", "Gaming", or "Academics".</param>
 public sealed record PlayerRanking(
-	int?   Position,
-	int?   Score,
-	string Category
+	int?    Position,
+	double? Score,
+	string  Category
 );

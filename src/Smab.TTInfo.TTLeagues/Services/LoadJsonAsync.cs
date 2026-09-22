@@ -55,7 +55,13 @@ public sealed partial class TTLeaguesReader
 		}
 
 		if (!string.IsNullOrWhiteSpace(jsonString)) {
-			returnValue = JsonSerializer.Deserialize<T>(jsonString, JSON_SER_OPTIONS);
+			try {
+				returnValue = JsonSerializer.Deserialize<T>(jsonString, JSON_SER_OPTIONS);
+			}
+			catch (Exception ex) {
+				Console.WriteLine($"Error deserializing JSON for {fileName}: {ex.Message}");
+				throw;
+			}
 		}
 
 		return returnValue;
