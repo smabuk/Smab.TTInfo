@@ -162,7 +162,7 @@ public sealed partial class TT365Reader
 			matchCard.HomePlayers.Add(new MatchPlayer(homePlayerName, homePlayerId, 0, false, isSubstitute));
 		}
 
-		if (matchCard.HomePlayers.All(x => x.Id == 0) && matchCard.AwayPlayers.All(x => x.Id == 0)) {
+		if (matchCard.HomePlayers.All(x => x.Id == 0) || matchCard.AwayPlayers.All(x => x.Id == 0)) {
 			// Something is very wrong with this matchcard, so we will return it as-is without parsing the sets!
 			return matchCard;
 		}

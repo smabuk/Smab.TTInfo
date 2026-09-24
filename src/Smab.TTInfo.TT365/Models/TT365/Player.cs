@@ -9,7 +9,7 @@
 /// unique identifier and season identifier from the player's URL.
 /// </remarks>
 [DebuggerDisplay("Name: {DisplayName,nq}")]
-public record class Player(string Name, int PlayerId, bool IsSubstitute = false)
+public sealed record class Player(string Name, int PlayerId, bool IsSubstitute = false)
 {
 	public string PlayerURL { get; set; } = "";
 	public int Played { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
-public record MatchCard(
+public sealed record MatchCard(
 	int Id,
 	DateOnly Date,
 	string HomeTeam,

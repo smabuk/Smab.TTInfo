@@ -6,7 +6,7 @@
 /// </summary>
 /// <remarks>This record extends the <see cref="Fixture"/> type to include additional details about a rescheduled
 /// fixture. Use this type to track changes to fixture schedules and the reasons for those changes.</remarks>
-public record RearrangedFixture(
+public sealed record RearrangedFixture(
 	string Division,
 	string Description,
 	DateOnly Date,

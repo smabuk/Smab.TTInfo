@@ -22,7 +22,7 @@ namespace Smab.TTInfo.TT365.Models.TT365;
 /// <param name="ResultReason"></param>
 /// <param name="MatchCardURL"></param>
 [DebuggerDisplay("Name: {Name,nq}")]
-public record PlayerResult(
+public sealed record PlayerResult(
 	int Id,
 	string Name,
 	int OriginalSortOrder,

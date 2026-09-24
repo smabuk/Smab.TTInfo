@@ -6,94 +6,92 @@
 /// </summary>
 public static partial class FixtureExtensions
 {
-	/// <summary>
-	/// Converts a <see cref="Fixture"/> to a <see cref="CompletedFixture"/>.
-	/// </summary>
-	/// <param name="fixture">The fixture to convert.</param>
-	/// <returns>A new <see cref="CompletedFixture"/> instance with properties copied from the original fixture.</returns>
-	public static CompletedFixture ToCompleted(this Fixture fixture)
+	extension(Fixture fixture)
 	{
-		return new CompletedFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue);
-	}
-
-	/// <summary>
-	/// Converts a <see cref="Fixture"/> to a <see cref="PostponedFixture"/>.
-	/// </summary>
-	/// <param name="fixture">The fixture to convert.</param>
-	/// <returns>A new <see cref="PostponedFixture"/> instance with properties copied from the original fixture.</returns>
-	public static PostponedFixture ToPostponed(this Fixture fixture, string reason)
-	{
-		return new PostponedFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue,
-			reason);
-	}
-
-	/// <summary>
-	/// Converts a <see cref="Fixture"/> to a <see cref="RearrangedFixture"/>.
-	/// </summary>
-	/// <param name="fixture">The fixture to convert.</param>
-	/// <returns>A new <see cref="RearrangedFixture"/> instance with properties copied from the original fixture.</returns>
-	public static RearrangedFixture ToRearranged(this Fixture fixture, DateOnly originalDate, string reason)
-	{
-		return new RearrangedFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue,
-			originalDate,
-			reason
-		);
-	}
-
-	/// <summary>
-	/// Converts a <see cref="Fixture"/> to a <see cref="VoidFixture"/>.
-	/// </summary>
-	/// <param name="fixture">The fixture to convert.</param>
-	/// <returns>A new <see cref="VoidFixture"/> instance with properties copied from the original fixture.</returns>
-	public static VoidFixture ToVoid(this Fixture fixture, string reason)
-	{
-		return new VoidFixture(
-			fixture.Division,
-			fixture.Description,
-			fixture.Date,
-			fixture.HomeTeam,
-			fixture.AwayTeam,
-			fixture.Venue,
-			reason
-		);
-	}
-
-	public static TimeOnly Time(this Fixture fixture)
-	{
-		TimeOnly defaultTime = TT365Reader.DEFAULT_START_TIME; // 7:30pm
-
-		if (fixture.Venue.Contains("CURZON", StringComparison.OrdinalIgnoreCase)
-			|| fixture.Venue.Contains("RBL", StringComparison.OrdinalIgnoreCase)) // 7pm start time
+		/// <summary>
+		/// Converts a <see cref="Fixture"/> to a <see cref="CompletedFixture"/>.
+		/// </summary>
+		/// <param name="fixture">The fixture to convert.</param>
+		/// <returns>A new <see cref="CompletedFixture"/> instance with properties copied from the original fixture.</returns>
+		public CompletedFixture ToCompleted()
 		{
-			return defaultTime.AddMinutes(-30);
+			return new CompletedFixture(
+				fixture.Division,
+				fixture.Description,
+				fixture.Date,
+				fixture.HomeTeam,
+				fixture.AwayTeam,
+				fixture.Venue);
 		}
 
-		if (fixture.Venue.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase)) // 7:15pm start time
+		/// <summary>
+		/// Converts a <see cref="Fixture"/> to a <see cref="PostponedFixture"/>.
+		/// </summary>
+		/// <param name="fixture">The fixture to convert.</param>
+		/// <returns>A new <see cref="PostponedFixture"/> instance with properties copied from the original fixture.</returns>
+		public PostponedFixture ToPostponed(string reason)
 		{
-			return defaultTime.AddMinutes(-15);
+			return new PostponedFixture(
+				fixture.Division,
+				fixture.Description,
+				fixture.Date,
+				fixture.HomeTeam,
+				fixture.AwayTeam,
+				fixture.Venue,
+				reason);
 		}
 
-		return defaultTime;
-	}
+		/// <summary>
+		/// Converts a <see cref="Fixture"/> to a <see cref="RearrangedFixture"/>.
+		/// </summary>
+		/// <param name="fixture">The fixture to convert.</param>
+		/// <returns>A new <see cref="RearrangedFixture"/> instance with properties copied from the original fixture.</returns>
+		public RearrangedFixture ToRearranged(DateOnly originalDate, string reason)
+		{
+			return new RearrangedFixture(
+				fixture.Division,
+				fixture.Description,
+				fixture.Date,
+				fixture.HomeTeam,
+				fixture.AwayTeam,
+				fixture.Venue,
+				originalDate,
+				reason
+			);
+		}
 
-	public static bool HasDefaultTime(this Fixture fixture) => fixture.Time() == TT365Reader.DEFAULT_START_TIME;
+		/// <summary>
+		/// Converts a <see cref="Fixture"/> to a <see cref="VoidFixture"/>.
+		/// </summary>
+		/// <param name="fixture">The fixture to convert.</param>
+		/// <returns>A new <see cref="VoidFixture"/> instance with properties copied from the original fixture.</returns>
+		public VoidFixture ToVoid(string reason)
+		{
+			return new VoidFixture(
+				fixture.Division,
+				fixture.Description,
+				fixture.Date,
+				fixture.HomeTeam,
+				fixture.AwayTeam,
+				fixture.Venue,
+				reason
+			);
+		}
+
+		public TimeOnly Time()
+		{
+			TimeOnly defaultTime = TT365Reader.DEFAULT_START_TIME; // 7:30pm
+
+			return fixture.Venue switch
+			{
+				string v when v.Contains("RBL", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-30), // 7:00pm start time
+				string v when v.Contains("CURZON", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-30), // 7:00pm start time
+				string v when v.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-15), // 7:15pm start time
+				_ => defaultTime
+			};
+		}
+
+		public bool HasDefaultTime() => fixture.Time() == TT365Reader.DEFAULT_START_TIME;
+	}
 }
 

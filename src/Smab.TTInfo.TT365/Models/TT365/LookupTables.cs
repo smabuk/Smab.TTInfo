@@ -6,7 +6,7 @@
 /// <remarks>This record provides pre-populated lookup data for use in scenarios where entity identifiers need to
 /// be mapped to their corresponding names. Each lookup table is represented as a list of <see cref="IdNamePair"/>
 /// objects.</remarks>
-public record LookupTables
+public sealed record LookupTables
 {
 	public ImmutableList<IdNamePair> DivisionLookup { get; set; } = [];
 	public ImmutableList<IdNamePair> ClubLookup { get; set; } = [];

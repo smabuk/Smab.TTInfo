@@ -81,13 +81,13 @@ internal class TTInfoCli
 			AnsiConsole.MarkupLine("");
 			AnsiConsole.MarkupLine($"  {division.Name}");
 			foreach (Team team in division.Teams) {
-				Team newTeam = new();
+				Team newTeam = Team.Empty;
 				string message = "";
 				try {
 					newTeam = await AnsiConsole.Status()
 						.Spinner(Spinner.Known.Circle)
 						.AutoRefresh(true)
-						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats((TT365LeagueId)ttinfoId, team.Name, seasonId) ?? new());
+						.StartAsync($"Loading team... {team.Name} ...", async ctx => await tt365.GetTeamStats((TT365LeagueId)ttinfoId, team.Name, seasonId) ?? Team.Empty);
 				}
 				catch (Exception ex) {
 					message = $"*** {ex.Message}";

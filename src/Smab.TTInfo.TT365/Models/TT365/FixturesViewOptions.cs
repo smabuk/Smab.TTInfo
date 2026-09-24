@@ -5,7 +5,7 @@
 /// </summary>
 /// <remarks>This record provides various properties to customize the display and filtering of fixtures, such as
 /// season, division, club, team, venue, and additional view preferences.</remarks>
-public record FixturesViewOptions(
+public sealed record FixturesViewOptions(
 	string Season,
 	string DivisionName,
 	string ClubId,

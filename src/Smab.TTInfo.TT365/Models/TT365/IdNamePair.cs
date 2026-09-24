@@ -6,4 +6,4 @@
 /// <remarks>This record is commonly used to associate a unique identifier with a descriptive name.</remarks>
 /// <param name="Id">The unique identifier for the pair. This value cannot be null.</param>
 /// <param name="Name">The name associated with the identifier. This value cannot be null.</param>
-public record IdNamePair(string Id, string Name);
+public sealed record IdNamePair(string Id, string Name);

@@ -5,7 +5,7 @@
 /// </summary>
 /// <remarks>This record extends the <see cref="Fixture"/> type to include additional information about why the
 /// fixture was postponed.</remarks>
-public record PostponedFixture(
+public sealed record PostponedFixture(
 	string Division,
 	string Description,
 	DateOnly Date,

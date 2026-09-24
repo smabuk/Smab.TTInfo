@@ -14,7 +14,7 @@
 /// <param name="Theme"></param>
 /// <param name="Seasons"></param>
 /// <param name="CurrentSeason"></param>
-public record League(
+public sealed record League(
 	TT365LeagueId Id,
 	string Name,
 	string Description,

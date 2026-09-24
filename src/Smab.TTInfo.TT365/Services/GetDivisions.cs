@@ -54,17 +54,17 @@ public sealed partial class TT365Reader
 				}
 
 				string divName = divDiv.SelectSingleNode("h3")?.InnerText.Trim() ?? "";
-				string divId = lookupTables.DivisionLookup.Where(d => d.Name == divName).Single().Id;
+				string divId = lookupTables.DivisionLookup.Single(d => d.Name == divName).Id;
 
 				HtmlNode? divTable = divDiv.SelectSingleNode(@"div//table");
 				List<Team> teams = [];
 				foreach (HtmlNode? teamRow in divTable?.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
 					string teamName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
-					Team team = new()
+					Team team = new(teamName, lookupTables.TeamLookup.Single(t => t.Name == teamName).Id)
 					{
 						DivisionName = divName,
 						Name = teamName,
-						Id = lookupTables.TeamLookup.Where(t => t.Name == teamName).Single().Id,
+						Id = lookupTables.TeamLookup.Single(t => t.Name == teamName).Id,
 						ShortName = teamName,
 						URL = $"{TT365_COM}{teamRow.SelectSingleNode("td[2]//a")?.GetAttributeValue("href", "")}",
 						LeaguePosition = teamRow.GetIntValueOrDefaultInSpan(1, null),
@@ -118,14 +118,12 @@ public sealed partial class TT365Reader
 
 				List<Team> teams = [];
 				foreach (HtmlNode teamRow in divTable.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
-					string teamName = teamRow.ChildNodes[3].FirstChild.InnerText.Trim();
-					Team team = new()
+					string teamName = teamRow.ChildNodes[3].FirstChild?.InnerText.Trim() ?? "";
+					Team team = new(teamName, lookupTables.TeamLookup.Single(t => t.Name == teamName).Id)
 					{
 						DivisionName = divName,
-						Name = teamName,
-						Id = lookupTables.TeamLookup.Where(t => t.Name == teamName).Single().Id,
 						ShortName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim()),
-						URL = $"{TT365_COM}{teamRow.ChildNodes[3].FirstChild.FirstChild.GetAttributeValue("href", "")}",
+						URL = $"{TT365_COM}{teamRow.ChildNodes[3].FirstChild?.FirstChild?.GetAttributeValue("href", "")}",
 						LeaguePosition = teamRow.GetIntValueOrDefault("pos", null),
 						Played = teamRow.GetIntValue("played"),
 						Won = teamRow.GetIntValue("won"),

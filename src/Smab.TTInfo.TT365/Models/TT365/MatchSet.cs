@@ -1,7 +1,7 @@
 ﻿namespace Smab.TTInfo.TT365.Models.TT365;
 
 //[DebuggerDisplay("Name: {Name,nq}")]
-public record MatchSet(
+public sealed record MatchSet(
 	int SetNo,
 	Player HomePlayer,
 	Player AwayPlayer,

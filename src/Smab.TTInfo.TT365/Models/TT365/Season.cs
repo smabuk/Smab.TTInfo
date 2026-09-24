@@ -7,7 +7,7 @@
 /// manage and organize season-specific information.</remarks>
 /// <param name="Id"></param>
 /// <param name="Name"></param>
-public record Season(
+public sealed record Season(
 	TT365SeasonId Id,
 	string Name,
 	LookupTables Lookups,
