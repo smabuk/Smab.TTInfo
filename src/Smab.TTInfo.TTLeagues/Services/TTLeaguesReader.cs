@@ -21,7 +21,7 @@ public sealed partial class TTLeaguesReader : ITTLeaguesReader
 	/// <summary>
 	/// The base URL for the TTLeagues API.
 	/// </summary>
-	private static readonly string TTLEAGUES_API = "https://ttleagues-api.azurewebsites.net/api/";
+	private static readonly string TTLEAGUES_API = "https://ttleagues-f6f7g9gccqd4dyhr.z01.azurefd.net/api/";
 	/// <summary>
 	/// The default JSON serializer options for TTLeagues data.
 	/// </summary>
