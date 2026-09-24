@@ -1,5 +1,13 @@
 ﻿h1 {
 	font-size: calc(1.3rem + .6vw);
+
+	& span {
+		white-space: nowrap;
+	}
+}
+
+h2 {
+	font-size: calc(1.2rem + .6vw);
 }
 
 time {

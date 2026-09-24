@@ -5,13 +5,14 @@
 
 <PageTitle>Last @NoOfFixtures Fixtures - @LeagueId</PageTitle>
 
-<h1>Recent Results for @league?.Name @league?.CurrentSeason.Name</h1>
+<h1>@league?.Name <span>@league?.CurrentSeason.Name</span></h1>
 
 @if (fixtures is null) {
 	<h2>Loading ... Results for the last @NoOfFixtures fixtures ...</h2>
 } else if (fixtures.Count == 0) {
 	<p>No fixtures.</p>
 } else {
+	<h2>Results for the last @NoOfFixtures fixtures</h2>
 	<div id="fixtures">
 		@foreach (Fixture fixture in fixtures) {
 			FixtureResult? fr;

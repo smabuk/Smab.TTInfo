@@ -12,7 +12,7 @@
 
 @if (League is not null && Season is not null) {
 	<PageTitle>@League.Name @Season.Name</PageTitle>
-	<h1>@League.Name @Season.Name</h1>
+	<h1>@League.Name <span>@Season.Name</span></h1>
 	<div>
 		@foreach (Division division in Season.Divisions) {
 			<DivisionSummary Division="@division" LeagueId="@League.Id" SeasonId="@Season.Id" />

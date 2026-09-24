@@ -13,23 +13,28 @@
 		<NavMenuItem Icon="bi-table"      Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
 		<NavMenuItem Icon="bi-table"      Text="Bracknell League"  Path="LeagueSummary/BracknellAndWokingham" />
 		<NavMenuItem Icon="bi-table"      Text="British League"    Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
+
+		<hr />
+		<NavMenuItem Icon="bi-clock-fill"   Text="Reading recent"        Path="Recent/Reading/20" />
+		<NavMenuItem Icon="bi-clock-fill"   Text="Bracknell recent"      Path="Recent/BracknellAndWokingham/20" />
+		<NavMenuItem Icon="bi-clock-fill"   Text="Maidenhead recent"     Path="Recent/Maidenhead/20" />
+
 		<hr />
 		<NavMenuItem Icon="bi-postcard"   Text="Reading Scorecard"      Path="print/scorecard/reading" />
 		<NavMenuItem Icon="bi-postcard"   Text="Maidenhead Scorecard"   Path="print/scorecard/maidenhead" />
 		<NavMenuItem Icon="bi-postcard"   Text="Bracknell Scorecard"    Path="print/scorecard/bracknell" />
 		<NavMenuItem Icon="bi-postcard"   Text="Bracknell John Howard Scorecard"    Path="print/scorecard/bracknelljohnhoward" />
 
-		<hr />
-		<NavMenuItem Icon="bi-calendar3"         Text="OLOP Bookings"         Path="OLOP/Bookings" />
-
 		@if (env.IsDevelopment()) {
 			<hr />
-			<NavMenuItem Icon="bi-clock-fill"   Text="Reading recent"        Path="Recent/Reading" />
-
 			<NavMenuItem Icon="@emojiTT"        Text="Reading OLOP D"        Path="TeamSummary/Reading/Our Lady Of Peace D" />
 			<NavMenuItem Icon="@emojiTT"        Text="Maidenhead OLOP Bears" Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
 			<NavMenuItem Icon="@emojiTT"        Text="Bracknell OLOP A"      Path="TeamSummary/BracknellAndWokingham/Olop A" />
 
+			<hr />
+
+			<NavMenuItem Icon="bi-calendar3"         Text="OLOP Bookings"         Path="OLOP/Bookings" />
+			<hr />
 			<NavMenuItem Icon="bi-calendar3"    Text="Reading OLOP D"        Path="Calendar/Reading/Our Lady Of Peace D?command=json" />
 			<NavMenuItem Icon="bi-calendar3"    Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=json" />
 			<NavMenuItem Icon="bi-calendar3"    Text="Bracknell OLOP A"      Path="Calendar/BracknellAndWokingham/Olop A?command=json" />

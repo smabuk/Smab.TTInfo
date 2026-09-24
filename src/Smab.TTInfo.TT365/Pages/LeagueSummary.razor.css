@@ -1,6 +1,9 @@
 ﻿h1 {
 	font-size: calc(1.6rem + .6vw);
-	white-space: nowrap;
+
+	& span {
+		white-space: nowrap;
+	}
 }
 
 dd a {
