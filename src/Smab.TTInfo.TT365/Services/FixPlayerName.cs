@@ -1,8 +1,5 @@
 ﻿namespace Smab.TTInfo.TT365.Services;
 
-/// <summary>
-/// Provides utility methods for fixing player names for TT365.
-/// </summary>
 public sealed partial class TT365Reader
 {
 	/// <summary>
@@ -12,12 +9,10 @@ public sealed partial class TT365Reader
 	/// <returns>The fixed player name.</returns>
 	public static string FixPlayerName(string playerName)
 	{
-		playerName = HttpUtility.HtmlDecode(playerName).Trim();
-
-		playerName = playerName.Replace("OSullivan", "O'Sullivan", StringComparison.OrdinalIgnoreCase);
-		playerName = playerName.Replace("OHalloran", "O'Halloran", StringComparison.OrdinalIgnoreCase);
-		playerName = playerName.Replace("Kashif Subhan", "Kash Subhan", StringComparison.OrdinalIgnoreCase);
-
-		return playerName;
+		return HttpUtility.HtmlDecode(playerName)
+			.Trim()
+			.Replace("OSullivan", "O'Sullivan", StringComparison.OrdinalIgnoreCase)
+			.Replace("OHalloran", "O'Halloran", StringComparison.OrdinalIgnoreCase)
+			.Replace("Kashif Subhan", "Kash Subhan", StringComparison.OrdinalIgnoreCase);
 	}
 }

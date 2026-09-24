@@ -32,6 +32,7 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 	private bool isLoading = true;
 	private TT365SeasonId seasonId;
 	private TT365LeagueId leagueId;
+	private Dictionary<string, string> teamNameToShortName = [];
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -46,6 +47,7 @@ public partial class DivisionSummary(ITT365Reader _tt365, NavigationManager _nav
 		}
 
 		Division ??= League.GetDivisionByIdOrName(seasonId, DivisionId, DivisionName);
+		teamNameToShortName = Division?.Teams.ToDictionary(t => t.Name, t => TT365Reader.GetShortNameTeamName(t.Name)) ?? [];
 
 		isLoading = false;
 	}
