@@ -54,7 +54,7 @@ public sealed partial class TT365Reader
 				}
 
 				string divName = divDiv.SelectSingleNode("h3")?.InnerText.Trim() ?? "";
-				string divId = lookupTables.DivisionLookup.Single(d => d.Name == divName).Id;
+				string divId = lookupTables.DivisionLookup.SingleOrDefault(d => d.Name == divName)?.Id ?? divName;
 
 				HtmlNode? divTable = divDiv.SelectSingleNode(@"div//table");
 				List<Team> teams = [];
