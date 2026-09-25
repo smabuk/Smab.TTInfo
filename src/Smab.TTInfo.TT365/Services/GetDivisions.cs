@@ -60,6 +60,8 @@ public sealed partial class TT365Reader
 				List<Team> teams = [];
 				foreach (HtmlNode? teamRow in divTable?.SelectNodes(@"tbody//tr") ?? EMPTY_NODE_COLLECTION) {
 					string teamName = HttpUtility.HtmlDecode(teamRow.ChildNodes[3].ChildNodes[1].InnerText.Trim());
+					int noOfColumns = teamRow.ChildNodes.Count(cn => cn.Name == "td");
+					int ptsColumnIndex = noOfColumns;
 					Team team = new(teamName, lookupTables.TeamLookup.Single(t => t.Name == teamName).Id)
 					{
 						DivisionName = divName,
@@ -75,7 +77,7 @@ public sealed partial class TT365Reader
 						SetsFor = teamRow.GetIntValue(7),
 						SetsAgainst = teamRow.GetIntValue(8),
 						//PointsAdjustment = teamRow.GetIntValue(8),
-						Points = teamRow.GetIntValue(9),
+						Points = teamRow.GetIntValue(ptsColumnIndex),
 					};
 
 					teams.Add(team);
