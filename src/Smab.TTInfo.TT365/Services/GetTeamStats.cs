@@ -132,11 +132,17 @@ public sealed partial class TT365Reader
 					_ => throw new ApplicationException("Home or Away value is not recognized.")
 				};
 
+				string oppositionName = cells[0].InnerText.Trim();
 				int forHome = int.Parse(score.Split("-")[0]);
 				int forAway = int.Parse(score.Split("-")[1]);
 				if (homeOrAway.Equals("away", StringComparison.OrdinalIgnoreCase)) {
 					(forHome, forAway) = (forAway, forHome);
 				}
+
+				//if (resultRow.InnerText.Contains("void", StringComparison.OrdinalIgnoreCase)) {
+				//	VoidFixture voidFixture = new(team.DivisionName, "", resultDate, "", "", "");
+				//	continue;
+				//}
 
 				CompletedFixture completedFixture = new CompletedFixture(team.DivisionName, "", resultDate, "", "", "") with
 				{
@@ -149,9 +155,9 @@ public sealed partial class TT365Reader
 
 				TeamResult teamResult = new(
 					completedFixture,
-					Opposition: cells[0].InnerText.Trim(),
+					Opposition: oppositionName,
 					HomeOrAway: homeOrAway,
-					Points: int.Parse(cells[4].InnerText),
+					Points: int.TryParse(cells[4].InnerText, out int points) ? points : 0,
 					IsVoid: isVoid);
 
 				team.Results = [.. team.Results, teamResult];
