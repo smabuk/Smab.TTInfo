@@ -80,8 +80,8 @@ public sealed partial class TT365Reader
 				continue;
 			}
 
-			string opponentName = FixPlayerName(cells[0].Descendants("a").Single().InnerText.Trim());
-			string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").Single().Attributes["href"]?.Value}";
+			string opponentName = FixPlayerName(cells[0].Descendants("a").FirstOrDefault()?.InnerText.Trim() ?? "");
+			string opponentHref = $"{TT365_COM}{cells[0].Descendants("a").FirstOrDefault()?.Attributes["href"]?.Value}";
 			Player opponent = new(opponentName, 0)
 			{
 				PlayerURL = opponentHref,
