@@ -84,7 +84,7 @@ public sealed partial class TT365Reader
 				string partialDate = fixtureNode.SelectSingleNode("td[@class='tt-fixture-date']")?.InnerText.Trim() ?? "";
 				_ = DateHelpers.TryParseWithMissingYear(partialDate, seasonId?.StartYear ?? 0, out DateOnly fixtureDate);
 
-				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']")?.InnerText ?? "");
+				string fixtureVenue = HttpUtility.HtmlDecode(fixtureNode.SelectSingleNode("td[@class='tt-fixture-venue']/a")?.InnerText ?? "");
 
 				HtmlNode? homeNode = fixtureNode.SelectSingleNode("td[2]/a");
 				HtmlNode? awayNode = fixtureNode.SelectSingleNode("td[4]/a");
