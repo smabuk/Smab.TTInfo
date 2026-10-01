@@ -8,7 +8,7 @@
 /// <param name="SetsWon">The number of sets won by the player during the match.</param>
 /// <param name="PoM">A value indicating whether the player was awarded Player of the Match. <see langword="true"/> if the player was the
 /// Player of the Match; otherwise, <see langword="false"/>.</param>
-public sealed record MatchPlayer(string Name, int Id, double SetsWon, bool PoM, bool IsSubstitute = false);
+public record MatchPlayer(string Name, int Id, double SetsWon, bool PoM, bool IsSubstitute = false);
 
 public static class MatchPlayerExtensions
 {
@@ -20,5 +20,9 @@ public static class MatchPlayerExtensions
 		/// <param name="player">The <see cref="MatchPlayer"/> instance.</param>
 		/// <returns>The display name of the player.</returns>
 		public string DisplayName => player.IsSubstitute ? $"{player.Name} (sub)" : player.Name;
+
+		public bool IsForfeit => player.Name.Contains("forfeit", StringComparison.OrdinalIgnoreCase);
+		public bool IsUnknown => player.Name.Contains("unknown", StringComparison.OrdinalIgnoreCase);
+		public bool IsMatchPlayer => !player.IsForfeit && !player.IsUnknown;
 	}
 }

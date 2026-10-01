@@ -135,7 +135,7 @@ public sealed partial class TT365Reader
 		List<MatchPlayer> awayPlayers = [];
 		if (playerNodes is not null) {
 			foreach (HtmlNode playerNode in playerNodes) {
-				string playerName = playerNode.SelectSingleNode("a")?.InnerText ?? "";
+				string playerName = playerNode.SelectSingleNode("a")?.InnerText ?? playerNode.SelectSingleNode("span[contains(@class,'tt-fixture-scorecard-forfeit')]")?.InnerText ?? "unknown";
 				playerName = FixPlayerName(playerName);
 				string? playerIdString = playerNode.SelectSingleNode("a")?.GetAttributeValue("href", null!);
 				int playerId = 0;

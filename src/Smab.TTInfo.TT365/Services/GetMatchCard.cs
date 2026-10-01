@@ -31,7 +31,7 @@ public sealed partial class TT365Reader
 
 		if (string.IsNullOrWhiteSpace(doc?.Text)) { return matchCard; }
 
-		if (doc.DocumentNode.SelectNodes("//div[contains(@class, 'tt-matchcard-teams')]") is null) { return matchCard; }
+		if (doc.DocumentNode.SelectNodes("//h2[contains(@class, 'tt-matchcard-teams')]") is null) { return matchCard; }
 
 		string homeTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-home')]")?.InnerText?.Trim() ?? "";
 		string awayTeamName = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'tt-matchcard-team-away')]")?.InnerText?.Trim() ?? "";
@@ -146,7 +146,7 @@ public sealed partial class TT365Reader
 
 		HtmlNode setsTableHeader = doc.DocumentNode.SelectSingleNode("//table/thead")!;
 		foreach (HtmlNode headerSpan in setsTableHeader.SelectNodes(".//th/span") ?? EMPTY_NODE_COLLECTION) { // Away players are in the header row
-			string awayPlayerName = headerSpan?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
+			string awayPlayerName = headerSpan?.SelectSingleNode(".//a")?.InnerText.Trim() ?? headerSpan?.InnerText.Trim() ?? "unknown";
 			int awayPlayerId = int.Parse(headerSpan?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
 			bool isSubstitute = headerSpan?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
 			matchCard.AwayPlayers.Add(new MatchPlayer(awayPlayerName, awayPlayerId, 0, false, isSubstitute));
@@ -156,7 +156,7 @@ public sealed partial class TT365Reader
 		// home players are in the body rows, and each row contains the games played against each away player
 		foreach (HtmlNode row in setsTableBody.SelectNodes("./tr") ?? EMPTY_NODE_COLLECTION) {
 			HtmlNode homePlayerNode = row.SelectSingleNode("./th[contains(@class, 'tt-matchcard-matrix-rowheader')]")!;
-			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? "";
+			string homePlayerName = homePlayerNode?.SelectSingleNode(".//a")?.InnerText.Trim() ?? homePlayerNode?.InnerText.Trim() ?? "unknown"; ;
 			int homePlayerId = int.Parse(homePlayerNode?.SelectSingleNode(".//a")?.GetAttributeValue("href", "").Split("id=").LastOrDefault() ?? "0");
 			bool isSubstitute = homePlayerNode?.SelectSingleNode(".//span[contains(@class, 'tt-matchcard-stepup')]") is not null;
 			matchCard.HomePlayers.Add(new MatchPlayer(homePlayerName, homePlayerId, 0, false, isSubstitute));

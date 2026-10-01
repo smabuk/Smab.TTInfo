@@ -42,7 +42,12 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.HomePlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
+						@if (player.IsMatchPlayer)
+						{
+							<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
+						} else {
+							<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)">@player.DisplayName (@player.SetsWon)</li>
+						}
 					}
 				</ul>
 			</div>
@@ -51,7 +56,11 @@ else
 				<ul>
 					@foreach (MatchPlayer player in matchCard.AwayPlayers)
 					{
-						<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
+						@if (player.IsMatchPlayer) {
+							<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)"><a href="PlayerSummary/@LeagueId/@SeasonId/@player.Name/@player.Id">@player.DisplayName</a> (@player.SetsWon)</li>
+						} else {
+							<li class="@((matchCard.PlayerOfTheMatch == player.Name) ? "pom" : null)">@player.DisplayName (@player.SetsWon)</li>
+						}
 					}
 				</ul>
 			</div>

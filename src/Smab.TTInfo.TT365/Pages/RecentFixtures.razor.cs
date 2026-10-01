@@ -42,6 +42,6 @@ public partial class RecentFixtures
 	private record FixtureResult(int Id, bool HomeWin, bool AwayWin, string FullScore);
 
 	private static string PlayerToLink(MatchPlayer player, TT365LeagueId leagueId, TT365SeasonId seasonId)
-		=> $"""PlayerSummary/{leagueId}/{seasonId}/{player.Name.Replace(" ", "_")}/{player.Id}""";
+		=> player.IsMatchPlayer ? $"""PlayerSummary/{leagueId}/{seasonId}/{player.Name.Replace(" ", "_")}/{player.Id}""" : "";
 
 }
