@@ -1,4 +1,6 @@
-﻿using Smab.Calendar;
+﻿using Ical.Net.Serialization;
+
+using Smab.Calendar;
 
 using Smab.TTInfo.TT365.Interfaces;
 using Smab.TTInfo.TT365.Models;
@@ -46,29 +48,33 @@ public static partial class CalendarEndPoints
 	/// <param name="context">The current HTTP context, used to set response headers and content type.</param>
 	/// <returns>A result containing the team's fixture calendar in the requested format. Returns a content result, file result,
 	/// JSON result, or not found result if no fixtures are available.</returns>
-	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<IcalCalendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, string? venue, ITT365Reader _tt365, TTLeaguesReader _ttleagues, HttpContext context)
+	public static async Task<Results<ContentHttpResult, FileContentHttpResult, JsonHttpResult<Ical.Net.Calendar>, NotFound>> GetCalendarByTeam(string LeagueName, string TeamName, string? Command, string? venue, ITT365Reader _tt365, TTLeaguesReader _ttleagues, HttpContext context)
 	{
+
 		TimeZoneInfo gmtZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
 		LeagueType leagueType = GetLeagueType(LeagueName);
 		TeamName = TeamName.Replace("_", " ");
-		IcalCalendar? ical = default;
+		Ical.Net.Calendar? icalCalendar = default;
 
 		if (leagueType is LeagueType.TT365) {
-			bool  teamFilter(Fixture f) => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase);
-			bool venueFilter(Fixture f) => string.Equals(f.Venue, venue, StringComparison.CurrentCultureIgnoreCase);
+			//	bool  teamFilter(Fixture f) => string.Equals(f.HomeTeam, TeamName, StringComparison.CurrentCultureIgnoreCase) || string.Equals(f.AwayTeam, TeamName, StringComparison.CurrentCultureIgnoreCase);
+			//	bool venueFilter(Fixture f) => string.Equals(f.Venue, venue, StringComparison.CurrentCultureIgnoreCase);
 
-			Func<Fixture, bool> filterFixtures = venue is null
-				? teamFilter
-				: venueFilter;
+			//	Func<Fixture, bool> filterFixtures = venue is null
+			//		? teamFilter
+			//		: venueFilter;
 
-			TT365LeagueId leagueId = (TT365LeagueId)LeagueName;
-			List<Fixture> fixtures = [.. (await _tt365.GetAllFixtures(leagueId))?.Where(filterFixtures) ?? []];
-			if (fixtures is []) {
-				return TypedResults.NotFound();
-			}
+			//	TT365LeagueId leagueId = (TT365LeagueId)LeagueName;
+			//	List<Fixture> fixtures = [.. (await _tt365.GetAllFixtures(leagueId))?.Where(filterFixtures) ?? []];
+			//	if (fixtures is []) {
+			//		return TypedResults.NotFound();
+			//	}
 
-			ical = _tt365.IcalFromFixtures(leagueId, TeamName, fixtures, gmtZone);
+			//	ical = _tt365.IcalFromFixtures(leagueId, TeamName, fixtures, gmtZone);
+
+			icalCalendar = await _tt365.IcalFromIcal((TT365LeagueId)LeagueName, TeamName, gmtZone);
 		} else {
+			IcalCalendar? ical = default;
 			string ttinfoId = LeagueName;
 			Fixtures? allFixtures = await _ttleagues.GetAllFixturesWithMatchResults(ttinfoId);
 
@@ -85,6 +91,7 @@ public static partial class CalendarEndPoints
 			}
 
 			ical = TTLeaguesReader.IcalFromFixtures(LeagueName, TeamName, fixtures, gmtZone);
+			icalCalendar = ical.ToString() is not null ? Ical.Net.Calendar.Load(ical.ToString()) : default;
 		}
 
 
@@ -93,32 +100,32 @@ public static partial class CalendarEndPoints
 		// Different ways of returning the information
 		return commandType switch
 		{
-			CommandType.TEXT    => TypedResults.Content(ical.ToString(), "text/plain"),
+			CommandType.TEXT    => TypedResults.Content(new CalendarSerializer().SerializeToString(icalCalendar) ?? "", "text/plain"),
 			CommandType.CONTENT => GenerateWithFilename(),
-			CommandType.FILE    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
-			CommandType.CSV     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(ical)), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
-			CommandType.JSON    => TypedResults.Json(ical),
-			CommandType.NEG     => TypedResults.Content(ical.ToString()), // Negotiated content type, default to text/plain
-			_ => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(ical.ToString()), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.FILE    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.CSV     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(icalCalendar ?? new())), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
+			CommandType.JSON    => TypedResults.Json(icalCalendar),
+			CommandType.NEG     => TypedResults.Content(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), // Negotiated content type, default to text/plain
+			_ => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
 		};
 
 		ContentHttpResult GenerateWithFilename()
 		{
 			context.Response.Headers.Append("content-disposition", $"inline; filename={LeagueName} - {TeamName} Fixtures.ics");
 			context.Response.ContentType = "text/calendar";
-			context.Response.ContentLength = ical.ToString().Length;
-			return TypedResults.Content(ical.ToString(), "text/calendar", System.Text.Encoding.UTF8);
+			context.Response.ContentLength = icalCalendar?.ToString()?.Length;
+			return TypedResults.Content(icalCalendar?.ToString(), "text/calendar", System.Text.Encoding.UTF8);
 		}
 	}
 
-	private static string CsvFromCalendar(IcalCalendar ical)
+	private static string CsvFromCalendar(Ical.Net.Calendar ical)
 	{
 		System.Text.StringBuilder output = new();
 
-		foreach (VEvent calEvent in ical.Events) {
-			string homeTeam = calEvent.Summary.Split("vs")[0].Replace("🏓", "").Trim();
-			string awayTeam = calEvent.Summary.Split("vs")[1].Trim();
-			_ = output.Append($"{calEvent.DateStart:dd/MM/yyyy},{homeTeam},{awayTeam},{calEvent.Location}{Environment.NewLine}");
+		foreach (Ical.Net.CalendarComponents.CalendarEvent calEvent in ical.Events) {
+			string homeTeam = calEvent.Summary?.Split("vs")[0].Replace("🏓", "").Trim() ?? "";
+			string awayTeam = calEvent.Summary?.Split(" v ")[1].Trim() ?? "";
+			_ = output.Append($"{calEvent.DtStart:dd/MM/yyyy},{homeTeam},{awayTeam},{calEvent.Location}{Environment.NewLine}");
 		}
 
 		return output.ToString();

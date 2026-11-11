@@ -57,33 +57,49 @@ public sealed partial class TT365Reader
 			string currentSeasonName = currentSeasonId.ToDisplay();
 			LookupTables currentSeasonLookups = await GetLookupTables(leagueId, currentSeasonId);
 			Season currentSeason = new(currentSeasonId, currentSeasonName, currentSeasonLookups, []);
-
-			HtmlDocument archives = await LoadAsync<HtmlDocument>(
-				leagueId,
-				$"Results/Archive",
-				$"{leagueId}_results_archive.html")
-				?? new();
-
 			List<Season> seasons = [currentSeason];
-			foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//a[contains(@class,'tt-league-picker-card-archived')]") ?? EMPTY_NODE_COLLECTION) {
-				string seasonId = item.GetAttributeValue("href", "");
-				seasonId = seasonId[(seasonId.LastIndexOf('=') + 1)..];
-				string seasonName = item.ChildNodes[^2].InnerText.Trim() ?? "";
-				LookupTables seasonLookups = await GetLookupTables(leagueId, (TT365SeasonId)seasonId);
-				List<Division> divisions = [.. await GetDivisions(leagueId, (TT365SeasonId)seasonId, true)];
-				seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, [.. divisions]));
+
+			try {
+				HtmlDocument archives = await LoadAsync<HtmlDocument>(
+					leagueId,
+					$"Results/Archive",
+					$"{leagueId}_results_archive.html")
+					?? new();
+
+				foreach (HtmlNode? item in archives.DocumentNode.SelectNodes("//a[contains(@class,'tt-league-picker-card-archived')]") ?? EMPTY_NODE_COLLECTION) {
+					string seasonId = item.GetAttributeValue("href", "");
+					seasonId = seasonId[(seasonId.LastIndexOf('=') + 1)..];
+					string seasonName = item.ChildNodes[^2].InnerText.Trim() ?? "";
+					LookupTables seasonLookups = await GetLookupTables(leagueId, (TT365SeasonId)seasonId);
+					List<Division> divisions = [.. await GetDivisions(leagueId, (TT365SeasonId)seasonId, true)];
+					seasons.Add(new((TT365SeasonId)seasonId, seasonName, seasonLookups, [.. divisions]));
+				}
+			}
+			catch (Exception) {
+				//throw;
 			}
 
 			league = new(leagueId, leagueName, leagueDescription, leagueURL, leagueTheme, [.. seasons], currentSeasonId);
 		}
 
-		league = league with
-		{
-			Seasons = [ league.CurrentSeason with {
-				Divisions = [.. await GetDivisions(leagueId, league.CurrentSeasonId)],
-			},
-			.. league.Seasons.Skip(1)]
-		};
+		try {
+			league = league with
+			{
+				Seasons = [ league.CurrentSeason with {
+					Divisions = [.. await GetDivisions(leagueId, league.CurrentSeasonId)],
+				},
+				.. league.Seasons.Skip(1)]
+			};
+		}
+		catch (Exception) {
+			league = league with
+			{
+				Seasons = [ league.CurrentSeason with {
+					Divisions = [.. await GetDivisions(leagueId, league.CurrentSeasonId, archivedDivisions: true)],
+				},
+				.. league.Seasons.Skip(1)]
+			};
+		}
 
 		jsonString = JsonSerializer.Serialize(league);
 		_ = SaveFileToCache(jsonString, $"{leagueId}.json");

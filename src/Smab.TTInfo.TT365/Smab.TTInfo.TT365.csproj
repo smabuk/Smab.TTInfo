@@ -10,6 +10,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 		<PackageReference Include="HtmlAgilityPack" />
 		<PackageReference Include="Smab.Calendar" />
+		<PackageReference Include="Ical.Net" />
 	</ItemGroup>
 
 	<ItemGroup>

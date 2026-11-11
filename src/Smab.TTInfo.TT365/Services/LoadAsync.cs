@@ -50,8 +50,10 @@ public sealed partial class TT365Reader
 				if (useCache) {
 					_ = SaveFileToCache(contentString, fileName);
 				}
-			//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
-			//	contentString = LoadFileFromCache(fileName);
+				//} else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) {
+				//	contentString = LoadFileFromCache(fileName);
+			} else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) {
+				throw new HttpRequestException($"Access forbidden to {url}. Have the developer check for CloudFlare challenge requiring a response.");
 			} else {
 				if (useCache) {
 					contentString = LoadFileFromCache(fileName);
@@ -64,6 +66,8 @@ public sealed partial class TT365Reader
 			rv.LoadHtml(contentString);
 			//rv.Save(source);
 			returnValue = (T?)Convert.ChangeType(rv, typeof(T));
+		} else if (typeof(T).Name == "Calendar" && contentString is not null) {
+			returnValue = (T?)Convert.ChangeType(Ical.Net.Calendar.Load(contentString), typeof(T));
 		} else if (!string.IsNullOrWhiteSpace(contentString)) {
 			returnValue = JsonSerializer.Deserialize<T>(contentString, JSON_SER_OPTIONS);
 		}

@@ -45,4 +45,9 @@ public interface ITT365Reader
 	/// Generates an iCal string from a collection of fixtures.
 	/// </summary>
 	string IcalStringFromFixtures(TT365LeagueId leagueId, string TeamName, ICollection<Fixture> Fixtures, TimeZoneInfo timeZone);
+
+
+	Task<Ical.Net.Calendar> IcalFromIcal(TT365LeagueId leagueId, string TeamName, TimeZoneInfo timeZone);
+	Task<string> IcalStringFromIcal(TT365LeagueId leagueId, string TeamName, TimeZoneInfo timeZone);
+
 }
