@@ -66,8 +66,6 @@ app.UseRequestLocalization(
 		.AddSupportedUICultures(cultures)
 );
 
-app.UseAntiforgery();
-
 app.UseOutputCache();
 
 app.MapRazorComponents<App>()

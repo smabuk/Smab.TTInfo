@@ -1,64 +1,66 @@
 ﻿@inject IWebHostEnvironment env
+<script type="module" src="@Assets["Components/Layout/NavMenu.razor.js"]"></script>
 <div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="" title="@VersionInfo">@Program.SiteName</a><span id="version-info" title="@VersionInfo"><i class="fa fas fa-info-circle"></i></span>
 	</div>
 </div>
 
-<input type="checkbox" title="Navigation menu" id="navbar-toggler" />
+<nav-menu>
+	<input type="checkbox" title="Navigation menu" id="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('#navbar-toggler').click()">
-	<nav class="nav flex-column">
-		<NavMenuItem Icon="bi-table"      Text="Reading League"    Path="LeagueSummary/Reading" />
-		<NavMenuItem Icon="bi-table"      Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
-		<NavMenuItem Icon="bi-table"      Text="Bracknell League"  Path="LeagueSummary/BracknellAndWokingham" />
-		<NavMenuItem Icon="bi-table"      Text="British League"    Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All"/>
-
-		<hr />
-		<NavMenuItem Icon="bi-clock-fill"   Text="Reading recent"        Path="Recent/Reading/20" />
-		<NavMenuItem Icon="bi-clock-fill"   Text="Bracknell recent"      Path="Recent/BracknellAndWokingham/20" />
-		@* <NavMenuItem Icon="bi-clock-fill"   Text="Maidenhead recent"     Path="Recent/Maidenhead/20" /> *@
-
-		<hr />
-		<NavMenuItem Icon="bi-postcard"   Text="Reading Scorecard"      Path="print/scorecard/reading" />
-		<NavMenuItem Icon="bi-postcard"   Text="Maidenhead Scorecard"   Path="print/scorecard/maidenhead" />
-		<NavMenuItem Icon="bi-postcard"   Text="Bracknell Scorecard"    Path="print/scorecard/bracknell" />
-		<NavMenuItem Icon="bi-postcard"   Text="Bracknell John Howard Scorecard"    Path="print/scorecard/bracknelljohnhoward" />
-
-		@if (env.IsDevelopment()) {
-			<hr />
-			<NavMenuItem Icon="@emojiTT"        Text="Reading OLOP D"        Path="TeamSummary/Reading/Our Lady Of Peace D" />
-			<NavMenuItem Icon="@emojiTT"        Text="Maidenhead OLOP Bears" Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
-			<NavMenuItem Icon="@emojiTT"        Text="Bracknell OLOP A"      Path="TeamSummary/BracknellAndWokingham/Olop A" />
+	<div class="nav-scrollable">
+		<nav class="nav flex-column">
+			<NavMenuItem Icon="bi-table" Text="Reading League" Path="LeagueSummary/Reading" />
+			<NavMenuItem Icon="bi-table" Text="Maidenhead League" Path="TTLeagues/LeagueSummary/Maidenhead" />
+			<NavMenuItem Icon="bi-table" Text="Bracknell League" Path="LeagueSummary/BracknellAndWokingham" />
+			<NavMenuItem Icon="bi-table" Text="British League" Path="TTLeagues/LeagueSummary/British" Match="NavLinkMatch.All" />
 
 			<hr />
-
-			<NavMenuItem Icon="bi-calendar3"         Text="OLOP Bookings"         Path="OLOP/Bookings" />
-			<hr />
-			<NavMenuItem Icon="bi-calendar3"    Text="Reading OLOP D ical"        Path="Calendar/Reading/Our Lady Of Peace D" />
-			<NavMenuItem Icon="bi-calendar3"    Text="Reading OLOP D"        Path="Calendar/Reading/Our Lady Of Peace D?command=text" />
-			<NavMenuItem Icon="bi-calendar3"    Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=text" />
-			<NavMenuItem Icon="bi-calendar3"    Text="Bracknell OLOP A"      Path="Calendar/BracknellAndWokingham/Olop A?command=text" />
-
-			<NavMenuItem Icon="bi-filetype-csv" Text="Reading OLOP D"        Path="Calendar/Reading/Our Lady Of Peace D?command=csv" />
-			<NavMenuItem Icon="bi-filetype-csv" Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=csv" />
-			<NavMenuItem Icon="bi-filetype-csv" Text="Bracknell OLOP A"      Path="Calendar/BracknellAndWokingham/Olop A?command=csv" />
-
+			<NavMenuItem Icon="bi-clock-fill" Text="Reading recent" Path="Recent/Reading/20" />
+			<NavMenuItem Icon="bi-clock-fill" Text="Bracknell recent" Path="Recent/BracknellAndWokingham/20" />
+			@* <NavMenuItem Icon="bi-clock-fill"   Text="Maidenhead recent"     Path="Recent/Maidenhead/20" /> *@
 
 			<hr />
-			<NavMenuItem Icon="bi-postcard"     Text="OLOP Premier"          Path="print/matchcards/4" />
-			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Summary"  Path="OLOP/Premier/Summary" />
-			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 1"   Path="OLOP/Premier/Week/1" />
-			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 2"   Path="OLOP/Premier/Week/2" />
-			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 3"   Path="OLOP/Premier/Week/3" />
-			<NavMenuItem Icon="bi-trophy-fill"  Text="OLOP Premier Week 4"   Path="OLOP/Premier/Week/4" />
+			<NavMenuItem Icon="bi-postcard" Text="Reading Scorecard" Path="print/scorecard/reading" />
+			<NavMenuItem Icon="bi-postcard" Text="Maidenhead Scorecard" Path="print/scorecard/maidenhead" />
+			<NavMenuItem Icon="bi-postcard" Text="Bracknell Scorecard" Path="print/scorecard/bracknell" />
+			<NavMenuItem Icon="bi-postcard" Text="Bracknell John Howard Scorecard" Path="print/scorecard/bracknelljohnhoward" />
 
-			<NavMenuItem Icon="bi-person-lines-fill" Text="OLOP Members"          Path="Club/OLOP/Membership" />
-			@* <NavMenuItem Icon="bi-table"  Text="SBL 2023/24"       Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" /> *@
-			@* <NavMenuItem Icon="@emojiTT"  Text="TT Daily"          Path="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All" /> *@
-		}
-	</nav>
-</div>
+			@if (env.IsDevelopment()) {
+				<hr />
+				<NavMenuItem Icon="@emojiTT" Text="Reading OLOP D" Path="TeamSummary/Reading/Our Lady Of Peace D" />
+				<NavMenuItem Icon="@emojiTT" Text="Maidenhead OLOP Bears" Path="TTLeagues/TeamSummary/Maidenhead/OLOP Bears" />
+				<NavMenuItem Icon="@emojiTT" Text="Bracknell OLOP A" Path="TeamSummary/BracknellAndWokingham/Olop A" />
+
+				<hr />
+
+				<NavMenuItem Icon="bi-calendar3" Text="OLOP Bookings" Path="OLOP/Bookings" />
+				<hr />
+				<NavMenuItem Icon="bi-calendar3" Text="Reading OLOP D" Path="Calendar/Reading/Our Lady Of Peace D?command=text" />
+				<NavMenuItem Icon="bi-calendar3" Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=text" />
+				<NavMenuItem Icon="bi-calendar3" Text="Bracknell OLOP A" Path="Calendar/BracknellAndWokingham/Olop A?command=text" />
+				<hr />
+
+				<NavMenuItem Icon="bi-filetype-csv" Text="Reading OLOP D" Path="Calendar/Reading/Our Lady Of Peace D?command=csv" />
+				<NavMenuItem Icon="bi-filetype-csv" Text="Maidenhead OLOP Bears" Path="Calendar/Maidenhead/OLOP Bears?command=csv" />
+				<NavMenuItem Icon="bi-filetype-csv" Text="Bracknell OLOP A" Path="Calendar/BracknellAndWokingham/Olop A?command=csv" />
+
+				<hr />
+				<NavMenuItem Icon="bi-postcard" Text="OLOP Premier" Path="print/matchcards/4" />
+				<NavMenuItem Icon="bi-trophy-fill" Text="OLOP Premier Summary" Path="OLOP/Premier/Summary" />
+				<NavMenuItem Icon="bi-trophy-fill" Text="OLOP Premier Week 1" Path="OLOP/Premier/Week/1" />
+				<NavMenuItem Icon="bi-trophy-fill" Text="OLOP Premier Week 2" Path="OLOP/Premier/Week/2" />
+				<NavMenuItem Icon="bi-trophy-fill" Text="OLOP Premier Week 3" Path="OLOP/Premier/Week/3" />
+				<NavMenuItem Icon="bi-trophy-fill" Text="OLOP Premier Week 4" Path="OLOP/Premier/Week/4" />
+
+				<NavMenuItem Icon="bi-person-lines-fill" Text="OLOP Members" Path="Club/OLOP/Membership" />
+				@* <NavMenuItem Icon="bi-table"  Text="SBL 2023/24"       Path="TTLeagues/LeagueSummary/British/2131" Match="NavLinkMatch.All" /> *@
+				@* <NavMenuItem Icon="@emojiTT"  Text="TT Daily"          Path="TTLeagues/TeamSummary/British/Table Tennis Daily/47042" Match="NavLinkMatch.All" /> *@
+			}
+		</nav>
+	</div>
+</nav-menu>
 
 @code {
 	private string VersionInfo => $"{Program.Name}: {Program.ProductVersion}";
