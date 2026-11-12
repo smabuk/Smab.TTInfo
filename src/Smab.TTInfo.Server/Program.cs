@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using Microsoft.AspNetCore.Components;
+
 using Smab.TTInfo.Olop;
 using Smab.TTInfo.Server.Components;
 using Smab.TTInfo.Server.EndPoints;
@@ -40,13 +42,10 @@ builder.Services
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
 	_ = app.UseDeveloperExceptionPage();
 	//app.UseWebAssemblyDebugging();
-}
-else
-{
+} else {
 	_ = app.UseExceptionHandler("/Error", createScopeForErrors: true);
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	_ = app.UseHsts();
@@ -70,6 +69,7 @@ app.UseOutputCache();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
+	.WithBrowserOptions(options => options.AddAutoPause(p => p.HiddenDelay = TimeSpan.FromSeconds(120)))
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TT365._Imports).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTClubs._Imports).Assembly)
 	.AddAdditionalAssemblies(typeof(Smab.TTInfo.TTLeagues._Imports).Assembly)

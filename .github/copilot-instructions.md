@@ -1,4 +1,4 @@
-# Instructions for GitHub and VisualStudio Copilot
+﻿# Instructions for GitHub and VisualStudio Copilot
 
 ## General
 
@@ -14,6 +14,7 @@
 * Use tabs for indentation, with a tab size of 4 spaces.
 
 ## Coding Style
+
 * Always use explict types instead of `var`. NEVER USE `var`.
 * Apply coding style defined in `.editorconfig`.
 * Use collection expressions
