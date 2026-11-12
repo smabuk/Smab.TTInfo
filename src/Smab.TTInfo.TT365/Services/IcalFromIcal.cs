@@ -1,4 +1,5 @@
 ﻿using Ical.Net.CalendarComponents;
+using Ical.Net.Serialization;
 
 namespace Smab.TTInfo.TT365.Services;
 
@@ -8,18 +9,20 @@ public sealed partial class TT365Reader
 	/// Generates an iCalendar (iCal) string representation of the specified fixtures for a given league and team.
 	/// </summary>
 	/// <param name="leagueId">The Id of the league to which the fixtures belong. Cannot be null or empty.</param>
-	/// <param name="TeamName">The name of the team for which the fixtures are being generated. Cannot be null or empty.</param>
+	/// <param name="TeamName">
+	/// The name of the team for which the fixtures are being generated. Cannot be null or empty.
+	/// </param>
 	/// <param name="Fixtures">A collection of fixtures to include in the iCalendar. Cannot be null or empty.</param>
 	/// <param name="timeZone">The time zone to use for the fixture dates and times. Cannot be null.</param>
 	/// <returns>A string containing the iCalendar representation of the fixtures.</returns>
 	public async Task<string> IcalStringFromIcal(TT365LeagueId leagueId, string TeamName, TimeZoneInfo timeZone)
-		=> (await IcalFromIcal(leagueId, TeamName, timeZone)).ToString() ?? "";
+		=> new CalendarSerializer().SerializeToString(await IcalFromIcal(leagueId, TeamName, timeZone)) ?? "";
 
 	public async Task<Ical.Net.Calendar> IcalFromIcal(TT365LeagueId leagueId, string TeamName, TimeZoneInfo timeZone)
 	{
 		League league = await GetLeague(leagueId) ?? throw new InvalidOperationException($"League with ID {leagueId} not found.");
 
-		string teamId = league.CurrentSeason.Lookups.TeamLookup.FirstOrDefault(t =>	t.Name.Equals(TeamName, StringComparison.OrdinalIgnoreCase))?.Id ?? "";
+		string teamId = league.CurrentSeason.Lookups.TeamLookup.FirstOrDefault(t => t.Name.Equals(TeamName, StringComparison.OrdinalIgnoreCase))?.Id ?? "";
 		string divisionId = league.CurrentSeason.Divisions.SingleOrDefault(d => d.Teams.Any(t => t.Id == teamId))?.Id ?? "";
 
 		TT365LeagueId reading = new("Reading");
@@ -51,14 +54,12 @@ public sealed partial class TT365Reader
 		// Fix the times from All day to start at a default of 7:30pm UTC time, as TT365 does not provide times for fixtures in the iCal feed
 		foreach (CalendarEvent e in ical.Events) {
 			if (e.IsAllDay) {
-				TimeOnly defaultTime = DEFAULT_START_TIME; // 7:30pm
-
-				TimeOnly startTime=  e.Location switch
+				TimeOnly startTime = e.Location switch
 				{
-					string v when v.Contains("RBL", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-30), // 7:00pm start time
-					string v when v.Contains("CURZON", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-30), // 7:00pm start time
-					string v when v.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase) => defaultTime.AddMinutes(-15), // 7:15pm start time
-					_ => defaultTime
+					string v when v.Contains("RBL", StringComparison.OrdinalIgnoreCase) => DEFAULT_START_TIME.AddMinutes(-30), // 7:00pm start time
+					string v when v.Contains("CURZON", StringComparison.OrdinalIgnoreCase) => DEFAULT_START_TIME.AddMinutes(-30), // 7:00pm start time
+					string v when v.Contains("BRAYBROOKE", StringComparison.OrdinalIgnoreCase) => DEFAULT_START_TIME.AddMinutes(-15), // 7:15pm start time
+					_ => DEFAULT_START_TIME
 				};
 
 				Ical.Net.DataTypes.CalDateTime startDateTime = new(e.Start!.Value.Add(startTime.ToTimeSpan()));

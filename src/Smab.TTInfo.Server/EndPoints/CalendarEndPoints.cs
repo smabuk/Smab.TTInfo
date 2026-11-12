@@ -100,13 +100,13 @@ public static partial class CalendarEndPoints
 		// Different ways of returning the information
 		return commandType switch
 		{
-			CommandType.TEXT    => TypedResults.Content(new CalendarSerializer().SerializeToString(icalCalendar) ?? "", "text/plain"),
+			CommandType.TEXT    => TypedResults.Content(IcalStringFromIcal(icalCalendar), "text/plain"),
 			CommandType.CONTENT => GenerateWithFilename(),
-			CommandType.FILE    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.FILE    => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(IcalStringFromIcal(icalCalendar)), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
 			CommandType.CSV     => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(CsvFromCalendar(icalCalendar ?? new())), "text/plain", $"{LeagueName} - {TeamName} Fixtures.csv"),
 			CommandType.JSON    => TypedResults.Json(icalCalendar),
-			CommandType.NEG     => TypedResults.Content(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), // Negotiated content type, default to text/plain
-			_ => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(new CalendarSerializer().SerializeToString(icalCalendar) ?? ""), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
+			CommandType.NEG     => TypedResults.Content(IcalStringFromIcal(icalCalendar)), // Negotiated content type, default to text/plain
+			_ => TypedResults.File(System.Text.Encoding.UTF8.GetBytes(IcalStringFromIcal(icalCalendar)), "text/calendar", $"{LeagueName} - {TeamName} Fixtures.ics"),
 		};
 
 		ContentHttpResult GenerateWithFilename()
@@ -130,6 +130,9 @@ public static partial class CalendarEndPoints
 
 		return output.ToString();
 	}
+
+	private static string IcalStringFromIcal(Ical.Net.Calendar? ical)
+		=> new CalendarSerializer().SerializeToString(ical) ?? "";
 
 	private enum CommandType {
 		UNKNOWN,
